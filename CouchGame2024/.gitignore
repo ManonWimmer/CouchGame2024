@@ -1,3 +1,10 @@
+# Rider files
+.idea/
+
+# VS Code
+.vscode/
+*.code-workspace
+
 # Visual Studio 2015 user specific files
 .vs/
 
@@ -47,10 +54,16 @@ SourceArt/**/*.tga
 
 # Binary Files
 Binaries/*
-Plugins/**/Binaries/*
+Plugins/*/Binaries/*
 
 # Builds
 Build/*
+
+!Binaries/Win64
+Binaries/Win64/*
+!Binaries/Win64/CouchGame2024Editor.target
+!Binaries/Win64/UnrealEditor.modules
+!Binaries/Win64/UnrealEditor-CouchGame2024.dll
 
 # Whitelist PakBlacklist-<BuildConfiguration>.txt files
 !Build/*/
@@ -68,7 +81,10 @@ Saved/*
 
 # Compiled source files for the engine to use
 Intermediate/*
-Plugins/**/Intermediate/*
+Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+#Rider
+.idea/
