@@ -64,6 +64,7 @@ Binaries/Win64/*
 !Binaries/Win64/CouchGame2024Editor.target
 !Binaries/Win64/UnrealEditor.modules
 !Binaries/Win64/UnrealEditor-CouchGame2024.dll
+!Binaries/Win64/UnrealEditor-LocalMultiplayer.dll
 
 # Whitelist PakBlacklist-<BuildConfiguration>.txt files
 !Build/*/
