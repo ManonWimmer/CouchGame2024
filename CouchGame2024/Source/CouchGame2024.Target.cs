@@ -12,4 +12,9 @@ public class CouchGame2024Target : TargetRules
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
 		ExtraModuleNames.Add("CouchGame2024");
 	}
+	
+	private void RegisterModulesCreatedByRider()
+	{
+    	ExtraModuleNames.AddRange(new string[] { "LocalMultiplayer" });
+	}
 }
