@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CouchGame2024/Public/PlayerBall.h"
+#include "CouchGame2024/Public/PlayerBall/PlayerBall.h"
 
 
 // Sets default values
