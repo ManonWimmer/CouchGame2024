@@ -16,10 +16,10 @@ class COUCHGAME2024_API APlayerBallController : public APlayerController
 
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerMoveX, float, XInput);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerMoveXInput, float, XInput);
 
 	UPROPERTY(BlueprintCallable)
-	FOnPlayerMoveX OnPlayerMoveX;
+	FOnPlayerMoveXInput OnPlayerMoveXInput;
 	
 protected:
 	UFUNCTION(BlueprintCallable)

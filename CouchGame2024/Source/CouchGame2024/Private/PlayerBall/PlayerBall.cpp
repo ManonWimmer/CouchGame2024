@@ -7,6 +7,8 @@
 #include "CouchGame2024/Public/PlayerBall/PlayerBallController.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/StaticMeshComponent.h"
+#include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Datas/PlayerBallData.h"
 
 // Sets default values
 APlayerBall::APlayerBall()
@@ -27,8 +29,13 @@ APlayerBall::APlayerBall()
 void APlayerBall::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CreateStateMachine();
+	InitStateMachine();
 	
 	BindEventActions();
+
+	SetupData();
 }
 
 // Called every frame
@@ -36,10 +43,7 @@ void APlayerBall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (PawnMovement->Velocity.Length() >= 10.f)
-	{
-		UpdateRotation();
-	}
+	TickStateMachine(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -48,7 +52,46 @@ void APlayerBall::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void APlayerBall::BindEventActions()
+void APlayerBall::SetupData()	// Get all data and set them
+{
+	if (PlayerBallData == nullptr)
+		return;
+
+	if (PawnMovement == nullptr)
+		return;
+
+	if (SphereCollision == nullptr)
+		return;
+
+	AngularRollForce = PlayerBallData->AngularRollForce;
+	BraqueDirectionForceMultiplier = PlayerBallData->BraqueDirectionForceMultiplier;
+	SphereCollision->SetAngularDamping(PlayerBallData->AngularRollDamping);
+	SphereCollision->SetPhysicsMaxAngularVelocityInDegrees(PlayerBallData->MaxAngularRollVelocity);
+	
+	//SphereCollision->SetMassScale(NAME_None, PlayerBallData->GravityScale);
+}
+
+
+void APlayerBall::CreateStateMachine()	// Create a StateMachine Object for the Pawn
+{
+	StateMachine = NewObject<UPlayerBallStateMachine>();
+}
+
+void APlayerBall::InitStateMachine()	// Call Init on StateMachine
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->Init(this);
+}
+
+void APlayerBall::TickStateMachine(float DeltaTime) const	// Call tick on StateMachine
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->Tick(DeltaTime);
+}
+
+void APlayerBall::BindEventActions()	// Bind Input Event from controller to Pawn Actions
 {
 	if (Controller == nullptr)
 		return;
@@ -58,42 +101,16 @@ void APlayerBall::BindEventActions()
 	if (BallController == nullptr)
 		return;
 	
-	BallController->OnPlayerMoveX.AddDynamic(this, &APlayerBall::MoveXAction);
+	BallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
 }
 
-void APlayerBall::MoveXAction(float XValue)
+void APlayerBall::MoveXAction(float XValue)	// Set MoveX Value
 {
-	GEngine->AddOnScreenDebugMessage(
-		-1,
-		3.f,
-		FColor::Red,
-		TEXT("MoveXAction")
-		);
-	
-	if (PawnMovement == nullptr)
-		return;
-
-	FVector RightVect = GetActorRightVector();
-
-	FVector Dir = RightVect * XValue;
-	
-	PawnMovement->AddInputVector(Dir);
+	MoveXValue = XValue;
 }
 
-void APlayerBall::MoveYAction(float YValue)
+void APlayerBall::MoveYAction(float YValue)	//Set MoveY Value
 {
-	
-}
-
-void APlayerBall::UpdateRotation()
-{
-	if (PawnMovement == nullptr)
-		return;
-
-	FVector TempVel = PawnMovement->Velocity;
-
-	FRotator TempRot(0.f, 0.f, TempVel.Y);
-	
-	SphereMesh->AddLocalRotation(TempRot * GetWorld()->GetDeltaSeconds());
+	MoveYValue = YValue;
 }
 

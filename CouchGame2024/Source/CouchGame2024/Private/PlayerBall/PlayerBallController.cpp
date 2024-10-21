@@ -5,5 +5,5 @@
 
 void APlayerBallController::MoveXInput(float XInput)
 {
-	OnPlayerMoveX.Broadcast(XInput);
+	OnPlayerMoveXInput.Broadcast(XInput);
 }

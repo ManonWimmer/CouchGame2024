@@ -6,6 +6,8 @@
 #include "GameFramework/Pawn.h"
 #include "PlayerBall.generated.h"
 
+class UPlayerBallData;
+class UPlayerBallStateMachine;
 class USphereComponent;
 class UFloatingPawnMovement;
 class UStaticMeshComponent;
@@ -31,26 +33,73 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 
+
+#pragma region Setup Data
+
+public:
+	UFUNCTION()
+	void SetupData();
+	
+private:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPlayerBallData> PlayerBallData;
+
+#pragma endregion 
+	
+#pragma region Components
+	
+public:
+	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UFloatingPawnMovement> PawnMovement;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> SphereMesh;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<USphereComponent> SphereCollision;
+#pragma endregion
+
+#pragma region StateMachine
+public:
+	void CreateStateMachine();
+
+	void InitStateMachine();
+
+	void TickStateMachine(float DeltaTime) const;
+
+protected:
+
+	TObjectPtr<UPlayerBallStateMachine> StateMachine;
+	
+	
+#pragma endregion
+
 	
 private:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
 	void BindEventActions();
+	
+#pragma region Movement
+	
+public:
+	
+	UPROPERTY()
+	float MoveXValue;
+	UPROPERTY()
+	float MoveYValue;
 
-	UFUNCTION(BlueprintCallable)
+	UPROPERTY()
+	float AngularRollForce = 2000.f;
+	UPROPERTY()
+	float BraqueDirectionForceMultiplier = 1.f;
+	
+private:
+
+	UFUNCTION()
 	void MoveXAction(float XValue);
-
-	UFUNCTION(BlueprintCallable)	
+	UFUNCTION()	
 	void MoveYAction(float YValue);
 
-	UFUNCTION(BlueprintCallable)
-	void UpdateRotation();
-	
+#pragma endregion
 };
