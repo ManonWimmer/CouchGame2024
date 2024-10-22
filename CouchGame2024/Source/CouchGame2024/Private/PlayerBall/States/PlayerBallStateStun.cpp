@@ -65,7 +65,7 @@ void UPlayerBallStateStun::StateTick(float DeltaTime)
 	DecreaseCooldownStun(DeltaTime);
 }
 
-void UPlayerBallStateStun::DecreaseCooldownStun(float DeltaTime)
+void UPlayerBallStateStun::DecreaseCooldownStun(float DeltaTime)	// cooldown before exit stun -> Idle
 {
 	if (CurrentStunRemaining > 0.f)	// Stun cooldown not finish -> decrease
 	{
@@ -80,7 +80,7 @@ void UPlayerBallStateStun::DecreaseCooldownStun(float DeltaTime)
 	}
 }
 
-void UPlayerBallStateStun::OnImpacted(float ImpactedValue)
+void UPlayerBallStateStun::OnImpacted(float ImpactedValue)	// -> impacted
 {
 	if (StateMachine == nullptr)	return;
 

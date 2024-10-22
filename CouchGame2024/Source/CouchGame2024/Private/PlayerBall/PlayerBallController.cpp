@@ -7,3 +7,8 @@ void APlayerBallController::MoveXInput(float XInput)
 {
 	OnPlayerMoveXInput.Broadcast(XInput);
 }
+
+void APlayerBallController::MoveYInput(float YInput)
+{
+	OnPlayerMoveYInput.Broadcast(YInput);
+}

@@ -91,7 +91,8 @@ void APlayerBall::SetupData()	// Get all data and set them
 	PawnMovement->Acceleration = PlayerBallData->AirControlSideAcceleration;
 	PawnMovement->MaxSpeed = PlayerBallData->AirControlSideMaxSpeed;
 	PawnMovement->Deceleration = PlayerBallData->AirControlSideDeceleration;
-	//SphereCollision->SetMassScale(NAME_None, PlayerBallData->GravityScale);
+	SlowFallForce = PlayerBallData->SlowFallForce;
+	AccelerateFallForce = PlayerBallData->AccelerateFallForce;
 
 	StunCooldown = PlayerBallData->StunCooldown;
 
@@ -133,6 +134,7 @@ void APlayerBall::BindEventActions()	// Bind Input Event from controller to Pawn
 		return;
 	
 	BallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
+	BallController->OnPlayerMoveYInput.AddDynamic(this, &APlayerBall::MoveYAction);
 	BallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
 }
 
@@ -156,7 +158,7 @@ bool APlayerBall::IsGrounded()
 		QueryParams
 	);
 
-	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 1.0f);
+	//DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 1.0f);
 
 	return bHit;
 }

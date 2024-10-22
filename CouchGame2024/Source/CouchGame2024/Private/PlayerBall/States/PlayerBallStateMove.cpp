@@ -65,14 +65,14 @@ void UPlayerBallStateMove::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
 
-	Move(DeltaTime);
+	MoveX(DeltaTime);
 	
 	CheckNotMoving();
 
 	CheckFalling();
 }
 
-void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X Axis by rolling it
+void UPlayerBallStateMove::MoveX(float DeltaTime)	// Move ball on X Axis by rolling it
 {
 	if (Pawn->PawnMovement == nullptr)
 		return;
@@ -108,7 +108,7 @@ void UPlayerBallStateMove::CheckNotMoving()	// Check if ball is still moving
 	}
 }
 
-void UPlayerBallStateMove::CheckFalling()
+void UPlayerBallStateMove::CheckFalling()	// check falling -> falling
 {
 	if (Pawn == nullptr)	return;
 
@@ -118,21 +118,21 @@ void UPlayerBallStateMove::CheckFalling()
 	}
 }
 
-void UPlayerBallStateMove::OnStunned(float StunnedValue)
+void UPlayerBallStateMove::OnStunned(float StunnedValue)	// -> stunned
 {
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Stun);
 }
 
-void UPlayerBallStateMove::OnPunch(float PunchValue)
+void UPlayerBallStateMove::OnPunch(float PunchValue)	// -> punch
 {
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Punch);
 }
 
-void UPlayerBallStateMove::OnImpacted(float ImpactedValue)
+void UPlayerBallStateMove::OnImpacted(float ImpactedValue)	// -> impacted
 {
 	if (StateMachine == nullptr)	return;
 

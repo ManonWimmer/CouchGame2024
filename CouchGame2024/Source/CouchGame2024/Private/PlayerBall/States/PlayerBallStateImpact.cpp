@@ -68,7 +68,7 @@ void UPlayerBallStateImpact::StateTick(float DeltaTime)
 	Super::StateTick(DeltaTime);
 }
 
-void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)
+void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in opposite direction from impact point
 {
 	if (Pawn == nullptr)
 		return;
@@ -83,8 +83,9 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)
 
 	Dir.Normalize();
 	
-	Pawn->ReceiveStunnedAction(1.f);
-	Pawn->SphereCollision->AddImpulse(Dir * Pawn->ImpactForceMultiplier, NAME_None, false);
+	Pawn->ReceiveStunnedAction(1.f);	// Stun
+	
+	Pawn->SphereCollision->AddImpulse(Dir * Pawn->ImpactForceMultiplier, NAME_None, false);	// impulse
 }
 
 

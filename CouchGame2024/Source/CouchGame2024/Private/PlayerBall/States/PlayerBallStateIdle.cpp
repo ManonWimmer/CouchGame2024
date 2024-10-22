@@ -91,21 +91,21 @@ void UPlayerBallStateIdle::CheckFalling()	// Check if ball falling
 	}
 }
 
-void UPlayerBallStateIdle::OnStunned(float StunnedValue)
+void UPlayerBallStateIdle::OnStunned(float StunnedValue)	// -> stunned
 {
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Stun);
 }
 
-void UPlayerBallStateIdle::OnPunch(float PunchValue)
+void UPlayerBallStateIdle::OnPunch(float PunchValue)	// -> punch
 {
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Punch);
 }
 
-void UPlayerBallStateIdle::OnImpacted(float ImpactedValue)
+void UPlayerBallStateIdle::OnImpacted(float ImpactedValue)	// -> impacted
 {
 	if (StateMachine == nullptr)	return;
 

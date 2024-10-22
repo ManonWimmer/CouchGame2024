@@ -166,7 +166,7 @@ void UPlayerBallStatePunch::DecreaseCooldownPunch(float DeltaTime)
 	}
 }
 
-void UPlayerBallStatePunch::Move(float DeltaTime)
+void UPlayerBallStatePunch::Move(float DeltaTime)	// roll ball X
 {
 	if (Pawn->PawnMovement == nullptr)
 		return;
@@ -190,7 +190,7 @@ void UPlayerBallStatePunch::Move(float DeltaTime)
 	}
 }
 
-void UPlayerBallStatePunch::FallingMove(float DeltaTime)
+void UPlayerBallStatePunch::FallingMove(float DeltaTime)	// AirControl fall X
 {
 	if (Pawn == nullptr)	return;
 
@@ -203,7 +203,7 @@ void UPlayerBallStatePunch::FallingMove(float DeltaTime)
 	Pawn->PawnMovement->AddInputVector(Dir);	// Move ball in air
 }
 
-void UPlayerBallStatePunch::OnImpacted(float ImpactedValue)
+void UPlayerBallStatePunch::OnImpacted(float ImpactedValue)	// -> impacted
 {
 	if (StateMachine == nullptr)	return;
 

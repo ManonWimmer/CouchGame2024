@@ -3,6 +3,7 @@
 
 #include "PlayerBall/States/PlayerBallStateFall.h"
 
+#include "Components/SphereComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
@@ -64,12 +65,13 @@ void UPlayerBallStateFall::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
 
-	FallingMove(DeltaTime);
-
+	FallingMoveX(DeltaTime);
+	FallingMoveY(DeltaTime);
+	
 	CheckStillFalling();
 }
 
-void UPlayerBallStateFall::FallingMove(float DeltaTime)
+void UPlayerBallStateFall::FallingMoveX(float DeltaTime) const	// Air control X
 {
 	if (Pawn == nullptr)	return;
 
@@ -82,7 +84,21 @@ void UPlayerBallStateFall::FallingMove(float DeltaTime)
 	Pawn->PawnMovement->AddInputVector(Dir);	// Move ball in air
 }
 
-void UPlayerBallStateFall::CheckStillFalling()
+void UPlayerBallStateFall::FallingMoveY(float DeltaTime) const	// Speed fall control Y
+{
+	if (Pawn == nullptr)	return;
+	
+	if (Pawn->MoveYValue > 0.1f && !(Pawn->GetVelocity().Z > -50.f))
+	{
+		Pawn->SphereCollision->AddForce(FVector(0.f, 0.f, 1.f) * Pawn->SlowFallForce * Pawn->MoveYValue, NAME_None, true);
+	}
+	else if (Pawn->MoveYValue < -0.1f)
+	{
+		Pawn->SphereCollision->AddForce(FVector(0.f, 0.f, 1.f) * Pawn->AccelerateFallForce * Pawn->MoveYValue, NAME_None, true);
+	}
+}
+
+void UPlayerBallStateFall::CheckStillFalling()	// check falling
 {
 	if (Pawn == nullptr)	return;
 	
@@ -92,21 +108,21 @@ void UPlayerBallStateFall::CheckStillFalling()
 	}
 }
 
-void UPlayerBallStateFall::OnStunned(float StunnedValue)
+void UPlayerBallStateFall::OnStunned(float StunnedValue)	// -> stun
 {
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Stun);
 }
 
-void UPlayerBallStateFall::OnPunch(float PunchValue)
+void UPlayerBallStateFall::OnPunch(float PunchValue)	// -> punch
 {
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Punch);
 }
 
-void UPlayerBallStateFall::OnImpacted(float ImpactedValue)
+void UPlayerBallStateFall::OnImpacted(float ImpactedValue)	// -> impacted
 {
 	if (StateMachine == nullptr)	return;
 
