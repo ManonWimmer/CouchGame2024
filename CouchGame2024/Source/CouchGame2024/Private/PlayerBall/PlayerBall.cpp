@@ -67,6 +67,10 @@ void APlayerBall::SetupData()	// Get all data and set them
 	BraqueDirectionForceMultiplier = PlayerBallData->BraqueDirectionForceMultiplier;
 	SphereCollision->SetAngularDamping(PlayerBallData->AngularRollDamping);
 	SphereCollision->SetPhysicsMaxAngularVelocityInDegrees(PlayerBallData->MaxAngularRollVelocity);
+
+	PawnMovement->Acceleration = PlayerBallData->AirControlSideAcceleration;
+	PawnMovement->MaxSpeed = PlayerBallData->AirControlSideMaxSpeed;
+	PawnMovement->Deceleration = PlayerBallData->AirControlSideDeceleration;
 	
 	//SphereCollision->SetMassScale(NAME_None, PlayerBallData->GravityScale);
 }
@@ -102,6 +106,31 @@ void APlayerBall::BindEventActions()	// Bind Input Event from controller to Pawn
 		return;
 	
 	BallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
+}
+
+bool APlayerBall::IsGrounded()
+{
+	// Line trace Pos
+	FVector Start = GetActorLocation();
+	FVector End = Start + FVector(0, 0, -50.f);
+
+	// LineTrace Parameters
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	// Line Trace Hit
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		Start,
+		End,
+		ECC_WorldStatic,
+		QueryParams
+	);
+
+	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 1.0f);
+
+	return bHit;
 }
 
 void APlayerBall::MoveXAction(float XValue)	// Set MoveX Value

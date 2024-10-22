@@ -4,6 +4,7 @@
 #include "PlayerBall/States/PlayerBallStateMove.h"
 
 #include "Components/SphereComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 
@@ -53,6 +54,8 @@ void UPlayerBallStateMove::StateTick(float DeltaTime)
 	Move(DeltaTime);
 	
 	CheckNotMoving();
+
+	CheckFalling();
 }
 
 void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X Axis by rolling it
@@ -71,11 +74,11 @@ void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X Axis by rolli
 
 	if (SameDirection)	// same direction -> normal roll
 	{
-		Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * GetWorld()->GetDeltaSeconds() * -Pawn->AngularRollForce, NAME_None, true);	// Roll ball
+		Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->AngularRollForce, NAME_None, true);	// Roll ball
 	}
 	else  // not same direction -> boost roll to braque faster
 	{
-		Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * GetWorld()->GetDeltaSeconds() * -(Pawn->AngularRollForce * Pawn->BraqueDirectionForceMultiplier), NAME_None, true);	// Roll ball
+		Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->AngularRollForce * Pawn->BraqueDirectionForceMultiplier), NAME_None, true);	// Roll ball
 	}
 }
 
@@ -88,6 +91,16 @@ void UPlayerBallStateMove::CheckNotMoving()	// Check if ball is still moving
 		if (StateMachine == nullptr)	return;
 
 		StateMachine->ChangeState(EPlayerBallStateID::Idle);
+	}
+}
+
+void UPlayerBallStateMove::CheckFalling()
+{
+	if (Pawn == nullptr)	return;
+
+	if (!Pawn->IsGrounded())	// not on ground -> falling
+	{
+		StateMachine->ChangeState(EPlayerBallStateID::Fall);
 	}
 }
 

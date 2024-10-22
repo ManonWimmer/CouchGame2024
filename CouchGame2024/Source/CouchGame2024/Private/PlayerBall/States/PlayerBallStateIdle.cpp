@@ -3,6 +3,7 @@
 
 #include "PlayerBall/States/PlayerBallStateIdle.h"
 
+#include "GameFramework/FloatingPawnMovement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 
@@ -50,6 +51,8 @@ void UPlayerBallStateIdle::StateTick(float DeltaTime)
 	Super::StateTick(DeltaTime);
 
 	OnMoveXCheck();
+
+	CheckFalling();
 }
 
 void UPlayerBallStateIdle::OnMoveXCheck()	// Check if ball start moving
@@ -61,6 +64,16 @@ void UPlayerBallStateIdle::OnMoveXCheck()	// Check if ball start moving
 		if (StateMachine == nullptr)	return;
 
 		StateMachine->ChangeState(EPlayerBallStateID::Move);
+	}
+}
+
+void UPlayerBallStateIdle::CheckFalling()	// Check if ball falling
+{
+	if (Pawn == nullptr)	return;
+
+	if (!Pawn->IsGrounded())	// not on ground -> falling
+	{
+		StateMachine->ChangeState(EPlayerBallStateID::Fall);
 	}
 }
 

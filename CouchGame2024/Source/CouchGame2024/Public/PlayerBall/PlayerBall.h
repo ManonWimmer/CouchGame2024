@@ -83,12 +83,16 @@ private:
 #pragma region Movement
 	
 public:
+
+	UFUNCTION(BlueprintCallable)
+	bool IsGrounded();
 	
 	UPROPERTY()
 	float MoveXValue;
 	UPROPERTY()
 	float MoveYValue;
 
+	// roll Datas
 	UPROPERTY()
 	float AngularRollForce = 2000.f;
 	UPROPERTY()

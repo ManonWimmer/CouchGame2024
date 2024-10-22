@@ -31,11 +31,18 @@ public:
 #pragma endregion
 
 #pragma region Falling Movements
+	// UPROPERTY(EditAnywhere, Category = "Falling Movements")
+	// float GravityScale = 1.f;
+
 	UPROPERTY(EditAnywhere, Category = "Falling Movements")
-	float GravityScale = 1.f;
+	float AirControlSideAcceleration = 200.f;
 
+	UPROPERTY(EditAnywhere, Category = "Falling Movements")
+	float AirControlSideMaxSpeed = 600.f;
 
-
+	UPROPERTY(EditAnywhere, Category = "Falling Movements")
+	float AirControlSideDeceleration = 1.f;
+	
 #pragma endregion
 
 	

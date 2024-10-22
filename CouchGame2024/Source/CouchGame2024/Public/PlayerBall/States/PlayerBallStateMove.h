@@ -34,4 +34,7 @@ private:
 
 	UFUNCTION()
 	void CheckNotMoving();
+
+	UFUNCTION()
+	void CheckFalling();
 };
