@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "PlayerBall/PlayerBallState.h"
-#include "PlayerBallStateStun.generated.h"
+#include "PlayerBallStateImpact.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class COUCHGAME2024_API UPlayerBallStateStun : public UPlayerBallState
+class COUCHGAME2024_API UPlayerBallStateImpact : public UPlayerBallState
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this component's properties
-	UPlayerBallStateStun();
+	UPlayerBallStateImpact();
 
 public:
 
@@ -29,14 +29,6 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 private:
-	UPROPERTY()
-	float CurrentStunRemaining = 0.f;
-
-
 	UFUNCTION()
-	void DecreaseCooldownStun(float DeltaTime);
-
-
-	UFUNCTION()
-	void OnImpacted(float ImpactedValue);
+	void ImpactedBall(float ImpactValue);
 };

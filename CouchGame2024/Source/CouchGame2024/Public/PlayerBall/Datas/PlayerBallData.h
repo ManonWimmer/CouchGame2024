@@ -60,7 +60,14 @@ public:
 	float PunchCooldown = 3.f;
 	
 	UPROPERTY(EditAnywhere, Category = "Punch")
-	float PunchForceMultiplier = 5.f;
+	float PunchForceMultiplier = 50000.f;
+#pragma endregion
+
+#pragma region Impact
+
+	UPROPERTY(EditAnywhere, Category = "Impact")
+	float ImpactForceMultiplier = 30000.f;
+
 #pragma endregion 
 	
 };

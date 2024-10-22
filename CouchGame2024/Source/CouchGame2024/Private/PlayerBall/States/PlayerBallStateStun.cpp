@@ -42,12 +42,20 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState)
 	if (Pawn != nullptr)
 	{
 		CurrentStunRemaining = Pawn->StunCooldown;
+
+
+		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateStun::OnImpacted);
 	}
 }
 
 void UPlayerBallStateStun::StateExit(EPlayerBallStateID NextState)
 {
 	Super::StateExit(NextState);
+
+	if (Pawn != nullptr)
+	{
+		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateStun::OnImpacted);
+	}
 }
 
 void UPlayerBallStateStun::StateTick(float DeltaTime)
@@ -70,6 +78,13 @@ void UPlayerBallStateStun::DecreaseCooldownStun(float DeltaTime)
 			StateMachine->ChangeState(EPlayerBallStateID::Idle);
 		}
 	}
+}
+
+void UPlayerBallStateStun::OnImpacted(float ImpactedValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Impact);
 }
 
 

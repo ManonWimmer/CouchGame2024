@@ -42,4 +42,7 @@ private:
 
 	UFUNCTION()
 	void OnPunch(float PunchValue);
+
+	UFUNCTION()
+	void OnImpacted(float ImpactedValue);
 };

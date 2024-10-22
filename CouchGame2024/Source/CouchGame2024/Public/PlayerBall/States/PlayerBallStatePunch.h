@@ -43,4 +43,7 @@ private:
 	void Move(float DeltaTime);
 	UFUNCTION()
 	void FallingMove(float DeltaTime);
+
+	UFUNCTION()
+	void OnImpacted(float ImpactedValue);
 };

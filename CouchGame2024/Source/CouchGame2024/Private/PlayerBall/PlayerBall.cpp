@@ -10,6 +10,20 @@
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
 
+void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (OtherActor == nullptr)	return;
+
+	TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
+	
+	if (OtherBall == nullptr)	return;
+
+	ImpactedPlayerBall = OtherBall;
+
+	ReceiveImpactAction(1.f);
+}
+
 // Sets default values
 APlayerBall::APlayerBall()
 {
@@ -23,6 +37,12 @@ APlayerBall::APlayerBall()
 
 	SphereCollision->SetupAttachment(RootComponent);
 	SphereMesh->SetupAttachment(SphereCollision);
+
+
+	if (SphereCollision != nullptr)
+	{
+		SphereCollision->OnComponentHit.AddDynamic(this, &APlayerBall::OnCollisionHit);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -78,6 +98,8 @@ void APlayerBall::SetupData()	// Get all data and set them
 	PunchCooldown = PlayerBallData->PunchCooldown;
 	PunchRadius = PlayerBallData->PunchRadius;
 	PunchForceMultiplier = PlayerBallData->PunchForceMultiplier;
+
+	ImpactForceMultiplier = PlayerBallData->ImpactForceMultiplier;
 }
 
 
@@ -157,5 +179,10 @@ void APlayerBall::ReceiveStunnedAction(float InStunnedValue)
 void APlayerBall::ReceivePunchAction(float InPunchValue)
 {
 	OnPunchAction.Broadcast(InPunchValue);
+}
+
+void APlayerBall::ReceiveImpactAction(float ImpactValue)
+{
+	OnImpactAction.Broadcast(ImpactValue);
 }
 

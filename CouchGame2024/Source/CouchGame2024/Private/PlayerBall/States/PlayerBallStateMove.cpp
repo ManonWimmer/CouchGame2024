@@ -45,6 +45,7 @@ void UPlayerBallStateMove::StateEnter(EPlayerBallStateID PreviousState)
 	{
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateMove::OnStunned);
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateMove::OnPunch);
+		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateMove::OnImpacted);
 	}
 }
 
@@ -56,6 +57,7 @@ void UPlayerBallStateMove::StateExit(EPlayerBallStateID NextState)
 	{
 		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateMove::OnStunned);
 		Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateMove::OnPunch);
+		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateMove::OnImpacted);
 	}
 }
 
@@ -128,5 +130,12 @@ void UPlayerBallStateMove::OnPunch(float PunchValue)
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Punch);
+}
+
+void UPlayerBallStateMove::OnImpacted(float ImpactedValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Impact);
 }
 

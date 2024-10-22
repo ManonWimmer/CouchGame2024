@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Components/PrimitiveComponent.h"
 #include "PlayerBall.generated.h"
+
 
 class UPlayerBallData;
 class UPlayerBallStateMachine;
@@ -18,6 +20,8 @@ class COUCHGAME2024_API APlayerBall : public APawn
 	GENERATED_BODY()
 
 public:
+	UFUNCTION()
+	void OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	// Sets default values for this pawn's properties
 	APlayerBall();
 
@@ -142,6 +146,25 @@ public:
 
 	UPROPERTY()
 	float PunchForceMultiplier = 5.f;
+
+#pragma endregion
+
+#pragma region Impact
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnImpactAction, float, ImpactValue);
+	
+	UPROPERTY()
+	FOnImpactAction OnImpactAction;
+
+	UPROPERTY()
+	TObjectPtr<APlayerBall> ImpactedPlayerBall;
+
+	UPROPERTY()
+	float ImpactForceMultiplier = 30000.f;
+	
+	UFUNCTION()
+	void ReceiveImpactAction(float ImpactValue);
 
 #pragma endregion 
 };

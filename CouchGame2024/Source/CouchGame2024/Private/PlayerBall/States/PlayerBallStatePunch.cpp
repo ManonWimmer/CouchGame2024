@@ -44,6 +44,8 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 	if (Pawn != nullptr)
 	{
 		CurrentPunchTimeRemaining = Pawn->PunchCooldown;
+		
+		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStatePunch::OnImpacted);
 	}
 	
 	PunchPlayerBall();
@@ -52,6 +54,11 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 void UPlayerBallStatePunch::StateExit(EPlayerBallStateID NextState)
 {
 	Super::StateExit(NextState);
+
+	if (Pawn != nullptr)
+	{
+		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStatePunch::OnImpacted);
+	}
 }
 
 void UPlayerBallStatePunch::StateTick(float DeltaTime)
@@ -194,6 +201,13 @@ void UPlayerBallStatePunch::FallingMove(float DeltaTime)
 	FVector Dir = RightVect * Pawn->MoveXValue;	// Get ball Side dir
 
 	Pawn->PawnMovement->AddInputVector(Dir);	// Move ball in air
+}
+
+void UPlayerBallStatePunch::OnImpacted(float ImpactedValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Impact);
 }
 
 
