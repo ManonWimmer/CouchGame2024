@@ -3,6 +3,7 @@
 
 #include "CouchGame2024/Public/PlayerBall/PlayerBall.h"
 
+#include "EnhancedInputComponent.h"
 #include "Components/SphereComponent.h"
 #include "CouchGame2024/Public/PlayerBall/PlayerBallController.h"
 #include "GameFramework/FloatingPawnMovement.h"
@@ -70,6 +71,8 @@ void APlayerBall::Tick(float DeltaTime)
 void APlayerBall::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 }
 
 void APlayerBall::SetupData()	// Get all data and set them
@@ -187,4 +190,3 @@ void APlayerBall::ReceiveImpactAction(float ImpactValue)
 {
 	OnImpactAction.Broadcast(ImpactValue);
 }
-

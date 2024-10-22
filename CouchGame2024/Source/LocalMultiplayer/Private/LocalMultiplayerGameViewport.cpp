@@ -21,22 +21,32 @@ void ULocalMultiplayerGameViewport::PostInitProperties()
 // Détection des inputs + attribution des players index en fonction de la touche du clavier / bouton de la manette fourni en paramètre.
 bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5, FColor::Yellow, FString::Printf(TEXT("TEST0")));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("TEST0")));
 	ULocalMultiplayerSubsystem* MultiplayerSubsystem = GetGameInstance()->GetSubsystem<ULocalMultiplayerSubsystem>();
 
 	const ULocalMultiplayerSettings* Settings = GetDefault<ULocalMultiplayerSettings>();
 	
-	if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5, FColor::Red, TEXT("Key pressed"));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("Key pressed"));
 	
 	if (!EventArgs.IsGamepad())
 	{
 		int KeyboardIndex = Settings->FindKeyboardProfileIndexFromKey(EventArgs.Key, ELocalMultiplayerInputMappingType::InGame);
+		
 		if (KeyboardIndex >= 0)
 		{
 			int PlayerIndex = MultiplayerSubsystem->GetAssignedPlayerIndexFromKeyboardProfileIndex(KeyboardIndex);
 			if (PlayerIndex == -1)
 			{
 				PlayerIndex = MultiplayerSubsystem->AssignNewPlayerToKeyboardProfile(KeyboardIndex);
+
+				/*
+				GEngine->AddOnScreenDebugMessage(
+				-1,
+				3.f,
+				FColor::Yellow,
+				FString::Printf(TEXT("Player Index : %d"), PlayerIndex)
+				);
+				*/
 				
 				MultiplayerSubsystem->AssignKeyboardMapping(PlayerIndex, KeyboardIndex, ELocalMultiplayerInputMappingType::InGame);
 			}

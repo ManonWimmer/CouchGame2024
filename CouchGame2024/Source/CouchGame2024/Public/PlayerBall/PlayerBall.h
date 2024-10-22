@@ -173,5 +173,6 @@ public:
 	UFUNCTION()
 	void ReceiveImpactAction(float ImpactValue);
 
-#pragma endregion 
+#pragma endregion
+
 };

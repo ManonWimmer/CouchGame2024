@@ -33,6 +33,7 @@ void UPlayerBallStateMove::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
+	/*
 	GEngine->AddOnScreenDebugMessage
 	(
 		-1,
@@ -40,6 +41,7 @@ void UPlayerBallStateMove::StateEnter(EPlayerBallStateID PreviousState)
 		FColor::Red,
 		TEXT("PlayerState : Move")
 	);
+	*/
 
 	if (Pawn != nullptr)
 	{

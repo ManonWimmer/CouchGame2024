@@ -32,6 +32,7 @@ void UPlayerBallStateImpact::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
+	/*
 	GEngine->AddOnScreenDebugMessage
 	(
 		-1,
@@ -39,6 +40,7 @@ void UPlayerBallStateImpact::StateEnter(EPlayerBallStateID PreviousState)
 		FColor::Red,
 		TEXT("PlayerState : Impact")
 	);
+	*/
 
 	ImpactedBall(1.f);
 

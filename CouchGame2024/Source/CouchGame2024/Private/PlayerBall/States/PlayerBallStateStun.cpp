@@ -31,6 +31,7 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
+	/*
 	GEngine->AddOnScreenDebugMessage
 	(
 		-1,
@@ -38,6 +39,7 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState)
 		FColor::Red,
 		TEXT("PlayerState : Stun")
 	);
+	*/
 	
 	if (Pawn != nullptr)
 	{
