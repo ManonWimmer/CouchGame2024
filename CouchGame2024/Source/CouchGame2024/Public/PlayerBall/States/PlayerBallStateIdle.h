@@ -34,4 +34,7 @@ private:
 
 	UFUNCTION()
 	void CheckFalling();
+
+	UFUNCTION()
+	void OnStunned(float StunnedValue);
 };

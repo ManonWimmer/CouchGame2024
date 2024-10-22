@@ -71,8 +71,9 @@ void APlayerBall::SetupData()	// Get all data and set them
 	PawnMovement->Acceleration = PlayerBallData->AirControlSideAcceleration;
 	PawnMovement->MaxSpeed = PlayerBallData->AirControlSideMaxSpeed;
 	PawnMovement->Deceleration = PlayerBallData->AirControlSideDeceleration;
-	
 	//SphereCollision->SetMassScale(NAME_None, PlayerBallData->GravityScale);
+
+	StunCooldown = PlayerBallData->StunCooldown;
 }
 
 
@@ -141,5 +142,10 @@ void APlayerBall::MoveXAction(float XValue)	// Set MoveX Value
 void APlayerBall::MoveYAction(float YValue)	//Set MoveY Value
 {
 	MoveYValue = YValue;
+}
+
+void APlayerBall::ReceiveStunnedAction(float InStunnedValue)
+{
+	OnStunnedAction.Broadcast(InStunnedValue);
 }
 

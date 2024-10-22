@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "PlayerBall/PlayerBallState.h"
-#include "PlayerBallStateMove.generated.h"
+#include "PlayerBallStateStun.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class COUCHGAME2024_API UPlayerBallStateMove : public UPlayerBallState
+class COUCHGAME2024_API UPlayerBallStateStun : public UPlayerBallState
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this component's properties
-	UPlayerBallStateMove();
+	UPlayerBallStateStun();
 
 public:
 
@@ -29,15 +29,10 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 private:
-	UFUNCTION()
-	void Move(float DeltaTime);
-	UFUNCTION()
-	void CheckNotMoving();
-	
-	UFUNCTION()
-	void CheckFalling();
+	UPROPERTY()
+	float CurrentStunRemaining = 0.f;
 
 
 	UFUNCTION()
-	void OnStunned(float StunnedValue);
+	void DecreaseCooldownStun(float DeltaTime);
 };

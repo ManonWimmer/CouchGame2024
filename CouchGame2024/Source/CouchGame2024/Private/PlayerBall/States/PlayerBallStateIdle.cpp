@@ -39,11 +39,21 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 		FColor::Red,
 		TEXT("PlayerState : Idle")
 	);
+
+	if (Pawn != nullptr)
+	{
+		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateIdle::OnStunned);
+	}
 }
 
 void UPlayerBallStateIdle::StateExit(EPlayerBallStateID NextState)
 {
 	Super::StateExit(NextState);
+
+	if (Pawn != nullptr)
+	{
+		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnStunned);
+	}
 }
 
 void UPlayerBallStateIdle::StateTick(float DeltaTime)
@@ -75,5 +85,12 @@ void UPlayerBallStateIdle::CheckFalling()	// Check if ball falling
 	{
 		StateMachine->ChangeState(EPlayerBallStateID::Fall);
 	}
+}
+
+void UPlayerBallStateIdle::OnStunned(float StunnedValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Stun);
 }
 

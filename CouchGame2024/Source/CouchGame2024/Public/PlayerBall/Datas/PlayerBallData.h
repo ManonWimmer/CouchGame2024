@@ -42,7 +42,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Falling Movements")
 	float AirControlSideDeceleration = 1.f;
-	
+
+	UPROPERTY(EditAnywhere, Category = "Stun")
+	float StunCooldown = 3.f;
 #pragma endregion
 
 	

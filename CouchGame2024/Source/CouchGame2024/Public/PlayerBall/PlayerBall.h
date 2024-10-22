@@ -39,7 +39,7 @@ public:
 public:
 	UFUNCTION()
 	void SetupData();
-	
+
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UPlayerBallData> PlayerBallData;
@@ -106,4 +106,20 @@ private:
 	void MoveYAction(float YValue);
 
 #pragma endregion
+
+#pragma region Stun
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStunedAction, float, StunValue);
+	
+	UPROPERTY()
+	FOnStunedAction OnStunnedAction;
+
+	UFUNCTION(BlueprintCallable)
+	void ReceiveStunnedAction(float InStunnedValue);
+	
+	UPROPERTY()
+	float StunCooldown = 3.f;
+
+#pragma	endregion 
 };

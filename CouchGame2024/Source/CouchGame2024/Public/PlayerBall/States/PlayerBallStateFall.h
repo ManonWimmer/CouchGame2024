@@ -31,7 +31,9 @@ public:
 private:
 	UFUNCTION()
 	void FallingMove(float DeltaTime);
-
 	UFUNCTION()
 	void CheckStillFalling();
+
+	UFUNCTION()
+	void OnStunned(float StunnedValue);
 };
