@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "PlayerBall/PlayerBallState.h"
-#include "PlayerBallStateFall.generated.h"
+#include "PlayerBallStatePunch.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class COUCHGAME2024_API UPlayerBallStateFall : public UPlayerBallState
+class COUCHGAME2024_API UPlayerBallStatePunch : public UPlayerBallState
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this component's properties
-	UPlayerBallStateFall();
+	UPlayerBallStatePunch();
 
 public:
 
@@ -30,13 +30,17 @@ public:
 
 private:
 	UFUNCTION()
-	void FallingMove(float DeltaTime);
+	void PunchPlayerBall();
 	UFUNCTION()
-	void CheckStillFalling();
+	APlayerBall* GetNearestPlayerBallInPunchRadius();
 
 	UFUNCTION()
-	void OnStunned(float StunnedValue);
-	
+	void DecreaseCooldownPunch(float DeltaTime);
+	UPROPERTY()
+	float CurrentPunchTimeRemaining = 0.f;
+
 	UFUNCTION()
-	void OnPunch(float PunchValue);
+	void Move(float DeltaTime);
+	UFUNCTION()
+	void FallingMove(float DeltaTime);
 };

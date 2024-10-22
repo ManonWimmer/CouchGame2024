@@ -25,5 +25,10 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void MoveXInput(float XInput);
 
-	
+public:
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerPunchInput, float, PunchInput);
+
+	UPROPERTY(BlueprintCallable)
+	FOnPlayerPunchInput OnPlayerPunchInput;
 };

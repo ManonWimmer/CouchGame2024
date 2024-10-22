@@ -16,5 +16,6 @@ enum class EPlayerBallStateID : uint8
 	Idle,
 	Move,
 	Fall,
-	Stun
+	Stun,
+	Punch
 };

@@ -43,9 +43,24 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Falling Movements")
 	float AirControlSideDeceleration = 1.f;
 
-	UPROPERTY(EditAnywhere, Category = "Stun")
-	float StunCooldown = 3.f;
 #pragma endregion
 
+#pragma region Stun
+	UPROPERTY(EditAnywhere, Category = "Stun")
+	float StunCooldown = 3.f;
+
+#pragma endregion
+
+#pragma region Punch
+
+	UPROPERTY(EditAnywhere, Category = "Punch")
+	float PunchRadius = 50.f;
+
+	UPROPERTY(EditAnywhere, Category = "Punch")
+	float PunchCooldown = 3.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Punch")
+	float PunchForceMultiplier = 5.f;
+#pragma endregion 
 	
 };

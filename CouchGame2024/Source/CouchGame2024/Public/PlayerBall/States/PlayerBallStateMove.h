@@ -37,7 +37,9 @@ private:
 	UFUNCTION()
 	void CheckFalling();
 
-
 	UFUNCTION()
 	void OnStunned(float StunnedValue);
+
+	UFUNCTION()
+	void OnPunch(float PunchValue);
 };

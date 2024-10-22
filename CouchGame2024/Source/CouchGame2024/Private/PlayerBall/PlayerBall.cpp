@@ -74,6 +74,10 @@ void APlayerBall::SetupData()	// Get all data and set them
 	//SphereCollision->SetMassScale(NAME_None, PlayerBallData->GravityScale);
 
 	StunCooldown = PlayerBallData->StunCooldown;
+
+	PunchCooldown = PlayerBallData->PunchCooldown;
+	PunchRadius = PlayerBallData->PunchRadius;
+	PunchForceMultiplier = PlayerBallData->PunchForceMultiplier;
 }
 
 
@@ -107,6 +111,7 @@ void APlayerBall::BindEventActions()	// Bind Input Event from controller to Pawn
 		return;
 	
 	BallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
+	BallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
 }
 
 bool APlayerBall::IsGrounded()
@@ -147,5 +152,10 @@ void APlayerBall::MoveYAction(float YValue)	//Set MoveY Value
 void APlayerBall::ReceiveStunnedAction(float InStunnedValue)
 {
 	OnStunnedAction.Broadcast(InStunnedValue);
+}
+
+void APlayerBall::ReceivePunchAction(float InPunchValue)
+{
+	OnPunchAction.Broadcast(InPunchValue);
 }
 

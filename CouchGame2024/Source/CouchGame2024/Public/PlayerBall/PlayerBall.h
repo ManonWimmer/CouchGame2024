@@ -121,5 +121,27 @@ public:
 	UPROPERTY()
 	float StunCooldown = 3.f;
 
-#pragma	endregion 
+#pragma	endregion
+
+#pragma region Punch
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPunchAction, float, PunchValue);
+	
+	UPROPERTY()
+	FOnPunchAction OnPunchAction;
+
+	UFUNCTION()
+	void ReceivePunchAction(float InPunchValue);
+	
+	UPROPERTY()
+	float PunchRadius = 50.f;
+
+	UPROPERTY()
+	float PunchCooldown = 3.f;
+
+	UPROPERTY()
+	float PunchForceMultiplier = 5.f;
+
+#pragma endregion 
 };
