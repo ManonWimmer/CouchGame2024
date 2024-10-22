@@ -3,6 +3,8 @@
 
 #include "Camera/CameraManager.h"
 
+#include "Camera/CameraActor.h"
+#include "GeometryCollection/GeometryCollectionAlgo.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -19,13 +21,17 @@ void ACameraManager::BeginPlay()
 	Super::BeginPlay();
 
 	GetAllPlayers();
-	GetMainCamera();
+	GetDebugSphere();
 }
 
 // Called every frame
 void ACameraManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	CalculateCameraLocations();
+	MoveCamera(DeltaTime);
+	MoveDebugSphere();
 }
 
 void ACameraManager::GetAllPlayers()
@@ -42,22 +48,59 @@ void ACameraManager::GetAllPlayers()
 	}
 }
 
-void ACameraManager::GetMainCamera()
+void ACameraManager::CalculateCameraLocations()
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Get Main Camera"));
+	FVector TotalPlayersPositions = FVector::ZeroVector;
+
+	for (AActor* Player : Players)
+	{
+		TotalPlayersPositions += Player->GetActorLocation();
+	}
+	AveragePlayerPositions = TotalPlayersPositions / Players.Num();
+	
+	FRotator CameraRotation = MainCamera->GetActorRotation();
+	
+	float CameraPitchRadians = FMath::DegreesToRadians(CameraRotation.Pitch);
+	
+	float OffsetZ = -FMath::Sin(CameraPitchRadians) * CameraDistance * CameraPitchMultiplier; 
+	float OffsetX = FMath::Cos(CameraPitchRadians) * CameraDistance; 
+	
+	FVector NewCameraLocation = AveragePlayerPositions - MainCamera->GetActorForwardVector() * OffsetX + FVector(0.0f, 0.0f, OffsetZ);
+	
+	MainCamera->SetActorLocation(NewCameraLocation);
+}
+
+
+
+void ACameraManager::MoveCamera(float DeltaTime)
+{
+	//NewCameraLocation = FVector(MainCamera->GetActorLocation().X, AveragePlayerPositions.Y, AveragePlayerPositions.Z);
+	//MainCamera->SetActorLocation(NewCameraLocation);
+}
+
+void ACameraManager::GetDebugSphere()
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Get Debug Sphere"));
 	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), CameraClass, FoundActors);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), DebugSphereClass, FoundActors);
 
 	if (FoundActors.Num() == 1)
 	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-													  FString::Printf(TEXT("Found camera : %s"), *FoundActors[0]->GetName()));
-		MainCamera = FoundActors[0];
+													  FString::Printf(TEXT("Found debug sphere : %s"), *FoundActors[0]->GetName()));
+		DebugSphere = FoundActors[0];
 	}
 	else if (FoundActors.Num() == 0)
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("No main camera"));
-	else
-	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Too many main cameras"));
-	}
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("No debug sphere"));
+		else
+		{
+			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Too many debug spheres"));
+		}
+}
+
+void ACameraManager::MoveDebugSphere()
+{
+	if (DebugSphere == nullptr) return;
+	
+	DebugSphere->SetActorLocation(AveragePlayerPositions);
 }

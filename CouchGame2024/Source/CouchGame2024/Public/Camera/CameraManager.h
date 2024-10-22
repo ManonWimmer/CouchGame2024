@@ -27,16 +27,37 @@ public:
 	TSubclassOf<AActor> PlayerClass;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> CameraClass;
+	ACameraActor* MainCamera;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> DebugSphereClass;
+
+	UPROPERTY(EditAnywhere)
+	float CameraPitchMultiplier = 0.3f;
+	
+	UPROPERTY(EditAnywhere)
+	float CameraDistance = 1000.f;
 
 private:
 	void GetAllPlayers();
 
-	void GetMainCamera();
+	void CalculateCameraLocations();
+	void MoveCamera(float DeltaTime);
 
+	void GetDebugSphere();
+	void MoveDebugSphere();
+	
 	UPROPERTY()
 	TArray<AActor*> Players;
+	
+	UPROPERTY()
+	FVector AveragePlayerPositions;
+
+	//UPROPERTY()
+	//FVector NewCameraLocation;
 
 	UPROPERTY()
-	AActor* MainCamera;
+	AActor* DebugSphere;
+
+	float MoveSpeed = 5.f;
 };
