@@ -3,6 +3,8 @@
 
 #include "Events/TestEvent01.h"
 
+#include "Score/GlobalScoreSubsystem.h"
+
 
 // Sets default values
 ATestEvent01::ATestEvent01()
@@ -29,5 +31,11 @@ void ATestEvent01::Tick(float DeltaTime)
 void ATestEvent01::TriggerEvent()
 {
 	Super::TriggerEvent();
+
+	UGlobalScoreSubsystem* ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
+	if (ScoreSubsystem != nullptr)
+	{
+		ScoreSubsystem->AddScore(0, 100);
+	}
 }
 
