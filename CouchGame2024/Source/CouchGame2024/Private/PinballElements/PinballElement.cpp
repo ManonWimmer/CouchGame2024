@@ -31,6 +31,6 @@ EPinballElementID APinballElement::GetElementID()
 
 void APinballElement::TriggerElement()
 {
-	
+	TriggerElementEffects();
 }
 

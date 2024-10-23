@@ -24,7 +24,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void TriggerElement() override;
-
+	
 	virtual EPinballElementID GetElementID() override;
 	
 private:

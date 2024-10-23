@@ -30,11 +30,10 @@ void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* Othe
 
 		if (OtherElement != nullptr)
 		{
-			OtherElement->TriggerElement();
-			
 			switch (OtherElement->GetElementID())
 			{
 				case EPinballElementID::Bumper:
+					OtherElement->TriggerElement();
 					ReceiveBumperReaction(OtherElement);
 					return;
 				case EPinballElementID::Flipper:
@@ -48,6 +47,32 @@ void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* Othe
 		}
 	}
 
+}
+
+void APlayerBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "OnBeginOverlap");
+
+	TObjectPtr<APinballElement> OtherElement = Cast<APinballElement>(OtherActor);
+
+	if (OtherElement != nullptr)
+	{
+			
+		switch (OtherElement->GetElementID())
+		{
+		case EPinballElementID::Bumper:
+			return;
+		case EPinballElementID::Flipper:
+			OtherElement->TriggerElement();
+			return;
+		case EPinballElementID::None:
+			return;
+
+		default:
+			return;
+		}
+	}
 }
 
 // Sets default values
@@ -68,6 +93,8 @@ APlayerBall::APlayerBall()
 	if (SphereCollision != nullptr)
 	{
 		SphereCollision->OnComponentHit.AddDynamic(this, &APlayerBall::OnCollisionHit);
+
+		SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerBall::OnBeginOverlap);
 	}
 }
 

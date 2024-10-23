@@ -29,4 +29,7 @@ public:
 
 	UFUNCTION()	
 	virtual void TriggerElement();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void TriggerElementEffects();
 };
