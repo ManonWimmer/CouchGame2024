@@ -68,10 +68,28 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-private:
+	UFUNCTION(BlueprintCallable, CallInEditor, Category = "Events")
+	void StartGame();
+
+	UFUNCTION(BlueprintCallable, CallInEditor, Category = "Events")
+	void EndGame();
+
+	UFUNCTION(BlueprintCallable, Category = "Events")
+	float GetCountdownTime() const;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Events")
+	int GameTimeInSec = 100;
+	
+	UPROPERTY()
+	float StartGameTime;
+	
+	UPROPERTY()
 	float CurrentTime;
 
+private:
 	void CheckAndTriggerEvents();
 
 	void CheckProbabilities();
+
+	bool IsGameStarted = false;
 };

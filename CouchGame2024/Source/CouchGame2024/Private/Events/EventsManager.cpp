@@ -24,8 +24,36 @@ void AEventsManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CurrentTime = GetWorld()->GetTimeSeconds();
-	CheckAndTriggerEvents();
+	if (IsGameStarted)
+	{
+		if (CurrentTime > GameTimeInSec)
+		{
+			CurrentTime = GameTimeInSec;
+			EndGame();
+		}
+		else
+		{
+			CheckAndTriggerEvents();
+		}
+	}
+}
+
+void AEventsManager::StartGame()
+{
+	StartGameTime = GetWorld()->GetTimeSeconds();
+	IsGameStarted = true;
+}
+
+void AEventsManager::EndGame()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green,
+												 TEXT("END GAME"));
+	IsGameStarted = false;
+}
+
+float AEventsManager::GetCountdownTime() const
+{
+	return GameTimeInSec - CurrentTime;
 }
 
 void AEventsManager::CheckAndTriggerEvents()
