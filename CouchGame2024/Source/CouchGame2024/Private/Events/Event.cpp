@@ -24,3 +24,11 @@ void AEvent::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void AEvent::TriggerEvent()
+{
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+										 FString::Printf(
+											 TEXT("Trigger event : %s"), *this->GetName()));
+}
+

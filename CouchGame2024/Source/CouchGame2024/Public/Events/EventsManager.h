@@ -15,7 +15,7 @@ struct FEventInfos
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event")
 	AEvent* Event;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event", meta = (ClampMin = 0.f, ClampMax = 1.f, UIMin = 0.f, UIMax = 1.f))
 	float Probability;
 
 	FEventInfos() : Event(nullptr), Probability(1.0f) {}
@@ -36,8 +36,8 @@ struct FLevelEventEntry
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event")
-	float TriggerTime;  // La clé (temps de déclenchement)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event", meta = (ClampMin = 0.f, ClampMax = 100.f, UIMin = 0.f, UIMax = 100.f))
+	float TriggerTime; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event")
 	FEventArray EventArray;
@@ -45,7 +45,7 @@ struct FLevelEventEntry
 	UPROPERTY()
 	bool HasBeenTriggered = false;
 
-	FLevelEventEntry() : TriggerTime(0.0f) {}  // Valeur par défaut
+	FLevelEventEntry() : TriggerTime(0.0f) {}  
 };
 
 UCLASS(Blueprintable)
@@ -72,4 +72,6 @@ private:
 	float CurrentTime;
 
 	void CheckAndTriggerEvents();
+
+	void CheckProbabilities();
 };

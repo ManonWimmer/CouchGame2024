@@ -26,13 +26,5 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void TriggerEvent()
-	{
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-			                                 FString::Printf(
-				                                 TEXT("Trigger event : %s"), *this->GetName()));
-
-		
-	}
+	virtual void TriggerEvent();
 };

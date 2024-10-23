@@ -9,6 +9,8 @@ ATestEvent01::ATestEvent01()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	EventName = "TestEvent01";
 }
 
 // Called when the game starts or when spawned
