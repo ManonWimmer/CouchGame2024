@@ -47,6 +47,7 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState)
 
 
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateStun::OnImpacted);
+		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateStun::OnBumped);
 	}
 }
 
@@ -57,6 +58,7 @@ void UPlayerBallStateStun::StateExit(EPlayerBallStateID NextState)
 	if (Pawn != nullptr)
 	{
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateStun::OnImpacted);
+		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateStun::OnBumped);
 	}
 }
 
@@ -87,6 +89,13 @@ void UPlayerBallStateStun::OnImpacted(float ImpactedValue)	// -> impacted
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Impact);
+}
+
+void UPlayerBallStateStun::OnBumped(float BumpedValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Bumped);
 }
 
 

@@ -46,4 +46,7 @@ private:
 
 	UFUNCTION()
 	void OnImpacted(float ImpactedValue);
+	
+	UFUNCTION()
+	void OnBumped(float BumpedValue);
 };

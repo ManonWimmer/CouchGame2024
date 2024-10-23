@@ -8,6 +8,7 @@
 #include "PlayerBall.generated.h"
 
 
+class APinballElement;
 class UPlayerBallData;
 class UPlayerBallStateMachine;
 class USphereComponent;
@@ -175,4 +176,30 @@ public:
 
 #pragma endregion
 
+#pragma region Reaction Pinball Elements
+
+public:
+	TObjectPtr<APinballElement> HitPinballElement;
+
+#pragma region Bumper Reaction
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBumperReaction, float, BumperReactionValue);
+
+	FOnBumperReaction OnBumperReaction;
+
+	UPROPERTY()
+	float BumpedForceMultiplier = 30000.f;
+
+	UPROPERTY()
+	float BumpedHitLagCooldown = 0.2f;
+	
+private:
+	UFUNCTION()
+	void ReceiveBumperReaction(APinballElement* Element);
+
+#pragma endregion 
+
+	
+#pragma endregion
+	
 };

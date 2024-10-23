@@ -48,6 +48,7 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 		CurrentPunchTimeRemaining = Pawn->PunchCooldown;
 		
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStatePunch::OnImpacted);
+		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStatePunch::OnBumped);
 	}
 	
 	PunchPlayerBall();
@@ -60,6 +61,7 @@ void UPlayerBallStatePunch::StateExit(EPlayerBallStateID NextState)
 	if (Pawn != nullptr)
 	{
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStatePunch::OnImpacted);
+		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStatePunch::OnBumped);
 	}
 }
 
@@ -88,16 +90,6 @@ void UPlayerBallStatePunch::PunchPlayerBall()
 	if (PlayerBall == nullptr)
 		return;
 
-	FString namePawn = Pawn->GetName();
-	
-	GEngine->AddOnScreenDebugMessage
-	(
-		-1,
-		2.f,
-		FColor::Green,
-		namePawn
-	);
-	
 	FVector Start = Pawn->GetActorLocation();
 	FVector End = PlayerBall->GetActorLocation();
 
@@ -210,6 +202,13 @@ void UPlayerBallStatePunch::OnImpacted(float ImpactedValue)	// -> impacted
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Impact);
+}
+
+void UPlayerBallStatePunch::OnBumped(float BumpedValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Bumped);
 }
 
 

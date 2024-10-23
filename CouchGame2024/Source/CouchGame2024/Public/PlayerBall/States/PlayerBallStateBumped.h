@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "PlayerBall/PlayerBallState.h"
-#include "PlayerBallStateMove.generated.h"
+#include "PlayerBallStateBumped.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class COUCHGAME2024_API UPlayerBallStateMove : public UPlayerBallState
+class COUCHGAME2024_API UPlayerBallStateBumped : public UPlayerBallState
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this component's properties
-	UPlayerBallStateMove();
+	UPlayerBallStateBumped();
 
 public:
 
@@ -29,19 +29,18 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 private:
+
 	UFUNCTION()
-	void MoveX(float DeltaTime);
+	void Bump();
+
 	UFUNCTION()
-	void CheckNotMoving();
+	void DecreaseHitLagTimer(float DeltaTime);
+
+	UPROPERTY()
+	float CurrentHitLagTimer = 0.f;
 	
 	UFUNCTION()
-	void CheckFalling();
-
-	UFUNCTION()
 	void OnStunned(float StunnedValue);
-
-	UFUNCTION()
-	void OnPunch(float PunchValue);
 
 	UFUNCTION()
 	void OnImpacted(float ImpactedValue);

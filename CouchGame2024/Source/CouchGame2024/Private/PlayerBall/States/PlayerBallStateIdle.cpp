@@ -31,8 +31,7 @@ void UPlayerBallStateIdle::StateInit(UPlayerBallStateMachine* InStateMachine)
 void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
-
-	/*
+	
 	GEngine->AddOnScreenDebugMessage
 	(
 		-1,
@@ -40,13 +39,14 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 		FColor::Red,
 		TEXT("PlayerState : Idle")
 	);
-	*/
+	
 
 	if (Pawn != nullptr)
 	{
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateIdle::OnStunned);
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateIdle::OnPunch);
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateIdle::OnImpacted);
+		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateIdle::OnBumped);
 	}
 }
 
@@ -59,6 +59,7 @@ void UPlayerBallStateIdle::StateExit(EPlayerBallStateID NextState)
 		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnStunned);
 		Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnPunch);
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnImpacted);
+		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateIdle::OnBumped);
 	}
 }
 
@@ -112,5 +113,12 @@ void UPlayerBallStateIdle::OnImpacted(float ImpactedValue)	// -> impacted
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Impact);
+}
+
+void UPlayerBallStateIdle::OnBumped(float BumpedValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Bumped);
 }
 

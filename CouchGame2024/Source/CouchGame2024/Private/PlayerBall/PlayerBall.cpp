@@ -8,6 +8,7 @@
 #include "CouchGame2024/Public/PlayerBall/PlayerBallController.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/StaticMeshComponent.h"
+#include "PinballElements/PinballElement.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
 
@@ -18,11 +19,35 @@ void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* Othe
 
 	TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
 	
-	if (OtherBall == nullptr)	return;
+	if (OtherBall != nullptr)
+	{
+		ImpactedPlayerBall = OtherBall;
+		ReceiveImpactAction(1.f);
+	}
+	else
+	{
+		TObjectPtr<APinballElement> OtherElement = Cast<APinballElement>(OtherActor);
 
-	ImpactedPlayerBall = OtherBall;
+		if (OtherElement != nullptr)
+		{
+			OtherElement->TriggerElement();
+			
+			switch (OtherElement->GetElementID())
+			{
+				case EPinballElementID::Bumper:
+					ReceiveBumperReaction(OtherElement);
+					return;
+				case EPinballElementID::Flipper:
+					return;
+				case EPinballElementID::None:
+					return;
 
-	ReceiveImpactAction(1.f);
+				default:
+					return;
+			}
+		}
+	}
+
 }
 
 // Sets default values
@@ -86,24 +111,33 @@ void APlayerBall::SetupData()	// Get all data and set them
 	if (SphereCollision == nullptr)
 		return;
 
+	// Movements
 	AngularRollForce = PlayerBallData->AngularRollForce;
 	BraqueDirectionForceMultiplier = PlayerBallData->BraqueDirectionForceMultiplier;
 	SphereCollision->SetAngularDamping(PlayerBallData->AngularRollDamping);
 	SphereCollision->SetPhysicsMaxAngularVelocityInDegrees(PlayerBallData->MaxAngularRollVelocity);
 
+	// Fall
 	PawnMovement->Acceleration = PlayerBallData->AirControlSideAcceleration;
 	PawnMovement->MaxSpeed = PlayerBallData->AirControlSideMaxSpeed;
 	PawnMovement->Deceleration = PlayerBallData->AirControlSideDeceleration;
 	SlowFallForce = PlayerBallData->SlowFallForce;
 	AccelerateFallForce = PlayerBallData->AccelerateFallForce;
 
+	// Stun By punch
 	StunCooldown = PlayerBallData->StunCooldown;
 
+	// Punch
 	PunchCooldown = PlayerBallData->PunchCooldown;
 	PunchRadius = PlayerBallData->PunchRadius;
 	PunchForceMultiplier = PlayerBallData->PunchForceMultiplier;
 
+	// Impact
 	ImpactForceMultiplier = PlayerBallData->ImpactForceMultiplier;
+
+	// Bumped
+	BumpedForceMultiplier = PlayerBallData->BumpedForceMultiplier;
+	BumpedHitLagCooldown = PlayerBallData->BumpedHitLagCooldown;
 }
 
 
@@ -189,4 +223,11 @@ void APlayerBall::ReceivePunchAction(float InPunchValue)
 void APlayerBall::ReceiveImpactAction(float ImpactValue)
 {
 	OnImpactAction.Broadcast(ImpactValue);
+}
+
+void APlayerBall::ReceiveBumperReaction(APinballElement* Element)
+{
+	HitPinballElement = Element;
+	
+	OnBumperReaction.Broadcast(1.f);
 }

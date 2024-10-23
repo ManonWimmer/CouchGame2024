@@ -72,5 +72,15 @@ public:
 	float ImpactForceMultiplier = 30000.f;
 
 #pragma endregion 
+
+#pragma region Bumped
+
+	UPROPERTY(EditAnywhere, Category = "Bumped")
+	float BumpedForceMultiplier = 30000.f;
+
+	UPROPERTY(EditAnywhere, Category = "Bumped")
+	float BumpedHitLagCooldown = 0.2f;
+
+#pragma endregion 
 	
 };
