@@ -105,8 +105,6 @@ void APlayerBall::BeginPlay()
 
 	CreateStateMachine();
 	InitStateMachine();
-	
-	BindEventActions();
 
 	SetupData();
 }
@@ -125,6 +123,8 @@ void APlayerBall::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+
+	BindEventActions();
 }
 
 void APlayerBall::SetupData()	// Get all data and set them

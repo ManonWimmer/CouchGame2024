@@ -17,7 +17,7 @@ class COUCHGAME2024_API APlayerBallController : public APlayerController
 
 public:
 	UPROPERTY(EditAnywhere)
-	TSoftObjectPtr<UPlayerActionsData> PlayerInputsData;
+	TObjectPtr<UPlayerActionsData> PlayerInputsData;
 	
 	UFUNCTION()
 	virtual void SetupInputComponent() override;
