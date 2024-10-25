@@ -77,7 +77,8 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 
 	if (Pawn->ImpactedPlayerBall == nullptr)
 		return;
-	
+
+	FVector Velocity = Pawn->ImpactedPlayerBall->GetVelocity();
 	FVector Start = Pawn->ImpactedPlayerBall->GetActorLocation();
 	FVector End = Pawn->GetActorLocation();
 
@@ -87,7 +88,7 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 	
 	Pawn->ReceiveStunnedAction(1.f);	// Stun
 	
-	Pawn->SphereCollision->AddImpulse(Dir * Pawn->ImpactForceMultiplier, NAME_None, false);	// impulse
+	Pawn->SphereCollision->AddImpulse(Dir * Pawn->ImpactForceMultiplier * Velocity.Length(), NAME_None, false);	// impulse
 }
 
 
