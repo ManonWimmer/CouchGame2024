@@ -105,12 +105,16 @@ public:
 	UPROPERTY()
 	float BraqueDirectionForceMultiplier = 1.f;
 
-
+#pragma region Fall (obsolete)
+/*
+	// Fall -> obsolete
 	UPROPERTY()
 	float SlowFallForce = 50.f;
 
 	UPROPERTY()
 	float AccelerateFallForce = 50.f;
+*/
+#pragma endregion
 	
 private:
 
@@ -137,8 +141,9 @@ public:
 
 #pragma	endregion
 
-#pragma region Punch
+#pragma region Punch (Obsolete)
 
+	/*
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPunchAction, float, PunchValue);
 	
@@ -157,6 +162,7 @@ public:
 	UPROPERTY()
 	float PunchForceMultiplier = 5.f;
 
+*/
 #pragma endregion
 
 #pragma region Impact

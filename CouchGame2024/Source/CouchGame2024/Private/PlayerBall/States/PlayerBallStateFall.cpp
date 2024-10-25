@@ -46,7 +46,7 @@ void UPlayerBallStateFall::StateEnter(EPlayerBallStateID PreviousState)
 	if (Pawn != nullptr)
 	{
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateFall::OnStunned);
-		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateFall::OnPunch);
+		//Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateFall::OnPunch);
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateFall::OnImpacted);
 		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateFall::OnBumped);
 	}
@@ -59,7 +59,7 @@ void UPlayerBallStateFall::StateExit(EPlayerBallStateID NextState)
 	if (Pawn != nullptr)
 	{
 		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateFall::OnStunned);
-		Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateFall::OnPunch);
+		//Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateFall::OnPunch);
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateFall::OnImpacted);
 		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateFall::OnBumped);
 	}
@@ -70,7 +70,7 @@ void UPlayerBallStateFall::StateTick(float DeltaTime)
 	Super::StateTick(DeltaTime);
 
 	FallingMoveX(DeltaTime);
-	FallingMoveY(DeltaTime);
+	//FallingMoveY(DeltaTime);
 	
 	CheckStillFalling();
 }
@@ -88,6 +88,7 @@ void UPlayerBallStateFall::FallingMoveX(float DeltaTime) const	// Air control X
 	Pawn->PawnMovement->AddInputVector(Dir);	// Move ball in air
 }
 
+/*
 void UPlayerBallStateFall::FallingMoveY(float DeltaTime) const	// Speed fall control Y
 {
 	if (Pawn == nullptr)	return;
@@ -101,6 +102,7 @@ void UPlayerBallStateFall::FallingMoveY(float DeltaTime) const	// Speed fall con
 		Pawn->SphereCollision->AddForce(FVector(0.f, 0.f, 1.f) * Pawn->AccelerateFallForce * Pawn->MoveYValue, NAME_None, true);
 	}
 }
+*/
 
 void UPlayerBallStateFall::CheckStillFalling()	// check falling
 {

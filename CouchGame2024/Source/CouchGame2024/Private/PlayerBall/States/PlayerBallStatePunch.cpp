@@ -45,13 +45,13 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 	
 	if (Pawn != nullptr)
 	{
-		CurrentPunchTimeRemaining = Pawn->PunchCooldown;
+		//CurrentPunchTimeRemaining = Pawn->PunchCooldown;
 		
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStatePunch::OnImpacted);
 		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStatePunch::OnBumped);
 	}
 	
-	PunchPlayerBall();
+	//PunchPlayerBall();
 }
 
 void UPlayerBallStatePunch::StateExit(EPlayerBallStateID NextState)
@@ -83,7 +83,7 @@ void UPlayerBallStatePunch::StateTick(float DeltaTime)
 		}
 	}
 }
-
+/*
 void UPlayerBallStatePunch::PunchPlayerBall()
 {
 	APlayerBall* PlayerBall = GetNearestPlayerBallInPunchRadius();
@@ -100,7 +100,9 @@ void UPlayerBallStatePunch::PunchPlayerBall()
 	PlayerBall->ReceiveStunnedAction(1.f);
 	PlayerBall->SphereCollision->AddImpulse(Dir * Pawn->PunchForceMultiplier, NAME_None, false);
 }
+*/
 
+/*
 APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 {
 	if (Pawn == nullptr)
@@ -144,6 +146,7 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 	}
 	return nullptr;
 }
+*/
 
 void UPlayerBallStatePunch::DecreaseCooldownPunch(float DeltaTime)
 {

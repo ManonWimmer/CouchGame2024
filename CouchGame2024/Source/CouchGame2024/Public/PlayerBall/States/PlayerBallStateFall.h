@@ -31,8 +31,8 @@ public:
 private:
 	UFUNCTION()
 	void FallingMoveX(float DeltaTime) const;
-	UFUNCTION()
-	void FallingMoveY(float DeltaTime) const;
+	// UFUNCTION()
+	// void FallingMoveY(float DeltaTime) const;
 	UFUNCTION()
 	void CheckStillFalling();
 

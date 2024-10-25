@@ -29,10 +29,10 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 private:
-	UFUNCTION()
-	void PunchPlayerBall();
-	UFUNCTION()
-	APlayerBall* GetNearestPlayerBallInPunchRadius();
+	// UFUNCTION()
+	// void PunchPlayerBall();
+	// UFUNCTION()
+	// APlayerBall* GetNearestPlayerBallInPunchRadius();
 
 	UFUNCTION()
 	void DecreaseCooldownPunch(float DeltaTime);
