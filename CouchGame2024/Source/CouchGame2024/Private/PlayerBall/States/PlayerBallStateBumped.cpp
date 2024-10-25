@@ -70,6 +70,8 @@ void UPlayerBallStateBumped::StateExit(EPlayerBallStateID NextState)
 void UPlayerBallStateBumped::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
+
+	DecreaseHitLagTimer(DeltaTime);
 }
 
 void UPlayerBallStateBumped::Bump()
