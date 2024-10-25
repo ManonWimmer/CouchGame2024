@@ -26,7 +26,7 @@ bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs
 
 	const ULocalMultiplayerSettings* Settings = GetDefault<ULocalMultiplayerSettings>();
 	
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("Key pressed"));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("Key pressed"));
 	
 	if (!EventArgs.IsGamepad())
 	{
@@ -39,12 +39,7 @@ bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs
 			{
 				PlayerIndex = MultiplayerSubsystem->AssignNewPlayerToKeyboardProfile(KeyboardIndex);
 				
-				GEngine->AddOnScreenDebugMessage(
-				-1,
-				3.f,
-				FColor::Yellow,
-				FString::Printf(TEXT("Player Index : %d"), PlayerIndex)
-				);
+				//GEngine->AddOnScreenDebugMessage(-1,3.f, FColor::Yellow,FString::Printf(TEXT("Player Index : %d"), PlayerIndex));
 				
 				MultiplayerSubsystem->AssignKeyboardMapping(PlayerIndex, KeyboardIndex, ELocalMultiplayerInputMappingType::InGame);
 			}
@@ -59,7 +54,7 @@ bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs
 		}
 		else
 		{
-			if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5, FColor::Red, TEXT("Bindings not in mapping context"));
+			//if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5, FColor::Red, TEXT("Bindings not in mapping context"));
 		}
 	}
 	else
@@ -96,7 +91,7 @@ bool ULocalMultiplayerGameViewport::InputAxis(FViewport* InViewport, FInputDevic
 
 		const ULocalMultiplayerSettings* Settings = GetDefault<ULocalMultiplayerSettings>();
 		
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("Axis pressed"));
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("Axis pressed"));
 		int PlayerIndex = MultiplayerSubsystem->GetAssignedPlayerIndexFromGamepadProfileID(InputDevice.GetId());
 
 		if (PlayerIndex == -1)
