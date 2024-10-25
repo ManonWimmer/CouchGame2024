@@ -69,21 +69,27 @@ void UPlayerBallStateMove::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
 
-	MoveX(DeltaTime);
+	Move(DeltaTime);
 	
 	CheckNotMoving();
 
 	CheckFalling();
 }
 
-void UPlayerBallStateMove::MoveX(float DeltaTime)	// Move ball on X Axis by rolling it
+void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by rolling it
 {
 	if (Pawn->PawnMovement == nullptr)
 		return;
 
-	FVector FwdVect = Pawn->GetActorForwardVector();
+	//FVector FwdVect = Pawn->GetActorForwardVector();
+	FVector FwdVect(1.f, 0.f, 0.f);
 
-	FVector Dir = FwdVect * Pawn->MoveXValue;	// Get ball roll dir
+	//FVector UpVect = Pawn->GetActorUpVector();
+	FVector UpVect(0.f, -1.f, 0.f);
+	
+	FVector Dir = (FwdVect * Pawn->MoveXValue) + (UpVect * Pawn->MoveYValue);	// Get ball roll dir
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Move forward: %f"), FwdVect.Length()));
 	
 	if (Pawn->SphereCollision == nullptr)
 		return;
@@ -104,7 +110,7 @@ void UPlayerBallStateMove::CheckNotMoving()	// Check if ball is still moving
 {
 	if (Pawn == nullptr)	return;
 
-	if (FMathf::Abs(Pawn->MoveXValue) < 0.1f)	// Not moving -> Idle
+	if (FMathf::Abs(Pawn->MoveXValue) < 0.1f && FMathf::Abs(Pawn->MoveYValue) < 0.1f)	// Not moving -> Idle
 	{
 		if (StateMachine == nullptr)	return;
 

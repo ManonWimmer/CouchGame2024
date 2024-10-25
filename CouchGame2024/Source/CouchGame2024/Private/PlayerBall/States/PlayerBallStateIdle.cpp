@@ -67,16 +67,16 @@ void UPlayerBallStateIdle::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
 
-	OnMoveXCheck();
+	OnMoveCheck();
 
 	CheckFalling();
 }
 
-void UPlayerBallStateIdle::OnMoveXCheck()	// Check if ball start moving
+void UPlayerBallStateIdle::OnMoveCheck()	// Check if ball start moving
 {
 	if (Pawn == nullptr)	return;
 
-	if (FMathf::Abs(Pawn->MoveXValue) >= 0.1f)	// moving -> Move
+	if (FMathf::Abs(Pawn->MoveXValue) >= 0.1f || FMathf::Abs(Pawn->MoveYValue) >= 0.1f)	// moving -> Move
 	{
 		if (StateMachine == nullptr)	return;
 

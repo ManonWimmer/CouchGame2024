@@ -30,7 +30,7 @@ public:
 
 private:
 	UFUNCTION()
-	void OnMoveXCheck();
+	void OnMoveCheck();
 
 	UFUNCTION()
 	void CheckFalling();
