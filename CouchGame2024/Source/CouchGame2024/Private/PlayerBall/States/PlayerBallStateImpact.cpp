@@ -87,8 +87,15 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 	Dir.Normalize();
 	
 	Pawn->ReceiveStunnedAction(1.f);	// Stun
+
+	float TotalForce = Pawn->ImpactForceMultiplier * Velocity.Length();
+
+	if (TotalForce < Pawn->ImpactMinTotalForce)
+	{
+		TotalForce = Pawn->ImpactMinTotalForce;
+	}
 	
-	Pawn->SphereCollision->AddImpulse(Dir * Pawn->ImpactForceMultiplier * Velocity.Length(), NAME_None, false);	// impulse
+	Pawn->SphereCollision->AddImpulse(Dir * TotalForce, NAME_None, false);	// impulse
 }
 
 

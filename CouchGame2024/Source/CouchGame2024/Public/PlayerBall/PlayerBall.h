@@ -178,6 +178,9 @@ public:
 
 	UPROPERTY()
 	float ImpactForceMultiplier = 30000.f;
+
+	UPROPERTY()
+	float ImpactMinTotalForce = 50.f;
 	
 	UFUNCTION()
 	void ReceiveImpactAction(float ImpactValue);

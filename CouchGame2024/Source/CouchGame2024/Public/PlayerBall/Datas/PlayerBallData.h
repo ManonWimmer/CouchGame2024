@@ -72,6 +72,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Impact")
 	float ImpactForceMultiplier = 30000.f;
+
+	UPROPERTY(EditAnywhere, Category = "Impact")
+	float ImpactMinTotalForce = 50.f;
 #pragma endregion 
 
 #pragma region Bumped

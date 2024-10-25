@@ -165,6 +165,7 @@ void APlayerBall::SetupData()	// Get all data and set them
 
 	// Impact
 	ImpactForceMultiplier = PlayerBallData->ImpactForceMultiplier;
+	ImpactMinTotalForce = PlayerBallData->ImpactMinTotalForce;
 
 	// Bumped
 	BumpedForceMultiplier = PlayerBallData->BumpedForceMultiplier;
