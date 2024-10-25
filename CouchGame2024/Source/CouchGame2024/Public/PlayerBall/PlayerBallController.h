@@ -47,7 +47,9 @@ protected:
 	void BindMoveYInput(UEnhancedInputComponent* EnhancedInputComponent);
 	
 #pragma endregion
-	
+
+#pragma region Punch (Obsolete)
+	/*
 public:
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerPunchInput, float, PunchInput);
@@ -60,4 +62,23 @@ public:
 
 	UFUNCTION()
 	void BindPunchInput(UEnhancedInputComponent* EnhancedInputComponent);
+	*/
+# pragma  endregion
+
+#pragma region Grappling Input
+public:
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerGrapplingInput, float, GrapplingInput);
+
+	UPROPERTY(BlueprintCallable)
+	FOnPlayerGrapplingInput OnPlayerGrapplingInput;
+
+	UFUNCTION()
+	void GrapplingInput(const FInputActionValue& GrapplingInput);
+
+	UFUNCTION()
+	void BindGrapplingInput(UEnhancedInputComponent* EnhancedInputComponent);
+
+#pragma endregion 
+	
 };

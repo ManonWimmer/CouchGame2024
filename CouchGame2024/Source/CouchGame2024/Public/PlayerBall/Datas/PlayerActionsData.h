@@ -20,9 +20,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = "MoveX")
 	TObjectPtr<UInputAction> MoveXAction;
 
-	UPROPERTY(EditAnywhere, Category = "MoveX")
+	UPROPERTY(EditAnywhere, Category = "MoveY")
 	TObjectPtr<UInputAction> MoveYAction;
 
-	UPROPERTY(EditAnywhere, Category = "MoveX")
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	TObjectPtr<UInputAction> GrapplingAction;
+	
+	/*
+	UPROPERTY(EditAnywhere, Category = "Punch")
 	TObjectPtr<UInputAction> PunchAction;
+	*/
 };

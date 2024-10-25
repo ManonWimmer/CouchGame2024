@@ -209,5 +209,35 @@ private:
 
 	
 #pragma endregion
+
+#pragma region Grappling
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrapplingAction, float, GrapplingValue);
+	
+	UPROPERTY()
+	FOnGrapplingAction OnGrapplingAction;
+	
+	UFUNCTION()
+	void ReceiveGrapplingAction(float InGrapplingValue);
+
+	UPROPERTY()
+	float GrapplingValue = 0.f;
+
+#pragma endregion
+
+#pragma region Grappled
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrappledAction, float, GrappledValue);
+	
+	UPROPERTY()
+	FOnGrappledAction OnGrappledAction;
+	
+	UFUNCTION()
+	void ReceiveGrappledAction(float InGrappledValue);
+
+#pragma endregion 
+
 	
 };

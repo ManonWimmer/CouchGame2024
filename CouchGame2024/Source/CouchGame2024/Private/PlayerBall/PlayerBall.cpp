@@ -204,6 +204,7 @@ void APlayerBall::BindEventActions()	// Bind Input Event from controller to Pawn
 	BallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
 	BallController->OnPlayerMoveYInput.AddDynamic(this, &APlayerBall::MoveYAction);
 	//BallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
+	BallController->OnPlayerGrapplingInput.AddDynamic(this, &APlayerBall::ReceiveGrapplingAction);
 }
 
 bool APlayerBall::IsGrounded()
@@ -256,4 +257,15 @@ void APlayerBall::ReceiveBumperReaction(APinballElement* Element)
 	HitPinballElement = Element;
 	
 	OnBumperReaction.Broadcast(1.f);
+}
+
+void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
+{
+	GrapplingValue = InGrapplingValue;
+	OnGrapplingAction.Broadcast(GrapplingValue);
+}
+
+void APlayerBall::ReceiveGrappledAction(float InGrappledValue)	// 0 -> end grappled	1 -> start grappled
+{
+	OnGrappledAction.Broadcast(InGrappledValue);
 }

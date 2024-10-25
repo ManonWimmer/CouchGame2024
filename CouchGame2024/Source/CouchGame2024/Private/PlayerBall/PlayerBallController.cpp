@@ -18,7 +18,7 @@ void APlayerBallController::SetupInputComponent()
 
 	BindMoveXInput(EnhancedInputComponent);
 	BindMoveYInput(EnhancedInputComponent);
-	BindPunchInput(EnhancedInputComponent);
+	//BindPunchInput(EnhancedInputComponent);
 }
 
 void APlayerBallController::SetupMappingContextIntoController() const
@@ -92,6 +92,32 @@ void APlayerBallController::BindMoveYInput(UEnhancedInputComponent* EnhancedInpu
 	);
 }
 
+void APlayerBallController::GrapplingInput(const FInputActionValue& GrapplingInput)
+{
+	OnPlayerGrapplingInput.Broadcast(GrapplingInput.Get<float>());
+}
+
+void APlayerBallController::BindGrapplingInput(UEnhancedInputComponent* EnhancedInputComponent)
+{
+	if (EnhancedInputComponent == nullptr) return;
+
+	if (PlayerInputsData == nullptr) return;
+
+	EnhancedInputComponent->BindAction(
+		PlayerInputsData->GrapplingAction,
+		ETriggerEvent::Started,
+		this,
+		&APlayerBallController::GrapplingInput
+	);
+	EnhancedInputComponent->BindAction(
+		PlayerInputsData->GrapplingAction,
+		ETriggerEvent::Completed,
+		this,
+		&APlayerBallController::GrapplingInput
+	);
+}
+
+/*
 void APlayerBallController::PunchInput(const FInputActionValue& PunchInput)
 {
 	OnPlayerPunchInput.Broadcast(PunchInput.Get<float>());
@@ -110,4 +136,4 @@ void APlayerBallController::BindPunchInput(UEnhancedInputComponent* EnhancedInpu
 		&APlayerBallController::PunchInput
 	);
 }
-
+*/
