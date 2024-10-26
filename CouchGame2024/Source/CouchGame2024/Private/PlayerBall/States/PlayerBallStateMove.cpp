@@ -81,10 +81,8 @@ void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by
 	if (Pawn->PawnMovement == nullptr)
 		return;
 
-	//FVector FwdVect = Pawn->GetActorForwardVector();
 	FVector FwdVect(1.f, 0.f, 0.f);
 
-	//FVector UpVect = Pawn->GetActorUpVector();
 	FVector UpVect(0.f, -1.f, 0.f);
 	
 	FVector Dir = (FwdVect * Pawn->MoveXValue) + (UpVect * Pawn->MoveYValue);	// Get ball roll dir
@@ -95,14 +93,16 @@ void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by
 	bool SameDirectionX = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X <= 0 && Dir.X >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X >= 0 && Dir.X <= 0);
 	bool SameDirectionY = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y <= 0 && Dir.Y >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y >= 0 && Dir.Y <= 0);
 
-	if (SameDirectionX || SameDirectionY)	// same direction -> normal roll
+	if (!SameDirectionX)	// May Increase roll X if oppositeDirection
 	{
-		Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->AngularRollForce, NAME_None, true);	// Roll ball
+		Dir.X *= Pawn->BraqueDirectionForceMultiplier;
 	}
-	else  // not same direction -> boost roll to braque faster
+	if (!SameDirectionY)	// May Increase roll Y if oppositeDirection
 	{
-		Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->AngularRollForce * Pawn->BraqueDirectionForceMultiplier), NAME_None, true);	// Roll ball
+		Dir.Y *= Pawn->BraqueDirectionForceMultiplier;
 	}
+
+	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->AngularRollForce, NAME_None, true);	// Roll ball
 }
 
 void UPlayerBallStateMove::CheckNotMoving()	// Check if ball is still moving
