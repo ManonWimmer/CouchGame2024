@@ -33,7 +33,7 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
-	/*
+	
 	GEngine->AddOnScreenDebugMessage
 	(
 		-1,
@@ -41,7 +41,6 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 		FColor::Red,
 		TEXT("PlayerState : Punch")
 	);
-	*/
 	
 	if (Pawn != nullptr)
 	{
@@ -127,8 +126,9 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 		FCollisionShape::MakeSphere(Pawn->PunchRadius),
 		CollisionParams
 	);
-	
-	DrawDebugSphere(GetWorld(), Start, Pawn->PunchRadius, 12, FColor::Blue, false, 3.f);
+
+	if (Pawn->GetWorld())
+		DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->PunchRadius, 12, FColor::Blue, false, 3.f);
 
 	if (bHasDetected)	// has detected a pawn
 	{
