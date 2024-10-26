@@ -55,8 +55,8 @@ public:
 
 #pragma endregion
 
-#pragma region Punch (Obsolete)
-/*
+#pragma region Punch
+
 	UPROPERTY(EditAnywhere, Category = "Punch")
 	float PunchRadius = 50.f;
 
@@ -66,7 +66,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Punch")
 	float PunchForceMultiplier = 50000.f;
 #pragma endregion
-*/
+
 
 #pragma region Impact
 

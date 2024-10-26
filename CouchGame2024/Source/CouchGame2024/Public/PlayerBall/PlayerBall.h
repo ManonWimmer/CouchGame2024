@@ -143,7 +143,6 @@ public:
 
 #pragma region Punch (Obsolete)
 
-	/*
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPunchAction, float, PunchValue);
 	
@@ -162,7 +161,6 @@ public:
 	UPROPERTY()
 	float PunchForceMultiplier = 5.f;
 
-*/
 #pragma endregion
 
 #pragma region Impact

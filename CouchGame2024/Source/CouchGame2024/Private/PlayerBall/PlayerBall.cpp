@@ -156,12 +156,11 @@ void APlayerBall::SetupData()	// Get all data and set them
 	// Stun By punch
 	StunCooldown = PlayerBallData->StunCooldown;
 
-	/*
-	// Punch (Obsolete)
+	// Punch
 	PunchCooldown = PlayerBallData->PunchCooldown;
 	PunchRadius = PlayerBallData->PunchRadius;
 	PunchForceMultiplier = PlayerBallData->PunchForceMultiplier;
-	*/
+	
 
 	// Impact
 	ImpactForceMultiplier = PlayerBallData->ImpactForceMultiplier;
@@ -204,7 +203,7 @@ void APlayerBall::BindEventActions()	// Bind Input Event from controller to Pawn
 	
 	BallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
 	BallController->OnPlayerMoveYInput.AddDynamic(this, &APlayerBall::MoveYAction);
-	//BallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
+	BallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
 	BallController->OnPlayerGrapplingInput.AddDynamic(this, &APlayerBall::ReceiveGrapplingAction);
 }
 
@@ -246,6 +245,11 @@ void APlayerBall::MoveYAction(float YValue)	//Set MoveY Value
 void APlayerBall::ReceiveStunnedAction(float InStunnedValue)
 {
 	OnStunnedAction.Broadcast(InStunnedValue);
+}
+
+void APlayerBall::ReceivePunchAction(float InPunchValue)
+{
+	OnPunchAction.Broadcast(InPunchValue);
 }
 
 void APlayerBall::ReceiveImpactAction(float ImpactValue)

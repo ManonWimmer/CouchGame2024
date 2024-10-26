@@ -45,13 +45,13 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 	
 	if (Pawn != nullptr)
 	{
-		//CurrentPunchTimeRemaining = Pawn->PunchCooldown;
+		CurrentPunchTimeRemaining = Pawn->PunchCooldown;
 		
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStatePunch::OnImpacted);
 		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStatePunch::OnBumped);
 	}
 	
-	//PunchPlayerBall();
+	PunchPlayerBall();
 }
 
 void UPlayerBallStatePunch::StateExit(EPlayerBallStateID NextState)
@@ -79,11 +79,12 @@ void UPlayerBallStatePunch::StateTick(float DeltaTime)
 		}
 		else
 		{
-			FallingMove(DeltaTime);
+			//FallingMove(DeltaTime);
 		}
 	}
 }
-/*
+
+#pragma region Punch Behavior
 void UPlayerBallStatePunch::PunchPlayerBall()
 {
 	APlayerBall* PlayerBall = GetNearestPlayerBallInPunchRadius();
@@ -100,9 +101,7 @@ void UPlayerBallStatePunch::PunchPlayerBall()
 	PlayerBall->ReceiveStunnedAction(1.f);
 	PlayerBall->SphereCollision->AddImpulse(Dir * Pawn->PunchForceMultiplier, NAME_None, false);
 }
-*/
 
-/*
 APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 {
 	if (Pawn == nullptr)
@@ -119,7 +118,7 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 	
 	FCollisionObjectQueryParams ObjectQueryParams(ECollisionChannel::ECC_Pawn);	// Look only for pawn
 
-	// Effectuer la détection de collision avec une sphère
+	// Detect Collision With sphere overlap
 	bool bHasDetected = GetWorld()->OverlapMultiByObjectType(
 		OverlapResults,
 		Start,
@@ -146,7 +145,6 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 	}
 	return nullptr;
 }
-*/
 
 void UPlayerBallStatePunch::DecreaseCooldownPunch(float DeltaTime)
 {
@@ -162,22 +160,29 @@ void UPlayerBallStatePunch::DecreaseCooldownPunch(float DeltaTime)
 		}
 	}
 }
+#pragma endregion 
 
-void UPlayerBallStatePunch::Move(float DeltaTime)	// roll ball X
+
+void UPlayerBallStatePunch::Move(float DeltaTime)	// Move ball on X and Y Axis by rolling it
 {
 	if (Pawn->PawnMovement == nullptr)
 		return;
 
-	FVector FwdVect = Pawn->GetActorForwardVector();
+	//FVector FwdVect = Pawn->GetActorForwardVector();
+	FVector FwdVect(1.f, 0.f, 0.f);
 
-	FVector Dir = FwdVect * Pawn->MoveXValue;	// Get ball roll dir
+	//FVector UpVect = Pawn->GetActorUpVector();
+	FVector UpVect(0.f, -1.f, 0.f);
+	
+	FVector Dir = (FwdVect * Pawn->MoveXValue) + (UpVect * Pawn->MoveYValue);	// Get ball roll dir
 	
 	if (Pawn->SphereCollision == nullptr)
 		return;
 
-	bool SameDirection = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X <= 0 && Dir.X >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X >= 0 && Dir.X <= 0);
+	bool SameDirectionX = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X <= 0 && Dir.X >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X >= 0 && Dir.X <= 0);
+	bool SameDirectionY = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y <= 0 && Dir.Y >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y >= 0 && Dir.Y <= 0);
 
-	if (SameDirection)	// same direction -> normal roll
+	if (SameDirectionX || SameDirectionY)	// same direction -> normal roll
 	{
 		Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->AngularRollForce, NAME_None, true);	// Roll ball
 	}
@@ -187,6 +192,7 @@ void UPlayerBallStatePunch::Move(float DeltaTime)	// roll ball X
 	}
 }
 
+/*
 void UPlayerBallStatePunch::FallingMove(float DeltaTime)	// AirControl fall X
 {
 	if (Pawn == nullptr)	return;
@@ -199,6 +205,7 @@ void UPlayerBallStatePunch::FallingMove(float DeltaTime)	// AirControl fall X
 
 	Pawn->PawnMovement->AddInputVector(Dir);	// Move ball in air
 }
+*/
 
 void UPlayerBallStatePunch::OnImpacted(float ImpactedValue)	// -> impacted
 {

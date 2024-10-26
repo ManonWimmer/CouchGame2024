@@ -48,8 +48,8 @@ protected:
 	
 #pragma endregion
 
-#pragma region Punch (Obsolete)
-	/*
+#pragma region Punch
+
 public:
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerPunchInput, float, PunchInput);
@@ -62,7 +62,7 @@ public:
 
 	UFUNCTION()
 	void BindPunchInput(UEnhancedInputComponent* EnhancedInputComponent);
-	*/
+
 # pragma  endregion
 
 #pragma region Grappling Input

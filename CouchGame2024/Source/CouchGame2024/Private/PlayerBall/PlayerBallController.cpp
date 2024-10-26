@@ -18,7 +18,8 @@ void APlayerBallController::SetupInputComponent()
 
 	BindMoveXInput(EnhancedInputComponent);
 	BindMoveYInput(EnhancedInputComponent);
-	//BindPunchInput(EnhancedInputComponent);
+	BindGrapplingInput(EnhancedInputComponent);
+	BindPunchInput(EnhancedInputComponent);
 }
 
 void APlayerBallController::SetupMappingContextIntoController() const
@@ -117,7 +118,6 @@ void APlayerBallController::BindGrapplingInput(UEnhancedInputComponent* Enhanced
 	);
 }
 
-/*
 void APlayerBallController::PunchInput(const FInputActionValue& PunchInput)
 {
 	OnPlayerPunchInput.Broadcast(PunchInput.Get<float>());
@@ -136,4 +136,3 @@ void APlayerBallController::BindPunchInput(UEnhancedInputComponent* EnhancedInpu
 		&APlayerBallController::PunchInput
 	);
 }
-*/
