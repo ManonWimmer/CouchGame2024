@@ -33,6 +33,7 @@ void UPlayerBallStateBumped::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
+	/*
 	GEngine->AddOnScreenDebugMessage
 	(
 		-1,
@@ -40,6 +41,7 @@ void UPlayerBallStateBumped::StateEnter(EPlayerBallStateID PreviousState)
 		FColor::Yellow,
 		TEXT("PlayerState : Bumped")
 	);
+	*/
 	
 	CurrentHitLagTimer = Pawn->BumpedHitLagCooldown;
 	

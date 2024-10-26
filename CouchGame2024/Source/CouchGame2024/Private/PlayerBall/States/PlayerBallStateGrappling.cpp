@@ -31,9 +31,13 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
+	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Yellow, TEXT("PlayerState : Grappling"));
+	
 	if (Pawn != nullptr)
 	{
 		Pawn->OnGrapplingAction.AddDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
+		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
+		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
 	}
 }
 
@@ -44,20 +48,35 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 	if (Pawn != nullptr)
 	{
 		Pawn->OnGrapplingAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
+		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnStunned);
+		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
 	}
 }
 
 void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
-	
 }
 
-void UPlayerBallStateGrappling::OnEndGrappling(float InGrapplingValue)
+void UPlayerBallStateGrappling::OnEndGrappling(float InGrapplingValue)	// Stop press input grappling -> Idle
 {
 	if (StateMachine == nullptr)	return;
 
 	if (InGrapplingValue == 0.0f)
 		StateMachine->ChangeState(EPlayerBallStateID::Idle);
+}
+
+void UPlayerBallStateGrappling::OnStunned(float StunnedValue)	// hit by punch -> stunned
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Stun);
+}
+
+void UPlayerBallStateGrappling::OnImpacted(float ImpactedValue)	// impact ball -> impacted
+{
+	if (StateMachine == nullptr)	return;
+    
+	StateMachine->ChangeState(EPlayerBallStateID::Impact);
 }
 

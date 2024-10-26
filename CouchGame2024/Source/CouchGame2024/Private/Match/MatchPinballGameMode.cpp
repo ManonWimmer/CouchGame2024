@@ -36,15 +36,6 @@ void AMatchPinballGameMode::FindPlayerBallSpawnInWorld(TArray<APlayerBallSpawn*>
 
 		ResultsActors.Add(PlayerSpawn);
 	}
-	
-	float Size = ResultsActors.Num();
-	
-	GEngine->AddOnScreenDebugMessage(
-		-1,
-		3.f,
-		FColor::Green,
-		FString::Printf(TEXT("Number of player balls spawn found : %f"), Size)
-	);
 }
 
 void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> SpawnPoints)

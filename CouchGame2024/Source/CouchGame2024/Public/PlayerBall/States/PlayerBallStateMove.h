@@ -48,4 +48,10 @@ private:
 
 	UFUNCTION()
 	void OnBumped(float BumpedValue);
+
+	UFUNCTION()
+	void OnGrappling(float InGrapplingValue);
+
+	UFUNCTION()
+	void OnGrappled(float InGrappledValue);
 };

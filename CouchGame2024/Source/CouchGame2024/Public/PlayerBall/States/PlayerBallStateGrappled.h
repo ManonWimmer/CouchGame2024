@@ -31,4 +31,10 @@ public:
 private:
 	UFUNCTION()
 	void OnEndGrappled(float InGrappledValue);
+
+	UFUNCTION()
+	void OnStunned(float StunnedValue);
+
+	UFUNCTION()
+	void OnImpacted(float ImpactedValue);
 };

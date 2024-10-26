@@ -31,7 +31,8 @@ void UPlayerBallStateIdle::StateInit(UPlayerBallStateMachine* InStateMachine)
 void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
-	
+
+	/*
 	GEngine->AddOnScreenDebugMessage
 	(
 		-1,
@@ -39,6 +40,7 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 		FColor::Red,
 		TEXT("PlayerState : Idle")
 	);
+	*/
 	
 
 	if (Pawn != nullptr)
@@ -47,6 +49,8 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateIdle::OnPunch);
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateIdle::OnImpacted);
 		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateIdle::OnBumped);
+		Pawn->OnGrapplingAction.AddDynamic(this, &UPlayerBallStateIdle::OnGrappling);
+		Pawn->OnGrappledAction.AddDynamic(this, &UPlayerBallStateIdle::OnGrappled);
 	}
 }
 
@@ -60,6 +64,8 @@ void UPlayerBallStateIdle::StateExit(EPlayerBallStateID NextState)
 		Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnPunch);
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnImpacted);
 		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateIdle::OnBumped);
+		Pawn->OnGrapplingAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnGrappling);
+		Pawn->OnGrappledAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnGrappled);
 	}
 }
 
@@ -120,5 +126,19 @@ void UPlayerBallStateIdle::OnBumped(float BumpedValue)
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Bumped);
+}
+
+void UPlayerBallStateIdle::OnGrappling(float InGrapplingValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Grappling);
+}
+
+void UPlayerBallStateIdle::OnGrappled(float InGrappledValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Grappled);
 }
 
