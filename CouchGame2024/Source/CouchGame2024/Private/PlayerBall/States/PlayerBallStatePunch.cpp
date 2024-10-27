@@ -97,7 +97,7 @@ void UPlayerBallStatePunch::PunchPlayerBall()
 
 	Dir.Normalize();
 	
-	PlayerBall->ReceiveStunnedAction(1.f);
+	PlayerBall->ReceiveStunnedAction(Pawn->PunchStunCooldown);
 	PlayerBall->SphereCollision->AddImpulse(Dir * Pawn->PunchForceMultiplier, NAME_None, false);
 }
 

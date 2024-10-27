@@ -104,7 +104,7 @@ void UPlayerBallStateIdle::OnStunned(float StunnedValue)	// -> stunned
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Stun);
+	StateMachine->ChangeState(EPlayerBallStateID::Stun, StunnedValue);
 }
 
 void UPlayerBallStateIdle::OnPunch(float PunchValue)	// -> punch

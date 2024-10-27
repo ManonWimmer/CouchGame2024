@@ -73,7 +73,7 @@ void UPlayerBallStateGrappled::OnStunned(float StunnedValue)	// hit by punch -> 
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Stun);
+	StateMachine->ChangeState(EPlayerBallStateID::Stun, StunnedValue);
 }
 
 void UPlayerBallStateGrappled::OnImpacted(float ImpactedValue)	// impact ball -> impacted

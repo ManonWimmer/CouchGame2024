@@ -41,18 +41,10 @@ void UPlayerBallStateImpact::StateEnter(EPlayerBallStateID PreviousState)
 		TEXT("PlayerState : Impact")
 	);
 	*/
-
-	ImpactedBall(1.f);
-
-	Pawn->ImpactedPlayerBall = nullptr;
 	
-	if (Pawn != nullptr)
-	{
-		if (Pawn->ImpactedPlayerBall == nullptr)
-		{
-			StateMachine->ChangeState(EPlayerBallStateID::Idle);
-		}
-	}
+	ImpactedBall(1.f);
+	
+	StateMachine->ChangeState(EPlayerBallStateID::Stun, Pawn->ImpactStunCooldown);	// Stun
 }
 
 void UPlayerBallStateImpact::StateExit(EPlayerBallStateID NextState)
@@ -61,7 +53,7 @@ void UPlayerBallStateImpact::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn == nullptr)
 		return;
-
+	
 	Pawn->ImpactedPlayerBall = nullptr;
 }
 
@@ -85,8 +77,6 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 	FVector Dir = End - Start;
 
 	Dir.Normalize();
-	
-	Pawn->ReceiveStunnedAction(1.f);	// Stun
 
 	float TotalForce = Pawn->ImpactForceMultiplier * Velocity.Length();
 

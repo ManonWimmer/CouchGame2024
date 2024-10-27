@@ -134,14 +134,14 @@ public:
 	FOnStunedAction OnStunnedAction;
 
 	UFUNCTION(BlueprintCallable)
-	void ReceiveStunnedAction(float InStunnedValue);
+	void ReceiveStunnedAction(float InStunnedDurationValue);
 	
 	UPROPERTY()
-	float StunCooldown = 3.f;
+	float PunchStunCooldown = 3.f;
 
 #pragma	endregion
 
-#pragma region Punch (Obsolete)
+#pragma region Punch
 
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPunchAction, float, PunchValue);
@@ -179,6 +179,9 @@ public:
 
 	UPROPERTY()
 	float ImpactMinTotalForce = 50.f;
+
+	UPROPERTY()
+	float ImpactStunCooldown = 1.f;
 	
 	UFUNCTION()
 	void ReceiveImpactAction(float ImpactValue);

@@ -43,18 +43,15 @@ void UPlayerBallStateBumped::StateEnter(EPlayerBallStateID PreviousState)
 	);
 	*/
 	
-	CurrentHitLagTimer = Pawn->BumpedHitLagCooldown;
-	
-	Bump();
 
 	if (Pawn != nullptr)
 	{
-		Pawn->HitPinballElement = nullptr;
-
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateBumped::OnStunned);
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateBumped::OnImpacted);
 		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateBumped::OnBumped);
 	}
+	
+	Bump();
 }
 
 void UPlayerBallStateBumped::StateExit(EPlayerBallStateID NextState)
@@ -63,6 +60,8 @@ void UPlayerBallStateBumped::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
 	{
+		Pawn->HitPinballElement = nullptr;
+		
 		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateBumped::OnStunned);
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateBumped::OnImpacted);
 		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateBumped::OnBumped);
@@ -72,15 +71,17 @@ void UPlayerBallStateBumped::StateExit(EPlayerBallStateID NextState)
 void UPlayerBallStateBumped::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
-
-	DecreaseHitLagTimer(DeltaTime);
 }
 
 void UPlayerBallStateBumped::Bump()
 {
 	if (Pawn == nullptr)	return;
 
-	if (Pawn->HitPinballElement == nullptr)	return;
+	if (Pawn->HitPinballElement == nullptr)
+	{
+		StateMachine->ChangeState(EPlayerBallStateID::Idle);
+		return;
+	}
 
 	FVector Start = Pawn->HitPinballElement->GetActorLocation();
 	FVector End = Pawn->GetActorLocation();
@@ -88,36 +89,26 @@ void UPlayerBallStateBumped::Bump()
 	FVector Dir = End - Start;
 
 	Dir.Normalize();
-	Pawn->SphereCollision->AddImpulse(Dir * Pawn->BumpedForceMultiplier, NAME_None, false);
+	Pawn->SphereCollision->AddImpulse(Dir * Pawn->BumpedForceMultiplier, NAME_None, false);	// impulse
+
+	Pawn->ReceiveStunnedAction(Pawn->BumpedHitLagCooldown);	// stun
 }
 
-void UPlayerBallStateBumped::DecreaseHitLagTimer(float DeltaTime)
-{
-	if (CurrentHitLagTimer > 0.f)
-	{
-		CurrentHitLagTimer -= DeltaTime;
-	}
-	else
-	{
-		StateMachine->ChangeState(EPlayerBallStateID::Idle);
-	}
-}
-
-void UPlayerBallStateBumped::OnStunned(float StunnedValue)
+void UPlayerBallStateBumped::OnStunned(float StunnedValue)	// -> stunned
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Stun);
+	StateMachine->ChangeState(EPlayerBallStateID::Stun, StunnedValue);
 }
 
-void UPlayerBallStateBumped::OnImpacted(float ImpactedValue)
+void UPlayerBallStateBumped::OnImpacted(float ImpactedValue)	// -> impact
 {
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Impact);
 }
 
-void UPlayerBallStateBumped::OnBumped(float BumpedValue)
+void UPlayerBallStateBumped::OnBumped(float BumpedValue)	// -> bumped
 {
 	if (StateMachine == nullptr)	return;
 

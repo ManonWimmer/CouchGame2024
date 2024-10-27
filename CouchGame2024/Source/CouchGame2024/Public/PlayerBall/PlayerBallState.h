@@ -27,6 +27,8 @@ public:
 	
 	virtual void StateEnter(EPlayerBallStateID PreviousState);
 
+	virtual void StateEnter(EPlayerBallStateID PreviousState, float InFloatParameter);
+
 	virtual void StateExit(EPlayerBallStateID NextState);
 	
 	virtual void StateTick(float DeltaTime);

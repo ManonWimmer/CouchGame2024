@@ -36,6 +36,11 @@ void UPlayerBallState::StateEnter(EPlayerBallStateID PreviousState)
 	
 }
 
+void UPlayerBallState::StateEnter(EPlayerBallStateID PreviousState, float InFloatParameter)
+{
+	StateEnter(GetStateID());
+}
+
 void UPlayerBallState::StateExit(EPlayerBallStateID NextState)
 {
 	

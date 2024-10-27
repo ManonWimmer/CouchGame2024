@@ -24,6 +24,8 @@ public:
 
 	virtual void StateEnter(EPlayerBallStateID PreviousState) override;
 
+	virtual void StateEnter(EPlayerBallStateID PreviousState, float InFloatParameter) override;
+	
 	virtual void StateExit(EPlayerBallStateID NextState) override;
 
 	virtual void StateTick(float DeltaTime) override;

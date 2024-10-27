@@ -23,7 +23,7 @@ public:
 	virtual void StateInit(UPlayerBallStateMachine* InStateMachine) override;
 
 	virtual void StateEnter(EPlayerBallStateID PreviousState) override;
-
+	
 	virtual void StateExit(EPlayerBallStateID NextState) override;
 
 	virtual void StateTick(float DeltaTime) override;

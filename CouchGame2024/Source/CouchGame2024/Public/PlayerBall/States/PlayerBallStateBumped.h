@@ -32,12 +32,6 @@ private:
 
 	UFUNCTION()
 	void Bump();
-
-	UFUNCTION()
-	void DecreaseHitLagTimer(float DeltaTime);
-
-	UPROPERTY()
-	float CurrentHitLagTimer = 0.f;
 	
 	UFUNCTION()
 	void OnStunned(float StunnedValue);

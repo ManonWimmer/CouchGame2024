@@ -24,7 +24,7 @@ public:
 	APlayerBall* GetPawn() const;
 
 	UFUNCTION(BlueprintCallable)
-	void ChangeState(EPlayerBallStateID NextStateID);
+	void ChangeState(EPlayerBallStateID NextStateID, float InFloatParameter = 0.f);
 
 	UPlayerBallState* GetState(EPlayerBallStateID StateID);
 

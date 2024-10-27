@@ -51,7 +51,13 @@ public:
 
 #pragma region Stun
 	UPROPERTY(EditAnywhere, Category = "Stun")
-	float StunCooldown = 3.f;
+	
+	float PunchStunCooldown = 3.f;
+	UPROPERTY(EditAnywhere, Category = "Stun")
+	float ImpactStunCooldown = 1.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Stun")
+	float BumpedHitLagStunCooldown = 0.2f;
 
 #pragma endregion
 
@@ -67,7 +73,6 @@ public:
 	float PunchForceMultiplier = 50000.f;
 #pragma endregion
 
-
 #pragma region Impact
 
 	UPROPERTY(EditAnywhere, Category = "Impact")
@@ -75,15 +80,13 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Impact")
 	float ImpactMinTotalForce = 50.f;
+
 #pragma endregion 
 
 #pragma region Bumped
 
 	UPROPERTY(EditAnywhere, Category = "Bumped")
 	float BumpedForceMultiplier = 30000.f;
-
-	UPROPERTY(EditAnywhere, Category = "Bumped")
-	float BumpedHitLagCooldown = 0.2f;
 
 #pragma endregion 
 	

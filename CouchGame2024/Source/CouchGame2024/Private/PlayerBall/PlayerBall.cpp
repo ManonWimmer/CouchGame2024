@@ -154,7 +154,7 @@ void APlayerBall::SetupData()	// Get all data and set them
 	*/
 
 	// Stun By punch
-	StunCooldown = PlayerBallData->StunCooldown;
+	PunchStunCooldown = PlayerBallData->PunchStunCooldown;
 
 	// Punch
 	PunchCooldown = PlayerBallData->PunchCooldown;
@@ -165,10 +165,11 @@ void APlayerBall::SetupData()	// Get all data and set them
 	// Impact
 	ImpactForceMultiplier = PlayerBallData->ImpactForceMultiplier;
 	ImpactMinTotalForce = PlayerBallData->ImpactMinTotalForce;
+	ImpactStunCooldown = PlayerBallData->ImpactStunCooldown;
 
 	// Bumped
 	BumpedForceMultiplier = PlayerBallData->BumpedForceMultiplier;
-	BumpedHitLagCooldown = PlayerBallData->BumpedHitLagCooldown;
+	BumpedHitLagCooldown = PlayerBallData->BumpedHitLagStunCooldown;
 }
 
 
@@ -242,9 +243,9 @@ void APlayerBall::MoveYAction(float YValue)	//Set MoveY Value
 	MoveYValue = YValue;
 }
 
-void APlayerBall::ReceiveStunnedAction(float InStunnedValue)
+void APlayerBall::ReceiveStunnedAction(float InStunnedDurationValue)
 {
-	OnStunnedAction.Broadcast(InStunnedValue);
+	OnStunnedAction.Broadcast(InStunnedDurationValue);
 }
 
 void APlayerBall::ReceivePunchAction(float InPunchValue)
