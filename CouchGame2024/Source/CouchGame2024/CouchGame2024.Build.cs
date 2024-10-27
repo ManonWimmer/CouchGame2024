@@ -10,7 +10,7 @@ public class CouchGame2024 : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "DeveloperSettings" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "GeometryFramework", "GeometryFramework", "LocalMultiplayer" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "GeometryFramework", "GeometryFramework", "LocalMultiplayer", "CableComponent" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
