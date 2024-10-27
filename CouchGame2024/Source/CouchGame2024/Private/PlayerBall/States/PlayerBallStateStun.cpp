@@ -53,13 +53,15 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState, float In
 	Super::StateEnter(PreviousState, InFloatParameter);
 
 	CurrentStunRemaining = InFloatParameter;
-	
+
+	/*
 	GEngine->AddOnScreenDebugMessage
 	(
 		-1,
 		2.f,
 		FColor::Yellow, FString::Printf(TEXT("PlayerState : stun : %f"), CurrentStunRemaining)
 	);
+	*/
 	
 
 }
