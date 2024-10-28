@@ -43,4 +43,7 @@ private:
 
 	UFUNCTION()
 	void SetGrapplingVelocityAndAngle(float DeltaTime);
+
+	UPROPERTY()
+	FVector LastLocation = FVector::ZeroVector;
 };
