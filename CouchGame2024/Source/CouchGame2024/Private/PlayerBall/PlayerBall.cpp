@@ -24,7 +24,7 @@ void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* Othe
 	if (OtherBall != nullptr)
 	{
 		ImpactedPlayerBall = OtherBall;
-		ReceiveImpactAction(1.f);
+		ReceiveImpactAction(1.f, Hit.ImpactNormal);
 	}
 	else
 	{
@@ -36,7 +36,7 @@ void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* Othe
 			{
 			case EPinballElementID::Bumper:
 				OtherElement->TriggerElement();
-				ReceiveBumperReaction(OtherElement);
+				ReceiveBumperReaction(OtherElement, Hit.ImpactNormal);
 				return;
 			case EPinballElementID::Flipper:
 				return;
@@ -267,14 +267,25 @@ void APlayerBall::ReceivePunchAction(float InPunchValue)
 	OnPunchAction.Broadcast(InPunchValue);
 }
 
-void APlayerBall::ReceiveImpactAction(float ImpactValue)
+void APlayerBall::ReceiveImpactAction(float ImpactValue, const FVector &InNormalImpact)
 {
+	NormalImpact = InNormalImpact;
+
+	NormalImpact.Z = 0.f;
+
+	NormalImpact.Normalize();
+	
 	OnImpactAction.Broadcast(ImpactValue);
 }
 
-void APlayerBall::ReceiveBumperReaction(APinballElement* Element)
+void APlayerBall::ReceiveBumperReaction(APinballElement* Element, const FVector &InNormalBump)
 {
 	HitPinballElement = Element;
+
+	NormalBump = InNormalBump;
+
+	NormalBump.Z = 0.f;
+	NormalBump.Normalize();
 
 	OnBumperReaction.Broadcast(1.f);
 }

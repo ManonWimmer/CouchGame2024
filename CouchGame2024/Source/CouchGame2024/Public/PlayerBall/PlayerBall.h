@@ -192,7 +192,10 @@ public:
 	float ImpactStunCooldown = 1.f;
 	
 	UFUNCTION()
-	void ReceiveImpactAction(float ImpactValue);
+	void ReceiveImpactAction(float ImpactValue, const FVector &InNormalImpact);
+
+	UPROPERTY()
+	FVector NormalImpact = FVector(0, 0, 0);
 
 #pragma endregion
 
@@ -201,6 +204,7 @@ public:
 public:
 	TObjectPtr<APinballElement> HitPinballElement;
 
+	
 #pragma region Bumper Reaction
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBumperReaction, float, BumperReactionValue);
@@ -213,9 +217,12 @@ public:
 	UPROPERTY()
 	float BumpedHitLagCooldown = 0.2f;
 	
+	UPROPERTY()
+	FVector NormalBump = FVector(0, 0, 0);
+	
 private:
 	UFUNCTION()
-	void ReceiveBumperReaction(APinballElement* Element);
+	void ReceiveBumperReaction(APinballElement* Element, const FVector &InNormalBump);
 
 #pragma endregion 
 

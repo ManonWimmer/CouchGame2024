@@ -76,7 +76,11 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 
 	FVector Dir = End - Start;
 
+	Dir = FMath::GetReflectionVector(Dir, Pawn->NormalImpact);
+	
 	Dir.Normalize();
+
+	Dir *= -1.f;
 
 	float TotalForce = Pawn->ImpactForceMultiplier * Velocity.Length();
 
