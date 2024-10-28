@@ -334,6 +334,10 @@ public:
 	UPROPERTY()
 	TObjectPtr<APlayerBall> SnappingPlayerBall;
 
+	float SnapAngularForce = 3000.f;
+
+	float SnapControlMoveRollDivider = 2.f;
+
 #pragma endregion 
 
 	

@@ -104,7 +104,7 @@ void UPlayerBallStateSnapping::Move(float DeltaTime)
 		Dir.Y *= Pawn->BraqueDirectionForceMultiplier;
 	}
 
-	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->AngularRollForce, NAME_None, true);
+	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->AngularRollForce / Pawn->SnapControlMoveRollDivider), NAME_None, true);
 }
 
 void UPlayerBallStateSnapping::SnappingEffect(float DeltaTime)
@@ -125,7 +125,7 @@ void UPlayerBallStateSnapping::SnappingEffect(float DeltaTime)
 
 	//DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 5.f);
 	
-	Pawn->SphereCollision->AddAngularImpulseInDegrees((Dir * DeltaTime * Pawn->AngularRollForce / 2.f), NAME_None, true);
+	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * Pawn->SnapAngularForce, NAME_None, true);
 }
 
 void UPlayerBallStateSnapping::OnEndSnapping(float InSnappingValue)

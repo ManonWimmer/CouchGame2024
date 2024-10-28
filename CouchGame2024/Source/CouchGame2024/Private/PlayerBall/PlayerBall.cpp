@@ -201,6 +201,7 @@ void APlayerBall::SetupData() // Get all data and set them
 	SphereCollision->SetAngularDamping(PlayerBallData->AngularRollDamping);
 	SphereCollision->SetPhysicsMaxAngularVelocityInDegrees(PlayerBallData->MaxAngularRollVelocity);
 
+#pragma region FallData (Obsolete)
 	/*
 	// Fall Obsolete
 	PawnMovement->Acceleration = PlayerBallData->AirControlSideAcceleration;
@@ -209,7 +210,8 @@ void APlayerBall::SetupData() // Get all data and set them
 	SlowFallForce = PlayerBallData->SlowFallForce;
 	AccelerateFallForce = PlayerBallData->AccelerateFallForce;
 	*/
-
+#pragma endregion 
+	
 	// Stun By punch
 	PunchStunCooldown = PlayerBallData->PunchStunCooldown;
 
@@ -227,6 +229,11 @@ void APlayerBall::SetupData() // Get all data and set them
 	// Bumped
 	BumpedForceMultiplier = PlayerBallData->BumpedForceMultiplier;
 	BumpedHitLagCooldown = PlayerBallData->BumpedHitLagStunCooldown;
+
+	// Snapping
+	SnapAngularForce = PlayerBallData->SnapAngularForce;
+	SnapControlMoveRollDivider = PlayerBallData->SnapControlMoveRollDivider;
+	
 }
 
 
