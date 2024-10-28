@@ -53,6 +53,8 @@ void ULocalMultiplayerSubsystem::AssignKeyboardMapping(int PlayerIndex, int Keyb
 
 	if (Controller == nullptr)	return;
 
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, Controller->GetPawn()->GetName());
+	
 	FModifyContextOptions ContextOptions;
 
 	ContextOptions.bForceImmediately = true;
