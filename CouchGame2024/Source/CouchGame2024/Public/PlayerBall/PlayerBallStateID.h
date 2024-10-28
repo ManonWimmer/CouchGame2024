@@ -21,5 +21,6 @@ enum class EPlayerBallStateID : uint8
 	Impact,
 	Bumped,
 	Grappling,
-	Grappled
+	Grappled,
+	Snapping
 };

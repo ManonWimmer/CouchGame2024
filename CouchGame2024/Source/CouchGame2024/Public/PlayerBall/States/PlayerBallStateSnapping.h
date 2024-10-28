@@ -16,12 +16,41 @@ public:
 	// Sets default values for this component's properties
 	UPlayerBallStateSnapping();
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
 public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+
+	virtual EPlayerBallStateID GetStateID() const override;
+	
+	virtual void StateInit(UPlayerBallStateMachine* InStateMachine) override;
+
+	virtual void StateEnter(EPlayerBallStateID PreviousState) override;
+
+	virtual void StateExit(EPlayerBallStateID NextState) override;
+
+	virtual void StateTick(float DeltaTime) override;
+
+private:
+
+	UFUNCTION()
+	void Move(float DeltaTime);
+
+	UFUNCTION()
+	void SnappingEffect();
+
+	UFUNCTION()
+	void OnStunned(float StunnedValue);
+
+	UFUNCTION()
+	void OnPunch(float PunchValue);
+
+	UFUNCTION()
+	void OnImpacted(float ImpactedValue);
+
+	UFUNCTION()
+	void OnBumped(float BumpedValue);
+
+	UFUNCTION()
+	void OnGrappling(float InGrapplingValue);
+
+	UFUNCTION()
+	void OnGrappled(float InGrappledValue);
 };

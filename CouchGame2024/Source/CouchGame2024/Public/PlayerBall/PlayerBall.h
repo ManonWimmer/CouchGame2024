@@ -303,6 +303,20 @@ public:
 	UPROPERTY()
 	TObjectPtr<APlayerBall> GrapplingPlayerBall;	// Ball grappling to this playerBall
 
+#pragma endregion
+
+#pragma region Snapping
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReceiveSnappingAction, float, SnappingValue);
+
+	UPROPERTY()
+	FOnReceiveSnappingAction OnReceiveSnappingAction;
+
+	
+	
+	UPROPERTY()
+	TObjectPtr<APlayerBall> SnappingPlayerBall;
+
 #pragma endregion 
 
 	
