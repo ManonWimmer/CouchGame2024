@@ -84,8 +84,8 @@ void UPlayerBallStateBumped::Bump()
 		return;
 	}
 
-	FVector Start = Pawn->HitPinballElement->GetActorLocation();
-	FVector End = Pawn->GetActorLocation();
+	FVector Start = Pawn->GetActorLocation();
+	FVector End = Pawn->HitPinballElement->GetActorLocation();
 
 	FVector Dir = End - Start;
 
@@ -94,9 +94,7 @@ void UPlayerBallStateBumped::Bump()
 
 	//DrawDebugLine(GetWorld(), Pawn->HitPinballElement->GetActorLocation(), Pawn->HitPinballElement->GetActorLocation() + Dir*1000.f, FColor::Green, true, 5.f);
 	Dir.Normalize();
-
-	Dir *= -1.f;
-
+	
 	Pawn->SphereCollision->AddImpulse(Dir * Pawn->BumpedForceMultiplier, NAME_None, false);	// impulse
 
 	Pawn->ReceiveStunnedAction(Pawn->BumpedHitLagCooldown);	// stun
