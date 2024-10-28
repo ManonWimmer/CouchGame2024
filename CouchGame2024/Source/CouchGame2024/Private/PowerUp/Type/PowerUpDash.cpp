@@ -24,3 +24,8 @@ void APowerUpDash::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+EPowerUpID APowerUpDash::GetPowerUpID() const
+{
+	return EPowerUpID::Dash;
+}
+

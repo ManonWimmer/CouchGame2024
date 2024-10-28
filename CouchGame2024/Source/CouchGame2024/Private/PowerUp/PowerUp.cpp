@@ -33,3 +33,8 @@ EPowerUpID APowerUp::GetPowerUpID() const
 	return EPowerUpID::None;
 }
 
+void APowerUp::TriggerPowerUp()
+{
+	PowerUpMesh->SetHiddenInGame(true);
+}
+

@@ -12,6 +12,7 @@
 #include "PinballElements/PinballElement.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
+#include "PowerUp/PowerUp.h"
 
 void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                  FVector NormalImpulse, const FHitResult& Hit)
@@ -55,22 +56,19 @@ void APlayerBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "OnBeginOverlap");
 
-	TObjectPtr<APinballElement> OtherElement = Cast<APinballElement>(OtherActor);
+	TObjectPtr<APowerUp> OtherPowerUp = Cast<APowerUp>(OtherActor);
 
-	if (OtherElement != nullptr)
+	if (OtherPowerUp != nullptr)
 	{
-		switch (OtherElement->GetElementID())
-		{
-		case EPinballElementID::Bumper:
-			return;
-		case EPinballElementID::Flipper:
-			OtherElement->TriggerElement();
-			return;
-		case EPinballElementID::None:
-			return;
+		switch (OtherPowerUp->GetPowerUpID()) {
+		case EPowerUpID::None:
+			break;
+		case EPowerUpID::Dash:
+			OtherPowerUp->TriggerPowerUp();
+			break;
 
 		default:
-			return;
+			break;
 		}
 	}
 }

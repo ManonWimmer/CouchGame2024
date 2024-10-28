@@ -35,5 +35,8 @@ public:
 
 	UFUNCTION()
 	virtual EPowerUpID GetPowerUpID() const;
+
+	UFUNCTION()
+	virtual void TriggerPowerUp();
 	
 };
