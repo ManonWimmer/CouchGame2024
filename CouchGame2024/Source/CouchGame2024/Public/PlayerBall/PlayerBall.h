@@ -14,6 +14,7 @@ class UPlayerBallStateMachine;
 class USphereComponent;
 class UFloatingPawnMovement;
 class UStaticMeshComponent;
+class UCableComponent;
 
 UCLASS()
 class COUCHGAME2024_API APlayerBall : public APawn
@@ -65,6 +66,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<USphereComponent> SphereCollision;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USphereComponent> GrapplingSphereCollision;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UCableComponent> GrapplingCable;
+	
 #pragma endregion
 
 #pragma region StateMachine
@@ -230,7 +238,55 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<APlayerBall> GrappledPlayerBall;	// Ball grappled to this playerBall
-	
+
+	UPROPERTY()
+	float CableLength = 0.f;
+
+	UPROPERTY()
+	FVector HookPoint = FVector(0.f, 0.f, 0.f);
+
+	UPROPERTY()
+	float CurrentGrapplingAngularVelocity = 0.f;
+
+	UPROPERTY()
+	float CurrentGrapplingAngle = 0.f;
+
+	UPROPERTY()
+	bool IsGrappling = false;
+
+	UPROPERTY()
+	float LastAngle = 0.f;
+
+	UPROPERTY()
+	float AngleRotate = 0.f;
+
+	UPROPERTY()
+	FVector ReleaseDirection = FVector(0.f, 0.f, 0.f);
+
+	UPROPERTY()
+	FVector GrapplingOffset = FVector(0.f, 0.f, 0.f);
+
+	UPROPERTY(EditAnywhere)
+	float GrapplingDamping = 0.99f;
+
+	UPROPERTY(EditAnywhere)
+	float GrapplingForce = 0.1f;
+
+	UPROPERTY(EditAnywhere)
+	float GrapplingReleaseForce = 250.f;
+
+	UPROPERTY(EditAnywhere)
+	float MinCableDistance = 200.f;
+
+	UPROPERTY(EditAnywhere)
+	float MaxCableDistance = 500.f;
+
+	UPROPERTY(EditAnywhere)
+	float MoreOrLessCablePerFrame = 10.f;
+
+	UPROPERTY(EditAnywhere)
+	float StartGrapplingForceFactorWhenAlreadyMoving = 0.001f;
+
 #pragma endregion
 
 #pragma region Grappled
