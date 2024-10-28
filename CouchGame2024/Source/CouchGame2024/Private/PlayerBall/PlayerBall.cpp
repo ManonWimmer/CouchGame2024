@@ -54,7 +54,7 @@ void APlayerBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
                                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                  const FHitResult& SweepResult)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "OnBeginOverlap");
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "OnBeginOverlap");
 
 	TObjectPtr<APowerUp> OtherPowerUp = Cast<APowerUp>(OtherActor);
 
@@ -70,6 +70,44 @@ void APlayerBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 		default:
 			break;
 		}
+
+		return;
+	}
+}
+
+void APlayerBall::OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (SnappingPlayerBall == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "OnAttractionBeginOverlap");
+
+		
+		TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
+
+		if (OtherBall != nullptr)
+		{
+			SnappingPlayerBall = OtherBall;
+			ReceiveSnappingAction(1.f);
+
+			return;
+		}
+	}
+}
+
+void APlayerBall::OnAttractionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (SnappingPlayerBall == nullptr)	return;
+
+	TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
+
+	if (OtherBall != nullptr)
+	{
+		if (OtherBall ==  SnappingPlayerBall)
+		{
+			ReceiveSnappingAction(0.f);
+		}
 	}
 }
 
@@ -83,16 +121,21 @@ APlayerBall::APlayerBall()
 	PawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingPawnMovement"));
 	SphereMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereComponent"));
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
-
+	AttractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AttractionSphere"));
+	
 	SphereCollision->SetupAttachment(RootComponent);
 	SphereMesh->SetupAttachment(SphereCollision);
-
+	AttractionSphere->SetupAttachment(SphereCollision);
 
 	if (SphereCollision != nullptr)
 	{
 		SphereCollision->OnComponentHit.AddDynamic(this, &APlayerBall::OnCollisionHit);
-
 		SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerBall::OnBeginOverlap);
+	}
+	if (AttractionSphere != nullptr)
+	{
+		AttractionSphere->OnComponentBeginOverlap.AddDynamic(this, &APlayerBall::OnAttractionBeginOverlap);
+		AttractionSphere->OnComponentEndOverlap.AddDynamic(this, &APlayerBall::OnAttractionEndOverlap);
 	}
 
 	// ----- Setup Grappling ----- //
@@ -353,4 +396,9 @@ void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 void APlayerBall::ReceiveGrappledAction(float InGrappledValue) // 0 -> end grappled	1 -> start grappled
 {
 	OnGrappledAction.Broadcast(InGrappledValue);
+}
+
+void APlayerBall::ReceiveSnappingAction(float SnappingValue)
+{
+	OnReceiveSnappingAction.Broadcast(SnappingValue);
 }

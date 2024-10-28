@@ -34,8 +34,11 @@ private:
 	void Move(float DeltaTime);
 
 	UFUNCTION()
-	void SnappingEffect();
+	void SnappingEffect(float DeltaTime);
 
+	UFUNCTION()
+	void OnEndSnapping(float InSnappingValue);
+	
 	UFUNCTION()
 	void OnStunned(float StunnedValue);
 

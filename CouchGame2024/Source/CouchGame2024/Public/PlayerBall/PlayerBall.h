@@ -26,6 +26,11 @@ public:
 	void OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                              const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnAttractionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	// Sets default values for this pawn's properties
 	APlayerBall();
 
@@ -66,6 +71,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<USphereComponent> SphereCollision;
+
+	// To detect other balls
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USphereComponent> AttractionSphere;
 	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USphereComponent> GrapplingSphereCollision;
@@ -319,7 +328,8 @@ public:
 	UPROPERTY()
 	FOnReceiveSnappingAction OnReceiveSnappingAction;
 
-	
+	UFUNCTION()
+	void ReceiveSnappingAction(float SnappingValue);
 	
 	UPROPERTY()
 	TObjectPtr<APlayerBall> SnappingPlayerBall;
