@@ -3,10 +3,12 @@
 
 #include "CouchGame2024/Public/PlayerBall/PlayerBall.h"
 
+#include "EnhancedInputComponent.h"
 #include "Components/SphereComponent.h"
 #include "CouchGame2024/Public/PlayerBall/PlayerBallController.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/StaticMeshComponent.h"
+#include "PinballElements/PinballElement.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
 
@@ -17,11 +19,60 @@ void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* Othe
 
 	TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
 	
-	if (OtherBall == nullptr)	return;
+	if (OtherBall != nullptr)
+	{
+		ImpactedPlayerBall = OtherBall;
+		ReceiveImpactAction(1.f);
+	}
+	else
+	{
+		TObjectPtr<APinballElement> OtherElement = Cast<APinballElement>(OtherActor);
 
-	ImpactedPlayerBall = OtherBall;
+		if (OtherElement != nullptr)
+		{
+			switch (OtherElement->GetElementID())
+			{
+				case EPinballElementID::Bumper:
+					OtherElement->TriggerElement();
+					ReceiveBumperReaction(OtherElement);
+					return;
+				case EPinballElementID::Flipper:
+					return;
+				case EPinballElementID::None:
+					return;
 
-	ReceiveImpactAction(1.f);
+				default:
+					return;
+			}
+		}
+	}
+
+}
+
+void APlayerBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "OnBeginOverlap");
+
+	TObjectPtr<APinballElement> OtherElement = Cast<APinballElement>(OtherActor);
+
+	if (OtherElement != nullptr)
+	{
+			
+		switch (OtherElement->GetElementID())
+		{
+		case EPinballElementID::Bumper:
+			return;
+		case EPinballElementID::Flipper:
+			OtherElement->TriggerElement();
+			return;
+		case EPinballElementID::None:
+			return;
+
+		default:
+			return;
+		}
+	}
 }
 
 // Sets default values
@@ -42,6 +93,8 @@ APlayerBall::APlayerBall()
 	if (SphereCollision != nullptr)
 	{
 		SphereCollision->OnComponentHit.AddDynamic(this, &APlayerBall::OnCollisionHit);
+
+		SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerBall::OnBeginOverlap);
 	}
 }
 
@@ -52,8 +105,6 @@ void APlayerBall::BeginPlay()
 
 	CreateStateMachine();
 	InitStateMachine();
-	
-	BindEventActions();
 
 	SetupData();
 }
@@ -70,6 +121,10 @@ void APlayerBall::Tick(float DeltaTime)
 void APlayerBall::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+
+	BindEventActions();
 }
 
 void APlayerBall::SetupData()	// Get all data and set them
@@ -83,24 +138,38 @@ void APlayerBall::SetupData()	// Get all data and set them
 	if (SphereCollision == nullptr)
 		return;
 
+	// Movements
 	AngularRollForce = PlayerBallData->AngularRollForce;
 	BraqueDirectionForceMultiplier = PlayerBallData->BraqueDirectionForceMultiplier;
 	SphereCollision->SetAngularDamping(PlayerBallData->AngularRollDamping);
 	SphereCollision->SetPhysicsMaxAngularVelocityInDegrees(PlayerBallData->MaxAngularRollVelocity);
 
+	/*
+	// Fall Obsolete
 	PawnMovement->Acceleration = PlayerBallData->AirControlSideAcceleration;
 	PawnMovement->MaxSpeed = PlayerBallData->AirControlSideMaxSpeed;
 	PawnMovement->Deceleration = PlayerBallData->AirControlSideDeceleration;
 	SlowFallForce = PlayerBallData->SlowFallForce;
 	AccelerateFallForce = PlayerBallData->AccelerateFallForce;
+	*/
 
-	StunCooldown = PlayerBallData->StunCooldown;
+	// Stun By punch
+	PunchStunCooldown = PlayerBallData->PunchStunCooldown;
 
+	// Punch
 	PunchCooldown = PlayerBallData->PunchCooldown;
 	PunchRadius = PlayerBallData->PunchRadius;
 	PunchForceMultiplier = PlayerBallData->PunchForceMultiplier;
+	
 
+	// Impact
 	ImpactForceMultiplier = PlayerBallData->ImpactForceMultiplier;
+	ImpactMinTotalForce = PlayerBallData->ImpactMinTotalForce;
+	ImpactStunCooldown = PlayerBallData->ImpactStunCooldown;
+
+	// Bumped
+	BumpedForceMultiplier = PlayerBallData->BumpedForceMultiplier;
+	BumpedHitLagCooldown = PlayerBallData->BumpedHitLagStunCooldown;
 }
 
 
@@ -136,6 +205,7 @@ void APlayerBall::BindEventActions()	// Bind Input Event from controller to Pawn
 	BallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
 	BallController->OnPlayerMoveYInput.AddDynamic(this, &APlayerBall::MoveYAction);
 	BallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
+	BallController->OnPlayerGrapplingInput.AddDynamic(this, &APlayerBall::ReceiveGrapplingAction);
 }
 
 bool APlayerBall::IsGrounded()
@@ -173,9 +243,9 @@ void APlayerBall::MoveYAction(float YValue)	//Set MoveY Value
 	MoveYValue = YValue;
 }
 
-void APlayerBall::ReceiveStunnedAction(float InStunnedValue)
+void APlayerBall::ReceiveStunnedAction(float InStunnedDurationValue)
 {
-	OnStunnedAction.Broadcast(InStunnedValue);
+	OnStunnedAction.Broadcast(InStunnedDurationValue);
 }
 
 void APlayerBall::ReceivePunchAction(float InPunchValue)
@@ -188,3 +258,20 @@ void APlayerBall::ReceiveImpactAction(float ImpactValue)
 	OnImpactAction.Broadcast(ImpactValue);
 }
 
+void APlayerBall::ReceiveBumperReaction(APinballElement* Element)
+{
+	HitPinballElement = Element;
+	
+	OnBumperReaction.Broadcast(1.f);
+}
+
+void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
+{
+	GrapplingValue = InGrapplingValue;
+	OnGrapplingAction.Broadcast(GrapplingValue);
+}
+
+void APlayerBall::ReceiveGrappledAction(float InGrappledValue)	// 0 -> end grappled	1 -> start grappled
+{
+	OnGrappledAction.Broadcast(InGrappledValue);
+}

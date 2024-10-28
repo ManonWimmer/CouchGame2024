@@ -21,7 +21,7 @@ APlayerBall* UPlayerBallStateMachine::GetPawn() const
 	return Pawn;
 }
 
-void UPlayerBallStateMachine::ChangeState(EPlayerBallStateID NextStateID)
+void UPlayerBallStateMachine::ChangeState(EPlayerBallStateID NextStateID, float InFloatParameter)
 {
 	UPlayerBallState* NextState = GetState(NextStateID);
 
@@ -38,7 +38,7 @@ void UPlayerBallStateMachine::ChangeState(EPlayerBallStateID NextStateID)
 
 	if (CurrentState != nullptr)
 	{
-		CurrentState->StateEnter(PreviousStateID);
+		CurrentState->StateEnter(PreviousStateID, InFloatParameter);
 	}
 }
 

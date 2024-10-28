@@ -23,7 +23,7 @@ public:
 	virtual void StateInit(UPlayerBallStateMachine* InStateMachine) override;
 
 	virtual void StateEnter(EPlayerBallStateID PreviousState) override;
-
+	
 	virtual void StateExit(EPlayerBallStateID NextState) override;
 
 	virtual void StateTick(float DeltaTime) override;
@@ -41,9 +41,12 @@ private:
 
 	UFUNCTION()
 	void Move(float DeltaTime);
-	UFUNCTION()
-	void FallingMove(float DeltaTime);
+	//UFUNCTION()
+	//void FallingMove(float DeltaTime);
 
 	UFUNCTION()
 	void OnImpacted(float ImpactedValue);
+	
+	UFUNCTION()
+	void OnBumped(float BumpedValue);
 };

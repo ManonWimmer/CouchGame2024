@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "MatchPinballGameMode.generated.h"
 
+class APlayerBall;
+class APlayerBallSpawn;
 /**
  * 
  */
@@ -14,5 +16,20 @@ class COUCHGAME2024_API AMatchPinballGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	
+public:
+	virtual void BeginPlay() override;
+
+private:
+
+	void FindPlayerBallSpawnInWorld(TArray<APlayerBallSpawn*> &ResultsActors);
+
+	void SpawnPlayerBalls(const TArray<APlayerBallSpawn*> SpawnPoints);
+
+	TSubclassOf<APlayerBall> GetPlayerBallClassFromInputType(EAutoReceiveInput::Type InputType) const;
+
+	void CreateAndInitPlayers() const;
+
+protected:
+	UPROPERTY(EditAnywhere)
+	TArray<APlayerBall*> PlayersBallInsideArena;
 };

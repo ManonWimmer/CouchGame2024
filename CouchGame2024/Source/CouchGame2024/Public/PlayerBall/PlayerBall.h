@@ -8,6 +8,7 @@
 #include "PlayerBall.generated.h"
 
 
+class APinballElement;
 class UPlayerBallData;
 class UPlayerBallStateMachine;
 class USphereComponent;
@@ -22,6 +23,8 @@ class COUCHGAME2024_API APlayerBall : public APawn
 public:
 	UFUNCTION()
 	void OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	UFUNCTION()
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	// Sets default values for this pawn's properties
 	APlayerBall();
 
@@ -102,12 +105,16 @@ public:
 	UPROPERTY()
 	float BraqueDirectionForceMultiplier = 1.f;
 
-
+#pragma region Fall (obsolete)
+/*
+	// Fall -> obsolete
 	UPROPERTY()
 	float SlowFallForce = 50.f;
 
 	UPROPERTY()
 	float AccelerateFallForce = 50.f;
+*/
+#pragma endregion
 	
 private:
 
@@ -127,10 +134,10 @@ public:
 	FOnStunedAction OnStunnedAction;
 
 	UFUNCTION(BlueprintCallable)
-	void ReceiveStunnedAction(float InStunnedValue);
+	void ReceiveStunnedAction(float InStunnedDurationValue);
 	
 	UPROPERTY()
-	float StunCooldown = 3.f;
+	float PunchStunCooldown = 3.f;
 
 #pragma	endregion
 
@@ -169,9 +176,78 @@ public:
 
 	UPROPERTY()
 	float ImpactForceMultiplier = 30000.f;
+
+	UPROPERTY()
+	float ImpactMinTotalForce = 50.f;
+
+	UPROPERTY()
+	float ImpactStunCooldown = 1.f;
 	
 	UFUNCTION()
 	void ReceiveImpactAction(float ImpactValue);
 
+#pragma endregion
+
+#pragma region Reaction Pinball Elements
+
+public:
+	TObjectPtr<APinballElement> HitPinballElement;
+
+#pragma region Bumper Reaction
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBumperReaction, float, BumperReactionValue);
+
+	FOnBumperReaction OnBumperReaction;
+
+	UPROPERTY()
+	float BumpedForceMultiplier = 30000.f;
+
+	UPROPERTY()
+	float BumpedHitLagCooldown = 0.2f;
+	
+private:
+	UFUNCTION()
+	void ReceiveBumperReaction(APinballElement* Element);
+
 #pragma endregion 
+
+	
+#pragma endregion
+
+#pragma region Grappling
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrapplingAction, float, GrapplingValue);
+	
+	UPROPERTY()
+	FOnGrapplingAction OnGrapplingAction;
+	
+	UFUNCTION()
+	void ReceiveGrapplingAction(float InGrapplingValue);
+
+	UPROPERTY()
+	float GrapplingValue = 0.f;
+
+	UPROPERTY()
+	TObjectPtr<APlayerBall> GrappledPlayerBall;	// Ball grappled to this playerBall
+	
+#pragma endregion
+
+#pragma region Grappled
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrappledAction, float, GrappledValue);
+	
+	UPROPERTY()
+	FOnGrappledAction OnGrappledAction;
+	
+	UFUNCTION()
+	void ReceiveGrappledAction(float InGrappledValue);
+
+	UPROPERTY()
+	TObjectPtr<APlayerBall> GrapplingPlayerBall;	// Ball grappling to this playerBall
+
+#pragma endregion 
+
+	
 };

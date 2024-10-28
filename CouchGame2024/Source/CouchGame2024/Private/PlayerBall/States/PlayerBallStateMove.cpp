@@ -33,6 +33,7 @@ void UPlayerBallStateMove::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
+	/*
 	GEngine->AddOnScreenDebugMessage
 	(
 		-1,
@@ -40,12 +41,16 @@ void UPlayerBallStateMove::StateEnter(EPlayerBallStateID PreviousState)
 		FColor::Red,
 		TEXT("PlayerState : Move")
 	);
+	*/
 
 	if (Pawn != nullptr)
 	{
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateMove::OnStunned);
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateMove::OnPunch);
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateMove::OnImpacted);
+		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateMove::OnBumped);
+		Pawn->OnGrapplingAction.AddDynamic(this, &UPlayerBallStateMove::OnGrappling);
+		Pawn->OnGrappledAction.AddDynamic(this, &UPlayerBallStateMove::OnGrappled);
 	}
 }
 
@@ -58,6 +63,9 @@ void UPlayerBallStateMove::StateExit(EPlayerBallStateID NextState)
 		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateMove::OnStunned);
 		Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateMove::OnPunch);
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateMove::OnImpacted);
+		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateMove::OnBumped);
+		Pawn->OnGrapplingAction.RemoveDynamic(this, &UPlayerBallStateMove::OnGrappling);
+		Pawn->OnGrappledAction.RemoveDynamic(this, &UPlayerBallStateMove::OnGrappled);
 	}
 }
 
@@ -65,42 +73,47 @@ void UPlayerBallStateMove::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
 
-	MoveX(DeltaTime);
+	Move(DeltaTime);
 	
 	CheckNotMoving();
 
 	CheckFalling();
 }
 
-void UPlayerBallStateMove::MoveX(float DeltaTime)	// Move ball on X Axis by rolling it
+void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by rolling it
 {
 	if (Pawn->PawnMovement == nullptr)
 		return;
 
-	FVector FwdVect = Pawn->GetActorForwardVector();
+	FVector FwdVect(1.f, 0.f, 0.f);
 
-	FVector Dir = FwdVect * Pawn->MoveXValue;	// Get ball roll dir
+	FVector UpVect(0.f, -1.f, 0.f);
+	
+	FVector Dir = (FwdVect * Pawn->MoveXValue) + (UpVect * Pawn->MoveYValue);	// Get ball roll dir
 	
 	if (Pawn->SphereCollision == nullptr)
 		return;
 
-	bool SameDirection = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X <= 0 && Dir.X >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X >= 0 && Dir.X <= 0);
+	bool SameDirectionX = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X <= 0 && Dir.X >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X >= 0 && Dir.X <= 0);
+	bool SameDirectionY = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y <= 0 && Dir.Y >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y >= 0 && Dir.Y <= 0);
 
-	if (SameDirection)	// same direction -> normal roll
+	if (!SameDirectionX)	// May Increase roll X if oppositeDirection
 	{
-		Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->AngularRollForce, NAME_None, true);	// Roll ball
+		Dir.X *= Pawn->BraqueDirectionForceMultiplier;
 	}
-	else  // not same direction -> boost roll to braque faster
+	if (!SameDirectionY)	// May Increase roll Y if oppositeDirection
 	{
-		Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->AngularRollForce * Pawn->BraqueDirectionForceMultiplier), NAME_None, true);	// Roll ball
+		Dir.Y *= Pawn->BraqueDirectionForceMultiplier;
 	}
+
+	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->AngularRollForce, NAME_None, true);	// Roll ball
 }
 
 void UPlayerBallStateMove::CheckNotMoving()	// Check if ball is still moving
 {
 	if (Pawn == nullptr)	return;
 
-	if (FMathf::Abs(Pawn->MoveXValue) < 0.1f)	// Not moving -> Idle
+	if (FMathf::Abs(Pawn->MoveXValue) < 0.1f && FMathf::Abs(Pawn->MoveYValue) < 0.1f)	// Not moving -> Idle
 	{
 		if (StateMachine == nullptr)	return;
 
@@ -122,7 +135,7 @@ void UPlayerBallStateMove::OnStunned(float StunnedValue)	// -> stunned
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Stun);
+	StateMachine->ChangeState(EPlayerBallStateID::Stun, StunnedValue);
 }
 
 void UPlayerBallStateMove::OnPunch(float PunchValue)	// -> punch
@@ -137,5 +150,26 @@ void UPlayerBallStateMove::OnImpacted(float ImpactedValue)	// -> impacted
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Impact);
+}
+
+void UPlayerBallStateMove::OnBumped(float BumpedValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Bumped);
+}
+
+void UPlayerBallStateMove::OnGrappling(float InGrapplingValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Grappling);
+}
+
+void UPlayerBallStateMove::OnGrappled(float InGrappledValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Grappled);
 }
 

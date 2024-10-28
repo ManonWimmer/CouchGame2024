@@ -33,6 +33,7 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
+	
 	GEngine->AddOnScreenDebugMessage
 	(
 		-1,
@@ -46,6 +47,7 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 		CurrentPunchTimeRemaining = Pawn->PunchCooldown;
 		
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStatePunch::OnImpacted);
+		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStatePunch::OnBumped);
 	}
 	
 	PunchPlayerBall();
@@ -58,6 +60,7 @@ void UPlayerBallStatePunch::StateExit(EPlayerBallStateID NextState)
 	if (Pawn != nullptr)
 	{
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStatePunch::OnImpacted);
+		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStatePunch::OnBumped);
 	}
 }
 
@@ -75,27 +78,18 @@ void UPlayerBallStatePunch::StateTick(float DeltaTime)
 		}
 		else
 		{
-			FallingMove(DeltaTime);
+			//FallingMove(DeltaTime);
 		}
 	}
 }
 
+#pragma region Punch Behavior
 void UPlayerBallStatePunch::PunchPlayerBall()
 {
 	APlayerBall* PlayerBall = GetNearestPlayerBallInPunchRadius();
 	if (PlayerBall == nullptr)
 		return;
 
-	FString namePawn = Pawn->GetName();
-	
-	GEngine->AddOnScreenDebugMessage
-	(
-		-1,
-		2.f,
-		FColor::Green,
-		namePawn
-	);
-	
 	FVector Start = Pawn->GetActorLocation();
 	FVector End = PlayerBall->GetActorLocation();
 
@@ -103,7 +97,7 @@ void UPlayerBallStatePunch::PunchPlayerBall()
 
 	Dir.Normalize();
 	
-	PlayerBall->ReceiveStunnedAction(1.f);
+	PlayerBall->ReceiveStunnedAction(Pawn->PunchStunCooldown);
 	PlayerBall->SphereCollision->AddImpulse(Dir * Pawn->PunchForceMultiplier, NAME_None, false);
 }
 
@@ -123,7 +117,7 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 	
 	FCollisionObjectQueryParams ObjectQueryParams(ECollisionChannel::ECC_Pawn);	// Look only for pawn
 
-	// Effectuer la détection de collision avec une sphère
+	// Detect Collision With sphere overlap
 	bool bHasDetected = GetWorld()->OverlapMultiByObjectType(
 		OverlapResults,
 		Start,
@@ -132,8 +126,9 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 		FCollisionShape::MakeSphere(Pawn->PunchRadius),
 		CollisionParams
 	);
-	
-	DrawDebugSphere(GetWorld(), Start, Pawn->PunchRadius, 12, FColor::Blue, false, 3.f);
+
+	if (Pawn->GetWorld())
+		DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->PunchRadius, 12, FColor::Blue, false, 3.f);
 
 	if (bHasDetected)	// has detected a pawn
 	{
@@ -165,31 +160,39 @@ void UPlayerBallStatePunch::DecreaseCooldownPunch(float DeltaTime)
 		}
 	}
 }
+#pragma endregion 
 
-void UPlayerBallStatePunch::Move(float DeltaTime)	// roll ball X
+
+void UPlayerBallStatePunch::Move(float DeltaTime)	// Move ball on X and Y Axis by rolling it
 {
 	if (Pawn->PawnMovement == nullptr)
 		return;
 
-	FVector FwdVect = Pawn->GetActorForwardVector();
+	FVector FwdVect(1.f, 0.f, 0.f);
 
-	FVector Dir = FwdVect * Pawn->MoveXValue;	// Get ball roll dir
+	FVector UpVect(0.f, -1.f, 0.f);
+	
+	FVector Dir = (FwdVect * Pawn->MoveXValue) + (UpVect * Pawn->MoveYValue);	// Get ball roll dir
 	
 	if (Pawn->SphereCollision == nullptr)
 		return;
 
-	bool SameDirection = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X <= 0 && Dir.X >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X >= 0 && Dir.X <= 0);
+	bool SameDirectionX = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X <= 0 && Dir.X >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X >= 0 && Dir.X <= 0);
+	bool SameDirectionY = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y <= 0 && Dir.Y >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y >= 0 && Dir.Y <= 0);
 
-	if (SameDirection)	// same direction -> normal roll
+	if (!SameDirectionX)	// May Increase roll X if oppositeDirection
 	{
-		Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->AngularRollForce, NAME_None, true);	// Roll ball
+		Dir.X *= Pawn->BraqueDirectionForceMultiplier;
 	}
-	else  // not same direction -> boost roll to braque faster
+	if (!SameDirectionY)	// May Increase roll Y if oppositeDirection
 	{
-		Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->AngularRollForce * Pawn->BraqueDirectionForceMultiplier), NAME_None, true);	// Roll ball
+		Dir.Y *= Pawn->BraqueDirectionForceMultiplier;
 	}
+
+	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->AngularRollForce, NAME_None, true);	// Roll ball
 }
 
+/*
 void UPlayerBallStatePunch::FallingMove(float DeltaTime)	// AirControl fall X
 {
 	if (Pawn == nullptr)	return;
@@ -202,12 +205,20 @@ void UPlayerBallStatePunch::FallingMove(float DeltaTime)	// AirControl fall X
 
 	Pawn->PawnMovement->AddInputVector(Dir);	// Move ball in air
 }
+*/
 
 void UPlayerBallStatePunch::OnImpacted(float ImpactedValue)	// -> impacted
 {
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Impact);
+}
+
+void UPlayerBallStatePunch::OnBumped(float BumpedValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Bumped);
 }
 
 

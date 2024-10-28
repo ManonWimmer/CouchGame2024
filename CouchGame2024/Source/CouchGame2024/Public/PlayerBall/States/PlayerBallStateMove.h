@@ -30,7 +30,7 @@ public:
 
 private:
 	UFUNCTION()
-	void MoveX(float DeltaTime);
+	void Move(float DeltaTime);
 	UFUNCTION()
 	void CheckNotMoving();
 	
@@ -45,4 +45,13 @@ private:
 
 	UFUNCTION()
 	void OnImpacted(float ImpactedValue);
+
+	UFUNCTION()
+	void OnBumped(float BumpedValue);
+
+	UFUNCTION()
+	void OnGrappling(float InGrapplingValue);
+
+	UFUNCTION()
+	void OnGrappled(float InGrappledValue);
 };

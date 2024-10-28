@@ -30,7 +30,7 @@ public:
 
 private:
 	UFUNCTION()
-	void OnMoveXCheck();
+	void OnMoveCheck();
 
 	UFUNCTION()
 	void CheckFalling();
@@ -43,4 +43,13 @@ private:
 
 	UFUNCTION()
 	void OnImpacted(float ImpactedValue);
+
+	UFUNCTION()
+	void OnBumped(float BumpedValue);
+
+	UFUNCTION()
+	void OnGrappling(float InGrapplingValue);
+
+	UFUNCTION()
+	void OnGrappled(float InGrappledValue);
 };

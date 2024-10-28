@@ -32,6 +32,7 @@ void UPlayerBallStateImpact::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
+	/*
 	GEngine->AddOnScreenDebugMessage
 	(
 		-1,
@@ -39,18 +40,11 @@ void UPlayerBallStateImpact::StateEnter(EPlayerBallStateID PreviousState)
 		FColor::Red,
 		TEXT("PlayerState : Impact")
 	);
-
-	ImpactedBall(1.f);
-
-	Pawn->ImpactedPlayerBall = nullptr;
+	*/
 	
-	if (Pawn != nullptr)
-	{
-		if (Pawn->ImpactedPlayerBall == nullptr)
-		{
-			StateMachine->ChangeState(EPlayerBallStateID::Idle);
-		}
-	}
+	ImpactedBall(1.f);
+	
+	StateMachine->ChangeState(EPlayerBallStateID::Stun, Pawn->ImpactStunCooldown);	// Stun
 }
 
 void UPlayerBallStateImpact::StateExit(EPlayerBallStateID NextState)
@@ -59,7 +53,7 @@ void UPlayerBallStateImpact::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn == nullptr)
 		return;
-
+	
 	Pawn->ImpactedPlayerBall = nullptr;
 }
 
@@ -75,17 +69,23 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 
 	if (Pawn->ImpactedPlayerBall == nullptr)
 		return;
-	
+
+	FVector Velocity = Pawn->ImpactedPlayerBall->GetVelocity();
 	FVector Start = Pawn->ImpactedPlayerBall->GetActorLocation();
 	FVector End = Pawn->GetActorLocation();
 
 	FVector Dir = End - Start;
 
 	Dir.Normalize();
+
+	float TotalForce = Pawn->ImpactForceMultiplier * Velocity.Length();
+
+	if (TotalForce < Pawn->ImpactMinTotalForce)
+	{
+		TotalForce = Pawn->ImpactMinTotalForce;
+	}
 	
-	Pawn->ReceiveStunnedAction(1.f);	// Stun
-	
-	Pawn->SphereCollision->AddImpulse(Dir * Pawn->ImpactForceMultiplier, NAME_None, false);	// impulse
+	Pawn->SphereCollision->AddImpulse(Dir * TotalForce, NAME_None, false);	// impulse
 }
 
 

@@ -33,6 +33,7 @@ void UPlayerBallStateFall::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
+	/*
 	GEngine->AddOnScreenDebugMessage
 	(
 		-1,
@@ -40,12 +41,14 @@ void UPlayerBallStateFall::StateEnter(EPlayerBallStateID PreviousState)
 		FColor::Red,
 		TEXT("PlayerState : Fall")
 	);
+	*/
 
 	if (Pawn != nullptr)
 	{
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateFall::OnStunned);
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateFall::OnPunch);
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateFall::OnImpacted);
+		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateFall::OnBumped);
 	}
 }
 
@@ -58,6 +61,7 @@ void UPlayerBallStateFall::StateExit(EPlayerBallStateID NextState)
 		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateFall::OnStunned);
 		Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateFall::OnPunch);
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateFall::OnImpacted);
+		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateFall::OnBumped);
 	}
 }
 
@@ -66,7 +70,7 @@ void UPlayerBallStateFall::StateTick(float DeltaTime)
 	Super::StateTick(DeltaTime);
 
 	FallingMoveX(DeltaTime);
-	FallingMoveY(DeltaTime);
+	//FallingMoveY(DeltaTime);
 	
 	CheckStillFalling();
 }
@@ -84,6 +88,7 @@ void UPlayerBallStateFall::FallingMoveX(float DeltaTime) const	// Air control X
 	Pawn->PawnMovement->AddInputVector(Dir);	// Move ball in air
 }
 
+/*
 void UPlayerBallStateFall::FallingMoveY(float DeltaTime) const	// Speed fall control Y
 {
 	if (Pawn == nullptr)	return;
@@ -97,6 +102,7 @@ void UPlayerBallStateFall::FallingMoveY(float DeltaTime) const	// Speed fall con
 		Pawn->SphereCollision->AddForce(FVector(0.f, 0.f, 1.f) * Pawn->AccelerateFallForce * Pawn->MoveYValue, NAME_None, true);
 	}
 }
+*/
 
 void UPlayerBallStateFall::CheckStillFalling()	// check falling
 {
@@ -112,7 +118,7 @@ void UPlayerBallStateFall::OnStunned(float StunnedValue)	// -> stun
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Stun);
+	StateMachine->ChangeState(EPlayerBallStateID::Stun, StunnedValue);
 }
 
 void UPlayerBallStateFall::OnPunch(float PunchValue)	// -> punch
@@ -127,5 +133,12 @@ void UPlayerBallStateFall::OnImpacted(float ImpactedValue)	// -> impacted
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Impact);
+}
+
+void UPlayerBallStateFall::OnBumped(float BumpedValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Bumped);
 }
 

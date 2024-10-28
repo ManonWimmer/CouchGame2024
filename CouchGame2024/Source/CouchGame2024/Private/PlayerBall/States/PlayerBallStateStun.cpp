@@ -31,6 +31,7 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
+	/*
 	GEngine->AddOnScreenDebugMessage
 	(
 		-1,
@@ -38,14 +39,31 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState)
 		FColor::Red,
 		TEXT("PlayerState : Stun")
 	);
+	*/
 	
 	if (Pawn != nullptr)
 	{
-		CurrentStunRemaining = Pawn->StunCooldown;
-
-
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateStun::OnImpacted);
+		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateStun::OnBumped);
 	}
+}
+
+void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState, float InFloatParameter)
+{
+	Super::StateEnter(PreviousState, InFloatParameter);
+
+	CurrentStunRemaining = InFloatParameter;
+
+	/*
+	GEngine->AddOnScreenDebugMessage
+	(
+		-1,
+		2.f,
+		FColor::Yellow, FString::Printf(TEXT("PlayerState : stun : %f"), CurrentStunRemaining)
+	);
+	*/
+	
+
 }
 
 void UPlayerBallStateStun::StateExit(EPlayerBallStateID NextState)
@@ -55,6 +73,7 @@ void UPlayerBallStateStun::StateExit(EPlayerBallStateID NextState)
 	if (Pawn != nullptr)
 	{
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateStun::OnImpacted);
+		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateStun::OnBumped);
 	}
 }
 
@@ -76,7 +95,7 @@ void UPlayerBallStateStun::DecreaseCooldownStun(float DeltaTime)	// cooldown bef
 		if (StateMachine != nullptr)	// Stun cooldown ended -> Idle
 		{
 			StateMachine->ChangeState(EPlayerBallStateID::Idle);
-		}
+		} 
 	}
 }
 
@@ -85,6 +104,13 @@ void UPlayerBallStateStun::OnImpacted(float ImpactedValue)	// -> impacted
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Impact);
+}
+
+void UPlayerBallStateStun::OnBumped(float BumpedValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Bumped);
 }
 
 

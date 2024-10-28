@@ -30,27 +30,34 @@ public:
 	float BraqueDirectionForceMultiplier = 2.f;
 #pragma endregion
 
-#pragma region Falling Movements
-	UPROPERTY(EditAnywhere, Category = "Falling Movements")
+#pragma region Falling Movements (Obsolete)
+	/*
+	UPROPERTY(EditAnywhere, Category = "Falling Movements Obsolete")
 	float SlowFallForce = 50.f;
 
-	UPROPERTY(EditAnywhere, Category = "Falling Movements")
+	UPROPERTY(EditAnywhere, Category = "Falling Movements Obsolete")
 	float AccelerateFallForce = 50.f;
 
-	UPROPERTY(EditAnywhere, Category = "Falling Movements")
+	UPROPERTY(EditAnywhere, Category = "Falling Movements Obsolete")
 	float AirControlSideAcceleration = 200.f;
 
-	UPROPERTY(EditAnywhere, Category = "Falling Movements")
+	UPROPERTY(EditAnywhere, Category = "Falling Movements Obsolete")
 	float AirControlSideMaxSpeed = 600.f;
 
-	UPROPERTY(EditAnywhere, Category = "Falling Movements")
+	UPROPERTY(EditAnywhere, Category = "Falling Movements Obsolete")
 	float AirControlSideDeceleration = 1.f;
-
+*/
 #pragma endregion
 
 #pragma region Stun
 	UPROPERTY(EditAnywhere, Category = "Stun")
-	float StunCooldown = 3.f;
+	
+	float PunchStunCooldown = 3.f;
+	UPROPERTY(EditAnywhere, Category = "Stun")
+	float ImpactStunCooldown = 1.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Stun")
+	float BumpedHitLagStunCooldown = 0.2f;
 
 #pragma endregion
 
@@ -70,6 +77,16 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Impact")
 	float ImpactForceMultiplier = 30000.f;
+
+	UPROPERTY(EditAnywhere, Category = "Impact")
+	float ImpactMinTotalForce = 50.f;
+
+#pragma endregion 
+
+#pragma region Bumped
+
+	UPROPERTY(EditAnywhere, Category = "Bumped")
+	float BumpedForceMultiplier = 30000.f;
 
 #pragma endregion 
 	
