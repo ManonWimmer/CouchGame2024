@@ -338,6 +338,8 @@ public:
 
 	float SnapControlMoveRollDivider = 2.f;
 
+	float MinVelocityToSnap = 200.f;
+
 #pragma endregion 
 
 	

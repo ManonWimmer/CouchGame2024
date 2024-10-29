@@ -100,6 +100,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "SnapMagnetic", meta = (ClampMin = "1.0", ClampMax = "100.0", SliderMin = "1.0", SliderMax = "100.0"))
 	float SnapControlMoveRollDivider = 2.f;
 
+
+	UPROPERTY(EditAnywhere, Category = "SnapMagnetic")
+	float MinVelocityToSnap = 200.f;
+	
 #pragma endregion 
 	
 };

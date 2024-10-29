@@ -233,6 +233,7 @@ void APlayerBall::SetupData() // Get all data and set them
 	// Snapping
 	SnapAngularForce = PlayerBallData->SnapAngularForce;
 	SnapControlMoveRollDivider = PlayerBallData->SnapControlMoveRollDivider;
+	MinVelocityToSnap = PlayerBallData->MinVelocityToSnap;
 	
 }
 
