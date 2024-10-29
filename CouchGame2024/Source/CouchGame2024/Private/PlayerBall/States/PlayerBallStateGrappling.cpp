@@ -101,6 +101,8 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
 
+	if (Pawn->GrappledPlayerBall == nullptr)	return;
+	
 	SetGrapplingVelocityAndAngle(GetWorld()->DeltaTimeSeconds);
 
 	if (TempGrapplingAngle == 0.f) return;

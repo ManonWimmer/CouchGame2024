@@ -353,6 +353,9 @@ void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "grappling action");
 
+	if (StateMachine->GetCurrentStateID() == EPlayerBallStateID::Stun)
+		return;
+	
 	if (InGrapplingValue == 0)
 	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "cc");
@@ -404,7 +407,7 @@ void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 		if (NewNearestDistance < NearestDistance)
 		{
 			NearestPlayerBall = PlayerBall;
-			NewNearestDistance = NearestDistance;
+			NearestDistance = NewNearestDistance;
 		}
 	}
 

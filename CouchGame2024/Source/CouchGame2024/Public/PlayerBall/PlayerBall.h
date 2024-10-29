@@ -252,7 +252,7 @@ public:
 	UPROPERTY()
 	float GrapplingValue = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<APlayerBall> GrappledPlayerBall = nullptr;	// Ball grappled to this playerBall
 
 	UPROPERTY()
@@ -316,7 +316,7 @@ public:
 	UFUNCTION()
 	void ReceiveGrappledAction(float InGrappledValue);
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<APlayerBall> GrapplingPlayerBall = nullptr;	// Ball grappling to this playerBall
 
 #pragma endregion
