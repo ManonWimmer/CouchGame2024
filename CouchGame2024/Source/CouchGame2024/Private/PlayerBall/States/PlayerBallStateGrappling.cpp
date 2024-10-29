@@ -90,6 +90,10 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 		Pawn->CurrentGrapplingAngularVelocity = 0.f;
 
 		Pawn->GrappledPlayerBall->ReceiveGrappledAction(0.f);
+
+		// Reset Grappled Player & Grappling Player
+		Pawn->GrappledPlayerBall->GrapplingPlayerBall = nullptr;
+		Pawn->GrappledPlayerBall = nullptr;
 	}
 }
 
