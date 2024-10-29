@@ -352,6 +352,13 @@ void APlayerBall::ReceiveBumperReaction(APinballElement* Element, const FVector 
 void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "grappling action");
+
+	if (InGrapplingValue == 0)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "cc");
+		OnGrapplingAction.Broadcast(InGrapplingValue);
+		return;
+	}
 	
 	GrapplingValue = InGrapplingValue;
 
@@ -406,7 +413,10 @@ void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 	IsGrappling = true;
 
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "oui");
-	OnGrapplingAction.Broadcast(GrapplingValue);
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "broadcast grappling");
+
+	if (GrappledPlayerBall != nullptr)
+		OnGrapplingAction.Broadcast(GrapplingValue);
 	
 }
 
