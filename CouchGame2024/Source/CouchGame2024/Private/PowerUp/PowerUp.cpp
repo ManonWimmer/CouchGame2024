@@ -38,3 +38,8 @@ void APowerUp::TriggerPowerUp()
 	this->Destroy();
 }
 
+void APowerUp::TriggerPowerUp(int Value)
+{
+	this->Destroy();
+}
+

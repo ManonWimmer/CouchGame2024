@@ -9,6 +9,7 @@
 #include "CouchGame2024/Public/PlayerBall/PlayerBallController.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/StaticMeshComponent.h"
+#include "GameFramework/PlayerState.h"
 #include "PinballElements/PinballElement.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
@@ -65,6 +66,9 @@ void APlayerBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 			break;
 		case EPowerUpID::Dash:
 			OtherPowerUp->TriggerPowerUp();
+			break;
+		case EPowerUpID::Collectible:
+			OtherPowerUp->TriggerPowerUp(PlayerIndex);
 			break;
 
 		default:
