@@ -78,7 +78,6 @@ void UPlayerBallStateSnapping::StateTick(float DeltaTime)
 
 	if (Pawn->GetVelocity().Length() >= Pawn->MinVelocityToSnap)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, TEXT("Snapping"));
 		SnappingEffect(DeltaTime);
 	}
 
@@ -177,7 +176,10 @@ void UPlayerBallStateSnapping::OnGrappling(float InGrapplingValue)
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Grappling);
+	if (InGrapplingValue == 1.f)
+	{
+		StateMachine->ChangeState(EPlayerBallStateID::Grappling);
+	}
 }
 
 void UPlayerBallStateSnapping::OnGrappled(float InGrappledValue)

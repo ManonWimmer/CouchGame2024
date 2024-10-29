@@ -28,9 +28,12 @@ AFlipperElement::AFlipperElement()
 
 	BoxTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxTrigger"));
 	FlipperMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FlipperMesh"));
+	FlipperMeshAnchor = CreateDefaultSubobject<USceneComponent>(TEXT("FlipperMeshAnchor"));
 
 	BoxTrigger->SetupAttachment(RootComponent);
-	FlipperMesh->SetupAttachment(BoxTrigger);
+	FlipperMeshAnchor->SetupAttachment(BoxTrigger);
+	FlipperMesh->SetupAttachment(FlipperMeshAnchor);
+	
 
 	if (BoxTrigger != nullptr)
 	{
