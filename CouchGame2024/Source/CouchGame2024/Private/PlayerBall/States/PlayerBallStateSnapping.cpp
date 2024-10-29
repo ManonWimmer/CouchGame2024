@@ -127,6 +127,8 @@ void UPlayerBallStateSnapping::SnappingEffect(float DeltaTime)
 	Dir.Y = Dir.X;
 	Dir.X = -TempX;
 
+	Dir.Z = 0.f;
+
 	Dir.Normalize();
 
 	//DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 5.f);

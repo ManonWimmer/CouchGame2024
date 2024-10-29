@@ -4,7 +4,20 @@
 #include "PinballElements/Elements/FlipperElement.h"
 
 #include "Components/BoxComponent.h"
+#include "PlayerBall/PlayerBall.h"
 
+
+void AFlipperElement::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                            UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
+
+	if (OtherBall != nullptr)
+	{
+		// Flip if not retourné, sinon reviens en position normale
+		FlipUp();
+	}
+}
 
 // Sets default values
 AFlipperElement::AFlipperElement()
@@ -12,34 +25,51 @@ AFlipperElement::AFlipperElement()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	FlipperBoxTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Trigger"));
-	FlipperMeshRoot = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Root"));
-	FlipperMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 
-	FlipperBoxTrigger->SetupAttachment(RootComponent);
-	FlipperMeshRoot->SetupAttachment(FlipperBoxTrigger);
-	FlipperMesh->SetupAttachment(FlipperMeshRoot);
+	BoxTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxTrigger"));
+	FlipperMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FlipperMesh"));
+
+	BoxTrigger->SetupAttachment(RootComponent);
+	FlipperMesh->SetupAttachment(BoxTrigger);
+
+	if (BoxTrigger != nullptr)
+	{
+		BoxTrigger->OnComponentBeginOverlap.AddDynamic(this, &AFlipperElement::OnTriggerBeginOverlap);
+	}
 }
+
 
 // Called when the game starts or when spawned
 void AFlipperElement::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// Rot Init
+	OriginalRotation = FRotator(0.f, 0.f, 0.f);
+	FlippedRotation = FRotator(0.f, 0.f, 45.f); // 45 deg
+	bIsFlipped = false;
+
+	OriginalRotation = FlipperMesh->GetRelativeRotation();
 }
 
 // Called every frame
 void AFlipperElement::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-}
 
-void AFlipperElement::TriggerElement()
-{
-	Super::TriggerElement();
+	if (bIsFlipped &&  FlipperMesh->GetRelativeRotation() != FlippedRotation)
+	{
+		FlipperMesh->SetRelativeRotation(FMath::RInterpTo(FlipperMesh->GetRelativeRotation(), FlippedRotation, DeltaTime, FlipUpSpeed));
+	}
+	else if (bIsFlipped && FlipperMesh->GetRelativeRotation() == FlippedRotation)
+	{
+		FlipDown();
+	}
+	else if (!bIsFlipped && FlipperMesh->GetRelativeRotation() != OriginalRotation)
+	{
+		FlipperMesh->SetRelativeRotation(FMath::RInterpTo(FlipperMesh->GetRelativeRotation(), OriginalRotation, DeltaTime, FlipDownSpeed));
 
-	ActivateFlip();
+	}
 }
 
 EPinballElementID AFlipperElement::GetElementID()
@@ -47,39 +77,23 @@ EPinballElementID AFlipperElement::GetElementID()
 	return EPinballElementID::Flipper;
 }
 
-void AFlipperElement::ActivateFlip()
+void AFlipperElement::TriggerElement()
 {
-	if (IsFlipping)	return;
+	Super::TriggerElement();
 
-	IsFlipping = true;
 }
 
-void AFlipperElement::HandleFlipRotation(float DeltaTime)
+void AFlipperElement::FlipUp()
 {
-	if (IsFlipping)
-	{
-		if (CurrentRotationAngle < FlipperMaxRotationAngle)
-		{
-			// Rotate the flipper towards the maximum angle
+	if (bIsFlipped)	return;
 
-			CurrentRotationAngle = FMath::FInterpTo(CurrentRotationAngle, FlipperMaxRotationAngle, DeltaTime, RotationSpeed);
-			
-			CurrentRotationAngle = FMath::Clamp(CurrentRotationAngle, 0.0f, FlipperMaxRotationAngle);
+	bIsFlipped = true;
+}
 
-			// Apply the rotation to the flipper mesh
-			FRotator NewRotation = FRotator(CurrentRotationAngle, 0, 0);
-			FlipperMeshRoot->SetRelativeRotation(NewRotation);
-		}
-	}
-	else
-	{
-		CurrentRotationAngle = FMath::FInterpTo(CurrentRotationAngle, 0.f, DeltaTime, RotationSpeed);
-			
-		CurrentRotationAngle = FMath::Clamp(CurrentRotationAngle, 0.0f, FlipperMaxRotationAngle);
+void AFlipperElement::FlipDown()
+{
+	if (!bIsFlipped)	return;
 
-		// Apply the rotation to the flipper mesh
-		FRotator NewRotation = FRotator(CurrentRotationAngle, 0, 0);
-		FlipperMeshRoot->SetRelativeRotation(NewRotation);
-	}
+	bIsFlipped = false;
 }
 
