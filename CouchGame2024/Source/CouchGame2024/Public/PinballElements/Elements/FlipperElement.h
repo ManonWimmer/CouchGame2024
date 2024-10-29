@@ -37,6 +37,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> FlipperMesh;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USceneComponent> FlipperMeshAnchor;
+
 #pragma endregion 
 	
 public:

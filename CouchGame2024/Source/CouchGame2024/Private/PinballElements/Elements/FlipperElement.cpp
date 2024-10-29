@@ -61,6 +61,10 @@ void AFlipperElement::Tick(float DeltaTime)
 	{
 		FlipperMesh->SetRelativeRotation(FMath::RInterpTo(FlipperMesh->GetRelativeRotation(), FlippedRotation, DeltaTime, FlipUpSpeed));
 	}
+	else if (bIsFlipped && FlipperMesh->GetRelativeRotation() == FlippedRotation)
+	{
+		FlipDown();
+	}
 	else if (!bIsFlipped && FlipperMesh->GetRelativeRotation() != OriginalRotation)
 	{
 		FlipperMesh->SetRelativeRotation(FMath::RInterpTo(FlipperMesh->GetRelativeRotation(), OriginalRotation, DeltaTime, FlipDownSpeed));
