@@ -235,7 +235,7 @@ void APlayerBall::SetupData() // Get all data and set them
 	MinVelocityToSnap = PlayerBallData->MinVelocityToSnap;
 
 	// Grappling
-	GrapplingDamping = PlayerBallData->SnapAngularForce;
+	GrapplingDamping = PlayerBallData->GrapplingDamping;
 	GrapplingForce = PlayerBallData->GrapplingForce;
 	GrapplingReleaseForce = PlayerBallData->GrapplingReleaseForce;
 	MinCableDistance = PlayerBallData->MinCableDistance;

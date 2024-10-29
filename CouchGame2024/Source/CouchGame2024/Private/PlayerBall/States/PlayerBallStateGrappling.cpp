@@ -180,6 +180,45 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	*/
 	// ----- Check Walls ----- //
 
+
+	// ----- Check Walls With Sphere Cast Offset ----- //
+	/*
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(Pawn);
+
+	FVector InputOffset = FVector(Pawn->MoveXValue, Pawn->MoveYValue, 0.f);
+
+	FVector SphereCenter = Pawn->GetActorLocation() + InputOffset;
+	float SphereRadius = Pawn->SphereCollision->GetScaledSphereRadius() + 0.2f;
+
+	FCollisionObjectQueryParams ObjectQueryParams(ECC_GameTraceChannel2);    // Look only for walls
+
+	// Detect Collision With sphere overlap
+	bool bHasDetected = GetWorld()->OverlapMultiByObjectType(
+		OverlapResults,
+		SphereCenter,
+		FQuat::Identity,
+		ObjectQueryParams,
+		FCollisionShape::MakeSphere(SphereRadius),
+		CollisionParams
+	);
+
+	// Dessine une sphère de débogage
+	DrawDebugSphere(
+		GetWorld(),
+		SphereCenter,
+		SphereRadius,
+		24,                        // Nombre de segments pour la sphère (plus élevé = sphère plus détaillée)
+		bHasDetected ? FColor::Red : FColor::Green,  // Rouge si collision détectée, sinon vert
+		false,                     // Persistent lines (false pour qu'elle disparaisse après un temps)
+		1.0f,                      // Durée en secondes de la sphère de débogage
+		0,                         // Prio
+		1.0f                       // Épaisseur de la ligne
+	);
+	*/
+	// ----- Check Walls With Sphere Cast Offset ----- //
+
 	SetGrapplingVelocityAndAngle(GetWorld()->DeltaTimeSeconds);
 
 	Pawn->GrapplingOffset = FVector(FMath::Cos(Pawn->CurrentGrapplingAngle), FMath::Sin(Pawn->CurrentGrapplingAngle), 0)
