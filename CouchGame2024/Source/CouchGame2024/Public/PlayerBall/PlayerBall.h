@@ -26,6 +26,11 @@ public:
 	void OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                              const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnAttractionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	// Sets default values for this pawn's properties
 	APlayerBall();
 
@@ -66,6 +71,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<USphereComponent> SphereCollision;
+
+	// To detect other balls
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USphereComponent> AttractionSphere;
 	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USphereComponent> GrapplingSphereCollision;
@@ -192,7 +201,10 @@ public:
 	float ImpactStunCooldown = 1.f;
 	
 	UFUNCTION()
-	void ReceiveImpactAction(float ImpactValue);
+	void ReceiveImpactAction(float ImpactValue, const FVector &InNormalImpact);
+
+	UPROPERTY()
+	FVector NormalImpact = FVector(0, 0, 0);
 
 #pragma endregion
 
@@ -201,6 +213,7 @@ public:
 public:
 	TObjectPtr<APinballElement> HitPinballElement;
 
+	
 #pragma region Bumper Reaction
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBumperReaction, float, BumperReactionValue);
@@ -213,9 +226,12 @@ public:
 	UPROPERTY()
 	float BumpedHitLagCooldown = 0.2f;
 	
+	UPROPERTY()
+	FVector NormalBump = FVector(0, 0, 0);
+	
 private:
 	UFUNCTION()
-	void ReceiveBumperReaction(APinballElement* Element);
+	void ReceiveBumperReaction(APinballElement* Element, const FVector &InNormalBump);
 
 #pragma endregion 
 
@@ -302,6 +318,27 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<APlayerBall> GrapplingPlayerBall;	// Ball grappling to this playerBall
+
+#pragma endregion
+
+#pragma region Snapping
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReceiveSnappingAction, float, SnappingValue);
+
+	UPROPERTY()
+	FOnReceiveSnappingAction OnReceiveSnappingAction;
+
+	UFUNCTION()
+	void ReceiveSnappingAction(float SnappingValue);
+	
+	UPROPERTY()
+	TObjectPtr<APlayerBall> SnappingPlayerBall;
+
+	float SnapAngularForce = 3000.f;
+
+	float SnapControlMoveRollDivider = 2.f;
+
+	float MinVelocityToSnap = 200.f;
 
 #pragma endregion 
 

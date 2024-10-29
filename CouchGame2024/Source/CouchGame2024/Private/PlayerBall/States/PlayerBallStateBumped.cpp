@@ -4,6 +4,7 @@
 #include "PlayerBall/States/PlayerBallStateBumped.h"
 
 #include "Components/SphereComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "PinballElements/PinballElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
@@ -83,12 +84,17 @@ void UPlayerBallStateBumped::Bump()
 		return;
 	}
 
-	FVector Start = Pawn->HitPinballElement->GetActorLocation();
-	FVector End = Pawn->GetActorLocation();
+	FVector Start = Pawn->GetActorLocation();
+	FVector End = Pawn->HitPinballElement->GetActorLocation();
 
 	FVector Dir = End - Start;
 
+	Dir = FMath::GetReflectionVector(Dir, Pawn->NormalBump);
+	
+
+	//DrawDebugLine(GetWorld(), Pawn->HitPinballElement->GetActorLocation(), Pawn->HitPinballElement->GetActorLocation() + Dir*1000.f, FColor::Green, true, 5.f);
 	Dir.Normalize();
+	
 	Pawn->SphereCollision->AddImpulse(Dir * Pawn->BumpedForceMultiplier, NAME_None, false);	// impulse
 
 	Pawn->ReceiveStunnedAction(Pawn->BumpedHitLagCooldown);	// stun

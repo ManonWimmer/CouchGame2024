@@ -12,6 +12,7 @@
 #include "PinballElements/PinballElement.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
+#include "PowerUp/PowerUp.h"
 
 void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                  FVector NormalImpulse, const FHitResult& Hit)
@@ -23,7 +24,7 @@ void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* Othe
 	if (OtherBall != nullptr)
 	{
 		ImpactedPlayerBall = OtherBall;
-		ReceiveImpactAction(1.f);
+		ReceiveImpactAction(1.f, Hit.ImpactNormal);
 	}
 	else
 	{
@@ -35,7 +36,7 @@ void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* Othe
 			{
 			case EPinballElementID::Bumper:
 				OtherElement->TriggerElement();
-				ReceiveBumperReaction(OtherElement);
+				ReceiveBumperReaction(OtherElement, Hit.ImpactNormal);
 				return;
 			case EPinballElementID::Flipper:
 				return;
@@ -53,24 +54,59 @@ void APlayerBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
                                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                  const FHitResult& SweepResult)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "OnBeginOverlap");
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "OnBeginOverlap");
 
-	TObjectPtr<APinballElement> OtherElement = Cast<APinballElement>(OtherActor);
+	TObjectPtr<APowerUp> OtherPowerUp = Cast<APowerUp>(OtherActor);
 
-	if (OtherElement != nullptr)
+	if (OtherPowerUp != nullptr)
 	{
-		switch (OtherElement->GetElementID())
-		{
-		case EPinballElementID::Bumper:
-			return;
-		case EPinballElementID::Flipper:
-			OtherElement->TriggerElement();
-			return;
-		case EPinballElementID::None:
-			return;
+		switch (OtherPowerUp->GetPowerUpID()) {
+		case EPowerUpID::None:
+			break;
+		case EPowerUpID::Dash:
+			OtherPowerUp->TriggerPowerUp();
+			break;
 
 		default:
+			break;
+		}
+
+		return;
+	}
+}
+
+void APlayerBall::OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (SnappingPlayerBall == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "OnAttractionBeginOverlap");
+
+		
+		TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
+
+		if (OtherBall != nullptr)
+		{
+			SnappingPlayerBall = OtherBall;
+			ReceiveSnappingAction(1.f);
+
 			return;
+		}
+	}
+}
+
+void APlayerBall::OnAttractionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (SnappingPlayerBall == nullptr)	return;
+
+	TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
+
+	if (OtherBall != nullptr)
+	{
+		if (OtherBall ==  SnappingPlayerBall)
+		{
+			ReceiveSnappingAction(0.f);
 		}
 	}
 }
@@ -85,16 +121,21 @@ APlayerBall::APlayerBall()
 	PawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingPawnMovement"));
 	SphereMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereComponent"));
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
-
+	AttractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AttractionSphere"));
+	
 	SphereCollision->SetupAttachment(RootComponent);
 	SphereMesh->SetupAttachment(SphereCollision);
-
+	AttractionSphere->SetupAttachment(SphereCollision);
 
 	if (SphereCollision != nullptr)
 	{
 		SphereCollision->OnComponentHit.AddDynamic(this, &APlayerBall::OnCollisionHit);
-
 		SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerBall::OnBeginOverlap);
+	}
+	if (AttractionSphere != nullptr)
+	{
+		AttractionSphere->OnComponentBeginOverlap.AddDynamic(this, &APlayerBall::OnAttractionBeginOverlap);
+		AttractionSphere->OnComponentEndOverlap.AddDynamic(this, &APlayerBall::OnAttractionEndOverlap);
 	}
 
 	// ----- Setup Grappling ----- //
@@ -160,6 +201,7 @@ void APlayerBall::SetupData() // Get all data and set them
 	SphereCollision->SetAngularDamping(PlayerBallData->AngularRollDamping);
 	SphereCollision->SetPhysicsMaxAngularVelocityInDegrees(PlayerBallData->MaxAngularRollVelocity);
 
+#pragma region FallData (Obsolete)
 	/*
 	// Fall Obsolete
 	PawnMovement->Acceleration = PlayerBallData->AirControlSideAcceleration;
@@ -168,7 +210,8 @@ void APlayerBall::SetupData() // Get all data and set them
 	SlowFallForce = PlayerBallData->SlowFallForce;
 	AccelerateFallForce = PlayerBallData->AccelerateFallForce;
 	*/
-
+#pragma endregion 
+	
 	// Stun By punch
 	PunchStunCooldown = PlayerBallData->PunchStunCooldown;
 
@@ -186,6 +229,12 @@ void APlayerBall::SetupData() // Get all data and set them
 	// Bumped
 	BumpedForceMultiplier = PlayerBallData->BumpedForceMultiplier;
 	BumpedHitLagCooldown = PlayerBallData->BumpedHitLagStunCooldown;
+
+	// Snapping
+	SnapAngularForce = PlayerBallData->SnapAngularForce;
+	SnapControlMoveRollDivider = PlayerBallData->SnapControlMoveRollDivider;
+	MinVelocityToSnap = PlayerBallData->MinVelocityToSnap;
+	
 }
 
 
@@ -269,14 +318,25 @@ void APlayerBall::ReceivePunchAction(float InPunchValue)
 	OnPunchAction.Broadcast(InPunchValue);
 }
 
-void APlayerBall::ReceiveImpactAction(float ImpactValue)
+void APlayerBall::ReceiveImpactAction(float ImpactValue, const FVector &InNormalImpact)
 {
+	NormalImpact = InNormalImpact;
+
+	NormalImpact.Z = 0.f;
+
+	NormalImpact.Normalize();
+	
 	OnImpactAction.Broadcast(ImpactValue);
 }
 
-void APlayerBall::ReceiveBumperReaction(APinballElement* Element)
+void APlayerBall::ReceiveBumperReaction(APinballElement* Element, const FVector &InNormalBump)
 {
 	HitPinballElement = Element;
+
+	NormalBump = InNormalBump;
+
+	NormalBump.Z = 0.f;
+	NormalBump.Normalize();
 
 	OnBumperReaction.Broadcast(1.f);
 }
@@ -344,4 +404,9 @@ void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 void APlayerBall::ReceiveGrappledAction(float InGrappledValue) // 0 -> end grappled	1 -> start grappled
 {
 	OnGrappledAction.Broadcast(InGrappledValue);
+}
+
+void APlayerBall::ReceiveSnappingAction(float SnappingValue)
+{
+	OnReceiveSnappingAction.Broadcast(SnappingValue);
 }
