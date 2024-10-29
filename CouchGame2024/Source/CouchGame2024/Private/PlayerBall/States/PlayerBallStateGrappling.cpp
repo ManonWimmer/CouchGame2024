@@ -215,7 +215,11 @@ void UPlayerBallStateGrappling::OnImpacted(float ImpactedValue) // impact ball -
 void UPlayerBallStateGrappling::SetCable()
 {
 	Pawn->GrapplingCable->SetWorldLocation(Pawn->GetActorLocation());
-	Pawn->HookPoint = Pawn->GrappledPlayerBall->GetActorLocation();
+
+	if (Pawn->GrappledPlayerBall != nullptr)
+	{
+		Pawn->HookPoint = Pawn->GrappledPlayerBall->GetActorLocation();
+	}
 
 	Pawn->CableLength = FVector::Dist(Pawn->GetActorLocation(), Pawn->HookPoint);
 
