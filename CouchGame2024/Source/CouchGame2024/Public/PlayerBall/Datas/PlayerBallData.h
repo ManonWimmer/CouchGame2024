@@ -88,6 +88,18 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Bumped")
 	float BumpedForceMultiplier = 30000.f;
 
+#pragma endregion
+
+
+
+#pragma region SnapMagnetic
+
+	UPROPERTY(EditAnywhere, Category = "SnapMagnetic")
+	float SnapAngularForce = 3000.f;
+
+	UPROPERTY(EditAnywhere, Category = "SnapMagnetic", meta = (ClampMin = "1.0", ClampMax = "100.0", SliderMin = "1.0", SliderMax = "100.0"))
+	float SnapControlMoveRollDivider = 2.f;
+
 #pragma endregion 
 	
 };
