@@ -37,4 +37,10 @@ private:
 
 	UFUNCTION()
 	void OnImpacted(float ImpactedValue);
+
+	UFUNCTION()
+	void SetCable();
+
+	UFUNCTION()
+	void SetGrapplingVelocityAndAngle(float DeltaTime);
 };

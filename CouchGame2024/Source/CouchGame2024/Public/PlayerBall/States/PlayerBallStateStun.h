@@ -44,4 +44,7 @@ private:
 
 	UFUNCTION()
 	void OnBumped(float BumpedValue);
+
+	UFUNCTION()
+	void OnSnapped(float InSnapValue);
 };
