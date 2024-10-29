@@ -169,7 +169,8 @@ void UPlayerBallStateMove::OnGrappling(float InGrapplingValue)
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Grappling);
+	if (InGrapplingValue == 1.f)
+		StateMachine->ChangeState(EPlayerBallStateID::Grappling);
 }
 
 void UPlayerBallStateMove::OnGrappled(float InGrappledValue)
