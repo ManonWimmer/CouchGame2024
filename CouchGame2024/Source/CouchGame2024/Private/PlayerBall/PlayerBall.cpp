@@ -367,7 +367,8 @@ void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 			TObjectPtr<APlayerBall> OtherPlayer = Cast<APlayerBall>(Actor);
 			if (OtherPlayer) 
 			{
-				OverlappingPlayers.Add(OtherPlayer);
+				if (OtherPlayer->GrappledPlayerBall == nullptr && OtherPlayer->GrapplingPlayerBall == nullptr)
+					OverlappingPlayers.Add(OtherPlayer);
 			}
 		}
 	}

@@ -253,7 +253,7 @@ public:
 	float GrapplingValue = 0.f;
 
 	UPROPERTY()
-	TObjectPtr<APlayerBall> GrappledPlayerBall;	// Ball grappled to this playerBall
+	TObjectPtr<APlayerBall> GrappledPlayerBall = nullptr;	// Ball grappled to this playerBall
 
 	UPROPERTY()
 	float CableLength = 0.f;
@@ -317,7 +317,7 @@ public:
 	void ReceiveGrappledAction(float InGrappledValue);
 
 	UPROPERTY()
-	TObjectPtr<APlayerBall> GrapplingPlayerBall;	// Ball grappling to this playerBall
+	TObjectPtr<APlayerBall> GrapplingPlayerBall = nullptr;	// Ball grappling to this playerBall
 
 #pragma endregion
 
