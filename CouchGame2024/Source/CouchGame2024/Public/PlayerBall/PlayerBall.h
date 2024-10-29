@@ -253,7 +253,7 @@ public:
 	float GrapplingValue = 0.f;
 
 	UPROPERTY()
-	TObjectPtr<APlayerBall> GrappledPlayerBall;	// Ball grappled to this playerBall
+	TObjectPtr<APlayerBall> GrappledPlayerBall = nullptr;	// Ball grappled to this playerBall
 
 	UPROPERTY()
 	float CableLength = 0.f;
@@ -282,25 +282,25 @@ public:
 	UPROPERTY()
 	FVector GrapplingOffset = FVector(0.f, 0.f, 0.f);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float GrapplingDamping = 0.99f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float GrapplingForce = 0.1f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float GrapplingReleaseForce = 250.f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float MinCableDistance = 200.f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float MaxCableDistance = 500.f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float MoreOrLessCablePerFrame = 10.f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float StartGrapplingForceFactorWhenAlreadyMoving = 0.001f;
 
 #pragma endregion
@@ -317,7 +317,7 @@ public:
 	void ReceiveGrappledAction(float InGrappledValue);
 
 	UPROPERTY()
-	TObjectPtr<APlayerBall> GrapplingPlayerBall;	// Ball grappling to this playerBall
+	TObjectPtr<APlayerBall> GrapplingPlayerBall = nullptr;	// Ball grappling to this playerBall
 
 #pragma endregion
 
@@ -337,6 +337,8 @@ public:
 	float SnapAngularForce = 3000.f;
 
 	float SnapControlMoveRollDivider = 2.f;
+
+	float MinVelocityToSnap = 200.f;
 
 #pragma endregion 
 
