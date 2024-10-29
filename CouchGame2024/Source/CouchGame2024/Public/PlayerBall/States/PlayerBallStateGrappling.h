@@ -46,4 +46,10 @@ private:
 
 	UPROPERTY()
 	FVector LastLocation = FVector::ZeroVector;
+
+	UPROPERTY()
+	float TempGrapplingAngularVelocity = 0.f;
+
+	UPROPERTY()
+	float TempGrapplingAngle = 0.f;
 };
