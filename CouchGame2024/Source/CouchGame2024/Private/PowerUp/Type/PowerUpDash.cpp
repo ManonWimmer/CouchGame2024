@@ -29,3 +29,10 @@ EPowerUpID APowerUpDash::GetPowerUpID() const
 	return EPowerUpID::Dash;
 }
 
+void APowerUpDash::TriggerPowerUp()
+{
+	
+	
+	Super::TriggerPowerUp();	// destroy object
+}
+
