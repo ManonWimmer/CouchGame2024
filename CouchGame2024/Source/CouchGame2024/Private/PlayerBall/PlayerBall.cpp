@@ -219,8 +219,7 @@ void APlayerBall::SetupData() // Get all data and set them
 	PunchCooldown = PlayerBallData->PunchCooldown;
 	PunchRadius = PlayerBallData->PunchRadius;
 	PunchForceMultiplier = PlayerBallData->PunchForceMultiplier;
-
-
+	
 	// Impact
 	ImpactForceMultiplier = PlayerBallData->ImpactForceMultiplier;
 	ImpactMinTotalForce = PlayerBallData->ImpactMinTotalForce;
@@ -234,6 +233,15 @@ void APlayerBall::SetupData() // Get all data and set them
 	SnapAngularForce = PlayerBallData->SnapAngularForce;
 	SnapControlMoveRollDivider = PlayerBallData->SnapControlMoveRollDivider;
 	MinVelocityToSnap = PlayerBallData->MinVelocityToSnap;
+
+	// Grappling
+	GrapplingDamping = PlayerBallData->SnapAngularForce;
+	GrapplingForce = PlayerBallData->GrapplingForce;
+	GrapplingReleaseForce = PlayerBallData->GrapplingReleaseForce;
+	MinCableDistance = PlayerBallData->MinCableDistance;
+	MaxCableDistance = PlayerBallData->MaxCableDistance;
+	MoreOrLessCablePerFrame = PlayerBallData->MoreOrLessCablePerFrame;
+	StartGrapplingForceFactorWhenAlreadyMoving = PlayerBallData->StartGrapplingForceFactorWhenAlreadyMoving;
 	
 }
 

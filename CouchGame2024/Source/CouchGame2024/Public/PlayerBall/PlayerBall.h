@@ -282,25 +282,25 @@ public:
 	UPROPERTY()
 	FVector GrapplingOffset = FVector(0.f, 0.f, 0.f);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float GrapplingDamping = 0.99f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float GrapplingForce = 0.1f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float GrapplingReleaseForce = 250.f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float MinCableDistance = 200.f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float MaxCableDistance = 500.f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float MoreOrLessCablePerFrame = 10.f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	float StartGrapplingForceFactorWhenAlreadyMoving = 0.001f;
 
 #pragma endregion
