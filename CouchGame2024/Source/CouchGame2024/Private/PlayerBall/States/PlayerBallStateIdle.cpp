@@ -143,7 +143,8 @@ void UPlayerBallStateIdle::OnGrappled(float InGrappledValue)
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Grappled);
+	if (InGrappledValue == 1.f)
+		StateMachine->ChangeState(EPlayerBallStateID::Grappled);
 }
 
 void UPlayerBallStateIdle::OnSnapped(float InSnapValue)

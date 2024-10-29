@@ -35,7 +35,7 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("PlayerState : Grappling"));
 
-	if (Pawn != nullptr)
+	if (Pawn != nullptr && Pawn->GrappledPlayerBall != nullptr)
 	{
 		Pawn->OnGrapplingAction.AddDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
@@ -56,7 +56,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 {
 	Super::StateExit(NextState);
 
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("c ciao"));
+	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("c ciao"));
 
 	if (Pawn != nullptr)
 	{
@@ -111,7 +111,7 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	float DistanceBetweenGrappledPlayers = FVector::Dist(Pawn->GetActorLocation(),
 	                                                     Pawn->GrappledPlayerBall->GetActorLocation());
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, Pawn->GrapplingOffset.ToString());
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, Pawn->GrapplingOffset.ToString());
 
 	FVector NormalizedDirection = (Pawn->GetActorLocation() - Pawn->GrappledPlayerBall->GetActorLocation()).
 		GetSafeNormal();
@@ -121,13 +121,13 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	{
 		if (Pawn->MoveYValue > 0.f && DistanceBetweenGrappledPlayers > Pawn->MinCableDistance) // Less cord
 		{
-			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Less cord");
+			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Less cord");
 
 			Pawn->GrapplingOffset -= NormalizedDirection * Pawn->MoreOrLessCablePerFrame;
 		}
 		else if (Pawn->MoveYValue < 0.f && DistanceBetweenGrappledPlayers < Pawn->MaxCableDistance) // More cord
 		{
-			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "More cord");
+			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "More cord");
 
 			Pawn->GrapplingOffset += NormalizedDirection * Pawn->MoreOrLessCablePerFrame;
 		}
@@ -181,7 +181,7 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 
 	Pawn->CurrentGrapplingAngularVelocity = TempGrapplingAngularVelocity;
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Angle %f"), TempGrapplingAngle));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Angle %f"), TempGrapplingAngle));
 	Pawn->CurrentGrapplingAngle = TempGrapplingAngle;
 	
 
@@ -219,14 +219,15 @@ void UPlayerBallStateGrappling::SetCable()
 	if (Pawn->GrappledPlayerBall != nullptr)
 	{
 		Pawn->HookPoint = Pawn->GrappledPlayerBall->GetActorLocation();
+
+		Pawn->CableLength = FVector::Dist(Pawn->GetActorLocation(), Pawn->HookPoint);
+
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Magenta, FString::Printf(TEXT("Cable Length: %f"), Pawn->CableLength));
+		Pawn->GrapplingCable->CableLength = Pawn->CableLength;
+
+	
+		Pawn->GrapplingCable->SetAttachEndToComponent(Pawn->GrappledPlayerBall->SphereMesh);
 	}
-
-	Pawn->CableLength = FVector::Dist(Pawn->GetActorLocation(), Pawn->HookPoint);
-
-	if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Magenta,
-	                                              FString::Printf(TEXT("Cable Length: %f"), Pawn->CableLength));
-	Pawn->GrapplingCable->CableLength = Pawn->CableLength;
-	Pawn->GrapplingCable->SetAttachEndToComponent(Pawn->GrappledPlayerBall->SphereMesh);
 }
 
 void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngle(float DeltaTime)
