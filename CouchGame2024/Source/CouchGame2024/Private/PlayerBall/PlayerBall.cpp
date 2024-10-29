@@ -283,6 +283,7 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	BallController->OnPlayerMoveYInput.AddDynamic(this, &APlayerBall::MoveYAction);
 	BallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
 	BallController->OnPlayerGrapplingInput.AddDynamic(this, &APlayerBall::ReceiveGrapplingAction);
+	BallController->OnPlayerMoreLessGrapplingInput.AddDynamic(this,&APlayerBall::MoreLessAction);
 }
 
 bool APlayerBall::IsGrounded()
@@ -435,4 +436,11 @@ void APlayerBall::ReceiveGrappledAction(float InGrappledValue) // 0 -> end grapp
 void APlayerBall::ReceiveSnappingAction(float SnappingValue)
 {
 	OnReceiveSnappingAction.Broadcast(SnappingValue);
+}
+
+void APlayerBall::MoreLessAction(float InMoreLessValue)
+{
+	MoreLessValue = InMoreLessValue;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("MoreLess : %f"), MoreLessValue));
 }

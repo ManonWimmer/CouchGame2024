@@ -345,5 +345,16 @@ public:
 
 #pragma endregion 
 
+#pragma region MoreLessGrappling
+public:
+	UPROPERTY()
+	float MoreLessValue;
+
+private:
+	UFUNCTION()
+	void MoreLessAction(float InMoreLessValue);
+	
+
+#pragma endregion
 	
 };
