@@ -4,6 +4,7 @@
 #include "PlayerBall/States/PlayerBallStateSnapping.h"
 
 #include "Components/SphereComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 
@@ -75,7 +76,12 @@ void UPlayerBallStateSnapping::StateTick(float DeltaTime)
 
 	Move(DeltaTime);
 
-	SnappingEffect(DeltaTime);
+	if (Pawn->GetVelocity().Length() >= Pawn->MinVelocityToSnap)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, TEXT("Snapping"));
+		SnappingEffect(DeltaTime);
+	}
+
 }
 
 void UPlayerBallStateSnapping::Move(float DeltaTime)
