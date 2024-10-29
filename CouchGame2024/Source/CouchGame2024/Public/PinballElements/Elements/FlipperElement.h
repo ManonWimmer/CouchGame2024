@@ -14,20 +14,12 @@ class COUCHGAME2024_API AFlipperElement : public APinballElement
 	GENERATED_BODY()
 
 public:
+	UFUNCTION()
+	void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                           const FHitResult& SweepResult);
 	// Sets default values for this actor's properties
 	AFlipperElement();
 
-private:
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UStaticMeshComponent> FlipperMesh;
-
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<USceneComponent> FlipperMeshRoot;
-
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UBoxComponent> FlipperBoxTrigger;
-	
-	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -36,24 +28,41 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void TriggerElement() override;
+#pragma region Components
+public:
 	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UBoxComponent> BoxTrigger;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStaticMeshComponent> FlipperMesh;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USceneComponent> FlipperMeshAnchor;
+
+#pragma endregion 
+	
+public:
+
 	virtual EPinballElementID GetElementID() override;
 
-private:
+	virtual void TriggerElement() override;
+
 	UFUNCTION(BlueprintCallable)
-	void ActivateFlip();
-
-	UFUNCTION()
-	void HandleFlipRotation(float DeltaTime);
+	void FlipUp();
 	
-	UPROPERTY()
-	bool IsFlipping;
-	
-	float CurrentRotationAngle = 0.0f;
+	UFUNCTION(BlueprintCallable)
+	void FlipDown();
 
-	UPROPERTY(EditAnywhere, Category = "Flipper Settings")
-	float FlipperMaxRotationAngle = 45.0f;
-	UPROPERTY(EditAnywhere, Category = "Flipper Settings")
-	float RotationSpeed = 90.0f;
+	UPROPERTY(EditAnywhere)
+	FRotator OriginalRotation;
+	UPROPERTY(EditAnywhere)
+	FRotator FlippedRotation;
+	bool bIsFlipped;
+
+	UPROPERTY(EditAnywhere)
+	float FlipUpSpeed = 20.f;
+
+	UPROPERTY(EditAnywhere)
+	float FlipDownSpeed = 20.f;
 };
