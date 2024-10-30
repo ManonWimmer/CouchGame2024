@@ -45,11 +45,13 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 
 	if (Pawn != nullptr)
 	{
+		Pawn->CanGrappling = true;
+		
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateIdle::OnStunned);
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateIdle::OnPunch);
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateIdle::OnImpacted);
 		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateIdle::OnBumped);
-		Pawn->OnGrapplingAction.AddDynamic(this, &UPlayerBallStateIdle::OnGrappling);
+		Pawn->OnGrapplingActionStarted.AddDynamic(this, &UPlayerBallStateIdle::OnGrappling);
 		Pawn->OnGrappledAction.AddDynamic(this, &UPlayerBallStateIdle::OnGrappled);
 
 		Pawn->OnReceiveSnappingAction.AddDynamic(this, &UPlayerBallStateIdle::OnSnapped);
@@ -66,7 +68,7 @@ void UPlayerBallStateIdle::StateExit(EPlayerBallStateID NextState)
 		Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnPunch);
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnImpacted);
 		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateIdle::OnBumped);
-		Pawn->OnGrapplingAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnGrappling);
+		Pawn->OnGrapplingActionStarted.RemoveDynamic(this, &UPlayerBallStateIdle::OnGrappling);
 		Pawn->OnGrappledAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnGrappled);
 
 		Pawn->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnSnapped);

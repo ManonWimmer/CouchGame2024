@@ -35,6 +35,8 @@ void UPlayerBallStateGrappled::StateEnter(EPlayerBallStateID PreviousState)
 	
 	if (Pawn != nullptr)	// link state to events
 	{
+		Pawn->CanGrappling = false;
+		
 		Pawn->OnGrappledAction.AddDynamic(this, &UPlayerBallStateGrappled::OnEndGrappled);
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappled::OnStunned);
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateGrappled::OnImpacted);

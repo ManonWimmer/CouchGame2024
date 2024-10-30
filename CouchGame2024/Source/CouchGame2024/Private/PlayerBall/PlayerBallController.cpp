@@ -96,9 +96,15 @@ void APlayerBallController::BindMoveYInput(UEnhancedInputComponent* EnhancedInpu
 #pragma endregion
 
 #pragma region Grappling
-void APlayerBallController::GrapplingInput(const FInputActionValue& GrapplingInput)
+
+void APlayerBallController::GrapplingInputStarted(const FInputActionValue& GrapplingInput)
 {
-	OnPlayerGrapplingInput.Broadcast(GrapplingInput.Get<float>());
+	OnPlayerGrapplingInputStarted.Broadcast(GrapplingInput.Get<float>());
+}
+
+void APlayerBallController::GrapplingInputEnded(const FInputActionValue& GrapplingInput)
+{
+	OnPlayerGrapplingInputEnded.Broadcast(GrapplingInput.Get<float>());
 }
 
 void APlayerBallController::BindGrapplingInput(UEnhancedInputComponent* EnhancedInputComponent)
@@ -111,13 +117,13 @@ void APlayerBallController::BindGrapplingInput(UEnhancedInputComponent* Enhanced
 		PlayerInputsData->GrapplingAction,
 		ETriggerEvent::Started,
 		this,
-		&APlayerBallController::GrapplingInput
+		&APlayerBallController::GrapplingInputStarted
 	);
 	EnhancedInputComponent->BindAction(
 		PlayerInputsData->GrapplingAction,
 		ETriggerEvent::Completed,
 		this,
-		&APlayerBallController::GrapplingInput
+		&APlayerBallController::GrapplingInputEnded
 	);
 }
 #pragma endregion

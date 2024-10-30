@@ -35,9 +35,14 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("PlayerState : Grappling"));
 
+	if (Pawn != nullptr)
+	{
+		Pawn->CanGrappling = false;
+	}
+	
 	if (Pawn != nullptr && Pawn->GrappledPlayerBall != nullptr)
 	{
-		Pawn->OnGrapplingAction.AddDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
+		Pawn->OnGrapplingActionEnded.AddDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
 
@@ -60,7 +65,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
 	{
-		Pawn->OnGrapplingAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
+		Pawn->OnGrapplingActionEnded.RemoveDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
 		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnStunned);
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
 
@@ -76,11 +81,23 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 
 		Pawn->GrapplingCable->SetHiddenInGame(true);
 
+		/*
 		Pawn->ReleaseDirection = Pawn->GetActorLocation() + (Pawn->GetActorLocation() - Pawn->GrappledPlayerBall->
 				GetActorLocation()).
 			RotateAngleAxis(Pawn->AngleRotate, FVector(1, 0, 0));
+			*/
+		// ------ Changed Part ----------
+		Pawn->ReleaseDirection = Pawn->GetActorLocation() - Pawn->GrappledPlayerBall->
+				GetActorLocation();
+		float TempX = Pawn->ReleaseDirection.X;
+		Pawn->ReleaseDirection.X = -Pawn->ReleaseDirection.Y;	// To get perpendicular vector of n : n(x, y) -> np(-y, x)
+		Pawn->ReleaseDirection.Y = TempX;
 		Pawn->ReleaseDirection.Z = 0.f;
 
+		Pawn->ReleaseDirection *= FMath::Sign(Pawn->CurrentGrapplingAngularVelocity);
+		DrawDebugLine(GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Pawn->ReleaseDirection * 500.f, FColor::Red, false, 5.f);
+		// Changed Part
+		
 		Pawn->SphereCollision->AddImpulse(
 			Pawn->ReleaseDirection.GetSafeNormal(0.0001f) * FMath::Abs(Pawn->CurrentGrapplingAngularVelocity) * Pawn->
 			GrapplingReleaseForce,
@@ -154,6 +171,7 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 		CollisionParams
 	);
 
+	/*
 	// Dessine une sphère de débogage
 	DrawDebugSphere(
 		GetWorld(),
@@ -166,7 +184,8 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 		0,                         // Prio
 		1.0f                       // Épaisseur de la ligne
 	);
-
+	*/
+	
 	if(bHasDetected)
 	{
 		Pawn->SphereCollision->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
