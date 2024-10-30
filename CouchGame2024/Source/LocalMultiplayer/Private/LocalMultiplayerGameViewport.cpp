@@ -15,7 +15,7 @@ void ULocalMultiplayerGameViewport::PostInitProperties()
 {
 	Super::PostInitProperties();
 
-	MaxSplitscreenPlayers = 4;
+	MaxSplitscreenPlayers = 8;
 }
 
 // Détection des inputs + attribution des players index en fonction de la touche du clavier / bouton de la manette fourni en paramètre.
@@ -49,7 +49,7 @@ bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs
 			{
 				FInputKeyParams KeyParams(EventArgs.Key, EventArgs.Event, EventArgs.AmountDepressed);
 			
-				Controller->InputKey(KeyParams);
+				return Controller->InputKey(KeyParams);
 			}
 		}
 		else
@@ -74,7 +74,7 @@ bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs
 		if (Controller)
 		{
 			FInputKeyParams KeyParams(EventArgs.Key, EventArgs.Event, EventArgs.AmountDepressed);
-			Controller->InputKey(KeyParams);
+			return Controller->InputKey(KeyParams);
 		}
 
 	}
@@ -110,9 +110,9 @@ bool ULocalMultiplayerGameViewport::InputAxis(FViewport* InViewport, FInputDevic
 		if (Controller)
 		{
 			GEngine->AddOnScreenDebugMessage(-1,3.f, FColor::Yellow,Controller->GetName());
-
+			GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Orange, Controller->GetPawn()->GetName());
 			FInputKeyParams KeyParams(Key, Delta, DeltaTime, NumSamples, bGamepad, InputDevice);
-			Controller->InputKey(KeyParams);
+			return Controller->InputKey(KeyParams);
 		}
 	}
 	
