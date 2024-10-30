@@ -47,6 +47,7 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 		CurrentPunchTimeRemaining = Pawn->PunchCooldown;
 
 		Pawn->CanGrappling = false;
+		Pawn->CanBeGrappled = false;
 		
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStatePunch::OnImpacted);
 		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStatePunch::OnBumped);

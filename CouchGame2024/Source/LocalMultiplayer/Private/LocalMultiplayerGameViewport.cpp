@@ -99,10 +99,12 @@ bool ULocalMultiplayerGameViewport::InputAxis(FViewport* InViewport, FInputDevic
 
 			MultiplayerSubsystem->AssignGamepadInputMapping(PlayerIndex, ELocalMultiplayerInputMappingType::InGame);
 
-			APlayerController* Controller = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), PlayerIndex);
-			
+		}
+		APlayerController* Controller = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), PlayerIndex);
+
+		if (Controller)
+		{
 			FInputKeyParams KeyParams(Key, Delta, DeltaTime, NumSamples, bGamepad, InputDevice);
-				
 			Controller->InputKey(KeyParams);
 		}
 	}
