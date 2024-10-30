@@ -47,6 +47,8 @@ void UPlayerBallStateBumped::StateEnter(EPlayerBallStateID PreviousState)
 
 	if (Pawn != nullptr)
 	{
+		Pawn->CanGrappling = false;
+		
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateBumped::OnStunned);
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateBumped::OnImpacted);
 		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateBumped::OnBumped);

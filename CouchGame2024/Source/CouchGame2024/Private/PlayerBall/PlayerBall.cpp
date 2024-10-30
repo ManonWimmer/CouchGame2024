@@ -173,9 +173,7 @@ void APlayerBall::Tick(float DeltaTime)
 
 	TickStateMachine(DeltaTime);
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Red,
-	                                              FString::Printf(
-		                                              TEXT("Current state: %hhd"), StateMachine->GetCurrentStateID()));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Red, FString::Printf(TEXT("Current state: %hhd"), StateMachine->GetCurrentStateID()));
 }
 
 // Called to bind functionality to input
@@ -282,7 +280,8 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	BallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
 	BallController->OnPlayerMoveYInput.AddDynamic(this, &APlayerBall::MoveYAction);
 	BallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
-	BallController->OnPlayerGrapplingInput.AddDynamic(this, &APlayerBall::ReceiveGrapplingAction);
+	BallController->OnPlayerGrapplingInputStarted.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionStarted);
+	BallController->OnPlayerGrapplingInputEnded.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionEnded);
 	BallController->OnPlayerMoreLessGrapplingInput.AddDynamic(this,&APlayerBall::MoreLessAction);
 }
 
@@ -353,17 +352,17 @@ void APlayerBall::ReceiveBumperReaction(APinballElement* Element, const FVector 
 
 	OnBumperReaction.Broadcast(1.f);
 }
-
+/*
 void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "grappling action");
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "grappling action");
 
 	if (StateMachine->GetCurrentStateID() == EPlayerBallStateID::Stun)
 		return;
 	
 	if (InGrapplingValue == 0)
 	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "cc");
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "cc");
 		OnGrapplingAction.Broadcast(InGrapplingValue);
 		return;
 	}
@@ -378,7 +377,7 @@ void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 
 	if (OverlappingActors.Num() <= 0)
 	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "pas de joueur");
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "pas de joueur");
 	
 		return;
 	}
@@ -398,7 +397,7 @@ void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 
 	if (OverlappingPlayers.Num() <= 0)
 	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "pas de joueur 2");
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "pas de joueur 2");
 	
 		return;
 	}
@@ -420,12 +419,91 @@ void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 	GrappledPlayerBall->GrapplingPlayerBall = this;
 	IsGrappling = true;
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "oui");
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "broadcast grappling");
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "oui");
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "broadcast grappling");
 
 	if (GrappledPlayerBall != nullptr)
 		OnGrapplingAction.Broadcast(GrapplingValue);
 	
+}
+*/
+void APlayerBall::ReceiveGrapplingActionStarted(float InGrapplingValue)
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Start grappling");
+
+	if (!CanGrappling)
+		return;
+	
+	if (InGrapplingValue == 0)
+	{
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "cc");
+		OnGrapplingActionEnded.Broadcast(InGrapplingValue);
+		return;
+	}
+	
+	GrapplingValue = InGrapplingValue;
+
+	// Check for nearest in grappling radius
+	IsGrappling = false;
+	TArray<TObjectPtr<AActor>> OverlappingActors;
+	TArray<TObjectPtr<APlayerBall>> OverlappingPlayers;
+	SphereCollision->GetOverlappingActors(OverlappingActors, APlayerBall::StaticClass());
+
+	if (OverlappingActors.Num() <= 0)
+	{
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "pas de joueur");
+	
+		return;
+	}
+
+	for (TObjectPtr<AActor> Actor : OverlappingActors)
+	{
+		if (Actor != this)
+		{
+			TObjectPtr<APlayerBall> OtherPlayer = Cast<APlayerBall>(Actor);
+			if (OtherPlayer) 
+			{
+				if (OtherPlayer->GrappledPlayerBall == nullptr && OtherPlayer->GrapplingPlayerBall == nullptr)
+					OverlappingPlayers.Add(OtherPlayer);
+			}
+		}
+	}
+
+	if (OverlappingPlayers.Num() <= 0)
+	{
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "pas de joueur 2");
+	
+		return;
+	}
+
+	TObjectPtr<APlayerBall> NearestPlayerBall = OverlappingPlayers[0];
+	float NearestDistance = FVector::Dist(GetActorLocation(), NearestPlayerBall->GetActorLocation());
+
+	for (APlayerBall* PlayerBall : OverlappingPlayers)
+	{
+		float NewNearestDistance = FVector::Dist(GetActorLocation(), PlayerBall->GetActorLocation());
+		if (NewNearestDistance < NearestDistance)
+		{
+			NearestPlayerBall = PlayerBall;
+			NearestDistance = NewNearestDistance;
+		}
+	}
+
+	GrappledPlayerBall = NearestPlayerBall;
+	GrappledPlayerBall->GrapplingPlayerBall = this;
+	IsGrappling = true;
+
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "oui");
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "broadcast grappling");
+
+	if (GrappledPlayerBall != nullptr)
+		OnGrapplingActionStarted.Broadcast(GrapplingValue);
+}
+
+void APlayerBall::ReceiveGrapplingActionEnded(float InGrapplingValue)
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "End Grappling");
+	OnGrapplingActionEnded.Broadcast(InGrapplingValue);
 }
 
 void APlayerBall::ReceiveGrappledAction(float InGrappledValue) // 0 -> end grappled	1 -> start grappled
@@ -441,6 +519,4 @@ void APlayerBall::ReceiveSnappingAction(float SnappingValue)
 void APlayerBall::MoreLessAction(float InMoreLessValue)
 {
 	MoreLessValue = InMoreLessValue;
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("MoreLess : %f"), MoreLessValue));
 }

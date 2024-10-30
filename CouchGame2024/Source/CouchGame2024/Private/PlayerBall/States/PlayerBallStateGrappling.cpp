@@ -35,9 +35,14 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("PlayerState : Grappling"));
 
+	if (Pawn != nullptr)
+	{
+		Pawn->CanGrappling = false;
+	}
+	
 	if (Pawn != nullptr && Pawn->GrappledPlayerBall != nullptr)
 	{
-		Pawn->OnGrapplingAction.AddDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
+		Pawn->OnGrapplingActionEnded.AddDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
 
@@ -60,7 +65,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
 	{
-		Pawn->OnGrapplingAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
+		Pawn->OnGrapplingActionEnded.RemoveDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
 		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnStunned);
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
 
@@ -154,6 +159,7 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 		CollisionParams
 	);
 
+	/*
 	// Dessine une sphère de débogage
 	DrawDebugSphere(
 		GetWorld(),
@@ -166,7 +172,8 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 		0,                         // Prio
 		1.0f                       // Épaisseur de la ligne
 	);
-
+	*/
+	
 	if(bHasDetected)
 	{
 		Pawn->SphereCollision->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);

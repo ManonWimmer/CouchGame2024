@@ -68,13 +68,19 @@ public:
 #pragma region Grappling Input
 public:
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerGrapplingInput, float, GrapplingInput);
-
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerGrapplingInputStarted, float, GrapplingInput);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerGrapplingInputEnded, float, GrapplingInput);
+	
+	
 	UPROPERTY(BlueprintCallable)
-	FOnPlayerGrapplingInput OnPlayerGrapplingInput;
+	FOnPlayerGrapplingInputStarted OnPlayerGrapplingInputStarted;
+	UPROPERTY(BlueprintCallable)
+	FOnPlayerGrapplingInputEnded OnPlayerGrapplingInputEnded;
 
 	UFUNCTION()
-	void GrapplingInput(const FInputActionValue& GrapplingInput);
+	void GrapplingInputStarted(const FInputActionValue& GrapplingInput);
+	UFUNCTION()
+	void GrapplingInputEnded(const FInputActionValue& GrapplingInput);
 
 	UFUNCTION()
 	void BindGrapplingInput(UEnhancedInputComponent* EnhancedInputComponent);

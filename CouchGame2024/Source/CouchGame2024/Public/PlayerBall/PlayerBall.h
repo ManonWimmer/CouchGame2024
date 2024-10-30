@@ -244,14 +244,24 @@ private:
 #pragma region Grappling
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrapplingAction, float, GrapplingValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrapplingActionStarted, float, GrapplingValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrapplingActionEnded, float, GrapplingValue);
 	
 	UPROPERTY()
-	FOnGrapplingAction OnGrapplingAction;
+	FOnGrapplingActionStarted OnGrapplingActionStarted;
+	UPROPERTY()
+	FOnGrapplingActionEnded OnGrapplingActionEnded;
 	
-	UFUNCTION()
-	void ReceiveGrapplingAction(float InGrapplingValue);
+	// UFUNCTION()
+	// void ReceiveGrapplingAction(float InGrapplingValue);
 
+	UFUNCTION()
+	void ReceiveGrapplingActionStarted(float InGrapplingValue);
+	UFUNCTION()
+	void ReceiveGrapplingActionEnded(float InGrapplingValue);
+
+	bool CanGrappling = false;
+	
 	UPROPERTY()
 	float GrapplingValue = 0.f;
 

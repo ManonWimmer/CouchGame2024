@@ -45,6 +45,8 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 	if (Pawn != nullptr)
 	{
 		CurrentPunchTimeRemaining = Pawn->PunchCooldown;
+
+		Pawn->CanGrappling = false;
 		
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStatePunch::OnImpacted);
 		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStatePunch::OnBumped);
@@ -127,8 +129,10 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 		CollisionParams
 	);
 
+	/*
 	if (Pawn->GetWorld())
 		DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->PunchRadius, 12, FColor::Blue, false, 3.f);
+	*/
 
 	if (bHasDetected)	// has detected a pawn
 	{
@@ -137,7 +141,7 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 			APlayerBall* DetectedBall = Cast<APlayerBall>(Result.GetActor());	// Check if Player Ball
 			if (DetectedBall)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Ball Found : %s"), *DetectedBall->GetName());
+				//UE_LOG(LogTemp, Warning, TEXT("Ball Found : %s"), *DetectedBall->GetName());
 
 				return DetectedBall;
 			}
