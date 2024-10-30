@@ -4,7 +4,6 @@
 #include "LocalMultiplayerSubsystem.h"
 
 #include "EnhancedInputSubsystems.h"
-#include "HeadMountedDisplayTypes.h"
 #include "LocalMultiplayerSettings.h"
 #include "Kismet/GameplayStatics.h"
 

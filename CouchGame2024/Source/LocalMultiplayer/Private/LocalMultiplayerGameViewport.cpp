@@ -3,7 +3,6 @@
 
 #include "LocalMultiplayerGameViewport.h"
 
-#include "K2Node_GetSubsystem.h"
 #include "LocalMultiplayerSettings.h"
 #include "LocalMultiplayerSubsystem.h"
 #include "GameFramework/PlayerInput.h"
