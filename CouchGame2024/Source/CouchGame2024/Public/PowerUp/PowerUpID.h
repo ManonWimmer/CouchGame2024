@@ -13,5 +13,6 @@ UENUM(BlueprintType)
 enum class EPowerUpID : uint8
 {
  None = 0,
- Dash
+ Dash,
+ Collectible
 };

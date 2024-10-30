@@ -119,15 +119,15 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 		GetSafeNormal();
 
 	// More or less cord
-	if (FMath::Abs(Pawn->MoveYValue) > 0.5f)
+	if (FMath::Abs(Pawn->MoreLessValue) > 0.5f)
 	{
-		if (Pawn->MoveYValue > 0.f && DistanceBetweenGrappledPlayers > Pawn->MinCableDistance) // Less cord
+		if (Pawn->MoreLessValue > 0.f && DistanceBetweenGrappledPlayers > Pawn->MinCableDistance) // Less cord
 		{
 			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Less cord");
 
 			Pawn->GrapplingOffset -= NormalizedDirection * Pawn->MoreOrLessCablePerFrame;
 		}
-		else if (Pawn->MoveYValue < 0.f && DistanceBetweenGrappledPlayers < Pawn->MaxCableDistance) // More cord
+		else if (Pawn->MoreLessValue < 0.f && DistanceBetweenGrappledPlayers < Pawn->MaxCableDistance) // More cord
 		{
 			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "More cord");
 

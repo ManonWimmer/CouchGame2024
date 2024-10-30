@@ -40,6 +40,7 @@ void AMatchPinballGameMode::FindPlayerBallSpawnInWorld(TArray<APlayerBallSpawn*>
 
 void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> SpawnPoints)
 {
+	int PlayerIndex = 0;
 	for (APlayerBallSpawn* SpawnPoint : SpawnPoints)
 	{
 		EAutoReceiveInput::Type InputType = SpawnPoint->AutoReceiveInput.GetValue();
@@ -50,12 +51,15 @@ void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> Spa
 
 		APlayerBall* NewCharacter = GetWorld()->SpawnActorDeferred<APlayerBall>(PlayerBallClass, SpawnPoint->GetTransform());
 
+		NewCharacter->PlayerIndex = PlayerIndex;
+		
 		if (NewCharacter == nullptr) continue;
 		
 		NewCharacter->AutoPossessPlayer = SpawnPoint->AutoReceiveInput;
 		NewCharacter->FinishSpawning(SpawnPoint->GetTransform());
 
 		PlayersBallInsideArena.Add(NewCharacter);
+		PlayerIndex++;
 	}
 }
 

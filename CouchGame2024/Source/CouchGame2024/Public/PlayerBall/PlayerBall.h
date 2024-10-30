@@ -45,6 +45,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY()
+	int PlayerIndex = 0;
+
 
 
 #pragma region Setup Data
@@ -342,5 +345,16 @@ public:
 
 #pragma endregion 
 
+#pragma region MoreLessGrappling
+public:
+	UPROPERTY()
+	float MoreLessValue;
+
+private:
+	UFUNCTION()
+	void MoreLessAction(float InMoreLessValue);
+	
+
+#pragma endregion
 	
 };
