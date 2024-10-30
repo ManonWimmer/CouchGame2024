@@ -38,6 +38,7 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 	if (Pawn != nullptr)
 	{
 		Pawn->CanGrappling = false;
+		Pawn->CanBeGrappled = false;
 	}
 	
 	if (Pawn != nullptr && Pawn->GrappledPlayerBall != nullptr)
@@ -53,7 +54,7 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 		Pawn->CurrentGrapplingAngle = atan2f(Direction.Y, Direction.X);
 		Pawn->CurrentGrapplingAngularVelocity = 0.f;
 
-		Pawn->GrappledPlayerBall->ReceiveGrappledAction(1.f);
+		Pawn->GrappledPlayerBall->ReceiveGrappledActionStarted(1.f);
 	}
 }
 
@@ -106,7 +107,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 		Pawn->CurrentGrapplingAngle = 0.f;
 		Pawn->CurrentGrapplingAngularVelocity = 0.f;
 
-		Pawn->GrappledPlayerBall->ReceiveGrappledAction(0.f);
+		Pawn->GrappledPlayerBall->ReceiveGrappledActionEnded(0.f);
 
 		// Reset Grappled Player & Grappling Player
 		Pawn->GrappledPlayerBall->GrapplingPlayerBall = nullptr;

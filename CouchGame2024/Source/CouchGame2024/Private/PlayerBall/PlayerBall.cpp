@@ -469,7 +469,7 @@ void APlayerBall::ReceiveGrapplingActionStarted(float InGrapplingValue)
 			TObjectPtr<APlayerBall> OtherPlayer = Cast<APlayerBall>(Actor);
 			if (OtherPlayer) 
 			{
-				if (OtherPlayer->GrappledPlayerBall == nullptr && OtherPlayer->GrapplingPlayerBall == nullptr)
+				if (OtherPlayer->GrappledPlayerBall == nullptr && OtherPlayer->GrapplingPlayerBall == nullptr && OtherPlayer->CanBeGrappled)
 					OverlappingPlayers.Add(OtherPlayer);
 			}
 		}
@@ -512,9 +512,14 @@ void APlayerBall::ReceiveGrapplingActionEnded(float InGrapplingValue)
 	OnGrapplingActionEnded.Broadcast(InGrapplingValue);
 }
 
-void APlayerBall::ReceiveGrappledAction(float InGrappledValue) // 0 -> end grappled	1 -> start grappled
+void APlayerBall::ReceiveGrappledActionStarted(float InGrappledValue) // 0 -> end grappled	1 -> start grappled
 {
-	OnGrappledAction.Broadcast(InGrappledValue);
+	OnGrappledActionStarted.Broadcast(InGrappledValue);
+}
+
+void APlayerBall::ReceiveGrappledActionEnded(float InGrappledValue)
+{
+	OnGrappledActionEnded.Broadcast(InGrappledValue);
 }
 
 void APlayerBall::ReceiveSnappingAction(float SnappingValue)

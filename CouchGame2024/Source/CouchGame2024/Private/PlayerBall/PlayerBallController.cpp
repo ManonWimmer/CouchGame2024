@@ -171,6 +171,13 @@ void APlayerBallController::BindMoreLessGrapplingInput(UEnhancedInputComponent* 
 
 	EnhancedInputComponent->BindAction(
 		PlayerInputsData->MoreLessGrappling,
+		ETriggerEvent::Triggered,
+		this,
+		&APlayerBallController::MoreLessGrapplingInput
+		);
+
+	EnhancedInputComponent->BindAction(
+		PlayerInputsData->MoreLessGrappling,
 		ETriggerEvent::Completed,
 		this,
 		&APlayerBallController::MoreLessGrapplingInput

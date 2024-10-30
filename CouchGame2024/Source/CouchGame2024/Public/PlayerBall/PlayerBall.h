@@ -321,13 +321,19 @@ public:
 #pragma region Grappled
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrappledAction, float, GrappledValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrappledActionStarted, float, GrappledValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrappledActionEnded, float, GrappledValue);
+
 	
 	UPROPERTY()
-	FOnGrappledAction OnGrappledAction;
+	FOnGrappledActionStarted OnGrappledActionStarted;
+	FOnGrappledActionEnded OnGrappledActionEnded;
+	
+	bool CanBeGrappled = false;
 	
 	UFUNCTION()
-	void ReceiveGrappledAction(float InGrappledValue);
+	void ReceiveGrappledActionStarted(float InGrappledValue);
+	void ReceiveGrappledActionEnded(float InGrappledValue);
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<APlayerBall> GrapplingPlayerBall = nullptr;	// Ball grappling to this playerBall
