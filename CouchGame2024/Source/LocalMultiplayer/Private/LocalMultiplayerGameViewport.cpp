@@ -65,11 +65,10 @@ bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs
 		{
 			PlayerIndex = MultiplayerSubsystem->AssignNewPlayerToGamepadProfileID(EventArgs.InputDevice.GetId());
 			MultiplayerSubsystem->AssignGamepadInputMapping(PlayerIndex, ELocalMultiplayerInputMappingType::InGame);
-
-
-			
 		}
+		
 		APlayerController* Controller = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), PlayerIndex);
+
 		if (Controller)
 		{
 			FInputKeyParams KeyParams(EventArgs.Key, EventArgs.Event, EventArgs.AmountDepressed);

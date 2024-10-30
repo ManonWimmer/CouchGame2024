@@ -162,8 +162,6 @@ void APlayerBall::BeginPlay()
 	InitStateMachine();
 
 	SetupData();
-
-	GrapplingSphereCollision->SetSphereRadius(MaxCableDistance); // Max grappling cable distance
 }
 
 // Called every frame
@@ -235,6 +233,14 @@ void APlayerBall::SetupData() // Get all data and set them
 	SnapAngularForce = PlayerBallData->SnapAngularForce;
 	SnapControlMoveRollDivider = PlayerBallData->SnapControlMoveRollDivider;
 	MinVelocityToSnap = PlayerBallData->MinVelocityToSnap;
+	if (PlayerBallData->SnapTriggerRadius == PlayerBallData->MaxCableDistance)	// to avoid a case in which 2 spheres overlap and causes physics bug
+	{
+		AttractionSphere->SetSphereRadius(PlayerBallData->SnapTriggerRadius - 2.f);
+	}
+	else
+	{
+		AttractionSphere->SetSphereRadius(PlayerBallData->SnapTriggerRadius);
+	}
 
 	// Grappling
 	GrapplingDamping = PlayerBallData->GrapplingDamping;
@@ -244,7 +250,7 @@ void APlayerBall::SetupData() // Get all data and set them
 	MaxCableDistance = PlayerBallData->MaxCableDistance;
 	MoreOrLessCablePerFrame = PlayerBallData->MoreOrLessCablePerFrame;
 	StartGrapplingForceFactorWhenAlreadyMoving = PlayerBallData->StartGrapplingForceFactorWhenAlreadyMoving;
-	
+	GrapplingSphereCollision->SetSphereRadius(MaxCableDistance); // Max grappling cable distance
 }
 
 
