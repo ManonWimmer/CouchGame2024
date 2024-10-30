@@ -37,9 +37,6 @@ bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs
 			if (PlayerIndex == -1)
 			{
 				PlayerIndex = MultiplayerSubsystem->AssignNewPlayerToKeyboardProfile(KeyboardIndex);
-				
-				GEngine->AddOnScreenDebugMessage(-1,3.f, FColor::Yellow,FString::Printf(TEXT("Player Index : %d"), PlayerIndex));
-				
 				MultiplayerSubsystem->AssignKeyboardMapping(PlayerIndex, KeyboardIndex, ELocalMultiplayerInputMappingType::InGame);
 			}
 			APlayerController* Controller = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), PlayerIndex);
@@ -64,7 +61,7 @@ bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs
 		{
 
 			PlayerIndex = MultiplayerSubsystem->AssignNewPlayerToGamepadProfileID(EventArgs.InputDevice.GetId());
-			GEngine->AddOnScreenDebugMessage(-1,3.f, FColor::Yellow,FString::Printf(TEXT("Player Index : %d"), PlayerIndex));
+			//GEngine->AddOnScreenDebugMessage(-1,3.f, FColor::Yellow,FString::Printf(TEXT("Player Index : %d"), PlayerIndex));
 			MultiplayerSubsystem->AssignGamepadInputMapping(PlayerIndex, ELocalMultiplayerInputMappingType::InGame);
 		}
 		
@@ -98,18 +95,12 @@ bool ULocalMultiplayerGameViewport::InputAxis(FViewport* InViewport, FInputDevic
 		{
 
 			PlayerIndex = MultiplayerSubsystem->AssignNewPlayerToGamepadProfileID(InputDevice.GetId());
-			GEngine->AddOnScreenDebugMessage(-1,3.f, FColor::Yellow,FString::Printf(TEXT("Player Index : %d"), PlayerIndex));
-			GEngine->AddOnScreenDebugMessage(-1,3.f, FColor::Yellow,FString::Printf(TEXT("Device ID : %d"), InputDevice.GetId()));
-
 			MultiplayerSubsystem->AssignGamepadInputMapping(PlayerIndex, ELocalMultiplayerInputMappingType::InGame);
-
 		}
 		APlayerController* Controller = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), PlayerIndex);
 
 		if (Controller)
 		{
-			GEngine->AddOnScreenDebugMessage(-1,3.f, FColor::Yellow,Controller->GetName());
-			GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Orange, Controller->GetPawn()->GetName());
 			FInputKeyParams KeyParams(Key, Delta, DeltaTime, NumSamples, bGamepad, InputDevice);
 			return Controller->InputKey(KeyParams);
 		}

@@ -32,15 +32,9 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
-	/*
-	GEngine->AddOnScreenDebugMessage
-	(
-		-1,
-		2.f,
-		FColor::Red,
-		TEXT("PlayerState : Idle")
-	);
-	*/
+	
+	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("PlayerState : Idle"));
+	
 	
 
 	if (Pawn != nullptr)
