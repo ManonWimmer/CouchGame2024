@@ -41,6 +41,11 @@ void UPlayerBallStateImpact::StateEnter(EPlayerBallStateID PreviousState)
 		TEXT("PlayerState : Impact")
 	);
 	*/
+
+	if (Pawn != nullptr)
+	{
+		Pawn->CanGrappling = false;
+	}
 	
 	ImpactedBall(1.f);
 	
