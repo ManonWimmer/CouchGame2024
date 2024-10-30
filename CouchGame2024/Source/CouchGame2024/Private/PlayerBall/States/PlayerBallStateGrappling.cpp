@@ -81,11 +81,23 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 
 		Pawn->GrapplingCable->SetHiddenInGame(true);
 
+		/*
 		Pawn->ReleaseDirection = Pawn->GetActorLocation() + (Pawn->GetActorLocation() - Pawn->GrappledPlayerBall->
 				GetActorLocation()).
 			RotateAngleAxis(Pawn->AngleRotate, FVector(1, 0, 0));
+			*/
+		// ------ Changed Part ----------
+		Pawn->ReleaseDirection = Pawn->GetActorLocation() - Pawn->GrappledPlayerBall->
+				GetActorLocation();
+		float TempX = Pawn->ReleaseDirection.X;
+		Pawn->ReleaseDirection.X = -Pawn->ReleaseDirection.Y;	// To get perpendicular vector of n : n(x, y) -> np(-y, x)
+		Pawn->ReleaseDirection.Y = TempX;
 		Pawn->ReleaseDirection.Z = 0.f;
 
+		Pawn->ReleaseDirection *= FMath::Sign(Pawn->CurrentGrapplingAngularVelocity);
+		DrawDebugLine(GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Pawn->ReleaseDirection * 500.f, FColor::Red, false, 5.f);
+		// Changed Part
+		
 		Pawn->SphereCollision->AddImpulse(
 			Pawn->ReleaseDirection.GetSafeNormal(0.0001f) * FMath::Abs(Pawn->CurrentGrapplingAngularVelocity) * Pawn->
 			GrapplingReleaseForce,
