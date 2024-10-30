@@ -79,6 +79,22 @@ public:
 	UFUNCTION()
 	void BindGrapplingInput(UEnhancedInputComponent* EnhancedInputComponent);
 
+#pragma endregion
+
+#pragma region MoreLessGrapplingInput
+public:
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerMoreLessGrapplingInput, float, MoreLessGrapplingInput);
+
+	UPROPERTY()
+	FOnPlayerMoreLessGrapplingInput OnPlayerMoreLessGrapplingInput;
+	
+	UFUNCTION()
+	void MoreLessGrapplingInput(const FInputActionValue& InputActionValue);
+
+	UFUNCTION()
+	void BindMoreLessGrapplingInput(UEnhancedInputComponent* EnhancedInputComponent);
+	
 #pragma endregion 
 	
 };

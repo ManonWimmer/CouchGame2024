@@ -35,6 +35,11 @@ EPowerUpID APowerUp::GetPowerUpID() const
 
 void APowerUp::TriggerPowerUp()
 {
-	PowerUpMesh->SetHiddenInGame(true);
+	this->Destroy();
+}
+
+void APowerUp::TriggerPowerUp(int Value)
+{
+	this->Destroy();
 }
 

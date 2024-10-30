@@ -24,4 +24,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual EPowerUpID GetPowerUpID() const override;
+
+	virtual void TriggerPowerUp() override;
 };

@@ -26,12 +26,16 @@ void UGlobalScoreSubsystem::AddScore(int PlayerIndex, int Value)
 	{
 		case 0:
 			Player0Score += Value;
+			break;
 		case 1:
 			Player1Score += Value;
+			break;
 		case 2:
 			Player2Score += Value;
+			break;
 		case 3:
 			Player3Score += Value;
+			break;
 		default: ;
 	}
 
@@ -45,15 +49,19 @@ void UGlobalScoreSubsystem::RemoveScore(int PlayerIndex, int Value)
 		case 0:
 			Player0Score -= Value;
 			if (Player0Score < 0) Player0Score = 0;
+			break;
 		case 1:
 			Player1Score -= Value;
 			if (Player1Score < 0) Player1Score = 0;
+			break;
 		case 2:
 			Player2Score -= Value;
 			if (Player2Score < 0) Player2Score = 0;
+			break;
 		case 3:
 			Player3Score -= Value;
 			if (Player3Score < 0) Player3Score = 0;
+			break;
 		default: ;
 	}
 

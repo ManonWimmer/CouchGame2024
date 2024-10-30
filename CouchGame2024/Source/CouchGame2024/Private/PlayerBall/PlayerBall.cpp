@@ -9,6 +9,7 @@
 #include "CouchGame2024/Public/PlayerBall/PlayerBallController.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/StaticMeshComponent.h"
+#include "GameFramework/PlayerState.h"
 #include "PinballElements/PinballElement.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
@@ -65,6 +66,9 @@ void APlayerBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 			break;
 		case EPowerUpID::Dash:
 			OtherPowerUp->TriggerPowerUp();
+			break;
+		case EPowerUpID::Collectible:
+			OtherPowerUp->TriggerPowerUp(PlayerIndex);
 			break;
 
 		default:
@@ -279,6 +283,7 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	BallController->OnPlayerMoveYInput.AddDynamic(this, &APlayerBall::MoveYAction);
 	BallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
 	BallController->OnPlayerGrapplingInput.AddDynamic(this, &APlayerBall::ReceiveGrapplingAction);
+	BallController->OnPlayerMoreLessGrapplingInput.AddDynamic(this,&APlayerBall::MoreLessAction);
 }
 
 bool APlayerBall::IsGrounded()
@@ -353,6 +358,9 @@ void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "grappling action");
 
+	if (StateMachine->GetCurrentStateID() == EPlayerBallStateID::Stun)
+		return;
+	
 	if (InGrapplingValue == 0)
 	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "cc");
@@ -404,7 +412,7 @@ void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 		if (NewNearestDistance < NearestDistance)
 		{
 			NearestPlayerBall = PlayerBall;
-			NewNearestDistance = NearestDistance;
+			NearestDistance = NewNearestDistance;
 		}
 	}
 
@@ -428,4 +436,11 @@ void APlayerBall::ReceiveGrappledAction(float InGrappledValue) // 0 -> end grapp
 void APlayerBall::ReceiveSnappingAction(float SnappingValue)
 {
 	OnReceiveSnappingAction.Broadcast(SnappingValue);
+}
+
+void APlayerBall::MoreLessAction(float InMoreLessValue)
+{
+	MoreLessValue = InMoreLessValue;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("MoreLess : %f"), MoreLessValue));
 }

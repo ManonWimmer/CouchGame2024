@@ -20,6 +20,7 @@ void APlayerBallController::SetupInputComponent()
 	BindMoveYInput(EnhancedInputComponent);
 	BindGrapplingInput(EnhancedInputComponent);
 	BindPunchInput(EnhancedInputComponent);
+	BindMoreLessGrapplingInput(EnhancedInputComponent);
 }
 
 void APlayerBallController::SetupMappingContextIntoController() const
@@ -31,6 +32,7 @@ void APlayerBallController::SetupMappingContextIntoController() const
 	UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 }
 
+#pragma region MoveInput
 void APlayerBallController::MoveXInput(const FInputActionValue& XInput)
 {
 	OnPlayerMoveXInput.Broadcast(XInput.Get<float>());
@@ -66,7 +68,6 @@ void APlayerBallController::BindMoveXInput(UEnhancedInputComponent* EnhancedInpu
 		&APlayerBallController::MoveXInput
 	);
 }
-
 void APlayerBallController::BindMoveYInput(UEnhancedInputComponent* EnhancedInputComponent)
 {
 	if (EnhancedInputComponent == nullptr) return;
@@ -92,7 +93,9 @@ void APlayerBallController::BindMoveYInput(UEnhancedInputComponent* EnhancedInpu
 		&APlayerBallController::MoveYInput
 	);
 }
+#pragma endregion
 
+#pragma region Grappling
 void APlayerBallController::GrapplingInput(const FInputActionValue& GrapplingInput)
 {
 	OnPlayerGrapplingInput.Broadcast(GrapplingInput.Get<float>());
@@ -117,7 +120,9 @@ void APlayerBallController::BindGrapplingInput(UEnhancedInputComponent* Enhanced
 		&APlayerBallController::GrapplingInput
 	);
 }
+#pragma endregion
 
+#pragma region PunchInput
 void APlayerBallController::PunchInput(const FInputActionValue& PunchInput)
 {
 	OnPlayerPunchInput.Broadcast(PunchInput.Get<float>());
@@ -136,3 +141,34 @@ void APlayerBallController::BindPunchInput(UEnhancedInputComponent* EnhancedInpu
 		&APlayerBallController::PunchInput
 	);
 }
+#pragma endregion
+
+#pragma region MoreLessGrapplingInput
+
+void APlayerBallController::MoreLessGrapplingInput(const FInputActionValue& InputActionValue)
+{
+	OnPlayerMoreLessGrapplingInput.Broadcast(InputActionValue.Get<float>());
+}
+
+void APlayerBallController::BindMoreLessGrapplingInput(UEnhancedInputComponent* EnhancedInputComponent)
+{
+	if (EnhancedInputComponent == nullptr) return;
+
+	if (PlayerInputsData == nullptr) return;
+
+	EnhancedInputComponent->BindAction(
+		PlayerInputsData->MoreLessGrappling,
+		ETriggerEvent::Started,
+		this,
+		&APlayerBallController::MoreLessGrapplingInput
+		);
+
+	EnhancedInputComponent->BindAction(
+		PlayerInputsData->MoreLessGrappling,
+		ETriggerEvent::Completed,
+		this,
+		&APlayerBallController::MoreLessGrapplingInput
+		);
+}
+
+#pragma endregion 
