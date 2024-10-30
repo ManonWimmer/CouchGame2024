@@ -31,13 +31,13 @@ void UPlayerBallStateGrappled::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
-	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Yellow, TEXT("PlayerState : Grappled"));
+	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Green, TEXT("PlayerState : Grappled"));
 	
 	if (Pawn != nullptr)	// link state to events
 	{
 		Pawn->CanGrappling = false;
 		
-		Pawn->OnGrappledAction.AddDynamic(this, &UPlayerBallStateGrappled::OnEndGrappled);
+		Pawn->OnGrappledActionEnded.AddDynamic(this, &UPlayerBallStateGrappled::OnEndGrappled);
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappled::OnStunned);
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateGrappled::OnImpacted);
 	}
@@ -49,9 +49,18 @@ void UPlayerBallStateGrappled::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
     {
-    	Pawn->OnGrappledAction.RemoveDynamic(this, &UPlayerBallStateGrappled::OnEndGrappled);
+		Pawn->CanBeGrappled = false;
+		
+    	Pawn->OnGrappledActionEnded.RemoveDynamic(this, &UPlayerBallStateGrappled::OnEndGrappled);
 		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappled::OnStunned);
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateGrappled::OnImpacted);
+
+
+		if (Pawn->GrapplingPlayerBall != nullptr)
+		{
+			Pawn->GrapplingPlayerBall->ReceiveGrappledActionEnded(0.f);
+			Pawn->GrapplingPlayerBall = nullptr;
+		}
     }
 }
 
