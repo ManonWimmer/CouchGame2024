@@ -51,6 +51,8 @@ void UPlayerBallStateMove::StateEnter(EPlayerBallStateID PreviousState)
 		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateMove::OnBumped);
 		Pawn->OnGrapplingAction.AddDynamic(this, &UPlayerBallStateMove::OnGrappling);
 		Pawn->OnGrappledAction.AddDynamic(this, &UPlayerBallStateMove::OnGrappled);
+
+		Pawn->OnReceiveSnappingAction.AddDynamic(this, &UPlayerBallStateMove::OnSnapped);
 	}
 }
 
@@ -66,6 +68,8 @@ void UPlayerBallStateMove::StateExit(EPlayerBallStateID NextState)
 		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateMove::OnBumped);
 		Pawn->OnGrapplingAction.RemoveDynamic(this, &UPlayerBallStateMove::OnGrappling);
 		Pawn->OnGrappledAction.RemoveDynamic(this, &UPlayerBallStateMove::OnGrappled);
+		
+		Pawn->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateMove::OnSnapped);
 	}
 }
 
@@ -87,9 +91,9 @@ void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by
 
 	FVector FwdVect(1.f, 0.f, 0.f);
 
-	FVector UpVect(0.f, -1.f, 0.f);
+	FVector RightVect(0.f, -1.f, 0.f);
 	
-	FVector Dir = (FwdVect * Pawn->MoveXValue) + (UpVect * Pawn->MoveYValue);	// Get ball roll dir
+	FVector Dir = (FwdVect * Pawn->MoveXValue) + (RightVect * Pawn->MoveYValue);	// Get ball roll dir
 	
 	if (Pawn->SphereCollision == nullptr)
 		return;
@@ -105,6 +109,8 @@ void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by
 	{
 		Dir.Y *= Pawn->BraqueDirectionForceMultiplier;
 	}
+
+	//DrawDebugLine(GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 500.f, FColor::Orange, false, 5.f);
 
 	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->AngularRollForce, NAME_None, true);	// Roll ball
 }
@@ -163,7 +169,8 @@ void UPlayerBallStateMove::OnGrappling(float InGrapplingValue)
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Grappling);
+	if (InGrapplingValue == 1.f)
+		StateMachine->ChangeState(EPlayerBallStateID::Grappling);
 }
 
 void UPlayerBallStateMove::OnGrappled(float InGrappledValue)
@@ -171,5 +178,12 @@ void UPlayerBallStateMove::OnGrappled(float InGrappledValue)
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Grappled);
+}
+
+void UPlayerBallStateMove::OnSnapped(float InSnapValue)
+{
+	if (StateMachine == nullptr || InSnapValue == 0.f)	return;
+	
+	StateMachine->ChangeState(EPlayerBallStateID::Snapping);
 }
 

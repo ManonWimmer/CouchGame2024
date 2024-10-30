@@ -15,7 +15,7 @@ void ULocalMultiplayerGameViewport::PostInitProperties()
 {
 	Super::PostInitProperties();
 
-	MaxSplitscreenPlayers = 8;
+	MaxSplitscreenPlayers = 4;
 }
 
 // Détection des inputs + attribution des players index en fonction de la touche du clavier / bouton de la manette fourni en paramètre.

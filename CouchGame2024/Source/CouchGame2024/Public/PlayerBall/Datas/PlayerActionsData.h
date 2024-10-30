@@ -28,4 +28,7 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "Punch")
 	TObjectPtr<UInputAction> PunchAction;
+
+	UPROPERTY(EditAnywhere, Category = "MoreLessGrappling")
+	TObjectPtr<UInputAction> MoreLessGrappling;
 };

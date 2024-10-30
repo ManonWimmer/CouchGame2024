@@ -88,6 +88,45 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Bumped")
 	float BumpedForceMultiplier = 30000.f;
 
-#pragma endregion 
+#pragma endregion
+
+
+
+#pragma region SnapMagnetic
+
+	UPROPERTY(EditAnywhere, Category = "SnapMagnetic")
+	float SnapAngularForce = 3000.f;
+
+	UPROPERTY(EditAnywhere, Category = "SnapMagnetic", meta = (ClampMin = "1.0", ClampMax = "100.0", SliderMin = "1.0", SliderMax = "100.0"))
+	float SnapControlMoveRollDivider = 2.f;
+	
+	UPROPERTY(EditAnywhere, Category = "SnapMagnetic")
+	float MinVelocityToSnap = 200.f;
+	
+#pragma endregion
+
+#pragma region Grappling
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float GrapplingDamping = 0.99f;
+
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float GrapplingForce = 0.1f;
+
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float GrapplingReleaseForce = 250.f;
+
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float MinCableDistance = 200.f;
+
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float MaxCableDistance = 500.f;
+
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float MoreOrLessCablePerFrame = 10.f;
+
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float StartGrapplingForceFactorWhenAlreadyMoving = 0.001f;
+	
+#pragma endregion
 	
 };
