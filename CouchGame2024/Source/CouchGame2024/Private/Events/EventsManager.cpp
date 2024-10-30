@@ -33,6 +33,7 @@ void AEventsManager::Tick(float DeltaTime)
 		}
 		else
 		{
+			CurrentTime += DeltaTime;
 			CheckAndTriggerEvents();
 		}
 	}
