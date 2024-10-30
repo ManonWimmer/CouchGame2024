@@ -58,8 +58,11 @@ void ULocalMultiplayerSubsystem::AssignKeyboardMapping(int PlayerIndex, int Keyb
 	FModifyContextOptions ContextOptions;
 
 	ContextOptions.bForceImmediately = true;
-	
-	Controller->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(IMC, 1, ContextOptions);
+
+	if (Controller->GetLocalPlayer())
+	{
+		Controller->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(IMC, PlayerIndex + 1, ContextOptions);
+	}
 }
 
 int ULocalMultiplayerSubsystem::GetAssignedPlayerIndexFromGamepadProfileID(int DeviceID)
@@ -88,7 +91,10 @@ void ULocalMultiplayerSubsystem::AssignGamepadInputMapping(int PlayerIndex,
 	FModifyContextOptions ContextOptions;
 
 	ContextOptions.bForceImmediately = true;
-	
-	Controller->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(IMC, 1, ContextOptions);
+
+	if (Controller->GetLocalPlayer())
+	{
+		Controller->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(IMC, PlayerIndex + 1, ContextOptions);
+	}
 }
 
