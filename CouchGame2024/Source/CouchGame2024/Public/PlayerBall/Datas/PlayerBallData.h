@@ -102,6 +102,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "SnapMagnetic")
 	float MinVelocityToSnap = 200.f;
+
+	UPROPERTY(EditAnywhere, Category = "SnapMagnetic")
+	float SnapTriggerRadius = 100.f;
 	
 #pragma endregion
 
