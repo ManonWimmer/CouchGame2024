@@ -113,6 +113,8 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 		Pawn->GrappledPlayerBall->GrapplingPlayerBall = nullptr;
 		Pawn->GrappledPlayerBall = nullptr;
 	}
+	
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "End Grappling");
 }
 
 void UPlayerBallStateGrappling::StateTick(float DeltaTime)

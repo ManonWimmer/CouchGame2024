@@ -31,7 +31,7 @@ void UPlayerBallStateGrappled::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
-	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Green, TEXT("PlayerState : Grappled"));
+	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Blue, TEXT("PlayerState : Grappled"));
 	
 	if (Pawn != nullptr)	// link state to events
 	{

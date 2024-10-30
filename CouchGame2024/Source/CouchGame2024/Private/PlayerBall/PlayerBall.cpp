@@ -435,8 +435,6 @@ void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 */
 void APlayerBall::ReceiveGrapplingActionStarted(float InGrapplingValue)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Start grappling");
-
 	if (!CanGrappling)
 		return;
 	
@@ -508,7 +506,6 @@ void APlayerBall::ReceiveGrapplingActionStarted(float InGrapplingValue)
 
 void APlayerBall::ReceiveGrapplingActionEnded(float InGrapplingValue)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "End Grappling");
 	OnGrapplingActionEnded.Broadcast(InGrapplingValue);
 }
 
