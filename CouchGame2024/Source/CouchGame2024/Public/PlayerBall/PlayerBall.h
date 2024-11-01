@@ -181,6 +181,12 @@ public:
 	UPROPERTY()
 	float PunchForceMultiplier = 5.f;
 
+	UFUNCTION()
+	void HandlePunchCooldown(float DeltaTime);
+
+	float CurrentPunchCooldown = 3.f;
+	bool bCanPunch = true;
+
 #pragma endregion
 
 #pragma region Impact

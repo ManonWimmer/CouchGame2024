@@ -34,56 +34,32 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 	Super::StateEnter(PreviousState);
 
 	
-	GEngine->AddOnScreenDebugMessage
-	(
-		-1,
-		2.f,
-		FColor::Red,
-		TEXT("PlayerState : Punch")
-	);
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("PlayerState : Punch"));
 	
 	if (Pawn != nullptr)
 	{
-		CurrentPunchTimeRemaining = Pawn->PunchCooldown;
-
 		Pawn->CanGrappling = false;
 		Pawn->CanBeGrappled = false;
-		
-		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStatePunch::OnImpacted);
-		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStatePunch::OnBumped);
 	}
 	
 	PunchPlayerBall();
+
+	if (StateMachine != nullptr)
+	{
+		StateMachine->ChangeState(EPlayerBallStateID::Idle);
+	}
 }
 
 void UPlayerBallStatePunch::StateExit(EPlayerBallStateID NextState)
 {
 	Super::StateExit(NextState);
-
-	if (Pawn != nullptr)
-	{
-		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStatePunch::OnImpacted);
-		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStatePunch::OnBumped);
-	}
+	
+	StartPunchCooldown();
 }
 
 void UPlayerBallStatePunch::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
-
-	DecreaseCooldownPunch(DeltaTime);
-
-	if (Pawn != nullptr)
-	{
-		if (Pawn->IsGrounded())
-		{
-			Move(DeltaTime);
-		}
-		else
-		{
-			//FallingMove(DeltaTime);
-		}
-	}
 }
 
 #pragma region Punch Behavior
@@ -129,11 +105,9 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 		FCollisionShape::MakeSphere(Pawn->PunchRadius),
 		CollisionParams
 	);
-
-	/*
+	
 	if (Pawn->GetWorld())
 		DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->PunchRadius, 12, FColor::Blue, false, 3.f);
-	*/
 
 	if (bHasDetected)	// has detected a pawn
 	{
@@ -142,8 +116,6 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 			APlayerBall* DetectedBall = Cast<APlayerBall>(Result.GetActor());	// Check if Player Ball
 			if (DetectedBall)
 			{
-				//UE_LOG(LogTemp, Warning, TEXT("Ball Found : %s"), *DetectedBall->GetName());
-
 				return DetectedBall;
 			}
 		}
@@ -151,20 +123,14 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 	return nullptr;
 }
 
-void UPlayerBallStatePunch::DecreaseCooldownPunch(float DeltaTime)
+void UPlayerBallStatePunch::StartPunchCooldown()	// Setup playerBall parameters to handle PunchCooldown
 {
-	if (CurrentPunchTimeRemaining > 0.f)
-	{
-		CurrentPunchTimeRemaining -= DeltaTime;
-	}
-	else
-	{
-		if (StateMachine != nullptr)
-		{
-			StateMachine->ChangeState(EPlayerBallStateID::Idle);
-		}
-	}
+	if (Pawn == nullptr)	return;
+
+	Pawn->bCanPunch = false;
+	Pawn->CurrentPunchCooldown = Pawn->PunchCooldown;
 }
+
 #pragma endregion 
 
 

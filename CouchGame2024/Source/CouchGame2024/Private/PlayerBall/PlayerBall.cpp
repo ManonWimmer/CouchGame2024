@@ -171,7 +171,7 @@ void APlayerBall::Tick(float DeltaTime)
 
 	TickStateMachine(DeltaTime);
 
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Red, FString::Printf(TEXT("Current state: %hhd"), StateMachine->GetCurrentStateID()));
+	HandlePunchCooldown(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -333,7 +333,23 @@ void APlayerBall::ReceiveStunnedAction(float InStunnedDurationValue)
 
 void APlayerBall::ReceivePunchAction(float InPunchValue)
 {
+	if (!bCanPunch)	return;
+	
 	OnPunchAction.Broadcast(InPunchValue);
+}
+
+void APlayerBall::HandlePunchCooldown(float DeltaTime)
+{
+	if (bCanPunch)	return;
+	
+	if (CurrentPunchCooldown > 0.f)
+	{
+		CurrentPunchCooldown -= DeltaTime;
+	}
+	else
+	{
+		bCanPunch = true;
+	}
 }
 
 void APlayerBall::ReceiveImpactAction(float ImpactValue, const FVector &InNormalImpact)

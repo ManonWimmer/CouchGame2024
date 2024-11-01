@@ -35,10 +35,8 @@ private:
 	APlayerBall* GetNearestPlayerBallInPunchRadius();
 
 	UFUNCTION()
-	void DecreaseCooldownPunch(float DeltaTime);
-	UPROPERTY()
-	float CurrentPunchTimeRemaining = 0.f;
-
+	void StartPunchCooldown();
+	
 	UFUNCTION()
 	void Move(float DeltaTime);
 	//UFUNCTION()
