@@ -62,7 +62,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 {
 	Super::StateExit(NextState);
 
-	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("c ciao"));
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("c ciao"));
 
 	if (Pawn != nullptr)
 	{
@@ -216,10 +216,7 @@ void UPlayerBallStateGrappling::OnEndGrappling(float InGrapplingValue) // Stop p
 {
 	if (StateMachine == nullptr) return;
 
-	if (InGrapplingValue == 0.0f)
-	{
-		StateMachine->ChangeState(EPlayerBallStateID::Idle);
-	}
+	StateMachine->ChangeState(EPlayerBallStateID::Idle);
 }
 
 void UPlayerBallStateGrappling::OnStunned(float StunnedValue) // hit by punch -> stunned

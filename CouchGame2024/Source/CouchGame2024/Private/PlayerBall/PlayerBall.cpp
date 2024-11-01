@@ -437,13 +437,18 @@ void APlayerBall::ReceiveGrapplingActionStarted(float InGrapplingValue)
 {
 	if (!CanGrappling)
 		return;
-	
+
+	/*
 	if (InGrapplingValue == 0)
 	{
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "cc");
 		OnGrapplingActionEnded.Broadcast(InGrapplingValue);
 		return;
 	}
+	*/
+
+	GrapplingPlayerBall = nullptr;
+	GrappledPlayerBall = nullptr;
 	
 	GrapplingValue = InGrapplingValue;
 
@@ -494,14 +499,16 @@ void APlayerBall::ReceiveGrapplingActionStarted(float InGrapplingValue)
 	}
 
 	GrappledPlayerBall = NearestPlayerBall;
+
+	if (GrappledPlayerBall == nullptr)
+		return;
+	
 	GrappledPlayerBall->GrapplingPlayerBall = this;
 	IsGrappling = true;
 
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "oui");
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "broadcast grappling");
 
-	if (GrappledPlayerBall != nullptr)
-		OnGrapplingActionStarted.Broadcast(GrapplingValue);
+	OnGrapplingActionStarted.Broadcast(GrapplingValue);
 }
 
 void APlayerBall::ReceiveGrapplingActionEnded(float InGrapplingValue)

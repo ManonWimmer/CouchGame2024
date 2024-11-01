@@ -58,7 +58,7 @@ void UPlayerBallStateGrappled::StateExit(EPlayerBallStateID NextState)
 
 		if (Pawn->GrapplingPlayerBall != nullptr)
 		{
-			Pawn->GrapplingPlayerBall->ReceiveGrappledActionEnded(0.f);
+			Pawn->GrapplingPlayerBall->ReceiveGrapplingActionEnded(0.f);
 			Pawn->GrapplingPlayerBall = nullptr;
 		}
     }
@@ -71,12 +71,9 @@ void UPlayerBallStateGrappled::StateTick(float DeltaTime)
 
 void UPlayerBallStateGrappled::OnEndGrappled(float InGrappledValue)	// receive event endGrappled -> Idle
 {
-	if (InGrappledValue == 0)
+	if (StateMachine != nullptr)
 	{
-		if (StateMachine != nullptr)
-		{
-			StateMachine->ChangeState(EPlayerBallStateID::Idle);
-		}
+		StateMachine->ChangeState(EPlayerBallStateID::Idle);
 	}
 }
 
