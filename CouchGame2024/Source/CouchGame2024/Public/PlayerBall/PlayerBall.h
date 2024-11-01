@@ -260,6 +260,7 @@ public:
 	UFUNCTION()
 	void ReceiveGrapplingActionEnded(float InGrapplingValue);
 
+	UPROPERTY(VisibleAnywhere)
 	bool CanGrappling = false;
 	
 	UPROPERTY()
@@ -328,7 +329,8 @@ public:
 	UPROPERTY()
 	FOnGrappledActionStarted OnGrappledActionStarted;
 	FOnGrappledActionEnded OnGrappledActionEnded;
-	
+
+	UPROPERTY(VisibleAnywhere)
 	bool CanBeGrappled = false;
 	
 	UFUNCTION()

@@ -33,7 +33,7 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 	Super::StateEnter(PreviousState);
 
 	
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("PlayerState : Idle"));
+	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("PlayerState : Idle"));
 	
 	
 
@@ -133,8 +133,7 @@ void UPlayerBallStateIdle::OnGrappling(float InGrapplingValue)
 {
 	if (StateMachine == nullptr)	return;
 
-	if (InGrapplingValue == 1.f)
-		StateMachine->ChangeState(EPlayerBallStateID::Grappling);
+	StateMachine->ChangeState(EPlayerBallStateID::Grappling);
 }
 
 void UPlayerBallStateIdle::OnGrappled(float InGrappledValue)

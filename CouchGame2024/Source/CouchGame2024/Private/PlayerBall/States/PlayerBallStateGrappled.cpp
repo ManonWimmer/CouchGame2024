@@ -36,6 +36,7 @@ void UPlayerBallStateGrappled::StateEnter(EPlayerBallStateID PreviousState)
 	if (Pawn != nullptr)	// link state to events
 	{
 		Pawn->CanGrappling = false;
+		Pawn->CanBeGrappled = false;
 		
 		Pawn->OnGrappledActionEnded.AddDynamic(this, &UPlayerBallStateGrappled::OnEndGrappled);
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappled::OnStunned);
@@ -49,8 +50,6 @@ void UPlayerBallStateGrappled::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
     {
-		Pawn->CanBeGrappled = false;
-		
     	Pawn->OnGrappledActionEnded.RemoveDynamic(this, &UPlayerBallStateGrappled::OnEndGrappled);
 		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappled::OnStunned);
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateGrappled::OnImpacted);
@@ -60,6 +59,7 @@ void UPlayerBallStateGrappled::StateExit(EPlayerBallStateID NextState)
 		{
 			Pawn->GrapplingPlayerBall->ReceiveGrapplingActionEnded(0.f);
 			Pawn->GrapplingPlayerBall = nullptr;
+			UE_LOG(LogTemp, Warning, TEXT("UnSet grapplingPlayerBall") );
 		}
     }
 }
@@ -71,16 +71,19 @@ void UPlayerBallStateGrappled::StateTick(float DeltaTime)
 
 void UPlayerBallStateGrappled::OnEndGrappled(float InGrappledValue)	// receive event endGrappled -> Idle
 {
-	if (StateMachine != nullptr)
-	{
-		StateMachine->ChangeState(EPlayerBallStateID::Idle);
-	}
+	if (StateMachine == nullptr)	return;
+	
+	//UE_LOG(LogTemp, Warning, TEXT("Stop by release input or by grappling cause in grappled") );
+	
+	StateMachine->ChangeState(EPlayerBallStateID::Idle);
 }
 
 void UPlayerBallStateGrappled::OnStunned(float StunnedValue)	// hit by punch -> stunned
 {
 	if (StateMachine == nullptr)	return;
 
+	//UE_LOG(LogTemp, Warning, TEXT("Stop by stunned in grappled") );
+	
 	StateMachine->ChangeState(EPlayerBallStateID::Stun, StunnedValue);
 }
 
@@ -88,6 +91,8 @@ void UPlayerBallStateGrappled::OnImpacted(float ImpactedValue)	// impact ball ->
 {
 	if (StateMachine == nullptr)	return;
 
+	//UE_LOG(LogTemp, Warning, TEXT("Stop by impact in grappled") );
+	
 	StateMachine->ChangeState(EPlayerBallStateID::Impact);
 }
 

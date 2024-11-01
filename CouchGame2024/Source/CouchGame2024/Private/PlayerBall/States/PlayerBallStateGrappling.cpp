@@ -39,22 +39,23 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 	{
 		Pawn->CanGrappling = false;
 		Pawn->CanBeGrappled = false;
-	}
-	
-	if (Pawn != nullptr && Pawn->GrappledPlayerBall != nullptr)
-	{
+		
 		Pawn->OnGrapplingActionEnded.AddDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
 
-		Pawn->GrapplingCable->SetHiddenInGame(false);
-		SetCable();
 
-		FVector Direction = Pawn->GetActorLocation() - Pawn->GrappledPlayerBall->GetActorLocation();
-		Pawn->CurrentGrapplingAngle = atan2f(Direction.Y, Direction.X);
-		Pawn->CurrentGrapplingAngularVelocity = 0.f;
+		if (Pawn->GrappledPlayerBall != nullptr)
+		{
+			Pawn->GrapplingCable->SetHiddenInGame(false);
+			SetCable();
 
-		Pawn->GrappledPlayerBall->ReceiveGrappledActionStarted(1.f);
+			FVector Direction = Pawn->GetActorLocation() - Pawn->GrappledPlayerBall->GetActorLocation();
+			Pawn->CurrentGrapplingAngle = atan2f(Direction.Y, Direction.X);
+			Pawn->CurrentGrapplingAngularVelocity = 0.f;
+
+			Pawn->GrappledPlayerBall->ReceiveGrappledActionStarted(1.f);
+		}
 	}
 }
 
@@ -62,7 +63,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 {
 	Super::StateExit(NextState);
 
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("c ciao"));
+	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("c ciao"));
 
 	if (Pawn != nullptr)
 	{
@@ -107,11 +108,16 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 		Pawn->CurrentGrapplingAngle = 0.f;
 		Pawn->CurrentGrapplingAngularVelocity = 0.f;
 
-		Pawn->GrappledPlayerBall->ReceiveGrappledActionEnded(0.f);
+		if (Pawn->GrappledPlayerBall != nullptr)
+		{
+			Pawn->GrappledPlayerBall->ReceiveGrappledActionEnded(0.f);
 
-		// Reset Grappled Player & Grappling Player
-		Pawn->GrappledPlayerBall->GrapplingPlayerBall = nullptr;
-		Pawn->GrappledPlayerBall = nullptr;
+			// Reset Grappled Player & Grappling Player
+			//Pawn->GrappledPlayerBall->GrapplingPlayerBall = nullptr;
+
+			UE_LOG(LogTemp, Warning, TEXT("UnSet grappledPlayerBall") );
+			Pawn->GrappledPlayerBall = nullptr;
+		}
 	}
 	
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "End Grappling");
@@ -216,6 +222,8 @@ void UPlayerBallStateGrappling::OnEndGrappling(float InGrapplingValue) // Stop p
 {
 	if (StateMachine == nullptr) return;
 
+	//UE_LOG(LogTemp, Warning, TEXT("Stop by release input or by grappled cause in grappling") );
+	
 	StateMachine->ChangeState(EPlayerBallStateID::Idle);
 }
 
@@ -223,6 +231,8 @@ void UPlayerBallStateGrappling::OnStunned(float StunnedValue) // hit by punch ->
 {
 	if (StateMachine == nullptr) return;
 
+	//UE_LOG(LogTemp, Warning, TEXT("Stop by stunned in grappling") );
+	
 	StateMachine->ChangeState(EPlayerBallStateID::Stun, StunnedValue);
 }
 
@@ -230,6 +240,8 @@ void UPlayerBallStateGrappling::OnImpacted(float ImpactedValue) // impact ball -
 {
 	if (StateMachine == nullptr) return;
 
+	//UE_LOG(LogTemp, Warning, TEXT("Stop by impact in grappling") );
+	
 	StateMachine->ChangeState(EPlayerBallStateID::Impact);
 }
 

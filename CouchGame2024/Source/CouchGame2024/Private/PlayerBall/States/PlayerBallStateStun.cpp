@@ -49,6 +49,7 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState)
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateStun::OnImpacted);
 		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateStun::OnBumped);
 		Pawn->OnReceiveSnappingAction.AddDynamic(this, &UPlayerBallStateStun::OnSnapped);
+		Pawn->OnGrappledActionStarted.AddDynamic(this, &UPlayerBallStateStun::OnGrappled);
 	}
 }
 
@@ -79,6 +80,7 @@ void UPlayerBallStateStun::StateExit(EPlayerBallStateID NextState)
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateStun::OnImpacted);
 		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateStun::OnBumped);
 		Pawn->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateStun::OnSnapped);
+		Pawn->OnGrappledActionStarted.RemoveDynamic(this, &UPlayerBallStateStun::OnGrappled);
 	}
 }
 
@@ -123,6 +125,13 @@ void UPlayerBallStateStun::OnSnapped(float InSnapValue)
 	if (StateMachine == nullptr || InSnapValue == 0.f)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Snapping);
+}
+
+void UPlayerBallStateStun::OnGrappled(float GrappledValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Grappled);
 }
 
 

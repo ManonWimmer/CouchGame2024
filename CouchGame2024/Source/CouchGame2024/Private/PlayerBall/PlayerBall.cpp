@@ -437,18 +437,6 @@ void APlayerBall::ReceiveGrapplingActionStarted(float InGrapplingValue)
 {
 	if (!CanGrappling)
 		return;
-
-	/*
-	if (InGrapplingValue == 0)
-	{
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "cc");
-		OnGrapplingActionEnded.Broadcast(InGrapplingValue);
-		return;
-	}
-	*/
-
-	GrapplingPlayerBall = nullptr;
-	GrappledPlayerBall = nullptr;
 	
 	GrapplingValue = InGrapplingValue;
 
@@ -503,7 +491,14 @@ void APlayerBall::ReceiveGrapplingActionStarted(float InGrapplingValue)
 	if (GrappledPlayerBall == nullptr)
 		return;
 	
+	// UE_LOG(LogTemp, Warning, TEXT("Set grappledPlayerBall") );
+	// UE_LOG(LogTemp, Log, TEXT("Current State : %hhd"), (StateMachine->GetCurrentStateID()) );
+	
 	GrappledPlayerBall->GrapplingPlayerBall = this;
+	
+	// UE_LOG(LogTemp, Warning, TEXT("Set grapplingPlayerBall") );
+	// UE_LOG(LogTemp, Log, TEXT("Current State : %hhd"), (StateMachine->GetCurrentStateID()) );
+	
 	IsGrappling = true;
 
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "broadcast grappling");
@@ -518,6 +513,8 @@ void APlayerBall::ReceiveGrapplingActionEnded(float InGrapplingValue)
 
 void APlayerBall::ReceiveGrappledActionStarted(float InGrappledValue) // 0 -> end grappled	1 -> start grappled
 {
+	if (!CanBeGrappled)	return;
+	
 	OnGrappledActionStarted.Broadcast(InGrappledValue);
 }
 

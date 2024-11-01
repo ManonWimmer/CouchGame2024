@@ -47,4 +47,7 @@ private:
 
 	UFUNCTION()
 	void OnSnapped(float InSnapValue);
+
+	UFUNCTION()
+	void OnGrappled(float GrappledValue);
 };

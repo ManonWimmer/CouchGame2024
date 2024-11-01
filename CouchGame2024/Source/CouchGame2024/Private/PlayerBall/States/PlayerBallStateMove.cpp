@@ -34,7 +34,7 @@ void UPlayerBallStateMove::StateEnter(EPlayerBallStateID PreviousState)
 	Super::StateEnter(PreviousState);
 
 	
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("PlayerState : Move"));
+	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("PlayerState : Move"));
 	
 
 	if (Pawn != nullptr)
@@ -166,8 +166,7 @@ void UPlayerBallStateMove::OnGrappling(float InGrapplingValue)
 {
 	if (StateMachine == nullptr)	return;
 
-	if (InGrapplingValue == 1.f)
-		StateMachine->ChangeState(EPlayerBallStateID::Grappling);
+	StateMachine->ChangeState(EPlayerBallStateID::Grappling);
 }
 
 void UPlayerBallStateMove::OnGrappled(float InGrappledValue)

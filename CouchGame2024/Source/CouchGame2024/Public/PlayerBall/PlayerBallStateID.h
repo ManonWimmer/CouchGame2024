@@ -13,14 +13,14 @@ UENUM(BlueprintType)
 enum class EPlayerBallStateID : uint8
 {
 	None = 0,
-	Idle,
-	Move,
-	Fall,
-	Stun,
-	Punch,
-	Impact,
-	Bumped,
-	Grappling,
-	Grappled,
-	Snapping
+	Idle UMETA(DisplayName="Idle"),
+	Move UMETA(DisplayName="Move"),
+	Fall UMETA(DisplayName="Fall"),
+	Stun UMETA(DisplayName="Stun"),
+	Punch UMETA(DisplayName="Punch"),
+	Impact UMETA(DisplayName="Impact"),
+	Bumped UMETA(DisplayName="Bumped"),
+	Grappling UMETA(DisplayName="Grappling"),
+	Grappled UMETA(DisplayName="Grappled"),
+	Snapping UMETA(DisplayName="Snapping")
 };

@@ -142,8 +142,6 @@ void UPlayerBallStateSnapping::SnappingEffect(float DeltaTime)
 void UPlayerBallStateSnapping::OnEndSnapping(float InSnappingValue)
 {
 	if (StateMachine == nullptr)	return;
-
-	if (InSnappingValue > 0.f)	return;
 	
 	StateMachine->ChangeState(EPlayerBallStateID::Idle);
 }
@@ -180,10 +178,7 @@ void UPlayerBallStateSnapping::OnGrappling(float InGrapplingValue)
 {
 	if (StateMachine == nullptr)	return;
 
-	if (InGrapplingValue == 1.f)
-	{
-		StateMachine->ChangeState(EPlayerBallStateID::Grappling);
-	}
+	StateMachine->ChangeState(EPlayerBallStateID::Grappling);
 }
 
 void UPlayerBallStateSnapping::OnGrappled(float InGrappledValue)
