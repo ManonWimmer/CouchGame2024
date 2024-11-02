@@ -92,6 +92,8 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 	{
 		TotalForce = Pawn->ImpactMinTotalForce;
 	}
+
+	Pawn->PlayImpactEffectsBlueprint();
 	
 	Pawn->SphereCollision->AddImpulse(Dir * TotalForce, NAME_None, false);	// impulse
 }

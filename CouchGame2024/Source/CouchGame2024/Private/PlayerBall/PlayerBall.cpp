@@ -278,17 +278,17 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	if (Controller == nullptr)
 		return;
 
-	APlayerBallController* BallController = Cast<APlayerBallController>(Controller);
+	PlayerBallController = Cast<APlayerBallController>(Controller);
 
-	if (BallController == nullptr)
+	if (PlayerBallController == nullptr)
 		return;
 
-	BallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
-	BallController->OnPlayerMoveYInput.AddDynamic(this, &APlayerBall::MoveYAction);
-	BallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
-	BallController->OnPlayerGrapplingInputStarted.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionStarted);
-	BallController->OnPlayerGrapplingInputEnded.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionEnded);
-	BallController->OnPlayerMoreLessGrapplingInput.AddDynamic(this,&APlayerBall::MoreLessAction);
+	PlayerBallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
+	PlayerBallController->OnPlayerMoveYInput.AddDynamic(this, &APlayerBall::MoveYAction);
+	PlayerBallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
+	PlayerBallController->OnPlayerGrapplingInputStarted.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionStarted);
+	PlayerBallController->OnPlayerGrapplingInputEnded.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionEnded);
+	PlayerBallController->OnPlayerMoreLessGrapplingInput.AddDynamic(this,&APlayerBall::MoreLessAction);
 }
 
 bool APlayerBall::IsGrounded()

@@ -8,6 +8,7 @@
 #include "PlayerBall.generated.h"
 
 
+class APlayerBallController;
 class APinballElement;
 class UPlayerBallData;
 class UPlayerBallStateMachine;
@@ -49,6 +50,9 @@ public:
 	int PlayerIndex = 0;
 
 
+public:
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<APlayerBallController> PlayerBallController;
 
 #pragma region Setup Data
 
@@ -212,6 +216,9 @@ public:
 	UFUNCTION()
 	void ReceiveImpactAction(float ImpactValue, const FVector &InNormalImpact);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayImpactEffectsBlueprint();
+	
 	UPROPERTY()
 	FVector NormalImpact = FVector(0, 0, 0);
 
