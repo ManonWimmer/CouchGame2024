@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Components/PrimitiveComponent.h"
+#include "PowerUp/PowerUpID.h"
 #include "PlayerBall.generated.h"
 
 
@@ -23,6 +24,7 @@ class COUCHGAME2024_API APlayerBall : public APawn
 	GENERATED_BODY()
 
 public:
+#pragma region Hit / Overlap
 	UFUNCTION()
 	void OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	UFUNCTION()
@@ -32,6 +34,9 @@ public:
 	                              const FHitResult& SweepResult);
 	UFUNCTION()
 	void OnAttractionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+#pragma endregion
+	
 	// Sets default values for this pawn's properties
 	APlayerBall();
 
@@ -110,6 +115,8 @@ protected:
 private:
 	UFUNCTION()
 	void BindEventActions();
+
+#pragma region States
 	
 #pragma region Movement
 	
@@ -224,36 +231,8 @@ public:
 
 #pragma endregion
 
-#pragma region Reaction Pinball Elements
-
-public:
-	TObjectPtr<APinballElement> HitPinballElement;
-
+#pragma region Grapple
 	
-#pragma region Bumper Reaction
-public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBumperReaction, float, BumperReactionValue);
-
-	FOnBumperReaction OnBumperReaction;
-
-	UPROPERTY()
-	float BumpedForceMultiplier = 30000.f;
-
-	UPROPERTY()
-	float BumpedHitLagCooldown = 0.2f;
-	
-	UPROPERTY()
-	FVector NormalBump = FVector(0, 0, 0);
-	
-private:
-	UFUNCTION()
-	void ReceiveBumperReaction(APinballElement* Element, const FVector &InNormalBump);
-
-#pragma endregion 
-
-	
-#pragma endregion
-
 #pragma region Grappling
 
 public:
@@ -355,8 +334,22 @@ public:
 
 #pragma endregion
 
-#pragma region Snapping
+#pragma region MoreLessGrappling
+public:
+	UPROPERTY()
+	float MoreLessValue;
 
+private:
+	UFUNCTION()
+	void MoreLessAction(float InMoreLessValue);
+	
+
+#pragma endregion
+	
+#pragma endregion 
+	
+#pragma region Snapping
+public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReceiveSnappingAction, float, SnappingValue);
 
 	UPROPERTY()
@@ -376,16 +369,52 @@ public:
 
 #pragma endregion 
 
-#pragma region MoreLessGrappling
-public:
-	UPROPERTY()
-	float MoreLessValue;
+#pragma endregion
+	
+#pragma region Reaction Pinball Elements
 
+public:
+	TObjectPtr<APinballElement> HitPinballElement;
+
+	
+#pragma region Bumper Reaction
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBumperReaction, float, BumperReactionValue);
+
+	FOnBumperReaction OnBumperReaction;
+
+	UPROPERTY()
+	float BumpedForceMultiplier = 30000.f;
+
+	UPROPERTY()
+	float BumpedHitLagCooldown = 0.2f;
+	
+	UPROPERTY()
+	FVector NormalBump = FVector(0, 0, 0);
+	
 private:
 	UFUNCTION()
-	void MoreLessAction(float InMoreLessValue);
-	
+	void ReceiveBumperReaction(APinballElement* Element, const FVector &InNormalBump);
 
+#pragma endregion 
+
+	
 #pragma endregion
+
+#pragma region PowerUp
+
+public:
+	EPowerUpID GetCurrentPowerUpCarried() const;
+
+	void SetPowerUpCarried(EPowerUpID PowerUpID);
+
+	UFUNCTION()
+	void UsePowerUpCarried();
+	
+private:
+	UPROPERTY(VisibleAnywhere)
+	EPowerUpID CurrentPowerUpCarried;
+	
+#pragma endregion 
 	
 };

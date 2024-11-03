@@ -64,13 +64,27 @@ void APlayerBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 		switch (OtherPowerUp->GetPowerUpID()) {
 		case EPowerUpID::None:
 			break;
+			
 		case EPowerUpID::Dash:
 			OtherPowerUp->TriggerPowerUp();
 			break;
+			
 		case EPowerUpID::Collectible:
 			OtherPowerUp->TriggerPowerUp(PlayerIndex);
 			break;
-
+			
+		case EPowerUpID::Freeze:
+			OtherPowerUp->TriggerPowerUp();
+			break;
+			
+		case EPowerUpID::Strength:
+			OtherPowerUp->TriggerPowerUp();
+			break;
+			
+		case EPowerUpID::Heavy:
+			OtherPowerUp->TriggerPowerUp();
+			break;
+			
 		default:
 			break;
 		}
@@ -195,6 +209,7 @@ void APlayerBall::SetupData() // Get all data and set them
 	if (SphereCollision == nullptr)
 		return;
 
+#pragma region States Data
 	// Movements
 	AngularRollForce = PlayerBallData->AngularRollForce;
 	BraqueDirectionForceMultiplier = PlayerBallData->BraqueDirectionForceMultiplier;
@@ -251,6 +266,9 @@ void APlayerBall::SetupData() // Get all data and set them
 	MoreOrLessCablePerFrame = PlayerBallData->MoreOrLessCablePerFrame;
 	StartGrapplingForceFactorWhenAlreadyMoving = PlayerBallData->StartGrapplingForceFactorWhenAlreadyMoving;
 	GrapplingSphereCollision->SetSphereRadius(MaxCableDistance); // Max grappling cable distance
+
+	
+#pragma endregion
 }
 
 
@@ -316,6 +334,7 @@ bool APlayerBall::IsGrounded()
 	return bHit;
 }
 
+#pragma region States
 void APlayerBall::MoveXAction(float XValue) // Set MoveX Value
 {
 	MoveXValue = XValue;
@@ -363,17 +382,7 @@ void APlayerBall::ReceiveImpactAction(float ImpactValue, const FVector &InNormal
 	OnImpactAction.Broadcast(ImpactValue);
 }
 
-void APlayerBall::ReceiveBumperReaction(APinballElement* Element, const FVector &InNormalBump)
-{
-	HitPinballElement = Element;
 
-	NormalBump = InNormalBump;
-
-	NormalBump.Z = 0.f;
-	NormalBump.Normalize();
-
-	OnBumperReaction.Broadcast(1.f);
-}
 /*
 void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 {
@@ -538,13 +547,58 @@ void APlayerBall::ReceiveGrappledActionEnded(float InGrappledValue)
 {
 	OnGrappledActionEnded.Broadcast(InGrappledValue);
 }
+void APlayerBall::MoreLessAction(float InMoreLessValue)
+{
+	MoreLessValue = InMoreLessValue;
+}
 
 void APlayerBall::ReceiveSnappingAction(float SnappingValue)
 {
 	OnReceiveSnappingAction.Broadcast(SnappingValue);
 }
 
-void APlayerBall::MoreLessAction(float InMoreLessValue)
+#pragma endregion 
+
+void APlayerBall::ReceiveBumperReaction(APinballElement* Element, const FVector &InNormalBump)
 {
-	MoreLessValue = InMoreLessValue;
+	HitPinballElement = Element;
+
+	NormalBump = InNormalBump;
+
+	NormalBump.Z = 0.f;
+	NormalBump.Normalize();
+
+	OnBumperReaction.Broadcast(1.f);
+}
+
+EPowerUpID APlayerBall::GetCurrentPowerUpCarried() const
+{
+	return CurrentPowerUpCarried;
+}
+
+void APlayerBall::SetPowerUpCarried(EPowerUpID PowerUpID)
+{
+	if (CurrentPowerUpCarried != EPowerUpID::None)	return;
+
+	CurrentPowerUpCarried = PowerUpID;
+}
+
+void APlayerBall::UsePowerUpCarried()
+{
+	if (CurrentPowerUpCarried == EPowerUpID::None)	return;
+
+	switch (CurrentPowerUpCarried)
+	{
+		case EPowerUpID::Freeze:
+			break;
+			
+		case EPowerUpID::Strength:
+			break;
+			
+		case EPowerUpID::Heavy:
+			break;
+			
+		default:
+			break;
+	}
 }
