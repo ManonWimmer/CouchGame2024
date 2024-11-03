@@ -127,7 +127,7 @@ APlayerBall::APlayerBall()
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
 	AttractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AttractionSphere"));
 	
-	SphereCollision->SetupAttachment(RootComponent);
+	RootComponent = SphereCollision;
 	SphereMesh->SetupAttachment(SphereCollision);
 	AttractionSphere->SetupAttachment(SphereCollision);
 

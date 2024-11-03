@@ -13,7 +13,7 @@ APowerUp::APowerUp()
 	SphereTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("SphereTrigger"));
 	PowerUpMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PowerUpMesh"));
 
-	SphereTrigger->SetupAttachment(RootComponent);
+	RootComponent = SphereTrigger;
 	PowerUpMesh->SetupAttachment(SphereTrigger);
 }
 
