@@ -14,6 +14,7 @@ enum ERoundsPhaseID
 {
 	NONE = 0,
 	PRE_ROUND,
+	STARTING_ROUND,
 	IN_ROUND,
 	POST_ROUND
 };

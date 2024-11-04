@@ -11,10 +11,21 @@
  * 
  */
 UCLASS()
-class COUCHGAME2024_API URoundsSubsystem : public UGameInstanceSubsystem
+class COUCHGAME2024_API URoundsSubsystem : public UGameInstanceSubsystem, public FTickableGameObject
 {
 	GENERATED_BODY()
+#pragma region Tickable
+	virtual void Tick(float DeltaTime) override;
+	virtual TStatId GetStatId() const override { return TStatId(); };
 
+#pragma endregion 
+	
+public:
+	
+	void StartRound();
+
+	void InitTimers();
+	
 #pragma region RoundsChange
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeRound, int, NewRoundIndex);
@@ -24,7 +35,6 @@ public:
 	
 	void ChangeRound(int NewRoundIndex);
 
-	UFUNCTION(BlueprintCallable)
 	void ChangeToNextRound();
 	
 	UFUNCTION(BlueprintCallable)
@@ -64,6 +74,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CheckForWinPlayer(int PlayerIndex);
+
+#pragma endregion 
+
+#pragma region Handle Timers
+	
+private:
+	void HandlePreRoundTimer(float DeltaTime);
+	void HandleStartingRoundTimer(float DeltaTime);
+	void HandlePostRoundTimer(float DeltaTime);
 	
 #pragma endregion 
 
@@ -71,7 +90,12 @@ public:
 private:
 	int CurrentRoundIndex = 0;
 
-	ERoundsPhaseID CurrentRoundPhaseID;
+	ERoundsPhaseID CurrentRoundPhaseID = ERoundsPhaseID::NONE;
 
 	TMap<int, int> RoundsWonByPlayersIndex;
+
+
+	float CurrentPreRoundTimer = 0.f;
+	float CurrentStartingRoundTimer = 0.f;
+	float CurrentPostRoundTimer = 0.f;
 };

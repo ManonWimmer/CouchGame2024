@@ -15,9 +15,16 @@ class COUCHGAME2024_API URoundsData : public UDataAsset
 	GENERATED_BODY()
 
 public:
+	
 	UPROPERTY(EditAnywhere, Category = "FreeForAll")
 	int RoundsToWin = 0;
 
+	UPROPERTY(EditAnywhere, Category = "FreeForAll")
+	float PreRoundDuration = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "FreeForAll")
+	float StartingRoundDuration = 1.f;
+	
 	UPROPERTY(EditAnywhere, Category = "FreeForAll")
 	float PostRoundDuration = 0.f;
 };
