@@ -59,34 +59,37 @@ void APlayerBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 
 	TObjectPtr<APowerUp> OtherPowerUp = Cast<APowerUp>(OtherActor);
 
-	if (OtherPowerUp != nullptr)
+	if (OtherPowerUp != nullptr && GetCurrentPowerUpCarried() == EPowerUpID::None)
 	{
-		switch (OtherPowerUp->GetPowerUpID()) {
-		case EPowerUpID::None:
-			break;
-			
-		case EPowerUpID::Dash:
-			OtherPowerUp->TriggerPowerUp();
-			break;
-			
-		case EPowerUpID::Collectible:
-			OtherPowerUp->TriggerPowerUp(PlayerIndex);
-			break;
-			
-		case EPowerUpID::Freeze:
-			OtherPowerUp->TriggerPowerUp();
-			break;
-			
-		case EPowerUpID::Strength:
-			OtherPowerUp->TriggerPowerUp();
-			break;
-			
-		case EPowerUpID::Heavy:
-			OtherPowerUp->TriggerPowerUp();
-			break;
-			
-		default:
-			break;
+		AssignPowerUpCarried(OtherPowerUp->GetPowerUpID());
+		
+		switch (OtherPowerUp->GetPowerUpID())
+		{
+			case EPowerUpID::Dash:
+				OtherPowerUp->TriggerPowerUp();
+				break;
+				
+			case EPowerUpID::Collectible:
+				OtherPowerUp->TriggerPowerUp(PlayerIndex);
+				break;
+				
+			case EPowerUpID::Freeze:
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Freeze power up");
+				OtherPowerUp->TriggerPowerUp();
+				break;
+				
+			case EPowerUpID::Strength:
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Strength power up");
+				OtherPowerUp->TriggerPowerUp();
+				break;
+				
+			case EPowerUpID::Heavy:
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Heavy power up");
+				OtherPowerUp->TriggerPowerUp();
+				break;
+				
+			default:
+				break;
 		}
 
 		return;
@@ -98,7 +101,7 @@ void APlayerBall::OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedCompon
 {
 	if (SnappingPlayerBall == nullptr)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "OnAttractionBeginOverlap");
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "OnAttractionBeginOverlap");
 
 		
 		TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
@@ -307,6 +310,7 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	PlayerBallController->OnPlayerGrapplingInputStarted.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionStarted);
 	PlayerBallController->OnPlayerGrapplingInputEnded.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionEnded);
 	PlayerBallController->OnPlayerMoreLessGrapplingInput.AddDynamic(this,&APlayerBall::MoreLessAction);
+	PlayerBallController->OnUsePowerUpInput.AddDynamic(this, &APlayerBall::UsePowerUpAction);
 }
 
 bool APlayerBall::IsGrounded()
@@ -576,29 +580,43 @@ EPowerUpID APlayerBall::GetCurrentPowerUpCarried() const
 	return CurrentPowerUpCarried;
 }
 
-void APlayerBall::SetPowerUpCarried(EPowerUpID PowerUpID)
+void APlayerBall::AssignPowerUpCarried(EPowerUpID PowerUpID)
 {
-	if (CurrentPowerUpCarried != EPowerUpID::None)	return;
+	if (CurrentPowerUpCarried != EPowerUpID::None || PowerUpID == EPowerUpID::Collectible)	return;
 
 	CurrentPowerUpCarried = PowerUpID;
 }
 
+void APlayerBall::UsePowerUpAction(float UsePowerUpValue)
+{
+	UsePowerUpCarried();
+}
+
 void APlayerBall::UsePowerUpCarried()
 {
-	if (CurrentPowerUpCarried == EPowerUpID::None)	return;
-
+	if (CurrentPowerUpCarried == EPowerUpID::None)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "You have no power up");
+		return;
+	}
+	
 	switch (CurrentPowerUpCarried)
 	{
 		case EPowerUpID::Freeze:
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Freeze PowerUp");
 			break;
 			
 		case EPowerUpID::Strength:
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Strength PowerUp");
 			break;
 			
 		case EPowerUpID::Heavy:
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Heavy PowerUp");
 			break;
 			
 		default:
 			break;
 	}
+
+	CurrentPowerUpCarried = EPowerUpID::None;
 }

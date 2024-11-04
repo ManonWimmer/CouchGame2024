@@ -31,4 +31,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "MoreLessGrappling")
 	TObjectPtr<UInputAction> MoreLessGrappling;
+
+	UPROPERTY(EditAnywhere, Category = "UsePowerUp")
+	TObjectPtr<UInputAction> UsePowerUp;
 };

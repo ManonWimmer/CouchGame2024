@@ -21,6 +21,7 @@ void APlayerBallController::SetupInputComponent()
 	BindGrapplingInput(EnhancedInputComponent);
 	BindPunchInput(EnhancedInputComponent);
 	BindMoreLessGrapplingInput(EnhancedInputComponent);
+	BindUsePowerUpInput(EnhancedInputComponent);
 }
 
 void APlayerBallController::SetupMappingContextIntoController() const
@@ -183,5 +184,28 @@ void APlayerBallController::BindMoreLessGrapplingInput(UEnhancedInputComponent* 
 		&APlayerBallController::MoreLessGrapplingInput
 		);
 }
+#pragma endregion
 
-#pragma endregion 
+#pragma region Use Power Up
+void APlayerBallController::UsePowerUpInput(const FInputActionValue& InputActionValue)
+{
+	OnUsePowerUpInput.Broadcast(InputActionValue.Get<float>());
+}
+
+void APlayerBallController::BindUsePowerUpInput(UEnhancedInputComponent* EnhancedInputComponent)
+{
+	if (EnhancedInputComponent == nullptr) return;
+	if (PlayerInputsData == nullptr) return;
+
+	EnhancedInputComponent->BindAction(
+		PlayerInputsData->UsePowerUp,
+		ETriggerEvent::Started,
+		this,
+		&APlayerBallController::UsePowerUpInput
+	);
+}
+
+#pragma endregion
+
+
+

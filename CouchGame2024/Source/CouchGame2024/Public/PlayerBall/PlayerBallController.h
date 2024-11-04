@@ -101,6 +101,23 @@ public:
 	UFUNCTION()
 	void BindMoreLessGrapplingInput(UEnhancedInputComponent* EnhancedInputComponent);
 	
+#pragma endregion
+
+#pragma region Use Power Up
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUsePowerUpInput, float, PowerUpInput);
+
+	UPROPERTY(BlueprintCallable)
+	FOnUsePowerUpInput OnUsePowerUpInput;
+	
+protected:
+	void UsePowerUpInput(const FInputActionValue& InputActionValue);
+	UFUNCTION()
+	void BindUsePowerUpInput(UEnhancedInputComponent* EnhancedInputComponent);
+
+	
+
 #pragma endregion 
 	
 };

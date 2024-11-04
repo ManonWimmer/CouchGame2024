@@ -406,8 +406,11 @@ private:
 public:
 	EPowerUpID GetCurrentPowerUpCarried() const;
 
-	void SetPowerUpCarried(EPowerUpID PowerUpID);
+	void AssignPowerUpCarried(EPowerUpID PowerUpID);
 
+	UFUNCTION()
+	void UsePowerUpAction(float UsePowerUpValue);
+	
 	UFUNCTION()
 	void UsePowerUpCarried();
 	
