@@ -404,6 +404,9 @@ private:
 #pragma region PowerUp
 
 public:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPowerUpPlayerBallComponent> PowerUpComponent;
+	
 	EPowerUpID GetCurrentPowerUpCarried() const;
 
 	void SetPowerUpCarried(EPowerUpID PowerUpID);
