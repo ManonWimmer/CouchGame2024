@@ -43,6 +43,7 @@ void UPlayerBallStateFall::StateEnter(EPlayerBallStateID PreviousState)
 	);
 	*/
 
+	/*
 	if (Pawn != nullptr)
 	{
 		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateFall::OnStunned);
@@ -50,12 +51,14 @@ void UPlayerBallStateFall::StateEnter(EPlayerBallStateID PreviousState)
 		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateFall::OnImpacted);
 		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateFall::OnBumped);
 	}
+	*/
 }
 
 void UPlayerBallStateFall::StateExit(EPlayerBallStateID NextState)
 {
 	Super::StateExit(NextState);
 
+	/*
 	if (Pawn != nullptr)
 	{
 		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateFall::OnStunned);
@@ -63,6 +66,7 @@ void UPlayerBallStateFall::StateExit(EPlayerBallStateID NextState)
 		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateFall::OnImpacted);
 		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateFall::OnBumped);
 	}
+	*/
 }
 
 void UPlayerBallStateFall::StateTick(float DeltaTime)

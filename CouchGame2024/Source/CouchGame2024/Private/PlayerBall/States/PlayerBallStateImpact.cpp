@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 
 
 // Sets default values for this component's properties
@@ -49,8 +50,15 @@ void UPlayerBallStateImpact::StateEnter(EPlayerBallStateID PreviousState)
 	}
 	
 	ImpactedBall(1.f);
-	
-	StateMachine->ChangeState(EPlayerBallStateID::Stun, Pawn->ImpactStunCooldown);	// Stun
+
+	if (Pawn->BehaviorElementReactions != nullptr)
+	{
+		StateMachine->ChangeState(EPlayerBallStateID::Stun, Pawn->BehaviorElementReactions->ImpactStunCooldown);	// Stun
+	}
+	else
+	{
+		StateMachine->ChangeState(EPlayerBallStateID::Idle);
+	}
 }
 
 void UPlayerBallStateImpact::StateExit(EPlayerBallStateID NextState)
@@ -59,8 +67,11 @@ void UPlayerBallStateImpact::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn == nullptr)
 		return;
+
+	if (Pawn->BehaviorElementReactions == nullptr)
+		return;
 	
-	Pawn->ImpactedPlayerBall = nullptr;
+	Pawn->BehaviorElementReactions->ImpactedPlayerBall = nullptr;
 }
 
 void UPlayerBallStateImpact::StateTick(float DeltaTime)
@@ -73,24 +84,27 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 	if (Pawn == nullptr)
 		return;
 
-	if (Pawn->ImpactedPlayerBall == nullptr)
+	if (Pawn->BehaviorElementReactions == nullptr)
+		return;
+	
+	if (Pawn->BehaviorElementReactions->ImpactedPlayerBall == nullptr)
 		return;
 
-	FVector Velocity = Pawn->ImpactedPlayerBall->GetVelocity();
+	FVector Velocity = Pawn->BehaviorElementReactions->ImpactedPlayerBall->GetVelocity();
 	FVector Start = Pawn->GetActorLocation();
-	FVector End = Pawn->ImpactedPlayerBall->GetActorLocation();
+	FVector End = Pawn->BehaviorElementReactions->ImpactedPlayerBall->GetActorLocation();
 
 	FVector Dir = End - Start;
 
-	Dir = FMath::GetReflectionVector(Dir, Pawn->NormalImpact);
+	Dir = FMath::GetReflectionVector(Dir, Pawn->BehaviorElementReactions->NormalImpact);
 	
 	Dir.Normalize();
 	
-	float TotalForce = Pawn->ImpactForceMultiplier * Velocity.Length();
+	float TotalForce = Pawn->BehaviorElementReactions->ImpactForceMultiplier * Velocity.Length();
 
-	if (TotalForce < Pawn->ImpactMinTotalForce)
+	if (TotalForce < Pawn->BehaviorElementReactions->ImpactMinTotalForce)
 	{
-		TotalForce = Pawn->ImpactMinTotalForce;
+		TotalForce = Pawn->BehaviorElementReactions->ImpactMinTotalForce;
 	}
 
 	Pawn->PlayImpactEffectsBlueprint();

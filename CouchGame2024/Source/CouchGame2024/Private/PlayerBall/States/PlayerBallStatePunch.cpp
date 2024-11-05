@@ -7,6 +7,7 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 
 
 // Sets default values for this component's properties
@@ -65,6 +66,8 @@ void UPlayerBallStatePunch::StateTick(float DeltaTime)
 #pragma region Punch Behavior
 void UPlayerBallStatePunch::PunchPlayerBall()
 {
+	if (Pawn == nullptr)	return;
+	
 	APlayerBall* PlayerBall = GetNearestPlayerBallInPunchRadius();
 	if (PlayerBall == nullptr)
 		return;
@@ -75,8 +78,12 @@ void UPlayerBallStatePunch::PunchPlayerBall()
 	FVector Dir = End - Start;
 
 	Dir.Normalize();
+
+	if (PlayerBall->BehaviorElementReactions != nullptr && Pawn->BehaviorElementReactions != nullptr)
+	{
+		PlayerBall->BehaviorElementReactions->ReceiveStunnedAction(Pawn->BehaviorElementReactions->PunchStunCooldown);
 	
-	PlayerBall->ReceiveStunnedAction(Pawn->PunchStunCooldown);
+	}
 	PlayerBall->SphereCollision->AddImpulse(Dir * Pawn->PunchForceMultiplier, NAME_None, false);
 }
 

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "PowerUp/PowerUpID.h"
 #include "PlayerBall.generated.h"
 
 
@@ -143,21 +142,6 @@ private:
 
 #pragma region States
 
-#pragma region Stun
-
-public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStunedAction, float, StunValue);
-	
-	UPROPERTY()
-	FOnStunedAction OnStunnedAction;
-
-	UFUNCTION(BlueprintCallable)
-	void ReceiveStunnedAction(float InStunnedDurationValue);
-	
-	UPROPERTY()
-	float PunchStunCooldown = 3.f;
-
-#pragma	endregion
 
 #pragma region Punch
 
@@ -186,37 +170,9 @@ public:
 	bool bCanPunch = true;
 
 #pragma endregion
-
-#pragma region Impact
-
-public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnImpactAction, float, ImpactValue);
 	
-	UPROPERTY()
-	FOnImpactAction OnImpactAction;
-
-	UPROPERTY()
-	TObjectPtr<APlayerBall> ImpactedPlayerBall;
-
-	UPROPERTY()
-	float ImpactForceMultiplier = 30000.f;
-
-	UPROPERTY()
-	float ImpactMinTotalForce = 50.f;
-
-	UPROPERTY()
-	float ImpactStunCooldown = 1.f;
-	
-	UFUNCTION()
-	void ReceiveImpactAction(float ImpactValue, const FVector &InNormalImpact);
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayImpactEffectsBlueprint();
-	
-	UPROPERTY()
-	FVector NormalImpact = FVector(0, 0, 0);
-
-#pragma endregion
 
 #pragma region Grapple
 	
@@ -334,58 +290,9 @@ private:
 #pragma endregion
 	
 #pragma endregion 
-	
-#pragma region Snapping
-public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReceiveSnappingAction, float, SnappingValue);
 
-	UPROPERTY()
-	FOnReceiveSnappingAction OnReceiveSnappingAction;
 
-	UFUNCTION()
-	void ReceiveSnappingAction(float SnappingValue);
-	
-	UPROPERTY()
-	TObjectPtr<APlayerBall> SnappingPlayerBall;
-
-	float SnapAngularForce = 3000.f;
-
-	float SnapControlMoveRollDivider = 2.f;
-
-	float MinVelocityToSnap = 200.f;
-
-#pragma endregion 
 
 #pragma endregion
 	
-#pragma region Reaction Pinball Elements
-
-public:
-	TObjectPtr<APinballElement> HitPinballElement;
-
-	
-#pragma region Bumper Reaction
-public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBumperReaction, float, BumperReactionValue);
-
-	FOnBumperReaction OnBumperReaction;
-
-	UPROPERTY()
-	float BumpedForceMultiplier = 30000.f;
-
-	UPROPERTY()
-	float BumpedHitLagCooldown = 0.2f;
-	
-	UPROPERTY()
-	FVector NormalBump = FVector(0, 0, 0);
-	
-private:
-	UFUNCTION()
-	void ReceiveBumperReaction(APinballElement* Element, const FVector &InNormalBump);
-
-#pragma endregion 
-
-	
-#pragma endregion
-
 };

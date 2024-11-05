@@ -21,6 +21,7 @@
 void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                  FVector NormalImpulse, const FHitResult& Hit)
 {
+	/*
 	if (OtherActor == nullptr) return;
 
 	TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
@@ -52,11 +53,13 @@ void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* Othe
 			}
 		}
 	}
+	*/
 }
 
 void APlayerBall::OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	/*
 	if (SnappingPlayerBall == nullptr)
 	{
 		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "OnAttractionBeginOverlap");
@@ -72,11 +75,13 @@ void APlayerBall::OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedCompon
 			return;
 		}
 	}
+	*/
 }
 
 void APlayerBall::OnAttractionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	/*
 	if (SnappingPlayerBall == nullptr)	return;
 
 	TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
@@ -88,6 +93,7 @@ void APlayerBall::OnAttractionEndOverlap(UPrimitiveComponent* OverlappedComponen
 			ReceiveSnappingAction(0.f);
 		}
 	}
+	*/
 }
 
 // Sets default values
@@ -113,12 +119,12 @@ APlayerBall::APlayerBall()
 	
 	if (SphereCollision != nullptr)
 	{
-		SphereCollision->OnComponentHit.AddDynamic(this, &APlayerBall::OnCollisionHit);
+		//SphereCollision->OnComponentHit.AddDynamic(this, &APlayerBall::OnCollisionHit);
 	}
 	if (AttractionSphere != nullptr)
 	{
-		AttractionSphere->OnComponentBeginOverlap.AddDynamic(this, &APlayerBall::OnAttractionBeginOverlap);
-		AttractionSphere->OnComponentEndOverlap.AddDynamic(this, &APlayerBall::OnAttractionEndOverlap);
+		//AttractionSphere->OnComponentBeginOverlap.AddDynamic(this, &APlayerBall::OnAttractionBeginOverlap);
+		//AttractionSphere->OnComponentEndOverlap.AddDynamic(this, &APlayerBall::OnAttractionEndOverlap);
 	}
 
 	// ----- Setup Grappling ----- //
@@ -179,13 +185,7 @@ void APlayerBall::SetupData() // Get all data and set them
 
 #pragma region States Data
 
-	// Movements
-	/*
-	AngularRollForce = PlayerBallData->AngularRollForce;
-	BraqueDirectionForceMultiplier = PlayerBallData->BraqueDirectionForceMultiplier;
-	SphereCollision->SetAngularDamping(PlayerBallData->AngularRollDamping);
-	SphereCollision->SetPhysicsMaxAngularVelocityInDegrees(PlayerBallData->MaxAngularRollVelocity);
-	*/
+	
 
 #pragma region FallData (Obsolete)
 	/*
@@ -197,28 +197,12 @@ void APlayerBall::SetupData() // Get all data and set them
 	AccelerateFallForce = PlayerBallData->AccelerateFallForce;
 	*/
 #pragma endregion 
-	
-	// Stun By punch
-	PunchStunCooldown = PlayerBallData->PunchStunCooldown;
 
 	// Punch
 	PunchCooldown = PlayerBallData->PunchCooldown;
 	PunchRadius = PlayerBallData->PunchRadius;
 	PunchForceMultiplier = PlayerBallData->PunchForceMultiplier;
-	
-	// Impact
-	ImpactForceMultiplier = PlayerBallData->ImpactForceMultiplier;
-	ImpactMinTotalForce = PlayerBallData->ImpactMinTotalForce;
-	ImpactStunCooldown = PlayerBallData->ImpactStunCooldown;
 
-	// Bumped
-	BumpedForceMultiplier = PlayerBallData->BumpedForceMultiplier;
-	BumpedHitLagCooldown = PlayerBallData->BumpedHitLagStunCooldown;
-
-	// Snapping
-	SnapAngularForce = PlayerBallData->SnapAngularForce;
-	SnapControlMoveRollDivider = PlayerBallData->SnapControlMoveRollDivider;
-	MinVelocityToSnap = PlayerBallData->MinVelocityToSnap;
 	if (PlayerBallData->SnapTriggerRadius == PlayerBallData->MaxCableDistance)	// to avoid a case in which 2 spheres overlap and causes physics bug
 	{
 		AttractionSphere->SetSphereRadius(PlayerBallData->SnapTriggerRadius - 2.f);
@@ -313,10 +297,6 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	//PlayerBallController->OnUsePowerUpInput.AddDynamic(this, &APlayerBall::UsePowerUpAction);
 }
 
-void APlayerBall::ReceiveStunnedAction(float InStunnedDurationValue)
-{
-	OnStunnedAction.Broadcast(InStunnedDurationValue);
-}
 
 void APlayerBall::ReceivePunchAction(float InPunchValue)
 {
@@ -338,18 +318,6 @@ void APlayerBall::HandlePunchCooldown(float DeltaTime)
 		bCanPunch = true;
 	}
 }
-
-void APlayerBall::ReceiveImpactAction(float ImpactValue, const FVector &InNormalImpact)
-{
-	NormalImpact = InNormalImpact;
-
-	NormalImpact.Z = 0.f;
-
-	NormalImpact.Normalize();
-	
-	OnImpactAction.Broadcast(ImpactValue);
-}
-
 
 /*
 void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
@@ -518,23 +486,4 @@ void APlayerBall::ReceiveGrappledActionEnded(float InGrappledValue)
 void APlayerBall::MoreLessAction(float InMoreLessValue)
 {
 	MoreLessValue = InMoreLessValue;
-}
-
-void APlayerBall::ReceiveSnappingAction(float SnappingValue)
-{
-	OnReceiveSnappingAction.Broadcast(SnappingValue);
-}
-
-#pragma endregion 
-
-void APlayerBall::ReceiveBumperReaction(APinballElement* Element, const FVector &InNormalBump)
-{
-	HitPinballElement = Element;
-
-	NormalBump = InNormalBump;
-
-	NormalBump.Z = 0.f;
-	NormalBump.Normalize();
-
-	OnBumperReaction.Broadcast(1.f);
 }

@@ -5,6 +5,7 @@
 
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 
 
 // Sets default values for this component's properties
@@ -39,8 +40,12 @@ void UPlayerBallStateGrappled::StateEnter(EPlayerBallStateID PreviousState)
 		Pawn->CanBeGrappled = false;
 		
 		Pawn->OnGrappledActionEnded.AddDynamic(this, &UPlayerBallStateGrappled::OnEndGrappled);
-		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappled::OnStunned);
-		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateGrappled::OnImpacted);
+
+		if (Pawn->BehaviorElementReactions != nullptr)
+		{
+			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappled::OnStunned);
+			Pawn->BehaviorElementReactions->OnImpactAction.AddDynamic(this, &UPlayerBallStateGrappled::OnImpacted);
+		}
 	}
 }
 
@@ -51,9 +56,12 @@ void UPlayerBallStateGrappled::StateExit(EPlayerBallStateID NextState)
 	if (Pawn != nullptr)
     {
     	Pawn->OnGrappledActionEnded.RemoveDynamic(this, &UPlayerBallStateGrappled::OnEndGrappled);
-		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappled::OnStunned);
-		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateGrappled::OnImpacted);
 
+		if (Pawn->BehaviorElementReactions != nullptr)
+		{
+			Pawn->BehaviorElementReactions->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappled::OnStunned);
+			Pawn->BehaviorElementReactions->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateGrappled::OnImpacted);
+		}
 
 		if (Pawn->GrapplingPlayerBall != nullptr)
 		{

@@ -7,6 +7,7 @@
 #include "Components/SphereComponent.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 
 
@@ -42,8 +43,12 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 		Pawn->CanBeGrappled = false;
 		
 		Pawn->OnGrapplingActionEnded.AddDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
-		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
-		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
+
+		if (Pawn->BehaviorElementReactions != nullptr)
+		{
+			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
+			Pawn->BehaviorElementReactions->OnImpactAction.AddDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
+		}
 
 
 		if (Pawn->GrappledPlayerBall != nullptr)
@@ -69,8 +74,12 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 	if (Pawn != nullptr)
 	{
 		Pawn->OnGrapplingActionEnded.RemoveDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
-		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnStunned);
-		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
+
+		if (Pawn->BehaviorElementReactions != nullptr)
+		{
+			Pawn->BehaviorElementReactions->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnStunned);
+			Pawn->BehaviorElementReactions->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
+		}
 
 		Pawn->IsGrappling = false;
 

@@ -4,10 +4,10 @@
 #include "PlayerBall/States/PlayerBallStateBumped.h"
 
 #include "Components/SphereComponent.h"
-#include "GameFramework/FloatingPawnMovement.h"
 #include "PinballElements/PinballElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 
 
 // Sets default values for this component's properties
@@ -49,10 +49,13 @@ void UPlayerBallStateBumped::StateEnter(EPlayerBallStateID PreviousState)
 	{
 		Pawn->CanGrappling = false;
 		Pawn->CanBeGrappled = false;
-		
-		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateBumped::OnStunned);
-		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateBumped::OnImpacted);
-		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateBumped::OnBumped);
+
+		if (Pawn->BehaviorElementReactions != nullptr)
+		{
+			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateBumped::OnStunned);
+			Pawn->BehaviorElementReactions->OnImpactAction.AddDynamic(this, &UPlayerBallStateBumped::OnImpacted);
+			Pawn->BehaviorElementReactions->OnBumperReaction.AddDynamic(this, &UPlayerBallStateBumped::OnBumped);
+		}
 	}
 	
 	Bump();
@@ -64,11 +67,14 @@ void UPlayerBallStateBumped::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
 	{
-		Pawn->HitPinballElement = nullptr;
-		
-		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateBumped::OnStunned);
-		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateBumped::OnImpacted);
-		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateBumped::OnBumped);
+		if (Pawn->BehaviorElementReactions != nullptr)
+		{
+			Pawn->BehaviorElementReactions->HitPinballElement = nullptr;
+			
+			Pawn->BehaviorElementReactions->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateBumped::OnStunned);
+			Pawn->BehaviorElementReactions->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateBumped::OnImpacted);
+			Pawn->BehaviorElementReactions->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateBumped::OnBumped);
+		}
 	}
 }
 
@@ -81,26 +87,28 @@ void UPlayerBallStateBumped::Bump()
 {
 	if (Pawn == nullptr)	return;
 
-	if (Pawn->HitPinballElement == nullptr)
+	if (Pawn->BehaviorElementReactions == nullptr)	return;
+	
+	if (Pawn->BehaviorElementReactions->HitPinballElement == nullptr)
 	{
 		StateMachine->ChangeState(EPlayerBallStateID::Idle);
 		return;
 	}
 
 	FVector Start = Pawn->GetActorLocation();
-	FVector End = Pawn->HitPinballElement->GetActorLocation();
+	FVector End = Pawn->BehaviorElementReactions->HitPinballElement->GetActorLocation();
 
 	FVector Dir = End - Start;
 
-	Dir = FMath::GetReflectionVector(Dir, Pawn->NormalBump);
+	Dir = FMath::GetReflectionVector(Dir, Pawn->BehaviorElementReactions->NormalBump);
 	
 
 	//DrawDebugLine(GetWorld(), Pawn->HitPinballElement->GetActorLocation(), Pawn->HitPinballElement->GetActorLocation() + Dir*1000.f, FColor::Green, true, 5.f);
 	Dir.Normalize();
 	
-	Pawn->SphereCollision->AddImpulse(Dir * Pawn->BumpedForceMultiplier, NAME_None, false);	// impulse
+	Pawn->SphereCollision->AddImpulse(Dir * Pawn->BehaviorElementReactions->BumpedForceMultiplier, NAME_None, false);	// impulse
 
-	Pawn->ReceiveStunnedAction(Pawn->BumpedHitLagCooldown);	// stun
+	Pawn->BehaviorElementReactions->ReceiveStunnedAction(Pawn->BehaviorElementReactions->BumpedHitLagCooldown);	// stun
 }
 
 void UPlayerBallStateBumped::OnStunned(float StunnedValue)	// -> stunned

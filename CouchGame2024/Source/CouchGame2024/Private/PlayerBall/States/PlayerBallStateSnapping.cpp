@@ -7,7 +7,9 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
+#include "PlayerBall/Datas/PlayerBallData.h"
 
 
 // Sets default values for this component's properties
@@ -41,19 +43,25 @@ void UPlayerBallStateSnapping::StateEnter(EPlayerBallStateID PreviousState)
 		Pawn->CanGrappling = true;
 		Pawn->CanBeGrappled = true;
 
+		if (Pawn->BehaviorElementReactions != nullptr)
+		{
+			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.AddDynamic(this, &UPlayerBallStateSnapping::OnEndSnapping);
+			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateSnapping::OnStunned);
+			Pawn->BehaviorElementReactions->OnImpactAction.AddDynamic(this, &UPlayerBallStateSnapping::OnImpacted);
+			Pawn->BehaviorElementReactions->OnBumperReaction.AddDynamic(this, &UPlayerBallStateSnapping::OnBumped);
+		}
 		
-		Pawn->OnReceiveSnappingAction.AddDynamic(this, &UPlayerBallStateSnapping::OnEndSnapping);
-		Pawn->OnStunnedAction.AddDynamic(this, &UPlayerBallStateSnapping::OnStunned);
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateSnapping::OnPunch);
-		Pawn->OnImpactAction.AddDynamic(this, &UPlayerBallStateSnapping::OnImpacted);
-		Pawn->OnBumperReaction.AddDynamic(this, &UPlayerBallStateSnapping::OnBumped);
 		Pawn->OnGrapplingActionStarted.AddDynamic(this, &UPlayerBallStateSnapping::OnGrappling);
 		Pawn->OnGrappledActionStarted.AddDynamic(this, &UPlayerBallStateSnapping::OnGrappled);
 	}
 
-	if (Pawn->SnappingPlayerBall == nullptr)
+	if (Pawn->BehaviorElementReactions != nullptr)
 	{
-		StateMachine->ChangeState(EPlayerBallStateID::Idle);
+		if (Pawn->BehaviorElementReactions->SnappingPlayerBall == nullptr)
+		{
+			StateMachine->ChangeState(EPlayerBallStateID::Idle);
+		}
 	}
 }
 
@@ -63,15 +71,22 @@ void UPlayerBallStateSnapping::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
 	{
-		Pawn->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnEndSnapping);
-		Pawn->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnStunned);
+		if (Pawn->BehaviorElementReactions != nullptr)
+		{
+			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnEndSnapping);
+			Pawn->BehaviorElementReactions->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnStunned);
+			Pawn->BehaviorElementReactions->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnImpacted);
+			Pawn->BehaviorElementReactions->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnBumped);
+		}
+		
 		Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnPunch);
-		Pawn->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnImpacted);
-		Pawn->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnBumped);
 		Pawn->OnGrapplingActionStarted.RemoveDynamic(this, &UPlayerBallStateSnapping::OnGrappling);
 		Pawn->OnGrappledActionStarted.RemoveDynamic(this, &UPlayerBallStateSnapping::OnGrappled);
 
-		Pawn->SnappingPlayerBall = nullptr;
+		if (Pawn->BehaviorElementReactions != nullptr)
+		{
+			Pawn->BehaviorElementReactions->SnappingPlayerBall = nullptr;
+		}
 	}
 }
 
@@ -81,7 +96,8 @@ void UPlayerBallStateSnapping::StateTick(float DeltaTime)
 
 	Move(DeltaTime);
 
-	if (Pawn->GetVelocity().Length() >= Pawn->MinVelocityToSnap)
+	
+	if (Pawn->GetVelocity().Length() >= Pawn->GetPlayerBallData()->MinVelocityToSnap)
 	{
 		SnappingEffect(DeltaTime);
 	}
@@ -116,15 +132,17 @@ void UPlayerBallStateSnapping::Move(float DeltaTime)
 		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
 
-	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->BehaviorMovements->AngularRollForce / Pawn->SnapControlMoveRollDivider), NAME_None, true);
+	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->BehaviorMovements->AngularRollForce / Pawn->GetPlayerBallData()->SnapControlMoveRollDivider), NAME_None, true);
 }
 
 void UPlayerBallStateSnapping::SnappingEffect(float DeltaTime)
 {
-	if (Pawn->SnappingPlayerBall == nullptr)	return;
+	if (Pawn->BehaviorElementReactions == nullptr)	return;
+	
+	if (Pawn->BehaviorElementReactions->SnappingPlayerBall == nullptr)	return;
 	
 	FVector Start = Pawn->GetActorLocation();
-	FVector End = Pawn->SnappingPlayerBall->GetActorLocation();
+	FVector End = Pawn->BehaviorElementReactions->SnappingPlayerBall->GetActorLocation();
 
 	FVector Dir = End - Start;
 
@@ -139,7 +157,7 @@ void UPlayerBallStateSnapping::SnappingEffect(float DeltaTime)
 
 	//DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 5.f);
 	
-	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * Pawn->SnapAngularForce, NAME_None, true);
+	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * Pawn->GetPlayerBallData()->SnapAngularForce, NAME_None, true);
 }
 
 void UPlayerBallStateSnapping::OnEndSnapping(float InSnappingValue)
