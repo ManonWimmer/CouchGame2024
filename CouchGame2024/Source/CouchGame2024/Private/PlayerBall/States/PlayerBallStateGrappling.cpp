@@ -8,6 +8,7 @@
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 
 
@@ -39,29 +40,36 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 
 	if (Pawn != nullptr)
 	{
-		Pawn->CanGrappling = false;
-		Pawn->CanBeGrappled = false;
-		
-		Pawn->OnGrapplingActionEnded.AddDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
-
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
 			Pawn->BehaviorElementReactions->OnImpactAction.AddDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
 		}
-
-
-		if (Pawn->GrappledPlayerBall != nullptr)
+		
+		if (Pawn->BehaviorGrapple != nullptr)
 		{
-			Pawn->GrapplingCable->SetHiddenInGame(false);
-			SetCable();
+			Pawn->BehaviorGrapple->CanGrappling = false;
+			Pawn->BehaviorGrapple->CanBeGrappled = false;
 
-			FVector Direction = Pawn->GetActorLocation() - Pawn->GrappledPlayerBall->GetActorLocation();
-			Pawn->CurrentGrapplingAngle = atan2f(Direction.Y, Direction.X);
-			Pawn->CurrentGrapplingAngularVelocity = 0.f;
+			Pawn->BehaviorGrapple->OnGrapplingActionEnded.AddDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
 
-			Pawn->GrappledPlayerBall->ReceiveGrappledActionStarted(1.f);
+			
+			if (Pawn->BehaviorGrapple->GrappledPlayerBall != nullptr)
+			{
+				Pawn->GrapplingCable->SetHiddenInGame(false);
+				SetCable();
+
+				FVector Direction = Pawn->GetActorLocation() - Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation();
+				Pawn->BehaviorGrapple->CurrentGrapplingAngle = atan2f(Direction.Y, Direction.X);
+				Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity = 0.f;
+
+				if (Pawn->BehaviorGrapple->GrappledPlayerBall->BehaviorGrapple != nullptr)
+				{
+					Pawn->BehaviorGrapple->GrappledPlayerBall->BehaviorGrapple->ReceiveGrappledActionStarted(1.f);
+				}
+			}
 		}
+
 	}
 }
 
@@ -73,60 +81,69 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
 	{
-		Pawn->OnGrapplingActionEnded.RemoveDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
-
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnStunned);
 			Pawn->BehaviorElementReactions->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
 		}
 
-		Pawn->IsGrappling = false;
 
-		Pawn->LastAngle = Pawn->CurrentGrapplingAngle;
-		SetGrapplingVelocityAndAngle(GetWorld()->DeltaTimeSeconds);
-
-		if (Pawn->CurrentGrapplingAngle > Pawn->LastAngle)
-			Pawn->AngleRotate = 90.f;
-		else
-			Pawn->AngleRotate = -90.f;
-
-		Pawn->GrapplingCable->SetHiddenInGame(true);
-
-		/*
-		Pawn->ReleaseDirection = Pawn->GetActorLocation() + (Pawn->GetActorLocation() - Pawn->GrappledPlayerBall->
-				GetActorLocation()).
-			RotateAngleAxis(Pawn->AngleRotate, FVector(1, 0, 0));
-			*/
-		// ------ Changed Part ----------
-		Pawn->ReleaseDirection = Pawn->GetActorLocation() - Pawn->GrappledPlayerBall->
-				GetActorLocation();
-		float TempX = Pawn->ReleaseDirection.X;
-		Pawn->ReleaseDirection.X = -Pawn->ReleaseDirection.Y;	// To get perpendicular vector of n : n(x, y) -> np(-y, x)
-		Pawn->ReleaseDirection.Y = TempX;
-		Pawn->ReleaseDirection.Z = 0.f;
-
-		Pawn->ReleaseDirection *= FMath::Sign(Pawn->CurrentGrapplingAngularVelocity);
-		DrawDebugLine(GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Pawn->ReleaseDirection * 500.f, FColor::Red, false, 5.f);
-		// Changed Part
 		
-		Pawn->SphereCollision->AddImpulse(
-			Pawn->ReleaseDirection.GetSafeNormal(0.0001f) * FMath::Abs(Pawn->CurrentGrapplingAngularVelocity) * Pawn->
-			GrapplingReleaseForce,
-			"None", true);
-
-		Pawn->CurrentGrapplingAngle = 0.f;
-		Pawn->CurrentGrapplingAngularVelocity = 0.f;
-
-		if (Pawn->GrappledPlayerBall != nullptr)
+		if (Pawn->BehaviorGrapple != nullptr)
 		{
-			Pawn->GrappledPlayerBall->ReceiveGrappledActionEnded(0.f);
+			Pawn->BehaviorGrapple->OnGrapplingActionEnded.RemoveDynamic(this, &UPlayerBallStateGrappling::OnEndGrappling);
+			
+			Pawn->BehaviorGrapple->IsGrappling = false;
+			Pawn->BehaviorGrapple->LastAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle;
 
-			// Reset Grappled Player & Grappling Player
-			//Pawn->GrappledPlayerBall->GrapplingPlayerBall = nullptr;
+			SetGrapplingVelocityAndAngle(GetWorld()->DeltaTimeSeconds);
 
-			UE_LOG(LogTemp, Warning, TEXT("UnSet grappledPlayerBall") );
-			Pawn->GrappledPlayerBall = nullptr;
+			if (Pawn->BehaviorGrapple->CurrentGrapplingAngle > Pawn->BehaviorGrapple->LastAngle)
+				Pawn->BehaviorGrapple->AngleRotate = 90.f;
+			else
+				Pawn->BehaviorGrapple->AngleRotate = -90.f;
+
+			
+			Pawn->GrapplingCable->SetHiddenInGame(true);
+
+			/*
+			Pawn->ReleaseDirection = Pawn->GetActorLocation() + (Pawn->GetActorLocation() - Pawn->GrappledPlayerBall->
+					GetActorLocation()).
+				RotateAngleAxis(Pawn->AngleRotate, FVector(1, 0, 0));
+				*/
+			// ------ Changed Part ----------
+			Pawn->BehaviorGrapple->ReleaseDirection = Pawn->GetActorLocation() - Pawn->BehaviorGrapple->GrappledPlayerBall->
+					GetActorLocation();
+			float TempX = Pawn->BehaviorGrapple->ReleaseDirection.X;
+			Pawn->BehaviorGrapple->ReleaseDirection.X = -Pawn->BehaviorGrapple->ReleaseDirection.Y;	// To get perpendicular vector of n : n(x, y) -> np(-y, x)
+			Pawn->BehaviorGrapple->ReleaseDirection.Y = TempX;
+			Pawn->BehaviorGrapple->ReleaseDirection.Z = 0.f;
+
+			Pawn->BehaviorGrapple->ReleaseDirection *= FMath::Sign(Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity);
+			DrawDebugLine(GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Pawn->BehaviorGrapple->ReleaseDirection * 500.f, FColor::Red, false, 5.f);
+			// Changed Part
+			
+			Pawn->SphereCollision->AddImpulse(
+				Pawn->BehaviorGrapple->ReleaseDirection.GetSafeNormal(0.0001f) * FMath::Abs(Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity) *
+				Pawn->BehaviorGrapple->GrapplingReleaseForce,
+				"None", true);
+
+			Pawn->BehaviorGrapple->CurrentGrapplingAngle = 0.f;
+			Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity = 0.f;
+
+			if (Pawn->BehaviorGrapple->GrappledPlayerBall != nullptr)
+			{
+				if (Pawn->BehaviorGrapple->GrappledPlayerBall->BehaviorGrapple != nullptr)
+				{
+					Pawn->BehaviorGrapple->GrappledPlayerBall->BehaviorGrapple->ReceiveGrappledActionEnded(0.f);
+				}
+
+				// Reset Grappled Player & Grappling Player
+				//Pawn->GrappledPlayerBall->GrapplingPlayerBall = nullptr;
+
+				UE_LOG(LogTemp, Warning, TEXT("UnSet grappledPlayerBall") );
+				Pawn->BehaviorGrapple->GrappledPlayerBall = nullptr;
+			}
 		}
 	}
 	
@@ -136,38 +153,40 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
-
-	if (Pawn->GrappledPlayerBall == nullptr)	return;
+	
+	if (Pawn->BehaviorGrapple == nullptr)	return;
+	
+	if (Pawn->BehaviorGrapple->GrappledPlayerBall == nullptr)	return;
 	
 	SetGrapplingVelocityAndAngle(GetWorld()->DeltaTimeSeconds);
 
 	if (TempGrapplingAngle == 0.f) return;
 
-	Pawn->GrapplingOffset = FVector(FMath::Cos(TempGrapplingAngle), FMath::Sin(TempGrapplingAngle), 0)
-		* Pawn->CableLength;
+	Pawn->BehaviorGrapple->GrapplingOffset = FVector(FMath::Cos(TempGrapplingAngle), FMath::Sin(TempGrapplingAngle), 0)
+		* Pawn->BehaviorGrapple->CableLength;
 
 	float DistanceBetweenGrappledPlayers = FVector::Dist(Pawn->GetActorLocation(),
-	                                                     Pawn->GrappledPlayerBall->GetActorLocation());
+	                                                     Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation());
 
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, Pawn->GrapplingOffset.ToString());
 
-	FVector NormalizedDirection = (Pawn->GetActorLocation() - Pawn->GrappledPlayerBall->GetActorLocation()).
+	FVector NormalizedDirection = (Pawn->GetActorLocation() - Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation()).
 		GetSafeNormal();
 
 	// More or less cord
-	if (FMath::Abs(Pawn->MoreLessValue) > 0.5f)
+	if (FMath::Abs(Pawn->BehaviorGrapple->MoreLessValue) > 0.5f)
 	{
-		if (Pawn->MoreLessValue > 0.f && DistanceBetweenGrappledPlayers > Pawn->MinCableDistance) // Less cord
+		if (Pawn->BehaviorGrapple->MoreLessValue > 0.f && DistanceBetweenGrappledPlayers > Pawn->BehaviorGrapple->MinCableDistance) // Less cord
 		{
 			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Less cord");
 
-			Pawn->GrapplingOffset -= NormalizedDirection * Pawn->MoreOrLessCablePerFrame;
+			Pawn->BehaviorGrapple->GrapplingOffset -= NormalizedDirection * Pawn->BehaviorGrapple->MoreOrLessCablePerFrame;
 		}
-		else if (Pawn->MoreLessValue < 0.f && DistanceBetweenGrappledPlayers < Pawn->MaxCableDistance) // More cord
+		else if (Pawn->BehaviorGrapple->MoreLessValue < 0.f && DistanceBetweenGrappledPlayers < Pawn->BehaviorGrapple->MaxCableDistance) // More cord
 		{
 			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "More cord");
 
-			Pawn->GrapplingOffset += NormalizedDirection * Pawn->MoreOrLessCablePerFrame;
+			Pawn->BehaviorGrapple->GrapplingOffset += NormalizedDirection * Pawn->BehaviorGrapple->MoreOrLessCablePerFrame;
 		}
 	}
 
@@ -175,7 +194,7 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(Pawn);
 
-	FVector SphereCenter = Pawn->GrappledPlayerBall->GetActorLocation() + Pawn->GrapplingOffset;
+	FVector SphereCenter = Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation() + Pawn->BehaviorGrapple->GrapplingOffset;
 	float SphereRadius = Pawn->SphereCollision->GetScaledSphereRadius() + 0.2f;
 
 	FCollisionObjectQueryParams ObjectQueryParams(ECC_GameTraceChannel2);    // Look only for walls
@@ -208,21 +227,21 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	if(bHasDetected)
 	{
 		Pawn->SphereCollision->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
-		Pawn->CurrentGrapplingAngularVelocity = 0.f;
+		Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity = 0.f;
 		return;
 	}
 
 	//TObjectPtr<FHitResult> OutSweepHitResult;
-	Pawn->SetActorLocation(Pawn->GrappledPlayerBall->GetActorLocation() + Pawn->GrapplingOffset);
+	Pawn->SetActorLocation(Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation() + Pawn->BehaviorGrapple->GrapplingOffset);
 	// Test de MoveComponent et AddForce -> ça fait nimp lol
 	//Pawn->SetActorLocation(Pawn->GrappledPlayerBall->GetActorLocation() + Pawn->GrapplingOffset, true, OutSweepHitResult ); détecte bien les murs mais aussi les bumpers + un peu crade 
 	Pawn->GrapplingCable->SetWorldLocation(Pawn->GetActorLocation());
 	SetCable();
 
-	Pawn->CurrentGrapplingAngularVelocity = TempGrapplingAngularVelocity;
+	Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity = TempGrapplingAngularVelocity;
 
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Angle %f"), TempGrapplingAngle));
-	Pawn->CurrentGrapplingAngle = TempGrapplingAngle;
+	Pawn->BehaviorGrapple->CurrentGrapplingAngle = TempGrapplingAngle;
 	
 
 	LastLocation = Pawn->GetActorLocation();
@@ -259,27 +278,31 @@ void UPlayerBallStateGrappling::SetCable()
 {
 	Pawn->GrapplingCable->SetWorldLocation(Pawn->GetActorLocation());
 
-	if (Pawn->GrappledPlayerBall != nullptr)
+	if (Pawn->BehaviorGrapple == nullptr) return;
+	
+	if (Pawn->BehaviorGrapple->GrappledPlayerBall != nullptr)
 	{
-		Pawn->HookPoint = Pawn->GrappledPlayerBall->GetActorLocation();
+		Pawn->BehaviorGrapple->HookPoint = Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation();
 
-		Pawn->CableLength = FVector::Dist(Pawn->GetActorLocation(), Pawn->HookPoint);
+		Pawn->BehaviorGrapple->CableLength = FVector::Dist(Pawn->GetActorLocation(), Pawn->BehaviorGrapple->HookPoint);
 
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Magenta, FString::Printf(TEXT("Cable Length: %f"), Pawn->CableLength));
-		Pawn->GrapplingCable->CableLength = Pawn->CableLength;
+		Pawn->GrapplingCable->CableLength = Pawn->BehaviorGrapple->CableLength;
 
 	
-		Pawn->GrapplingCable->SetAttachEndToComponent(Pawn->GrappledPlayerBall->SphereMesh);
+		Pawn->GrapplingCable->SetAttachEndToComponent(Pawn->BehaviorGrapple->GrappledPlayerBall->SphereMesh);
 	}
 }
 
 void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngle(float DeltaTime)
 {
 	if (Pawn->BehaviorMovements == nullptr)	return;
-	
-	TempGrapplingAngularVelocity = Pawn->GrapplingDamping * Pawn->CurrentGrapplingAngularVelocity + (Pawn->BehaviorMovements->MoveXValue * -1 *
-			Pawn->GrapplingForce) +
-		Pawn->StartGrapplingForceFactorWhenAlreadyMoving * Pawn->GetVelocity().X;
 
-	TempGrapplingAngle = Pawn->CurrentGrapplingAngle +  TempGrapplingAngularVelocity * DeltaTime;
+	if (Pawn->BehaviorGrapple == nullptr)	return;
+	
+	TempGrapplingAngularVelocity = Pawn->BehaviorGrapple->GrapplingDamping * Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity + (Pawn->BehaviorMovements->MoveXValue * -1 *
+			Pawn->BehaviorGrapple->GrapplingForce) +
+		Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * Pawn->GetVelocity().X;
+
+	TempGrapplingAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle +  TempGrapplingAngularVelocity * DeltaTime;
 }

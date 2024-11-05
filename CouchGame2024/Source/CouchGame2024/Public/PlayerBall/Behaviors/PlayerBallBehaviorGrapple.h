@@ -26,5 +26,118 @@ public:
 	virtual void InitBehavior() override;
 
 	virtual void BindBehaviorEventAction(APlayerBallController* InPlayerBallController) override;
+
+	virtual void SetupData() override;
+
+
+	#pragma region Grappling
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrapplingActionStarted, float, GrapplingValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrapplingActionEnded, float, GrapplingValue);
+	
+	UPROPERTY()
+	FOnGrapplingActionStarted OnGrapplingActionStarted;
+	UPROPERTY()
+	FOnGrapplingActionEnded OnGrapplingActionEnded;
+
+	UFUNCTION()
+	void ReceiveGrapplingActionStarted(float InGrapplingValue);
+	UFUNCTION()
+	void ReceiveGrapplingActionEnded(float InGrapplingValue);
+
+	UPROPERTY(VisibleAnywhere)
+	bool CanGrappling = false;
+	
+	UPROPERTY()
+	float GrapplingValue = 0.f;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<APlayerBall> GrappledPlayerBall = nullptr;	// Ball grappled to this playerBall
+
+	UPROPERTY()
+	float CableLength = 0.f;
+
+	UPROPERTY()
+	FVector HookPoint = FVector(0.f, 0.f, 0.f);
+
+	UPROPERTY()
+	float CurrentGrapplingAngularVelocity = 0.f;
+
+	UPROPERTY()
+	float CurrentGrapplingAngle = 0.f;
+
+	UPROPERTY()
+	bool IsGrappling = false;
+
+	UPROPERTY()
+	float LastAngle = 0.f;
+
+	UPROPERTY()
+	float AngleRotate = 0.f;
+
+	UPROPERTY()
+	FVector ReleaseDirection = FVector(0.f, 0.f, 0.f);
+
+	UPROPERTY()
+	FVector GrapplingOffset = FVector(0.f, 0.f, 0.f);
+
+	UPROPERTY()
+	float GrapplingDamping = 0.99f;
+
+	UPROPERTY()
+	float GrapplingForce = 0.1f;
+
+	UPROPERTY()
+	float GrapplingReleaseForce = 250.f;
+
+	UPROPERTY()
+	float MinCableDistance = 200.f;
+
+	UPROPERTY()
+	float MaxCableDistance = 500.f;
+
+	UPROPERTY()
+	float MoreOrLessCablePerFrame = 10.f;
+
+	UPROPERTY()
+	float StartGrapplingForceFactorWhenAlreadyMoving = 0.001f;
+
+#pragma endregion
+
+#pragma region Grappled
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrappledActionStarted, float, GrappledValue);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrappledActionEnded, float, GrappledValue);
+
+	
+	UPROPERTY()
+	FOnGrappledActionStarted OnGrappledActionStarted;
+	FOnGrappledActionEnded OnGrappledActionEnded;
+
+	UPROPERTY(VisibleAnywhere)
+	bool CanBeGrappled = false;
+	
+	UFUNCTION()
+	void ReceiveGrappledActionStarted(float InGrappledValue);
+	void ReceiveGrappledActionEnded(float InGrappledValue);
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<APlayerBall> GrapplingPlayerBall = nullptr;	// Ball grappling to this playerBall
+
+#pragma endregion
+
+#pragma region MoreLessGrappling
+public:
+	UPROPERTY()
+	float MoreLessValue;
+
+private:
+	UFUNCTION()
+	void MoreLessAction(float InMoreLessValue);
+	
+
+#pragma endregion
 	
 };

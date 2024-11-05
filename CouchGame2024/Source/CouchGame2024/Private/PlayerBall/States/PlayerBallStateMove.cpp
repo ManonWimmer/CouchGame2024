@@ -7,6 +7,7 @@
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 
 
@@ -40,8 +41,14 @@ void UPlayerBallStateMove::StateEnter(EPlayerBallStateID PreviousState)
 
 	if (Pawn != nullptr)
 	{
-		Pawn->CanGrappling = true;
-		Pawn->CanBeGrappled = true;
+		if (Pawn->BehaviorGrapple != nullptr)
+		{
+			Pawn->BehaviorGrapple->CanGrappling = true;
+			Pawn->BehaviorGrapple->CanBeGrappled = true;
+
+			Pawn->BehaviorGrapple->OnGrapplingActionStarted.AddDynamic(this, &UPlayerBallStateMove::OnGrappling);
+			Pawn->BehaviorGrapple->OnGrappledActionStarted.AddDynamic(this, &UPlayerBallStateMove::OnGrappled);
+		}
 
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
@@ -52,8 +59,6 @@ void UPlayerBallStateMove::StateEnter(EPlayerBallStateID PreviousState)
 		}
 		
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateMove::OnPunch);
-		Pawn->OnGrapplingActionStarted.AddDynamic(this, &UPlayerBallStateMove::OnGrappling);
-		Pawn->OnGrappledActionStarted.AddDynamic(this, &UPlayerBallStateMove::OnGrappled);
 
 	}
 }
@@ -73,8 +78,12 @@ void UPlayerBallStateMove::StateExit(EPlayerBallStateID NextState)
 		}
 		
 		Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateMove::OnPunch);
-		Pawn->OnGrapplingActionStarted.RemoveDynamic(this, &UPlayerBallStateMove::OnGrappling);
-		Pawn->OnGrappledActionStarted.RemoveDynamic(this, &UPlayerBallStateMove::OnGrappled);
+		
+		if (Pawn->BehaviorGrapple != nullptr)
+		{
+			Pawn->BehaviorGrapple->OnGrapplingActionStarted.RemoveDynamic(this, &UPlayerBallStateMove::OnGrappling);
+			Pawn->BehaviorGrapple->OnGrappledActionStarted.RemoveDynamic(this, &UPlayerBallStateMove::OnGrappled);
+		}
 	}
 }
 

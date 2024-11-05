@@ -6,6 +6,7 @@
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 
 
 // Sets default values for this component's properties
@@ -36,10 +37,14 @@ void UPlayerBallStateGrappled::StateEnter(EPlayerBallStateID PreviousState)
 	
 	if (Pawn != nullptr)	// link state to events
 	{
-		Pawn->CanGrappling = false;
-		Pawn->CanBeGrappled = false;
+		if (Pawn->BehaviorGrapple != nullptr)
+		{
+			Pawn->BehaviorGrapple->CanGrappling = false;
+			Pawn->BehaviorGrapple->CanBeGrappled = false;
+
+			Pawn->BehaviorGrapple->OnGrappledActionEnded.AddDynamic(this, &UPlayerBallStateGrappled::OnEndGrappled);
+		}
 		
-		Pawn->OnGrappledActionEnded.AddDynamic(this, &UPlayerBallStateGrappled::OnEndGrappled);
 
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
@@ -55,19 +60,28 @@ void UPlayerBallStateGrappled::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
     {
-    	Pawn->OnGrappledActionEnded.RemoveDynamic(this, &UPlayerBallStateGrappled::OnEndGrappled);
-
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappled::OnStunned);
 			Pawn->BehaviorElementReactions->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateGrappled::OnImpacted);
 		}
 
-		if (Pawn->GrapplingPlayerBall != nullptr)
+		
+		if (Pawn->BehaviorGrapple != nullptr)
 		{
-			Pawn->GrapplingPlayerBall->ReceiveGrapplingActionEnded(0.f);
-			Pawn->GrapplingPlayerBall = nullptr;
-			UE_LOG(LogTemp, Warning, TEXT("UnSet grapplingPlayerBall") );
+    		Pawn->BehaviorGrapple->OnGrappledActionEnded.RemoveDynamic(this, &UPlayerBallStateGrappled::OnEndGrappled);
+
+
+			
+			if (Pawn->BehaviorGrapple->GrapplingPlayerBall != nullptr)
+			{
+				if (Pawn->BehaviorGrapple->GrapplingPlayerBall->BehaviorGrapple != nullptr)
+				{
+					Pawn->BehaviorGrapple->GrapplingPlayerBall->BehaviorGrapple->ReceiveGrapplingActionEnded(0.f);
+				}
+				Pawn->BehaviorGrapple->GrapplingPlayerBall = nullptr;
+				UE_LOG(LogTemp, Warning, TEXT("UnSet grapplingPlayerBall") );
+			}
 		}
     }
 }

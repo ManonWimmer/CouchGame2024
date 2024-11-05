@@ -212,6 +212,7 @@ void APlayerBall::SetupData() // Get all data and set them
 		AttractionSphere->SetSphereRadius(PlayerBallData->SnapTriggerRadius);
 	}
 
+	/*
 	// Grappling
 	GrapplingDamping = PlayerBallData->GrapplingDamping;
 	GrapplingForce = PlayerBallData->GrapplingForce;
@@ -221,6 +222,7 @@ void APlayerBall::SetupData() // Get all data and set them
 	MoreOrLessCablePerFrame = PlayerBallData->MoreOrLessCablePerFrame;
 	StartGrapplingForceFactorWhenAlreadyMoving = PlayerBallData->StartGrapplingForceFactorWhenAlreadyMoving;
 	GrapplingSphereCollision->SetSphereRadius(MaxCableDistance); // Max grappling cable distance
+	*/
 
 	
 #pragma endregion
@@ -234,8 +236,6 @@ TObjectPtr<UPlayerBallData> APlayerBall::GetPlayerBallData() const
 
 void APlayerBall::InitPlayerBallBehaviors() const
 {
-	
-	
 	if (BehaviorMovements)
 		BehaviorMovements->InitBehavior();
 
@@ -286,10 +286,15 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	//PlayerBallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
 	//PlayerBallController->OnPlayerMoveYInput.AddDynamic(this, &APlayerBall::MoveYAction);
 	PlayerBallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
-	PlayerBallController->OnPlayerGrapplingInputStarted.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionStarted);
-	PlayerBallController->OnPlayerGrapplingInputEnded.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionEnded);
-	PlayerBallController->OnPlayerMoreLessGrapplingInput.AddDynamic(this,&APlayerBall::MoreLessAction);
+	//PlayerBallController->OnPlayerGrapplingInputStarted.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionStarted);
+	//PlayerBallController->OnPlayerGrapplingInputEnded.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionEnded);
+	//PlayerBallController->OnPlayerMoreLessGrapplingInput.AddDynamic(this,&APlayerBall::MoreLessAction);
 
+	if (BehaviorGrapple != nullptr)
+	{
+		BehaviorGrapple->BindBehaviorEventAction(PlayerBallController);
+	}
+	
 	if (BehaviorPowerUp != nullptr)
 	{
 		BehaviorPowerUp->BindBehaviorEventAction(PlayerBallController);
@@ -394,6 +399,7 @@ void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
 	
 }
 */
+/*
 void APlayerBall::ReceiveGrapplingActionStarted(float InGrapplingValue)
 {
 	if (!CanGrappling)
@@ -487,3 +493,4 @@ void APlayerBall::MoreLessAction(float InMoreLessValue)
 {
 	MoreLessValue = InMoreLessValue;
 }
+*/

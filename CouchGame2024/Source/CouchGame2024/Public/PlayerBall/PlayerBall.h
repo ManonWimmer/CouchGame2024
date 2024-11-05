@@ -174,6 +174,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayImpactEffectsBlueprint();
 
+	/*
 #pragma region Grapple
 	
 #pragma region Grappling
@@ -291,7 +292,7 @@ private:
 	
 #pragma endregion 
 
-
+*/
 
 #pragma endregion
 	

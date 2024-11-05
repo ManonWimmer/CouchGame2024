@@ -6,6 +6,7 @@
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 
 
 // Sets default values for this component's properties
@@ -44,8 +45,13 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState)
 	
 	if (Pawn != nullptr)
 	{
-		Pawn->CanGrappling = false;
-		Pawn->CanBeGrappled = true;
+		if (Pawn->BehaviorGrapple != nullptr)
+		{
+			Pawn->BehaviorGrapple->CanGrappling = false;
+			Pawn->BehaviorGrapple->CanBeGrappled = true;
+
+			Pawn->BehaviorGrapple->OnGrappledActionStarted.AddDynamic(this, &UPlayerBallStateStun::OnGrappled);
+		}
 
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
@@ -53,7 +59,6 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState)
 			Pawn->BehaviorElementReactions->OnBumperReaction.AddDynamic(this, &UPlayerBallStateStun::OnBumped);
 			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.AddDynamic(this, &UPlayerBallStateStun::OnSnapped);
 		}
-		Pawn->OnGrappledActionStarted.AddDynamic(this, &UPlayerBallStateStun::OnGrappled);
 	}
 }
 
@@ -87,7 +92,11 @@ void UPlayerBallStateStun::StateExit(EPlayerBallStateID NextState)
 			Pawn->BehaviorElementReactions->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateStun::OnBumped);
 			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateStun::OnSnapped);
 		}
-		Pawn->OnGrappledActionStarted.RemoveDynamic(this, &UPlayerBallStateStun::OnGrappled);
+		
+		if (Pawn->BehaviorGrapple != nullptr)
+		{
+			Pawn->BehaviorGrapple->OnGrappledActionStarted.RemoveDynamic(this, &UPlayerBallStateStun::OnGrappled);
+		}
 	}
 }
 

@@ -8,6 +8,7 @@
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 
 
 // Sets default values for this component's properties
@@ -39,8 +40,11 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 	
 	if (Pawn != nullptr)
 	{
-		Pawn->CanGrappling = false;
-		Pawn->CanBeGrappled = false;
+		if (Pawn->BehaviorGrapple != nullptr)
+		{
+			Pawn->BehaviorGrapple->CanGrappling = false;
+			Pawn->BehaviorGrapple->CanBeGrappled = false;
+		}
 	}
 	
 	PunchPlayerBall();
