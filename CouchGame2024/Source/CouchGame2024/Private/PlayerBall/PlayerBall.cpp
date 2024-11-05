@@ -18,90 +18,13 @@
 #include "PlayerBall/Datas/PlayerBallData.h"
 #include "PowerUp/PowerUp.h"
 
-void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-                                 FVector NormalImpulse, const FHitResult& Hit)
-{
-	/*
-	if (OtherActor == nullptr) return;
-
-	TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
-
-	if (OtherBall != nullptr)
-	{
-		ImpactedPlayerBall = OtherBall;
-		ReceiveImpactAction(1.f, Hit.ImpactNormal);
-	}
-	else
-	{
-		TObjectPtr<APinballElement> OtherElement = Cast<APinballElement>(OtherActor);
-
-		if (OtherElement != nullptr)
-		{
-			switch (OtherElement->GetElementID())
-			{
-			case EPinballElementID::Bumper:
-				OtherElement->TriggerElement();
-				ReceiveBumperReaction(OtherElement, Hit.ImpactNormal);
-				return;
-			case EPinballElementID::Flipper:
-				return;
-			case EPinballElementID::None:
-				return;
-
-			default:
-				return;
-			}
-		}
-	}
-	*/
-}
-
-void APlayerBall::OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	/*
-	if (SnappingPlayerBall == nullptr)
-	{
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "OnAttractionBeginOverlap");
-
-		
-		TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
-
-		if (OtherBall != nullptr)
-		{
-			SnappingPlayerBall = OtherBall;
-			ReceiveSnappingAction(1.f);
-
-			return;
-		}
-	}
-	*/
-}
-
-void APlayerBall::OnAttractionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	/*
-	if (SnappingPlayerBall == nullptr)	return;
-
-	TObjectPtr<APlayerBall> OtherBall = Cast<APlayerBall>(OtherActor);
-
-	if (OtherBall != nullptr)
-	{
-		if (OtherBall ==  SnappingPlayerBall)
-		{
-			ReceiveSnappingAction(0.f);
-		}
-	}
-	*/
-}
 
 // Sets default values
 APlayerBall::APlayerBall()
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 
 	PawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingPawnMovement"));
 	SphereMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereComponent"));
@@ -117,15 +40,6 @@ APlayerBall::APlayerBall()
 	BehaviorElementReactions = CreateDefaultSubobject<UPlayerBallBehaviorElementReactions>(TEXT("BehaviorElementReactions"));
 	BehaviorPowerUp = CreateDefaultSubobject<UPlayerBallBehaviorPowerUp>(TEXT("BehaviorPowerUp"));
 	
-	if (SphereCollision != nullptr)
-	{
-		//SphereCollision->OnComponentHit.AddDynamic(this, &APlayerBall::OnCollisionHit);
-	}
-	if (AttractionSphere != nullptr)
-	{
-		//AttractionSphere->OnComponentBeginOverlap.AddDynamic(this, &APlayerBall::OnAttractionBeginOverlap);
-		//AttractionSphere->OnComponentEndOverlap.AddDynamic(this, &APlayerBall::OnAttractionEndOverlap);
-	}
 
 	// ----- Setup Grappling ----- //
 	GrapplingSphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("GrapplingSphereCollision"));
@@ -183,10 +97,6 @@ void APlayerBall::SetupData() // Get all data and set them
 	if (SphereCollision == nullptr)
 		return;
 
-#pragma region States Data
-
-	
-
 #pragma region FallData (Obsolete)
 	/*
 	// Fall Obsolete
@@ -211,21 +121,6 @@ void APlayerBall::SetupData() // Get all data and set them
 	{
 		AttractionSphere->SetSphereRadius(PlayerBallData->SnapTriggerRadius);
 	}
-
-	/*
-	// Grappling
-	GrapplingDamping = PlayerBallData->GrapplingDamping;
-	GrapplingForce = PlayerBallData->GrapplingForce;
-	GrapplingReleaseForce = PlayerBallData->GrapplingReleaseForce;
-	MinCableDistance = PlayerBallData->MinCableDistance;
-	MaxCableDistance = PlayerBallData->MaxCableDistance;
-	MoreOrLessCablePerFrame = PlayerBallData->MoreOrLessCablePerFrame;
-	StartGrapplingForceFactorWhenAlreadyMoving = PlayerBallData->StartGrapplingForceFactorWhenAlreadyMoving;
-	GrapplingSphereCollision->SetSphereRadius(MaxCableDistance); // Max grappling cable distance
-	*/
-
-	
-#pragma endregion
 }
 
 TObjectPtr<UPlayerBallData> APlayerBall::GetPlayerBallData() const
@@ -283,12 +178,7 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	{
 		BehaviorMovements->BindBehaviorEventAction(PlayerBallController);
 	}
-	//PlayerBallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
-	//PlayerBallController->OnPlayerMoveYInput.AddDynamic(this, &APlayerBall::MoveYAction);
 	PlayerBallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
-	//PlayerBallController->OnPlayerGrapplingInputStarted.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionStarted);
-	//PlayerBallController->OnPlayerGrapplingInputEnded.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionEnded);
-	//PlayerBallController->OnPlayerMoreLessGrapplingInput.AddDynamic(this,&APlayerBall::MoreLessAction);
 
 	if (BehaviorGrapple != nullptr)
 	{
@@ -299,7 +189,6 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	{
 		BehaviorPowerUp->BindBehaviorEventAction(PlayerBallController);
 	}
-	//PlayerBallController->OnUsePowerUpInput.AddDynamic(this, &APlayerBall::UsePowerUpAction);
 }
 
 
@@ -323,174 +212,3 @@ void APlayerBall::HandlePunchCooldown(float DeltaTime)
 		bCanPunch = true;
 	}
 }
-
-/*
-void APlayerBall::ReceiveGrapplingAction(float InGrapplingValue)
-{
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "grappling action");
-
-	if (StateMachine->GetCurrentStateID() == EPlayerBallStateID::Stun)
-		return;
-	
-	if (InGrapplingValue == 0)
-	{
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "cc");
-		OnGrapplingAction.Broadcast(InGrapplingValue);
-		return;
-	}
-	
-	GrapplingValue = InGrapplingValue;
-
-	// Check for nearest in grappling radius
-	IsGrappling = false;
-	TArray<TObjectPtr<AActor>> OverlappingActors;
-	TArray<TObjectPtr<APlayerBall>> OverlappingPlayers;
-	SphereCollision->GetOverlappingActors(OverlappingActors, APlayerBall::StaticClass());
-
-	if (OverlappingActors.Num() <= 0)
-	{
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "pas de joueur");
-	
-		return;
-	}
-
-	for (TObjectPtr<AActor> Actor : OverlappingActors)
-	{
-		if (Actor != this)
-		{
-			TObjectPtr<APlayerBall> OtherPlayer = Cast<APlayerBall>(Actor);
-			if (OtherPlayer) 
-			{
-				if (OtherPlayer->GrappledPlayerBall == nullptr && OtherPlayer->GrapplingPlayerBall == nullptr)
-					OverlappingPlayers.Add(OtherPlayer);
-			}
-		}
-	}
-
-	if (OverlappingPlayers.Num() <= 0)
-	{
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "pas de joueur 2");
-	
-		return;
-	}
-
-	TObjectPtr<APlayerBall> NearestPlayerBall = OverlappingPlayers[0];
-	float NearestDistance = FVector::Dist(GetActorLocation(), NearestPlayerBall->GetActorLocation());
-
-	for (APlayerBall* PlayerBall : OverlappingPlayers)
-	{
-		float NewNearestDistance = FVector::Dist(GetActorLocation(), PlayerBall->GetActorLocation());
-		if (NewNearestDistance < NearestDistance)
-		{
-			NearestPlayerBall = PlayerBall;
-			NearestDistance = NewNearestDistance;
-		}
-	}
-
-	GrappledPlayerBall = NearestPlayerBall;
-	GrappledPlayerBall->GrapplingPlayerBall = this;
-	IsGrappling = true;
-
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "oui");
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "broadcast grappling");
-
-	if (GrappledPlayerBall != nullptr)
-		OnGrapplingAction.Broadcast(GrapplingValue);
-	
-}
-*/
-/*
-void APlayerBall::ReceiveGrapplingActionStarted(float InGrapplingValue)
-{
-	if (!CanGrappling)
-		return;
-	
-	GrapplingValue = InGrapplingValue;
-
-	// Check for nearest in grappling radius
-	IsGrappling = false;
-	TArray<TObjectPtr<AActor>> OverlappingActors;
-	TArray<TObjectPtr<APlayerBall>> OverlappingPlayers;
-	SphereCollision->GetOverlappingActors(OverlappingActors, APlayerBall::StaticClass());
-
-	if (OverlappingActors.Num() <= 0)
-	{
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "pas de joueur");
-	
-		return;
-	}
-
-	for (TObjectPtr<AActor> Actor : OverlappingActors)
-	{
-		if (Actor != this)
-		{
-			TObjectPtr<APlayerBall> OtherPlayer = Cast<APlayerBall>(Actor);
-			if (OtherPlayer) 
-			{
-				if (OtherPlayer->GrappledPlayerBall == nullptr && OtherPlayer->GrapplingPlayerBall == nullptr && OtherPlayer->CanBeGrappled)
-					OverlappingPlayers.Add(OtherPlayer);
-			}
-		}
-	}
-
-	if (OverlappingPlayers.Num() <= 0)
-	{
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "pas de joueur 2");
-	
-		return;
-	}
-
-	TObjectPtr<APlayerBall> NearestPlayerBall = OverlappingPlayers[0];
-	float NearestDistance = FVector::Dist(GetActorLocation(), NearestPlayerBall->GetActorLocation());
-
-	for (APlayerBall* PlayerBall : OverlappingPlayers)
-	{
-		float NewNearestDistance = FVector::Dist(GetActorLocation(), PlayerBall->GetActorLocation());
-		if (NewNearestDistance < NearestDistance)
-		{
-			NearestPlayerBall = PlayerBall;
-			NearestDistance = NewNearestDistance;
-		}
-	}
-
-	GrappledPlayerBall = NearestPlayerBall;
-
-	if (GrappledPlayerBall == nullptr)
-		return;
-	
-	// UE_LOG(LogTemp, Warning, TEXT("Set grappledPlayerBall") );
-	// UE_LOG(LogTemp, Log, TEXT("Current State : %hhd"), (StateMachine->GetCurrentStateID()) );
-	
-	GrappledPlayerBall->GrapplingPlayerBall = this;
-	
-	// UE_LOG(LogTemp, Warning, TEXT("Set grapplingPlayerBall") );
-	// UE_LOG(LogTemp, Log, TEXT("Current State : %hhd"), (StateMachine->GetCurrentStateID()) );
-	
-	IsGrappling = true;
-
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "broadcast grappling");
-
-	OnGrapplingActionStarted.Broadcast(GrapplingValue);
-}
-
-void APlayerBall::ReceiveGrapplingActionEnded(float InGrapplingValue)
-{
-	OnGrapplingActionEnded.Broadcast(InGrapplingValue);
-}
-
-void APlayerBall::ReceiveGrappledActionStarted(float InGrappledValue) // 0 -> end grappled	1 -> start grappled
-{
-	if (!CanBeGrappled)	return;
-	
-	OnGrappledActionStarted.Broadcast(InGrappledValue);
-}
-
-void APlayerBall::ReceiveGrappledActionEnded(float InGrappledValue)
-{
-	OnGrappledActionEnded.Broadcast(InGrappledValue);
-}
-void APlayerBall::MoreLessAction(float InMoreLessValue)
-{
-	MoreLessValue = InMoreLessValue;
-}
-*/
