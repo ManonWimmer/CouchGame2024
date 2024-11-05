@@ -9,9 +9,12 @@
 #include "CouchGame2024/Public/PlayerBall/PlayerBallController.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/StaticMeshComponent.h"
-#include "GameFramework/PlayerState.h"
 #include "PinballElements/PinballElement.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
 #include "PowerUp/PowerUp.h"
 
@@ -148,6 +151,11 @@ APlayerBall::APlayerBall()
 	SphereMesh->SetupAttachment(SphereCollision);
 	AttractionSphere->SetupAttachment(SphereCollision);
 
+	BehaviorMovements = CreateDefaultSubobject<UPlayerBallBehaviorMovements>(TEXT("BehaviorMovement"));
+	BehaviorGrapple = CreateDefaultSubobject<UPlayerBallBehaviorGrapple>(TEXT("BehaviorGrapple"));
+	BehaviorElementReactions = CreateDefaultSubobject<UPlayerBallBehaviorElementReactions>(TEXT("BehaviorElementReactions"));
+	BehaviorPowerUp = CreateDefaultSubobject<UPlayerBallBehaviorPowerUp>(TEXT("BehaviorPowerUp"));
+	
 	if (SphereCollision != nullptr)
 	{
 		SphereCollision->OnComponentHit.AddDynamic(this, &APlayerBall::OnCollisionHit);
@@ -175,9 +183,12 @@ void APlayerBall::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
 	CreateStateMachine();
 	InitStateMachine();
 
+	InitPlayerBallBehaviors();
+	
 	SetupData();
 }
 
@@ -213,11 +224,14 @@ void APlayerBall::SetupData() // Get all data and set them
 		return;
 
 #pragma region States Data
+
 	// Movements
+	/*
 	AngularRollForce = PlayerBallData->AngularRollForce;
 	BraqueDirectionForceMultiplier = PlayerBallData->BraqueDirectionForceMultiplier;
 	SphereCollision->SetAngularDamping(PlayerBallData->AngularRollDamping);
 	SphereCollision->SetPhysicsMaxAngularVelocityInDegrees(PlayerBallData->MaxAngularRollVelocity);
+	*/
 
 #pragma region FallData (Obsolete)
 	/*
@@ -274,6 +288,29 @@ void APlayerBall::SetupData() // Get all data and set them
 #pragma endregion
 }
 
+TObjectPtr<UPlayerBallData> APlayerBall::GetPlayerBallData() const
+{
+	return PlayerBallData;
+}
+
+
+void APlayerBall::InitPlayerBallBehaviors() const
+{
+	
+	
+	if (BehaviorMovements)
+		BehaviorMovements->InitBehavior();
+
+	if (BehaviorGrapple)
+		BehaviorGrapple->InitBehavior();
+
+	if (BehaviorElementReactions)
+		BehaviorElementReactions->InitBehavior();
+
+	if (BehaviorPowerUp)
+		BehaviorPowerUp->InitBehavior();
+}
+
 
 void APlayerBall::CreateStateMachine() // Create a StateMachine Object for the Pawn
 {
@@ -304,8 +341,12 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	if (PlayerBallController == nullptr)
 		return;
 
-	PlayerBallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
-	PlayerBallController->OnPlayerMoveYInput.AddDynamic(this, &APlayerBall::MoveYAction);
+	if (BehaviorMovements != nullptr)
+	{
+		BehaviorMovements->BindBehaviorEventAction(PlayerBallController);
+	}
+	//PlayerBallController->OnPlayerMoveXInput.AddDynamic(this, &APlayerBall::MoveXAction);
+	//PlayerBallController->OnPlayerMoveYInput.AddDynamic(this, &APlayerBall::MoveYAction);
 	PlayerBallController->OnPlayerPunchInput.AddDynamic(this, &APlayerBall::ReceivePunchAction);
 	PlayerBallController->OnPlayerGrapplingInputStarted.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionStarted);
 	PlayerBallController->OnPlayerGrapplingInputEnded.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionEnded);
@@ -313,6 +354,7 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	PlayerBallController->OnUsePowerUpInput.AddDynamic(this, &APlayerBall::UsePowerUpAction);
 }
 
+/*
 bool APlayerBall::IsGrounded()
 {
 	// Line trace Pos
@@ -337,7 +379,6 @@ bool APlayerBall::IsGrounded()
 
 	return bHit;
 }
-
 #pragma region States
 void APlayerBall::MoveXAction(float XValue) // Set MoveX Value
 {
@@ -348,6 +389,7 @@ void APlayerBall::MoveYAction(float YValue) //Set MoveY Value
 {
 	MoveYValue = YValue;
 }
+*/
 
 void APlayerBall::ReceiveStunnedAction(float InStunnedDurationValue)
 {

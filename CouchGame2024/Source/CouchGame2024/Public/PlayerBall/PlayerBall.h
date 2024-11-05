@@ -4,11 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "Components/PrimitiveComponent.h"
 #include "PowerUp/PowerUpID.h"
 #include "PlayerBall.generated.h"
 
 
+class UPlayerBallBehaviorPowerUp;
+class UPlayerBallBehaviorElementReactions;
+class UPlayerBallBehaviorGrapple;
+class UPlayerBallBehaviorMovements;
 class APlayerBallController;
 class APinballElement;
 class UPlayerBallData;
@@ -65,6 +68,8 @@ public:
 	UFUNCTION()
 	void SetupData();
 
+	TObjectPtr<UPlayerBallData> GetPlayerBallData() const;
+	
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UPlayerBallData> PlayerBallData;
@@ -96,6 +101,28 @@ public:
 	
 #pragma endregion
 
+#pragma  region Behaviors Components
+
+private:
+	void InitPlayerBallBehaviors() const;
+	
+	
+public:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPlayerBallBehaviorMovements> BehaviorMovements;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPlayerBallBehaviorGrapple> BehaviorGrapple;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPlayerBallBehaviorElementReactions> BehaviorElementReactions;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPlayerBallBehaviorPowerUp> BehaviorPowerUp;
+	
+
+#pragma endregion 
+	
 #pragma region StateMachine
 public:
 	void CreateStateMachine();
@@ -119,7 +146,7 @@ private:
 #pragma region States
 	
 #pragma region Movement
-	
+	/*
 public:
 
 	UFUNCTION(BlueprintCallable)
@@ -137,14 +164,14 @@ public:
 	float BraqueDirectionForceMultiplier = 1.f;
 
 #pragma region Fall (obsolete)
-/*
+
 	// Fall -> obsolete
 	UPROPERTY()
 	float SlowFallForce = 50.f;
 
 	UPROPERTY()
 	float AccelerateFallForce = 50.f;
-*/
+
 #pragma endregion
 	
 private:
@@ -153,7 +180,7 @@ private:
 	void MoveXAction(float XValue);
 	UFUNCTION()	
 	void MoveYAction(float YValue);
-
+*/
 #pragma endregion
 
 #pragma region Stun

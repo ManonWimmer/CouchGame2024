@@ -29,8 +29,8 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 private:
-	UFUNCTION()
-	void FallingMoveX(float DeltaTime) const;
+	// UFUNCTION()
+	// void FallingMoveX(float DeltaTime) const;
 	// UFUNCTION()
 	// void FallingMoveY(float DeltaTime) const;
 	UFUNCTION()

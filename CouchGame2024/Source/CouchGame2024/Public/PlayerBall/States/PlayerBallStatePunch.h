@@ -36,11 +36,6 @@ private:
 
 	UFUNCTION()
 	void StartPunchCooldown();
-	
-	UFUNCTION()
-	void Move(float DeltaTime);
-	//UFUNCTION()
-	//void FallingMove(float DeltaTime);
 
 	UFUNCTION()
 	void OnImpacted(float ImpactedValue);

@@ -7,6 +7,7 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 
 
 // Sets default values for this component's properties
@@ -89,14 +90,16 @@ void UPlayerBallStateSnapping::StateTick(float DeltaTime)
 
 void UPlayerBallStateSnapping::Move(float DeltaTime)
 {
-	if (Pawn->PawnMovement == nullptr)
+	if (Pawn == nullptr)
 		return;
 
+	if (Pawn->BehaviorMovements == nullptr)	return;
+	
 	FVector FwdVect(1.f, 0.f, 0.f);
 
 	FVector RightVect(0.f, -1.f, 0.f);
 	
-	FVector Dir = (FwdVect * Pawn->MoveXValue) + (RightVect * Pawn->MoveYValue);	// Get ball roll dir
+	FVector Dir = (FwdVect * Pawn->BehaviorMovements->MoveXValue) + (RightVect * Pawn->BehaviorMovements->MoveYValue);	// Get ball roll dir
 	
 	if (Pawn->SphereCollision == nullptr)
 		return;
@@ -106,14 +109,14 @@ void UPlayerBallStateSnapping::Move(float DeltaTime)
 
 	if (!SameDirectionX)	// May Increase roll X if oppositeDirection
 	{
-		Dir.X *= Pawn->BraqueDirectionForceMultiplier;
+		Dir.X *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
 	if (!SameDirectionY)	// May Increase roll Y if oppositeDirection
 	{
-		Dir.Y *= Pawn->BraqueDirectionForceMultiplier;
+		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
 
-	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->AngularRollForce / Pawn->SnapControlMoveRollDivider), NAME_None, true);
+	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->BehaviorMovements->AngularRollForce / Pawn->SnapControlMoveRollDivider), NAME_None, true);
 }
 
 void UPlayerBallStateSnapping::SnappingEffect(float DeltaTime)

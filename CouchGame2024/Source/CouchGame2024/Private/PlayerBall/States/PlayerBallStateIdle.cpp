@@ -6,6 +6,7 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 
 
 // Sets default values for this component's properties
@@ -83,7 +84,9 @@ void UPlayerBallStateIdle::OnMoveCheck()	// Check if ball start moving
 {
 	if (Pawn == nullptr)	return;
 
-	if (FMathf::Abs(Pawn->MoveXValue) >= 0.1f || FMathf::Abs(Pawn->MoveYValue) >= 0.1f)	// moving -> Move
+	if (Pawn->BehaviorMovements == nullptr)	return;
+	
+	if (FMathf::Abs(Pawn->BehaviorMovements->MoveXValue) >= 0.1f || FMathf::Abs(Pawn->BehaviorMovements->MoveYValue) >= 0.1f)	// moving -> Move
 	{
 		if (StateMachine == nullptr)	return;
 
@@ -95,7 +98,9 @@ void UPlayerBallStateIdle::CheckFalling()	// Check if ball falling
 {
 	if (Pawn == nullptr)	return;
 
-	if (!Pawn->IsGrounded())	// not on ground -> falling
+	if (Pawn->BehaviorMovements == nullptr)	return;
+	
+	if (!Pawn->BehaviorMovements->IsGrounded())	// not on ground -> falling
 	{
 		StateMachine->ChangeState(EPlayerBallStateID::Fall);
 	}

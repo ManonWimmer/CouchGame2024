@@ -4,9 +4,9 @@
 #include "PlayerBall/States/PlayerBallStateMove.h"
 
 #include "Components/SphereComponent.h"
-#include "GameFramework/FloatingPawnMovement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 
 
 // Sets default values for this component's properties
@@ -81,16 +81,16 @@ void UPlayerBallStateMove::StateTick(float DeltaTime)
 	CheckFalling();
 }
 
-void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by rolling it
+void UPlayerBallStateMove::Move(float DeltaTime) const	// Move ball on X and Y Axis by rolling it
 {
-	if (Pawn->PawnMovement == nullptr)
-		return;
-
-	FVector FwdVect(1.f, 0.f, 0.f);
-
-	FVector RightVect(0.f, -1.f, 0.f);
+	if (Pawn->PawnMovement == nullptr)	return;
 	
-	FVector Dir = (FwdVect * Pawn->MoveXValue) + (RightVect * Pawn->MoveYValue);	// Get ball roll dir
+	if (Pawn->BehaviorMovements == nullptr)	return;
+	
+	
+	FVector FwdVect(1.f, 0.f, 0.f);
+	FVector RightVect(0.f, -1.f, 0.f);
+	FVector Dir = (FwdVect * Pawn->BehaviorMovements->MoveXValue) + (RightVect * Pawn->BehaviorMovements->MoveYValue);	// Get ball roll dir
 	
 	if (Pawn->SphereCollision == nullptr)
 		return;
@@ -100,23 +100,25 @@ void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by
 
 	if (!SameDirectionX)	// May Increase roll X if oppositeDirection
 	{
-		Dir.X *= Pawn->BraqueDirectionForceMultiplier;
+		Dir.X *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
 	if (!SameDirectionY)	// May Increase roll Y if oppositeDirection
 	{
-		Dir.Y *= Pawn->BraqueDirectionForceMultiplier;
+		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
 
 	//DrawDebugLine(GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 500.f, FColor::Orange, false, 5.f);
 
-	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->AngularRollForce, NAME_None, true);	// Roll ball
+	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->BehaviorMovements->AngularRollForce, NAME_None, true);	// Roll ball
 }
 
 void UPlayerBallStateMove::CheckNotMoving()	// Check if ball is still moving
 {
 	if (Pawn == nullptr)	return;
 
-	if (FMathf::Abs(Pawn->MoveXValue) < 0.1f && FMathf::Abs(Pawn->MoveYValue) < 0.1f)	// Not moving -> Idle
+	if (Pawn->BehaviorMovements == nullptr)	return;
+	
+	if (FMathf::Abs(Pawn->BehaviorMovements->MoveXValue) < 0.1f && FMathf::Abs(Pawn->BehaviorMovements->MoveYValue) < 0.1f)	// Not moving -> Idle
 	{
 		if (StateMachine == nullptr)	return;
 
@@ -128,7 +130,9 @@ void UPlayerBallStateMove::CheckFalling()	// check falling -> falling
 {
 	if (Pawn == nullptr)	return;
 
-	if (!Pawn->IsGrounded())	// not on ground -> falling
+	if (Pawn->BehaviorMovements == nullptr)	return;
+	
+	if (!Pawn->BehaviorMovements->IsGrounded())	// not on ground -> falling
 	{
 		StateMachine->ChangeState(EPlayerBallStateID::Fall);
 	}

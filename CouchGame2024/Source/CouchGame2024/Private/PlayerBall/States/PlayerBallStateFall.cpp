@@ -69,12 +69,12 @@ void UPlayerBallStateFall::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
 
-	FallingMoveX(DeltaTime);
+	//FallingMoveX(DeltaTime);
 	//FallingMoveY(DeltaTime);
 	
 	CheckStillFalling();
 }
-
+/*
 void UPlayerBallStateFall::FallingMoveX(float DeltaTime) const	// Air control X
 {
 	if (Pawn == nullptr)	return;
@@ -87,7 +87,7 @@ void UPlayerBallStateFall::FallingMoveX(float DeltaTime) const	// Air control X
 
 	Pawn->PawnMovement->AddInputVector(Dir);	// Move ball in air
 }
-
+*/
 /*
 void UPlayerBallStateFall::FallingMoveY(float DeltaTime) const	// Speed fall control Y
 {
@@ -107,11 +107,12 @@ void UPlayerBallStateFall::FallingMoveY(float DeltaTime) const	// Speed fall con
 void UPlayerBallStateFall::CheckStillFalling()	// check falling
 {
 	if (Pawn == nullptr)	return;
-	
+	/*
 	if (Pawn->IsGrounded())	// IsGrounded -> Idle
 	{
 		StateMachine->ChangeState(EPlayerBallStateID::Idle);
 	}
+	*/
 }
 
 void UPlayerBallStateFall::OnStunned(float StunnedValue)	// -> stun

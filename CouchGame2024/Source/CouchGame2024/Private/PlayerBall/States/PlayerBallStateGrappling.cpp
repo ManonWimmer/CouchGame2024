@@ -7,6 +7,7 @@
 #include "Components/SphereComponent.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 
 
 // Sets default values for this component's properties
@@ -265,8 +266,9 @@ void UPlayerBallStateGrappling::SetCable()
 
 void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngle(float DeltaTime)
 {
-	TempGrapplingAngularVelocity = Pawn->GrapplingDamping * Pawn->CurrentGrapplingAngularVelocity + (Pawn->
-			MoveXValue * -1 *
+	if (Pawn->BehaviorMovements == nullptr)	return;
+	
+	TempGrapplingAngularVelocity = Pawn->GrapplingDamping * Pawn->CurrentGrapplingAngularVelocity + (Pawn->BehaviorMovements->MoveXValue * -1 *
 			Pawn->GrapplingForce) +
 		Pawn->StartGrapplingForceFactorWhenAlreadyMoving * Pawn->GetVelocity().X;
 

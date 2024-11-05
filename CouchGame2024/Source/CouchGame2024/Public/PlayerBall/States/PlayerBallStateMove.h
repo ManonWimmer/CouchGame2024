@@ -30,7 +30,7 @@ public:
 
 private:
 	UFUNCTION()
-	void Move(float DeltaTime);
+	void Move(float DeltaTime) const;
 	UFUNCTION()
 	void CheckNotMoving();
 	
