@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PlayerBall/PlayerBallBehaviorComponent.h"
+#include "PowerUp/PowerUpID.h"
 #include "PlayerBallBehaviorPowerUp.generated.h"
 
 
@@ -28,4 +29,26 @@ public:
 	virtual void BindBehaviorEventAction(APlayerBallController* InPlayerBallController) override;
 
 	
+#pragma region PowerUp
+
+public:
+	UFUNCTION()
+	void OnPlayerSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                                const FHitResult& SweepResult);
+	
+	EPowerUpID GetCurrentPowerUpCarried() const;
+
+	void AssignPowerUpCarried(EPowerUpID PowerUpID);
+
+	UFUNCTION()
+	void UsePowerUpAction(float UsePowerUpValue);
+	
+	UFUNCTION()
+	void UsePowerUpCarried();
+	
+private:
+	UPROPERTY(VisibleAnywhere)
+	EPowerUpID CurrentPowerUpCarried;
+	
+#pragma endregion 
 };

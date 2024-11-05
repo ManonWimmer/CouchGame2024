@@ -54,51 +54,6 @@ void APlayerBall::OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* Othe
 	}
 }
 
-void APlayerBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-                                 const FHitResult& SweepResult)
-{
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "OnBeginOverlap");
-
-	TObjectPtr<APowerUp> OtherPowerUp = Cast<APowerUp>(OtherActor);
-
-	if (OtherPowerUp != nullptr && GetCurrentPowerUpCarried() == EPowerUpID::None)
-	{
-		AssignPowerUpCarried(OtherPowerUp->GetPowerUpID());
-		
-		switch (OtherPowerUp->GetPowerUpID())
-		{
-			case EPowerUpID::Dash:
-				OtherPowerUp->TriggerPowerUp();
-				break;
-				
-			case EPowerUpID::Collectible:
-				OtherPowerUp->TriggerPowerUp(PlayerIndex);
-				break;
-				
-			case EPowerUpID::Freeze:
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Freeze power up");
-				OtherPowerUp->TriggerPowerUp();
-				break;
-				
-			case EPowerUpID::Strength:
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Strength power up");
-				OtherPowerUp->TriggerPowerUp();
-				break;
-				
-			case EPowerUpID::Heavy:
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Heavy power up");
-				OtherPowerUp->TriggerPowerUp();
-				break;
-				
-			default:
-				break;
-		}
-
-		return;
-	}
-}
-
 void APlayerBall::OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -159,7 +114,6 @@ APlayerBall::APlayerBall()
 	if (SphereCollision != nullptr)
 	{
 		SphereCollision->OnComponentHit.AddDynamic(this, &APlayerBall::OnCollisionHit);
-		SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerBall::OnBeginOverlap);
 	}
 	if (AttractionSphere != nullptr)
 	{
@@ -351,45 +305,13 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	PlayerBallController->OnPlayerGrapplingInputStarted.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionStarted);
 	PlayerBallController->OnPlayerGrapplingInputEnded.AddDynamic(this, &APlayerBall::ReceiveGrapplingActionEnded);
 	PlayerBallController->OnPlayerMoreLessGrapplingInput.AddDynamic(this,&APlayerBall::MoreLessAction);
-	PlayerBallController->OnUsePowerUpInput.AddDynamic(this, &APlayerBall::UsePowerUpAction);
+
+	if (BehaviorPowerUp != nullptr)
+	{
+		BehaviorPowerUp->BindBehaviorEventAction(PlayerBallController);
+	}
+	//PlayerBallController->OnUsePowerUpInput.AddDynamic(this, &APlayerBall::UsePowerUpAction);
 }
-
-/*
-bool APlayerBall::IsGrounded()
-{
-	// Line trace Pos
-	FVector Start = GetActorLocation();
-	FVector End = Start + FVector(0, 0, -50.f);
-
-	// LineTrace Parameters
-	FHitResult HitResult;
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-
-	// Line Trace Hit
-	bool bHit = GetWorld()->LineTraceSingleByChannel(
-		HitResult,
-		Start,
-		End,
-		ECC_WorldStatic,
-		QueryParams
-	);
-
-	//DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 1.0f);
-
-	return bHit;
-}
-#pragma region States
-void APlayerBall::MoveXAction(float XValue) // Set MoveX Value
-{
-	MoveXValue = XValue;
-}
-
-void APlayerBall::MoveYAction(float YValue) //Set MoveY Value
-{
-	MoveYValue = YValue;
-}
-*/
 
 void APlayerBall::ReceiveStunnedAction(float InStunnedDurationValue)
 {
@@ -615,50 +537,4 @@ void APlayerBall::ReceiveBumperReaction(APinballElement* Element, const FVector 
 	NormalBump.Normalize();
 
 	OnBumperReaction.Broadcast(1.f);
-}
-
-EPowerUpID APlayerBall::GetCurrentPowerUpCarried() const
-{
-	return CurrentPowerUpCarried;
-}
-
-void APlayerBall::AssignPowerUpCarried(EPowerUpID PowerUpID)
-{
-	if (CurrentPowerUpCarried != EPowerUpID::None || PowerUpID == EPowerUpID::Collectible)	return;
-
-	CurrentPowerUpCarried = PowerUpID;
-}
-
-void APlayerBall::UsePowerUpAction(float UsePowerUpValue)
-{
-	UsePowerUpCarried();
-}
-
-void APlayerBall::UsePowerUpCarried()
-{
-	if (CurrentPowerUpCarried == EPowerUpID::None)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "You have no power up");
-		return;
-	}
-	
-	switch (CurrentPowerUpCarried)
-	{
-		case EPowerUpID::Freeze:
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Freeze PowerUp");
-			break;
-			
-		case EPowerUpID::Strength:
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Strength PowerUp");
-			break;
-			
-		case EPowerUpID::Heavy:
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Heavy PowerUp");
-			break;
-			
-		default:
-			break;
-	}
-
-	CurrentPowerUpCarried = EPowerUpID::None;
 }

@@ -31,8 +31,6 @@ public:
 	UFUNCTION()
 	void OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	UFUNCTION()
-	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
 	void OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 	                              const FHitResult& SweepResult);
 	UFUNCTION()
@@ -144,44 +142,6 @@ private:
 	void BindEventActions();
 
 #pragma region States
-	
-#pragma region Movement
-	/*
-public:
-
-	UFUNCTION(BlueprintCallable)
-	bool IsGrounded();
-	
-	UPROPERTY()
-	float MoveXValue;
-	UPROPERTY()
-	float MoveYValue;
-
-	// roll Datas
-	UPROPERTY()
-	float AngularRollForce = 2000.f;
-	UPROPERTY()
-	float BraqueDirectionForceMultiplier = 1.f;
-
-#pragma region Fall (obsolete)
-
-	// Fall -> obsolete
-	UPROPERTY()
-	float SlowFallForce = 50.f;
-
-	UPROPERTY()
-	float AccelerateFallForce = 50.f;
-
-#pragma endregion
-	
-private:
-
-	UFUNCTION()
-	void MoveXAction(float XValue);
-	UFUNCTION()	
-	void MoveYAction(float YValue);
-*/
-#pragma endregion
 
 #pragma region Stun
 
@@ -428,23 +388,4 @@ private:
 	
 #pragma endregion
 
-#pragma region PowerUp
-
-public:
-	EPowerUpID GetCurrentPowerUpCarried() const;
-
-	void AssignPowerUpCarried(EPowerUpID PowerUpID);
-
-	UFUNCTION()
-	void UsePowerUpAction(float UsePowerUpValue);
-	
-	UFUNCTION()
-	void UsePowerUpCarried();
-	
-private:
-	UPROPERTY(VisibleAnywhere)
-	EPowerUpID CurrentPowerUpCarried;
-	
-#pragma endregion 
-	
 };
