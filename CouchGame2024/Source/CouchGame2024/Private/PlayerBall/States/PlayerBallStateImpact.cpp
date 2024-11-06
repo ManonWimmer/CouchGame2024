@@ -13,11 +13,7 @@
 // Sets default values for this component's properties
 UPlayerBallStateImpact::UPlayerBallStateImpact()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	
 }
 
 EPlayerBallStateID UPlayerBallStateImpact::GetStateID() const
@@ -43,6 +39,8 @@ void UPlayerBallStateImpact::StateEnter(EPlayerBallStateID PreviousState)
 		TEXT("PlayerState : Impact")
 	);
 	*/
+
+	UE_LOG(LogTemp, Warning, TEXT("Enter PlayerState : Impact") );
 
 	if (Pawn != nullptr)
 	{

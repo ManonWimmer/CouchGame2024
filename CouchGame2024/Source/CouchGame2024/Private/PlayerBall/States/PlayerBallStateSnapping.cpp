@@ -16,11 +16,7 @@
 // Sets default values for this component's properties
 UPlayerBallStateSnapping::UPlayerBallStateSnapping()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	
 }
 
 EPlayerBallStateID UPlayerBallStateSnapping::GetStateID() const
@@ -38,6 +34,8 @@ void UPlayerBallStateSnapping::StateEnter(EPlayerBallStateID PreviousState)
 	Super::StateEnter(PreviousState);
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("PlayerState : Snapping"));
+
+	UE_LOG(LogTemp, Warning, TEXT("Enter PlayerState : Snapping") );
 	
 	if (Pawn != nullptr)
 	{
@@ -162,7 +160,7 @@ void UPlayerBallStateSnapping::SnappingEffect(float DeltaTime)
 
 	Dir.Normalize();
 
-	//DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 5.f);
+	//DrawDebugLine(Pawn->GetWorld(), Start, End, FColor::Blue, false, 5.f);
 	
 	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * Pawn->GetPlayerBallData()->SnapAngularForce, NAME_None, true);
 }

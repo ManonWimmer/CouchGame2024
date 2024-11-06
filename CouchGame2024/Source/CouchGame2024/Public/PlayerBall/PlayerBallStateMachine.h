@@ -50,6 +50,11 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UPlayerBallState> CurrentState;
 
+	void CreateObjectStates();
+
+	UFUNCTION()
+	void CreateStateByID(EPlayerBallStateID InStateID);
+	
 	void FindStates();
 
 	void InitStates();

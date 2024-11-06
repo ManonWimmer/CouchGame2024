@@ -12,11 +12,7 @@
 // Sets default values for this component's properties
 UPlayerBallStateGrappled::UPlayerBallStateGrappled()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	
 }
 
 EPlayerBallStateID UPlayerBallStateGrappled::GetStateID() const
@@ -34,6 +30,7 @@ void UPlayerBallStateGrappled::StateEnter(EPlayerBallStateID PreviousState)
 	Super::StateEnter(PreviousState);
 
 	GEngine->AddOnScreenDebugMessage(-1,2.f, FColor::Blue, TEXT("PlayerState : Grappled"));
+	UE_LOG(LogTemp, Warning, TEXT("Enter PlayerState : Grappled") );
 	
 	if (Pawn != nullptr)	// link state to events
 	{

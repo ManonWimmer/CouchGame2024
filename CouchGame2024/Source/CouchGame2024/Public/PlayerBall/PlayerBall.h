@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PlayerBallStateID.h"
 #include "GameFramework/Pawn.h"
 #include "PlayerBall.generated.h"
 
@@ -91,8 +92,7 @@ public:
 
 private:
 	void InitPlayerBallBehaviors() const;
-	
-	
+
 public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UPlayerBallBehaviorMovements> BehaviorMovements;
@@ -105,7 +105,6 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UPlayerBallBehaviorPowerUp> BehaviorPowerUp;
-	
 
 #pragma endregion 
 	
@@ -117,6 +116,9 @@ public:
 
 	void TickStateMachine(float DeltaTime) const;
 
+	UPROPERTY(EditAnywhere)
+	TArray<EPlayerBallStateID> PlayerStates;
+	
 protected:
 
 	TObjectPtr<UPlayerBallStateMachine> StateMachine;
@@ -129,8 +131,9 @@ private:
 	UFUNCTION()
 	void BindEventActions();
 
-#pragma region States
 
+	
+#pragma region States
 
 #pragma region Punch
 

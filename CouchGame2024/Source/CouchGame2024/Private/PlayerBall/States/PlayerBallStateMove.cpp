@@ -14,11 +14,7 @@
 // Sets default values for this component's properties
 UPlayerBallStateMove::UPlayerBallStateMove()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	
 }
 
 EPlayerBallStateID UPlayerBallStateMove::GetStateID() const
@@ -37,7 +33,8 @@ void UPlayerBallStateMove::StateEnter(EPlayerBallStateID PreviousState)
 
 	
 	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("PlayerState : Move"));
-	
+
+	UE_LOG(LogTemp, Warning, TEXT("Enter PlayerState : Move") );
 
 	if (Pawn != nullptr)
 	{
@@ -59,7 +56,6 @@ void UPlayerBallStateMove::StateEnter(EPlayerBallStateID PreviousState)
 		}
 		
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateMove::OnPunch);
-
 	}
 }
 
@@ -100,8 +96,6 @@ void UPlayerBallStateMove::StateTick(float DeltaTime)
 
 void UPlayerBallStateMove::Move(float DeltaTime) const	// Move ball on X and Y Axis by rolling it
 {
-	if (Pawn->PawnMovement == nullptr)	return;
-	
 	if (Pawn->BehaviorMovements == nullptr)	return;
 	
 	
@@ -124,7 +118,7 @@ void UPlayerBallStateMove::Move(float DeltaTime) const	// Move ball on X and Y A
 		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
 
-	//DrawDebugLine(GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 500.f, FColor::Orange, false, 5.f);
+	//DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 500.f, FColor::Orange, false, 5.f);
 
 	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->BehaviorMovements->AngularRollForce, NAME_None, true);	// Roll ball
 }

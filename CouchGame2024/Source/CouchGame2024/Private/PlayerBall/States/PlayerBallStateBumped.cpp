@@ -14,11 +14,7 @@
 // Sets default values for this component's properties
 UPlayerBallStateBumped::UPlayerBallStateBumped()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	
 }
 
 EPlayerBallStateID UPlayerBallStateBumped::GetStateID() const
@@ -44,7 +40,8 @@ void UPlayerBallStateBumped::StateEnter(EPlayerBallStateID PreviousState)
 		TEXT("PlayerState : Bumped")
 	);
 	*/
-	
+
+	UE_LOG(LogTemp, Warning, TEXT("Enter PlayerState : Bumped") );
 
 	if (Pawn != nullptr)
 	{
@@ -107,7 +104,7 @@ void UPlayerBallStateBumped::Bump()
 	Dir = FMath::GetReflectionVector(Dir, Pawn->BehaviorElementReactions->NormalBump);
 	
 
-	//DrawDebugLine(GetWorld(), Pawn->HitPinballElement->GetActorLocation(), Pawn->HitPinballElement->GetActorLocation() + Dir*1000.f, FColor::Green, true, 5.f);
+	//DrawDebugLine(Pawn->GetWorld(), Pawn->HitPinballElement->GetActorLocation(), Pawn->HitPinballElement->GetActorLocation() + Dir*1000.f, FColor::Green, true, 5.f);
 	Dir.Normalize();
 	
 	Pawn->SphereCollision->AddImpulse(Dir * Pawn->BehaviorElementReactions->BumpedForceMultiplier, NAME_None, false);	// impulse

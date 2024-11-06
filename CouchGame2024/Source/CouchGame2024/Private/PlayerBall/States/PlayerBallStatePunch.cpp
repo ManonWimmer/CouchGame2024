@@ -14,11 +14,7 @@
 // Sets default values for this component's properties
 UPlayerBallStatePunch::UPlayerBallStatePunch()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	
 }
 
 EPlayerBallStateID UPlayerBallStatePunch::GetStateID() const
@@ -37,6 +33,8 @@ void UPlayerBallStatePunch::StateEnter(EPlayerBallStateID PreviousState)
 
 	
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("PlayerState : Punch"));
+
+	UE_LOG(LogTemp, Warning, TEXT("Enter PlayerState : Punch") );
 	
 	if (Pawn != nullptr)
 	{
@@ -108,7 +106,7 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 	FCollisionObjectQueryParams ObjectQueryParams(ECollisionChannel::ECC_Pawn);	// Look only for pawn
 
 	// Detect Collision With sphere overlap
-	bool bHasDetected = GetWorld()->OverlapMultiByObjectType(
+	bool bHasDetected = Pawn->GetWorld()->OverlapMultiByObjectType(
 		OverlapResults,
 		Start,
 		FQuat::Identity,

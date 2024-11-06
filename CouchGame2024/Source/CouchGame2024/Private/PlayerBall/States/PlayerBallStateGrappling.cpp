@@ -15,11 +15,7 @@
 // Sets default values for this component's properties
 UPlayerBallStateGrappling::UPlayerBallStateGrappling()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	
 }
 
 EPlayerBallStateID UPlayerBallStateGrappling::GetStateID() const
@@ -37,7 +33,8 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 	Super::StateEnter(PreviousState);
 
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("PlayerState : Grappling"));
-
+	UE_LOG(LogTemp, Warning, TEXT("Enter PlayerState : Grappling") );
+	
 	if (Pawn != nullptr)
 	{
 		if (Pawn->BehaviorElementReactions != nullptr)
@@ -95,8 +92,8 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			
 			Pawn->BehaviorGrapple->IsGrappling = false;
 			Pawn->BehaviorGrapple->LastAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle;
-
-			SetGrapplingVelocityAndAngle(GetWorld()->DeltaTimeSeconds);
+			
+			SetGrapplingVelocityAndAngle(Pawn->GetWorld()->DeltaTimeSeconds);
 
 			if (Pawn->BehaviorGrapple->CurrentGrapplingAngle > Pawn->BehaviorGrapple->LastAngle)
 				Pawn->BehaviorGrapple->AngleRotate = 90.f;
@@ -120,7 +117,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			Pawn->BehaviorGrapple->ReleaseDirection.Z = 0.f;
 
 			Pawn->BehaviorGrapple->ReleaseDirection *= FMath::Sign(Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity);
-			DrawDebugLine(GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Pawn->BehaviorGrapple->ReleaseDirection * 500.f, FColor::Red, false, 5.f);
+			DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Pawn->BehaviorGrapple->ReleaseDirection * 500.f, FColor::Red, false, 5.f);
 			// Changed Part
 			
 			Pawn->SphereCollision->AddImpulse(
@@ -157,8 +154,8 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	if (Pawn->BehaviorGrapple == nullptr)	return;
 	
 	if (Pawn->BehaviorGrapple->GrappledPlayerBall == nullptr)	return;
-	
-	SetGrapplingVelocityAndAngle(GetWorld()->DeltaTimeSeconds);
+
+	SetGrapplingVelocityAndAngle(DeltaTime);
 
 	if (TempGrapplingAngle == 0.f) return;
 
@@ -200,7 +197,7 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	FCollisionObjectQueryParams ObjectQueryParams(ECC_GameTraceChannel2);    // Look only for walls
 
 	// Detect Collision With sphere overlap
-	bool bHasDetected = GetWorld()->OverlapMultiByObjectType(
+	bool bHasDetected = Pawn->GetWorld()->OverlapMultiByObjectType(
 		OverlapResults,
 		SphereCenter,
 		FQuat::Identity,

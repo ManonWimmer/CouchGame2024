@@ -5,12 +5,25 @@
 
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallState.h"
+#include "PlayerBall/States/PlayerBallStateBumped.h"
+#include "PlayerBall/States/PlayerBallStateFall.h"
+#include "PlayerBall/States/PlayerBallStateGrappled.h"
+#include "PlayerBall/States/PlayerBallStateGrappling.h"
+#include "PlayerBall/States/PlayerBallStateIdle.h"
+#include "PlayerBall/States/PlayerBallStateImpact.h"
+#include "PlayerBall/States/PlayerBallStateMove.h"
+#include "PlayerBall/States/PlayerBallStatePunch.h"
+#include "PlayerBall/States/PlayerBallStateSnapping.h"
+#include "PlayerBall/States/PlayerBallStateStun.h"
 
 void UPlayerBallStateMachine::Init(APlayerBall* InPawn)
 {
 	Pawn = InPawn;
 	
 	FindStates();
+
+	//CreateObjectStates();
+
 	InitStates();
 
 	ChangeState(EPlayerBallStateID::Idle);
@@ -58,7 +71,7 @@ UPlayerBallState* UPlayerBallStateMachine::GetState(EPlayerBallStateID StateID)
 void UPlayerBallStateMachine::Tick(float DeltaTime)
 {
 	if (CurrentState == nullptr)	return;
-
+	
 	CurrentState->StateTick(DeltaTime);
 }
 
@@ -70,6 +83,62 @@ UPlayerBallState* UPlayerBallStateMachine::GetCurrentState() const
 EPlayerBallStateID UPlayerBallStateMachine::GetCurrentStateID() const
 {
 	return CurrentStateID;
+}
+
+void UPlayerBallStateMachine::CreateObjectStates()	// Create state as UObject and register them
+{
+	if (Pawn == nullptr)	return;
+
+	TArray<EPlayerBallStateID> States = Pawn->PlayerStates;
+
+	for (EPlayerBallStateID State : States)
+	{
+		CreateStateByID(State);
+	}
+}
+
+void UPlayerBallStateMachine::CreateStateByID(EPlayerBallStateID InStateID)
+{
+	TObjectPtr<UPlayerBallState> OutState = nullptr;
+	
+	switch (InStateID)
+	{
+		case EPlayerBallStateID::Idle:
+			OutState = NewObject<UPlayerBallStateIdle>();
+			break;
+		case EPlayerBallStateID::Move:
+			OutState = NewObject<UPlayerBallStateMove>();
+			break;
+		case EPlayerBallStateID::Stun:
+			OutState = NewObject<UPlayerBallStateStun>();
+			break;
+		case EPlayerBallStateID::Punch:
+			OutState = NewObject<UPlayerBallStatePunch>();
+			break;
+		case EPlayerBallStateID::Impact:
+			OutState = NewObject<UPlayerBallStateImpact>();
+			break;
+		case EPlayerBallStateID::Bumped:
+			OutState = NewObject<UPlayerBallStateBumped>();
+			break;
+		case EPlayerBallStateID::Grappling:
+			OutState = NewObject<UPlayerBallStateGrappling>();
+			break;
+		case EPlayerBallStateID::Grappled:
+			OutState = NewObject<UPlayerBallStateGrappled>();
+			break;
+		case EPlayerBallStateID::Snapping:
+			OutState = NewObject<UPlayerBallStateSnapping>();
+			break;
+
+		default:
+			break;
+	}
+	
+	if (OutState != nullptr)
+	{
+		AllStates.Add(OutState);
+	}
 }
 
 void UPlayerBallStateMachine::FindStates()
