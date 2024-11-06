@@ -20,9 +20,9 @@ void UPlayerBallStateMachine::Init(APlayerBall* InPawn)
 {
 	Pawn = InPawn;
 	
-	FindStates();
+	//FindStates();
 
-	//CreateObjectStates();
+	CreateObjectStates();
 
 	InitStates();
 
@@ -104,31 +104,31 @@ void UPlayerBallStateMachine::CreateStateByID(EPlayerBallStateID InStateID)
 	switch (InStateID)
 	{
 		case EPlayerBallStateID::Idle:
-			OutState = NewObject<UPlayerBallStateIdle>();
+			OutState = NewObject<UPlayerBallStateIdle>(this);
 			break;
 		case EPlayerBallStateID::Move:
-			OutState = NewObject<UPlayerBallStateMove>();
+			OutState = NewObject<UPlayerBallStateMove>(this);
 			break;
 		case EPlayerBallStateID::Stun:
-			OutState = NewObject<UPlayerBallStateStun>();
+			OutState = NewObject<UPlayerBallStateStun>(this);
 			break;
 		case EPlayerBallStateID::Punch:
-			OutState = NewObject<UPlayerBallStatePunch>();
+			OutState = NewObject<UPlayerBallStatePunch>(this);
 			break;
 		case EPlayerBallStateID::Impact:
-			OutState = NewObject<UPlayerBallStateImpact>();
+			OutState = NewObject<UPlayerBallStateImpact>(this);
 			break;
 		case EPlayerBallStateID::Bumped:
-			OutState = NewObject<UPlayerBallStateBumped>();
+			OutState = NewObject<UPlayerBallStateBumped>(this);
 			break;
 		case EPlayerBallStateID::Grappling:
-			OutState = NewObject<UPlayerBallStateGrappling>();
+			OutState = NewObject<UPlayerBallStateGrappling>(this);
 			break;
 		case EPlayerBallStateID::Grappled:
-			OutState = NewObject<UPlayerBallStateGrappled>();
+			OutState = NewObject<UPlayerBallStateGrappled>(this);
 			break;
 		case EPlayerBallStateID::Snapping:
-			OutState = NewObject<UPlayerBallStateSnapping>();
+			OutState = NewObject<UPlayerBallStateSnapping>(this);
 			break;
 
 		default:

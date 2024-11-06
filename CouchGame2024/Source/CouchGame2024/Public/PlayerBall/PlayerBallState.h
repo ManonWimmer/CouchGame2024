@@ -13,7 +13,7 @@ class APlayerBall;
 class UPlayerBallStateMachine;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class COUCHGAME2024_API UPlayerBallState : public UActorComponent
+class COUCHGAME2024_API UPlayerBallState : public UObject
 {
 	GENERATED_BODY()
 

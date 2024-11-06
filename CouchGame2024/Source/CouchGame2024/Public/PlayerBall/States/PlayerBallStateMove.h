@@ -28,6 +28,7 @@ public:
 
 	virtual void StateTick(float DeltaTime) override;
 
+
 private:
 	UFUNCTION()
 	void Move(float DeltaTime) const;

@@ -121,6 +121,7 @@ public:
 	
 protected:
 
+	UPROPERTY()
 	TObjectPtr<UPlayerBallStateMachine> StateMachine;
 	
 	

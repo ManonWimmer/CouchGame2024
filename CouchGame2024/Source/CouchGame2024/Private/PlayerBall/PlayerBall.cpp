@@ -145,7 +145,7 @@ void APlayerBall::InitPlayerBallBehaviors() const
 
 void APlayerBall::CreateStateMachine() // Create a StateMachine Object for the Pawn
 {
-	StateMachine = NewObject<UPlayerBallStateMachine>();
+	StateMachine = NewObject<UPlayerBallStateMachine>(this);
 }
 
 void APlayerBall::InitStateMachine() // Call Init on StateMachine
