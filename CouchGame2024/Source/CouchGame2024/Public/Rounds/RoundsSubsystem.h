@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class COUCHGAME2024_API URoundsSubsystem : public UGameInstanceSubsystem, public FTickableGameObject
+class COUCHGAME2024_API URoundsSubsystem : public UTickableWorldSubsystem
 {
 	GENERATED_BODY()
 #pragma region Tickable
@@ -19,8 +19,11 @@ class COUCHGAME2024_API URoundsSubsystem : public UGameInstanceSubsystem, public
 	virtual TStatId GetStatId() const override { return TStatId(); };
 
 #pragma endregion 
+
+	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 	
 public:
+	void InitRoundSubsystem();
 	
 	void StartRound();
 
@@ -48,6 +51,8 @@ public:
 
 	UPROPERTY()
 	FOnChangeRoundPhases OnChangeRoundPhases;
+	
+	void InitRoundsPhase();
 	
 	UFUNCTION(BlueprintCallable)
 	ERoundsPhaseID GetCurrentRoundPhaseID();

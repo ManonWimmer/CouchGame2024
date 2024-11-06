@@ -27,11 +27,22 @@ void URoundsSubsystem::Tick(float DeltaTime)
 	}
 }
 
-void URoundsSubsystem::StartRound()
+void URoundsSubsystem::OnWorldBeginPlay(UWorld& InWorld)
+{
+	Super::OnWorldBeginPlay(InWorld);
+	
+}
+
+void URoundsSubsystem::InitRoundSubsystem()
 {
 	InitTimers();
-	
-	
+
+	InitRoundsPhase();
+}
+
+void URoundsSubsystem::StartRound()
+{
+	ChangeRoundPhase(ERoundsPhaseID::PRE_ROUND);
 }
 
 void URoundsSubsystem::InitTimers()
@@ -43,10 +54,21 @@ void URoundsSubsystem::InitTimers()
 	CurrentPostRoundTimer = RoundsSettings->RoundsData->PostRoundDuration;
 }
 
+void URoundsSubsystem::InitRoundsPhase()
+{
+	CurrentRoundPhaseID = NONE;
+}
+
 void URoundsSubsystem::ChangeRound(int NewRoundIndex)
 {
 	CurrentRoundIndex = NewRoundIndex;
 	OnChangeRound.Broadcast(CurrentRoundIndex);
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Change Round");
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::FromInt(CurrentRoundIndex));
+	}
 }
 
 void URoundsSubsystem::ChangeToNextRound()
@@ -68,6 +90,12 @@ void URoundsSubsystem::ChangeRoundPhase(ERoundsPhaseID RoundsPhaseID)
 {
 	CurrentRoundPhaseID = RoundsPhaseID;
 	OnChangeRoundPhases.Broadcast(CurrentRoundPhaseID);
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Change Round Phase");
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("New phase Id = %hhd"), CurrentRoundPhaseID));
+	}
 }
 
 void URoundsSubsystem::StartRoundPhase()
