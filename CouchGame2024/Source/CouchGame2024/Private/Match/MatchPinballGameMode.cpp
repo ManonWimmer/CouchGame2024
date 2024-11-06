@@ -9,6 +9,7 @@
 #include "Match/MatchSettings.h"
 #include "Match/PlayerBallSpawn.h"
 #include "PlayerBall/PlayerBall.h"
+#include "Rounds/RoundsSubsystem.h"
 
 void AMatchPinballGameMode::BeginPlay()
 {
@@ -95,4 +96,15 @@ void AMatchPinballGameMode::CreateAndInitPlayers() const
 	if (LocalMultiplayerSubsystem == nullptr) return;
 
 	LocalMultiplayerSubsystem->CreateAndInitPlayers(ELocalMultiplayerInputMappingType::InGame);
+}
+
+void AMatchPinballGameMode::InitRoundsSubsystem()
+{
+	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+	if (RoundsSubsystem == nullptr) return;
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Get Round subsystem");
+	
+	RoundsSubsystem->InitRoundSubsystem();
 }

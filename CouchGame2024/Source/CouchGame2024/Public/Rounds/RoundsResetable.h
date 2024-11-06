@@ -22,4 +22,12 @@ class COUCHGAME2024_API IRoundsResetable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+
+	UFUNCTION()
+	virtual  bool IsResetable() = 0;
+	
+	UFUNCTION()
+	virtual void ResetObject() = 0;
+
+	
 };

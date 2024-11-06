@@ -19,6 +19,7 @@ class COUCHGAME2024_API AMatchPinballGameMode : public AGameModeBase
 public:
 	virtual void BeginPlay() override;
 
+#pragma region Players
 private:
 
 	void FindPlayerBallSpawnInWorld(TArray<APlayerBallSpawn*> &ResultsActors);
@@ -32,4 +33,15 @@ private:
 protected:
 	UPROPERTY(EditAnywhere)
 	TArray<APlayerBall*> PlayersBallInsideArena;
+
+#pragma endregion
+
+#pragma region Rounds
+
+private:
+	UFUNCTION()
+	void InitRoundsSubsystem();
+
+#pragma endregion 
+	
 };
