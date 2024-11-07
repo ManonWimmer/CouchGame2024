@@ -111,6 +111,9 @@ public:
 
 	UPROPERTY()
 	TScriptInterface<IHookable> HookInterface;
+
+	UPROPERTY()
+	bool IsHookingPillar = false;
 	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 
 #pragma endregion

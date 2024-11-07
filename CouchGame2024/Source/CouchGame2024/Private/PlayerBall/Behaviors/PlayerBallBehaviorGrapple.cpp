@@ -219,6 +219,8 @@ void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionStarted(float InGrappling
 	// UE_LOG(LogTemp, Log, TEXT("Current State : %hhd"), (StateMachine->GetCurrentStateID()) );
 
 	IsGrappling = true;
+
+	IsHookingPillar = HookInterface->IsPillar();
 	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "broadcast grappling");

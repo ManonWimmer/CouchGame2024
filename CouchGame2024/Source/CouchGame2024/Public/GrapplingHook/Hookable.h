@@ -26,5 +26,7 @@ public:
 	virtual FVector GetHookPosition() = 0;
 
 	virtual bool IsHookable() = 0;
+
+	virtual bool IsPillar() = 0;
 public:
 };

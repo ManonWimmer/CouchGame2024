@@ -109,7 +109,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			Pawn->BehaviorGrapple->LastAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle;
 
 			// Get new temp angle & velocity
-			SetGrapplingVelocityAndAngle(Pawn->GetWorld()->DeltaTimeSeconds);
+			SetGrapplingVelocityAndAnglePillar(Pawn->GetWorld()->DeltaTimeSeconds);
 
 			// Get angle rotate left or right depending on last & current angle
 			if (Pawn->BehaviorGrapple->CurrentGrapplingAngle > Pawn->BehaviorGrapple->LastAngle)
@@ -198,6 +198,83 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 
 	if (Pawn->BehaviorGrapple == nullptr) return;
 
+	if (Pawn->BehaviorGrapple->IsHookingPillar)
+	{
+		UpdateHookPillar(DeltaTime);
+	}
+	else
+	{
+		UpdateHookNotPillar(DeltaTime);
+	}
+}
+
+void UPlayerBallStateGrappling::OnEndGrappling(float InGrapplingValue) // Stop press input grappling -> Idle
+{
+	if (StateMachine == nullptr) return;
+
+	//UE_LOG(LogTemp, Warning, TEXT("Stop by release input or by grappled cause in grappling") );
+
+	StateMachine->ChangeState(EPlayerBallStateID::Idle);
+}
+
+void UPlayerBallStateGrappling::OnStunned(float StunnedValue) // hit by punch -> stunned
+{
+	if (StateMachine == nullptr) return;
+
+	//UE_LOG(LogTemp, Warning, TEXT("Stop by stunned in grappling") );
+
+	StateMachine->ChangeState(EPlayerBallStateID::Stun, StunnedValue);
+}
+
+void UPlayerBallStateGrappling::OnImpacted(float ImpactedValue) // impact ball -> impacted
+{
+	if (StateMachine == nullptr) return;
+
+	//UE_LOG(LogTemp, Warning, TEXT("Stop by impact in grappling") );
+
+	StateMachine->ChangeState(EPlayerBallStateID::Impact);
+}
+
+void UPlayerBallStateGrappling::SetCable() // Same for Pillar & Not Pillar
+{
+	// Set cable on player
+	Pawn->GrapplingCable->SetWorldLocation(Pawn->GetActorLocation());
+
+	if (Pawn->BehaviorGrapple == nullptr) return;
+
+	// Set cable end location & length
+	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
+	/*
+	if (Pawn->BehaviorGrapple->GrappledPlayerBall != nullptr)
+	{
+		Pawn->BehaviorGrapple->HookPoint = Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation();
+
+		Pawn->BehaviorGrapple->CableLength = FVector::Dist(Pawn->GetActorLocation(), Pawn->BehaviorGrapple->HookPoint);
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Magenta, FString::Printf(TEXT("Cable Length: %f"), Pawn->CableLength));
+		Pawn->GrapplingCable->CableLength = Pawn->BehaviorGrapple->CableLength;
+
+		Pawn->GrapplingCable->SetAttachEndToComponent(Pawn->BehaviorGrapple->GrappledPlayerBall->SphereMesh);
+	}
+	*/
+	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
+
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+	if (Pawn->BehaviorGrapple->HookInterface != nullptr)
+	{
+		Pawn->BehaviorGrapple->HookPoint = Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
+
+		Pawn->BehaviorGrapple->CableLength = FVector::Dist(Pawn->GetActorLocation(), Pawn->BehaviorGrapple->HookPoint);
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Magenta, FString::Printf(TEXT("Cable Length: %f"), Pawn->CableLength));
+		Pawn->GrapplingCable->CableLength = Pawn->BehaviorGrapple->CableLength;
+		
+		Pawn->GrapplingCable->SetAttachEndToComponent(Cast<AActor>(Pawn->BehaviorGrapple->HookObject)->GetRootComponent());
+	}
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+}
+
+#pragma region Hook Pillar
+void UPlayerBallStateGrappling::UpdateHookPillar(float DeltaTime)
+{
 	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
 	//if (Pawn->BehaviorGrapple->GrappledPlayerBall == nullptr) return;
 	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
@@ -207,7 +284,7 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 
 	// Get temp angle, velocity & offset
-	SetGrapplingVelocityAndAngle(DeltaTime);
+	SetGrapplingVelocityAndAnglePillar(DeltaTime);
 
 	if (TempGrapplingAngle == 0.f) return;
 
@@ -324,71 +401,7 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	LastLocation = Pawn->GetActorLocation();
 }
 
-void UPlayerBallStateGrappling::OnEndGrappling(float InGrapplingValue) // Stop press input grappling -> Idle
-{
-	if (StateMachine == nullptr) return;
-
-	//UE_LOG(LogTemp, Warning, TEXT("Stop by release input or by grappled cause in grappling") );
-
-	StateMachine->ChangeState(EPlayerBallStateID::Idle);
-}
-
-void UPlayerBallStateGrappling::OnStunned(float StunnedValue) // hit by punch -> stunned
-{
-	if (StateMachine == nullptr) return;
-
-	//UE_LOG(LogTemp, Warning, TEXT("Stop by stunned in grappling") );
-
-	StateMachine->ChangeState(EPlayerBallStateID::Stun, StunnedValue);
-}
-
-void UPlayerBallStateGrappling::OnImpacted(float ImpactedValue) // impact ball -> impacted
-{
-	if (StateMachine == nullptr) return;
-
-	//UE_LOG(LogTemp, Warning, TEXT("Stop by impact in grappling") );
-
-	StateMachine->ChangeState(EPlayerBallStateID::Impact);
-}
-
-void UPlayerBallStateGrappling::SetCable()
-{
-	// Set cable on player
-	Pawn->GrapplingCable->SetWorldLocation(Pawn->GetActorLocation());
-
-	if (Pawn->BehaviorGrapple == nullptr) return;
-
-	// Set cable end location & length
-	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
-	/*
-	if (Pawn->BehaviorGrapple->GrappledPlayerBall != nullptr)
-	{
-		Pawn->BehaviorGrapple->HookPoint = Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation();
-
-		Pawn->BehaviorGrapple->CableLength = FVector::Dist(Pawn->GetActorLocation(), Pawn->BehaviorGrapple->HookPoint);
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Magenta, FString::Printf(TEXT("Cable Length: %f"), Pawn->CableLength));
-		Pawn->GrapplingCable->CableLength = Pawn->BehaviorGrapple->CableLength;
-
-		Pawn->GrapplingCable->SetAttachEndToComponent(Pawn->BehaviorGrapple->GrappledPlayerBall->SphereMesh);
-	}
-	*/
-	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
-
-	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
-	if (Pawn->BehaviorGrapple->HookInterface != nullptr)
-	{
-		Pawn->BehaviorGrapple->HookPoint = Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
-
-		Pawn->BehaviorGrapple->CableLength = FVector::Dist(Pawn->GetActorLocation(), Pawn->BehaviorGrapple->HookPoint);
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Magenta, FString::Printf(TEXT("Cable Length: %f"), Pawn->CableLength));
-		Pawn->GrapplingCable->CableLength = Pawn->BehaviorGrapple->CableLength;
-		
-		Pawn->GrapplingCable->SetAttachEndToComponent(Cast<AActor>(Pawn->BehaviorGrapple->HookObject)->GetRootComponent());
-	}
-	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
-}
-
-void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngle(float DeltaTime)
+void UPlayerBallStateGrappling::SetGrapplingVelocityAndAnglePillar(float DeltaTime)
 {
 	if (Pawn->BehaviorMovements == nullptr) return;
 
@@ -403,3 +416,16 @@ void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngle(float DeltaTime)
 	// Get new angle from new velocity
 	TempGrapplingAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle + TempGrapplingAngularVelocity * DeltaTime;
 }
+#pragma endregion
+
+#pragma region Hook Not Pillar
+void UPlayerBallStateGrappling::UpdateHookNotPillar(float DeltaTime)
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Not Pillar");
+}
+
+void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngleNotPillar(float DeltaTime)
+{
+	
+}
+#pragma endregion

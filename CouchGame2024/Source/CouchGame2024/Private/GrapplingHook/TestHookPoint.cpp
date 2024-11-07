@@ -34,3 +34,8 @@ bool ATestHookPoint::IsHookable()
 	return true;
 }
 
+bool ATestHookPoint::IsPillar()
+{
+	return true;
+}
+

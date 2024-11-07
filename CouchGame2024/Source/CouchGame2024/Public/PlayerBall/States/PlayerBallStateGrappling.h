@@ -42,7 +42,16 @@ private:
 	void SetCable();
 
 	UFUNCTION()
-	void SetGrapplingVelocityAndAngle(float DeltaTime);
+	void SetGrapplingVelocityAndAnglePillar(float DeltaTime);
+	
+	UFUNCTION()
+	void SetGrapplingVelocityAndAngleNotPillar(float DeltaTime);
+
+	UFUNCTION()
+	void UpdateHookPillar(float DeltaTime);
+
+	UFUNCTION()
+	void UpdateHookNotPillar(float DeltaTime);
 
 	UPROPERTY()
 	FVector LastLocation = FVector::ZeroVector;
@@ -52,4 +61,6 @@ private:
 
 	UPROPERTY()
 	float TempGrapplingAngle = 0.f;
+
+	
 };
