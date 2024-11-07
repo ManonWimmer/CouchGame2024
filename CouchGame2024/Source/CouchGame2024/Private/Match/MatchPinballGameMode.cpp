@@ -15,11 +15,15 @@ void AMatchPinballGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Players
 	CreateAndInitPlayers();
-
 	TArray<APlayerBallSpawn*> PlayerSpawnPoints;
 	FindPlayerBallSpawnInWorld(PlayerSpawnPoints);
 	SpawnPlayerBalls(PlayerSpawnPoints);
+
+
+	// Rounds
+	InitRoundsSubsystem();
 }
 
 void AMatchPinballGameMode::FindPlayerBallSpawnInWorld(TArray<APlayerBallSpawn*>& ResultsActors)

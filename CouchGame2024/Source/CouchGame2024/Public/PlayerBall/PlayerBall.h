@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "PlayerBallStateID.h"
 #include "GameFramework/Pawn.h"
+#include "Rounds/RoundsResetable.h"
 #include "PlayerBall.generated.h"
 
 
@@ -22,7 +23,7 @@ class UStaticMeshComponent;
 class UCableComponent;
 
 UCLASS()
-class COUCHGAME2024_API APlayerBall : public APawn
+class COUCHGAME2024_API APlayerBall : public APawn, public IRoundsResetable
 {
 	GENERATED_BODY()
 
@@ -131,8 +132,6 @@ protected:
 private:
 	UFUNCTION()
 	void BindEventActions();
-
-
 	
 #pragma region States
 
@@ -169,5 +168,23 @@ public:
 
 	
 #pragma endregion
+
+#pragma region IRoundsResetable
+
+private:
+	virtual void InitResetable() override;
+	
+public:
+	virtual bool IsResetable() override;
+
+	virtual void ResetObject() override;
+	
+	void ResetState();
+	void ResetMovement();
+	void ResetGrapple();
+	void ResetCooldown();
+	void ResetPosition();
+
+#pragma endregion 
 	
 };

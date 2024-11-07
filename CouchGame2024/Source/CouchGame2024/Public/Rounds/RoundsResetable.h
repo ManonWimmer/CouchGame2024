@@ -24,6 +24,9 @@ class COUCHGAME2024_API IRoundsResetable
 public:
 
 	UFUNCTION()
+	virtual void InitResetable() = 0;
+	
+	UFUNCTION()
 	virtual  bool IsResetable() = 0;
 	
 	UFUNCTION()

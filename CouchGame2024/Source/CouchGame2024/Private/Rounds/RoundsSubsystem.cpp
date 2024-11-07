@@ -3,6 +3,7 @@
 
 #include "Rounds/RoundsSubsystem.h"
 
+#include "Rounds/RoundsResetable.h"
 #include "Rounds/RoundsSettings.h"
 #include "Rounds/Datas/RoundsData.h"
 
@@ -35,6 +36,8 @@ void URoundsSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 
 void URoundsSubsystem::InitRoundSubsystem()
 {
+	InitRounds();
+	
 	InitTimers();
 
 	InitRoundsPhase();
@@ -48,10 +51,32 @@ void URoundsSubsystem::StartRound()
 void URoundsSubsystem::InitTimers()
 {
 	const URoundsSettings* RoundsSettings = GetDefault<URoundsSettings>();
+
+	if (RoundsSettings == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Warning : Rounds Settings is nullptr");
+		return;
+	}
+
+	URoundsData* RoundsData = RoundsSettings->RoundsData.LoadSynchronous();
 	
-	CurrentPreRoundTimer = RoundsSettings->RoundsData->PreRoundDuration;
-	CurrentStartingRoundTimer = RoundsSettings->RoundsData->StartingRoundDuration;
-	CurrentPostRoundTimer = RoundsSettings->RoundsData->PostRoundDuration;
+	if (RoundsData == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Warning : Rounds Settings Data is nullptr");
+		return;
+	}
+
+		
+	CurrentPreRoundTimer = RoundsData->PreRoundDuration;
+	CurrentStartingRoundTimer = RoundsData->StartingRoundDuration;
+	CurrentPostRoundTimer = RoundsData->PostRoundDuration;
+}
+
+void URoundsSubsystem::InitRounds()
+{
+	InitRoundsWonByPlayers(4);
+
+	CurrentRoundIndex = 0;
 }
 
 void URoundsSubsystem::InitRoundsPhase()
@@ -128,6 +153,8 @@ void URoundsSubsystem::ChangeToNextRoundPhase()
 
 void URoundsSubsystem::InitRoundsWonByPlayers(int PlayerCount)
 {
+	RoundsWonByPlayersIndex.Empty();
+	
 	for (int i = 0; i < PlayerCount; i++)
 	{
 		RoundsWonByPlayersIndex.Add(i, 0);
@@ -203,4 +230,36 @@ void URoundsSubsystem::HandlePostRoundTimer(float DeltaTime)
     {
     	ChangeToNextRoundPhase();
     }
+}
+
+void URoundsSubsystem::AddResetableObject(UObject* InResetableObject)
+{
+	if (InResetableObject == nullptr)	return;
+	if (ResetableObjects.Contains(InResetableObject))	return;
+
+	ResetableObjects.Add(InResetableObject);
+}
+
+void URoundsSubsystem::RemoveResetableObjects(UObject* InResetableObject)
+{
+	if (InResetableObject == nullptr)	return;
+	if (!ResetableObjects.Contains(InResetableObject))	return;
+
+	ResetableObjects.Remove(InResetableObject);
+}
+
+void URoundsSubsystem::ResetRound()
+{
+	for (UObject* Resetable : ResetableObjects)
+	{
+		if (Resetable == nullptr)	continue;
+
+		IRoundsResetable* RoundsResetable = Cast<IRoundsResetable>(Resetable);
+
+		if (RoundsResetable == nullptr)	continue;
+
+		if (!RoundsResetable->IsResetable())	continue;
+
+		RoundsResetable->ResetObject();
+	}
 }

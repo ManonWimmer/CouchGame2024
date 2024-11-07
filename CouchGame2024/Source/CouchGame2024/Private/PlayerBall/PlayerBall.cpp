@@ -15,6 +15,7 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
+#include "Rounds/RoundsSubsystem.h"
 
 
 // Sets default values
@@ -54,7 +55,6 @@ APlayerBall::APlayerBall()
 void APlayerBall::BeginPlay()
 {
 	Super::BeginPlay();
-
 	
 	CreateStateMachine();
 	InitStateMachine();
@@ -62,6 +62,8 @@ void APlayerBall::BeginPlay()
 	InitPlayerBallBehaviors();
 	
 	SetupData();
+
+	InitResetable();
 }
 
 // Called every frame
@@ -209,4 +211,64 @@ void APlayerBall::HandlePunchCooldown(float DeltaTime)
 	{
 		bCanPunch = true;
 	}
+}
+
+void APlayerBall::InitResetable()
+{
+	if (!GetWorld())	return;
+
+	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+	if (RoundsSubsystem == nullptr)	return;
+
+	RoundsSubsystem->AddResetableObject(this);
+}
+
+bool APlayerBall::IsResetable()
+{
+	return true;
+}
+
+void APlayerBall::ResetObject()
+{
+	ResetState();
+	ResetMovement();
+	ResetGrapple();
+	ResetCooldown();
+	ResetPosition();
+}
+
+void APlayerBall::ResetState()
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Idle);
+}
+
+void APlayerBall::ResetMovement()
+{
+	this->GetVelocity() = FVector::ZeroVector;
+	
+	if (SphereCollision != nullptr)
+	{
+		SphereCollision->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector, false);
+		SphereCollision->SetWorldRotation(FRotator::ZeroRotator);
+		SphereCollision->ComponentVelocity = FVector::ZeroVector;
+	}
+}
+
+void APlayerBall::ResetGrapple()
+{
+	
+}
+
+void APlayerBall::ResetCooldown()
+{
+	CurrentPunchCooldown = 0.f;
+	bCanPunch = true;
+}
+
+void APlayerBall::ResetPosition()
+{
+	
 }

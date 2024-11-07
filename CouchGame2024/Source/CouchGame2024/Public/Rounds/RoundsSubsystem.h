@@ -7,6 +7,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "RoundsSubsystem.generated.h"
 
+class IRoundsResetable;
 /**
  * 
  */
@@ -28,6 +29,8 @@ public:
 	void StartRound();
 
 	void InitTimers();
+
+	void InitRounds();
 	
 #pragma region RoundsChange
 public:
@@ -91,12 +94,27 @@ private:
 	
 #pragma endregion 
 
+#pragma region ResetRound
+	
+public:
+	void AddResetableObject(UObject* InResetableObject);
+	void RemoveResetableObjects(UObject* InResetableObject);
+
+private:
+	
+	void ResetRound();
+
+	UPROPERTY()
+	TArray<UObject*> ResetableObjects;
+
+#pragma endregion 
 	
 private:
 	int CurrentRoundIndex = 0;
 
 	ERoundsPhaseID CurrentRoundPhaseID = ERoundsPhaseID::NONE;
 
+	UPROPERTY()
 	TMap<int, int> RoundsWonByPlayersIndex;
 
 
