@@ -213,6 +213,7 @@ void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionStarted(float InGrappling
 	if (NearestHookObject == nullptr || NearestHookInterface == nullptr) return;
 
 	HookObject = NearestHookObject;
+	HookInterface = NearestHookInterface;
 
 	UE_LOG(LogTemp, Warning, TEXT("Set NearestHookObject"));
 	// UE_LOG(LogTemp, Log, TEXT("Current State : %hhd"), (StateMachine->GetCurrentStateID()) );
@@ -221,7 +222,7 @@ void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionStarted(float InGrappling
 	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "broadcast grappling");
-	//OnGrapplingActionStarted.Broadcast(GrapplingValue);
+	OnGrapplingActionStarted.Broadcast(GrapplingValue);
 }
 
 void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionEnded(float InGrapplingValue)
