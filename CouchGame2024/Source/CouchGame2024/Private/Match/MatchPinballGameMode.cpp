@@ -24,6 +24,9 @@ void AMatchPinballGameMode::BeginPlay()
 
 	// Rounds
 	InitRoundsSubsystem();
+
+	// Launch game
+	BeginGame();
 }
 
 void AMatchPinballGameMode::FindPlayerBallSpawnInWorld(TArray<APlayerBallSpawn*>& ResultsActors)
@@ -100,6 +103,16 @@ void AMatchPinballGameMode::CreateAndInitPlayers() const
 	if (LocalMultiplayerSubsystem == nullptr) return;
 
 	LocalMultiplayerSubsystem->CreateAndInitPlayers(ELocalMultiplayerInputMappingType::InGame);
+}
+
+void AMatchPinballGameMode::BeginGame()
+{
+	OnBeginGameMatch.Broadcast();
+}
+
+void AMatchPinballGameMode::EndGame()
+{
+	OnEndGameMatch.Broadcast();
 }
 
 void AMatchPinballGameMode::InitRoundsSubsystem()

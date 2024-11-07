@@ -3,6 +3,8 @@
 
 #include "Rounds/RoundsSubsystem.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Match/MatchPinballGameMode.h"
 #include "Rounds/RoundsResetable.h"
 #include "Rounds/RoundsSettings.h"
 #include "Rounds/Datas/RoundsData.h"
@@ -41,6 +43,22 @@ void URoundsSubsystem::InitRoundSubsystem()
 	InitTimers();
 
 	InitRoundsPhase();
+
+	if (GetWorld() == nullptr)	return;
+	
+	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
+
+	if (GameMode == nullptr)	return;
+	
+	AMatchPinballGameMode* MatchPinballGameMode = Cast<AMatchPinballGameMode>(GameMode);
+
+	if (MatchPinballGameMode == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Warning : Match Pinball GameMode not found in roundsSubsystem");
+		return;
+	}
+	
+	MatchPinballGameMode->OnBeginGameMatch.AddDynamic(this, &URoundsSubsystem::StartRound);
 }
 
 void URoundsSubsystem::StartRound()
@@ -119,7 +137,8 @@ void URoundsSubsystem::ChangeRoundPhase(ERoundsPhaseID RoundsPhaseID)
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Change Round Phase");
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("New phase Id = %hhd"), CurrentRoundPhaseID));
+		const FString PhaseIdString = UEnum::GetValueAsString(CurrentRoundPhaseID);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("New phase Id = %s"), *PhaseIdString));
 	}
 }
 

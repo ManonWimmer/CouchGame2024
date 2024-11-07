@@ -33,7 +33,7 @@ void UPlayerBallStateSnapping::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("PlayerState : Snapping"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("PlayerState : Snapping"));
 
 	UE_LOG(LogTemp, Warning, TEXT("Enter PlayerState : Snapping") );
 	

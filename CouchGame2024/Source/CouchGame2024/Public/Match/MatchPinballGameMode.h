@@ -36,6 +36,25 @@ protected:
 
 #pragma endregion
 
+#pragma region Game Match
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBeginGameMatch);
+
+	UPROPERTY()
+	FOnBeginGameMatch OnBeginGameMatch;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndGameMatch);
+
+	UPROPERTY()
+	FOnEndGameMatch OnEndGameMatch;
+	
+	void BeginGame();
+
+	void EndGame();
+
+#pragma endregion 
+	
 #pragma region Rounds
 
 private:

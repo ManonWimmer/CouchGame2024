@@ -25,7 +25,8 @@ class COUCHGAME2024_API URoundsSubsystem : public UTickableWorldSubsystem
 	
 public:
 	void InitRoundSubsystem();
-	
+
+	UFUNCTION()
 	void StartRound();
 
 	void InitTimers();
