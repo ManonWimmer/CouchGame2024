@@ -78,10 +78,12 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 				Pawn->GrapplingCable->SetHiddenInGame(false);
 				SetCable();
 
-				// Reset values 
+				// Start values 
 				FVector Direction = Pawn->GetActorLocation() - Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
 				Pawn->BehaviorGrapple->CurrentGrapplingAngle = atan2f(Direction.Y, Direction.X);
 				Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity = 0.f;
+
+				StartAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle;
 			}
 			// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 		}
@@ -198,14 +200,109 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 
 	if (Pawn->BehaviorGrapple == nullptr) return;
 
+	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
+	//if (Pawn->BehaviorGrapple->GrappledPlayerBall == nullptr) return;
+	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
+
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+	if (Pawn->BehaviorGrapple->HookInterface == nullptr) return;
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+
+	// Get temp angle, velocity & offset
 	if (Pawn->BehaviorGrapple->IsHookingPillar)
 	{
-		UpdateHookPillar(DeltaTime);
+		SetGrapplingVelocityAndAnglePillar(DeltaTime);
 	}
 	else
 	{
-		UpdateHookNotPillar(DeltaTime);
+		SetGrapplingVelocityAndAngleNotPillar(DeltaTime);
 	}
+
+	if (TempGrapplingAngle == 0.f) return;
+
+	Pawn->BehaviorGrapple->GrapplingOffset = FVector(FMath::Cos(TempGrapplingAngle), FMath::Sin(TempGrapplingAngle), 0)
+		* Pawn->BehaviorGrapple->CableLength;
+
+	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
+	// float DistanceBetweenGrappledPlayers = FVector::Dist(Pawn->GetActorLocation(), Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation());
+	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
+
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+	float DistanceBetweenPlayerAndHookPoint = FVector::Dist(Pawn->GetActorLocation(),
+	                                                        Pawn->BehaviorGrapple->HookInterface->GetHookPosition());
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, Pawn->GrapplingOffset.ToString());
+
+	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
+	// FVector NormalizedDirection = (Pawn->GetActorLocation() - Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation()).GetSafeNormal();
+	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
+
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+	FVector NormalizedDirection = (Pawn->GetActorLocation() - Pawn->BehaviorGrapple->HookInterface->GetHookPosition()).
+		GetSafeNormal();
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+
+	if (Pawn->BehaviorGrapple->IsHookingPillar)
+	{
+		// More or less cord depending on input
+		if (FMath::Abs(Pawn->BehaviorGrapple->MoreLessValue) > 0.5f)
+		{
+			if (Pawn->BehaviorGrapple->MoreLessValue > 0.f && DistanceBetweenPlayerAndHookPoint > Pawn->BehaviorGrapple
+				->
+				MinCableDistance) // Less cord
+			{
+				//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Less cord");
+
+				Pawn->BehaviorGrapple->GrapplingOffset -= NormalizedDirection * Pawn->BehaviorGrapple->
+					MoreOrLessCablePerFrame;
+			}
+			else if (Pawn->BehaviorGrapple->MoreLessValue < 0.f && DistanceBetweenPlayerAndHookPoint < Pawn->
+				BehaviorGrapple->
+				MaxCableDistance) // More cord
+			{
+				//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "More cord");
+
+				Pawn->BehaviorGrapple->GrapplingOffset += NormalizedDirection * Pawn->BehaviorGrapple->
+					MoreOrLessCablePerFrame;
+			}
+		}
+	}
+
+	// Stop movement if wall detected & return
+	if (DetectWalls())
+	{
+		Pawn->SphereCollision->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
+		Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity = 0.f;
+		return;
+	}
+
+	// Update player location
+	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
+	// Pawn->SetActorLocation(Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation() + Pawn->BehaviorGrapple->GrapplingOffset);
+	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
+
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+	Pawn->SetActorLocation(
+		Pawn->BehaviorGrapple->HookInterface->GetHookPosition() + Pawn->BehaviorGrapple->GrapplingOffset);
+
+	if (!Pawn->BehaviorGrapple->IsHookingPillar && FMath::Abs(StartAngle - Pawn->BehaviorGrapple->CurrentGrapplingAngle) >
+		FMath::DegreesToRadians(90.f))
+	{
+		StateMachine->ChangeState(EPlayerBallStateID::Idle);
+	}
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+
+	// Update cable
+	Pawn->GrapplingCable->SetWorldLocation(Pawn->GetActorLocation());
+	SetCable();
+
+	// Can set temp velocity & angle if didn't return before
+	Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity = TempGrapplingAngularVelocity;
+	Pawn->BehaviorGrapple->CurrentGrapplingAngle = TempGrapplingAngle;
+
+	// Update last location
+	LastLocation = Pawn->GetActorLocation();
 }
 
 void UPlayerBallStateGrappling::OnEndGrappling(float InGrapplingValue) // Stop press input grappling -> Idle
@@ -266,71 +363,53 @@ void UPlayerBallStateGrappling::SetCable() // Same for Pillar & Not Pillar
 		Pawn->BehaviorGrapple->CableLength = FVector::Dist(Pawn->GetActorLocation(), Pawn->BehaviorGrapple->HookPoint);
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Magenta, FString::Printf(TEXT("Cable Length: %f"), Pawn->CableLength));
 		Pawn->GrapplingCable->CableLength = Pawn->BehaviorGrapple->CableLength;
-		
-		Pawn->GrapplingCable->SetAttachEndToComponent(Cast<AActor>(Pawn->BehaviorGrapple->HookObject)->GetRootComponent());
+
+		Pawn->GrapplingCable->SetAttachEndToComponent(
+			Cast<AActor>(Pawn->BehaviorGrapple->HookObject)->GetRootComponent());
 	}
 	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 }
 
-#pragma region Hook Pillar
-void UPlayerBallStateGrappling::UpdateHookPillar(float DeltaTime)
+void UPlayerBallStateGrappling::SetGrapplingVelocityAndAnglePillar(float DeltaTime)
 {
-	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
-	//if (Pawn->BehaviorGrapple->GrappledPlayerBall == nullptr) return;
-	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
+	if (Pawn->BehaviorMovements == nullptr) return;
+	if (Pawn->BehaviorGrapple == nullptr) return;
 
-	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
-	if (Pawn->BehaviorGrapple->HookInterface == nullptr) return;
-	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+	// Get angular velocity with last velocity & input
+	TempGrapplingAngularVelocity = Pawn->BehaviorGrapple->GrapplingDamping * Pawn->BehaviorGrapple->
+		CurrentGrapplingAngularVelocity + (Pawn->BehaviorMovements->MoveXValue * -1 *
+			Pawn->BehaviorGrapple->GrapplingForce) +
+		Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * Pawn->GetVelocity().X; // A modif pour prendre velocity y
 
-	// Get temp angle, velocity & offset
-	SetGrapplingVelocityAndAnglePillar(DeltaTime);
+	// Get new angle from new velocity
+	TempGrapplingAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle + TempGrapplingAngularVelocity * DeltaTime;
+}
 
-	if (TempGrapplingAngle == 0.f) return;
-
-	Pawn->BehaviorGrapple->GrapplingOffset = FVector(FMath::Cos(TempGrapplingAngle), FMath::Sin(TempGrapplingAngle), 0)
-		* Pawn->BehaviorGrapple->CableLength;
-
-	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
-	// float DistanceBetweenGrappledPlayers = FVector::Dist(Pawn->GetActorLocation(), Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation());
-	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
-
-	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
-	float DistanceBetweenPlayerAndHookPoint = FVector::Dist(Pawn->GetActorLocation(),
-	                                                     Pawn->BehaviorGrapple->HookInterface->GetHookPosition());
-	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
-
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, Pawn->GrapplingOffset.ToString());
-
-	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
-	// FVector NormalizedDirection = (Pawn->GetActorLocation() - Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation()).GetSafeNormal();
-	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
-
-	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
-	FVector NormalizedDirection = (Pawn->GetActorLocation() - Pawn->BehaviorGrapple->HookInterface->GetHookPosition()).GetSafeNormal();
-	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngleNotPillar(float DeltaTime)
+{
+	if (Pawn->BehaviorMovements == nullptr || Pawn->BehaviorGrapple == nullptr) return;
 	
-	// More or less cord depending on input
-	if (FMath::Abs(Pawn->BehaviorGrapple->MoreLessValue) > 0.5f)
-	{
-		if (Pawn->BehaviorGrapple->MoreLessValue > 0.f && DistanceBetweenPlayerAndHookPoint > Pawn->BehaviorGrapple->
-			MinCableDistance) // Less cord
-		{
-			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Less cord");
+	FVector Direction = (LastLocation - Pawn->GetActorLocation()).GetSafeNormal();
+	FVector Velocity = Pawn->GetVelocity();
+	
+	FVector PerpendicularVelocity = FVector::CrossProduct(Direction, FVector::CrossProduct(Velocity, Direction)).GetSafeNormal();
+	float ProjectedVelocityMagnitude = FVector::DotProduct(PerpendicularVelocity, Velocity);
 
-			Pawn->BehaviorGrapple->GrapplingOffset -= NormalizedDirection * Pawn->BehaviorGrapple->
-				MoreOrLessCablePerFrame;
-		}
-		else if (Pawn->BehaviorGrapple->MoreLessValue < 0.f && DistanceBetweenPlayerAndHookPoint < Pawn->BehaviorGrapple->
-			MaxCableDistance) // More cord
-		{
-			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "More cord");
+	// ça marche po pour sens horaire ou anti horaire
+	float RotationDirection = FVector::DotProduct(FVector::CrossProduct(Direction, Velocity), FVector::UpVector) > 0 ? 1.0f : -1.0f;
+	
+	float WeightedProjectedVelocity = RotationDirection * ProjectedVelocityMagnitude * 2.0f; 
+	
+	TempGrapplingAngularVelocity = (Pawn->BehaviorGrapple->GrapplingDamping * Pawn->BehaviorGrapple->GrapplingForce)
+		+ Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * FMath::Abs(WeightedProjectedVelocity);
+	
+	TempGrapplingAngularVelocity = FMath::Clamp(TempGrapplingAngularVelocity, 3.0f, 10.0f); // valeurs temp
+	
+	TempGrapplingAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle + TempGrapplingAngularVelocity * DeltaTime;
+}
 
-			Pawn->BehaviorGrapple->GrapplingOffset += NormalizedDirection * Pawn->BehaviorGrapple->
-				MoreOrLessCablePerFrame;
-		}
-	}
-
+bool UPlayerBallStateGrappling::DetectWalls()
+{
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(Pawn);
@@ -338,11 +417,12 @@ void UPlayerBallStateGrappling::UpdateHookPillar(float DeltaTime)
 	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
 	// FVector SphereCenter = Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation() + Pawn->BehaviorGrapple->GrapplingOffset;
 	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
-	
+
 	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
-	FVector SphereCenter = Pawn->BehaviorGrapple->HookInterface->GetHookPosition() + Pawn->BehaviorGrapple->GrapplingOffset;
+	FVector SphereCenter = Pawn->BehaviorGrapple->HookInterface->GetHookPosition() + Pawn->BehaviorGrapple->
+		GrapplingOffset;
 	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
-	
+
 	float SphereRadius = Pawn->SphereCollision->GetScaledSphereRadius() + 0.2f;
 
 	FCollisionObjectQueryParams ObjectQueryParams(ECC_GameTraceChannel2); // Look only for walls
@@ -372,60 +452,5 @@ void UPlayerBallStateGrappling::UpdateHookPillar(float DeltaTime)
 	);
 	*/
 
-	// Stop movement if wall detected & return
-	if (bHasDetected)
-	{
-		Pawn->SphereCollision->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
-		Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity = 0.f;
-		return;
-	}
-
-	// Update player location
-	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
-	// Pawn->SetActorLocation(Pawn->BehaviorGrapple->GrappledPlayerBall->GetActorLocation() + Pawn->BehaviorGrapple->GrapplingOffset);
-	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
-
-	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
-	Pawn->SetActorLocation(Pawn->BehaviorGrapple->HookInterface->GetHookPosition() + Pawn->BehaviorGrapple->GrapplingOffset);
-	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
-	
-	// Update cable
-	Pawn->GrapplingCable->SetWorldLocation(Pawn->GetActorLocation());
-	SetCable();
-
-	// Can set temp velocity & angle if didn't return before
-	Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity = TempGrapplingAngularVelocity;
-	Pawn->BehaviorGrapple->CurrentGrapplingAngle = TempGrapplingAngle;
-
-	// Update last location
-	LastLocation = Pawn->GetActorLocation();
+	return bHasDetected;
 }
-
-void UPlayerBallStateGrappling::SetGrapplingVelocityAndAnglePillar(float DeltaTime)
-{
-	if (Pawn->BehaviorMovements == nullptr) return;
-
-	if (Pawn->BehaviorGrapple == nullptr) return;
-
-	// Get angular velocity with last velocity & input
-	TempGrapplingAngularVelocity = Pawn->BehaviorGrapple->GrapplingDamping * Pawn->BehaviorGrapple->
-		CurrentGrapplingAngularVelocity + (Pawn->BehaviorMovements->MoveXValue * -1 *
-			Pawn->BehaviorGrapple->GrapplingForce) +
-		Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * Pawn->GetVelocity().X;
-
-	// Get new angle from new velocity
-	TempGrapplingAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle + TempGrapplingAngularVelocity * DeltaTime;
-}
-#pragma endregion
-
-#pragma region Hook Not Pillar
-void UPlayerBallStateGrappling::UpdateHookNotPillar(float DeltaTime)
-{
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Not Pillar");
-}
-
-void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngleNotPillar(float DeltaTime)
-{
-	
-}
-#pragma endregion
