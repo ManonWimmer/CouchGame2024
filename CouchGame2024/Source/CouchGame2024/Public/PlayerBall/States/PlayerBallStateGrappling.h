@@ -48,12 +48,6 @@ private:
 	void SetGrapplingVelocityAndAngleNotPillar(float DeltaTime);
 
 	UFUNCTION()
-	void UpdateHookPillar(float DeltaTime);
-
-	UFUNCTION()
-	void UpdateHookNotPillar(float DeltaTime);
-
-	UFUNCTION()
 	bool DetectWalls();
 	
 	UPROPERTY()
