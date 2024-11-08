@@ -9,6 +9,7 @@
 #include "CouchGame2024/Public/PlayerBall/PlayerBallController.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/WidgetComponent.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
@@ -29,10 +30,15 @@ APlayerBall::APlayerBall()
 	SphereMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereComponent"));
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
 	AttractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AttractionSphere"));
+
+	StartForceEffectWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("StartForceEffectWidget"));
 	
 	RootComponent = SphereCollision;
 	SphereMesh->SetupAttachment(SphereCollision);
 	AttractionSphere->SetupAttachment(SphereCollision);
+
+	StartForceEffectWidget->SetupAttachment(SphereCollision);
+	
 
 	BehaviorMovements = CreateDefaultSubobject<UPlayerBallBehaviorMovements>(TEXT("BehaviorMovement"));
 	BehaviorGrapple = CreateDefaultSubobject<UPlayerBallBehaviorGrapple>(TEXT("BehaviorGrapple"));
@@ -65,6 +71,8 @@ void APlayerBall::BeginPlay()
 
 	InitResetable();
 	InitLockableInput();
+
+	StartForceEffectWidget->SetHiddenInGame(true);
 }
 
 // Called every frame
@@ -292,37 +300,33 @@ bool APlayerBall::IsLockableInput()
 
 void APlayerBall::LockInput()
 {
-	if (PlayerBallController == nullptr)	return;
-
-	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Purple, TEXT("Lock player"));
-
 	
 	bIsLocked = true;
 
-	if (BehaviorMovements)
-		BehaviorMovements->LockBehavior();
+	if (StateMachine == nullptr)	return;
 
-	if (BehaviorElementReactions)
-		BehaviorElementReactions->LockBehavior();
-
-	if (BehaviorPowerUp)
-		BehaviorPowerUp->LockBehavior();
+	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Purple, TEXT("Lock player"));
+	StateMachine->ChangeState(EPlayerBallStateID::Locked, 0.f);
 }
 
 void APlayerBall::UnlockInput()
 {
-	if (PlayerBallController == nullptr)	return;
-
+	if (StateMachine == nullptr)	return;
+	
 	bIsLocked = false;
+	bIsLockedButSpecial = false;
 
-	if (BehaviorMovements)
-		BehaviorMovements->UnlockBehavior();
+	StateMachine->ChangeState(EPlayerBallStateID::Idle);
+}
 
-	if (BehaviorElementReactions)
-		BehaviorElementReactions->UnlockBehavior();
+void APlayerBall::LockButOnlySpecialInput()
+{
+	if (StateMachine == nullptr)	return;
+	
+	bIsLocked = true;
+	bIsLockedButSpecial = true;
 
-	if (BehaviorPowerUp)
-		BehaviorPowerUp->UnlockBehavior();
+	StateMachine->ChangeState(EPlayerBallStateID::Locked, 1.f);
 }
 
 int APlayerBall::GetLockableInputIndex()

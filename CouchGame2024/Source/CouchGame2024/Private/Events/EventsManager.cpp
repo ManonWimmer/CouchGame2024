@@ -190,4 +190,7 @@ bool AEventsManager::IsResetable()
 void AEventsManager::ResetObject()
 {
 	CurrentTime = 0.f;
+
+	StartGameTime = GetWorld()->GetTimeSeconds();
+	IsGameStarted = true;
 }

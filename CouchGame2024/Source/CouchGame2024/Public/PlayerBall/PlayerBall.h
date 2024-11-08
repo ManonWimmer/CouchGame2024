@@ -10,6 +10,7 @@
 #include "PlayerBall.generated.h"
 
 
+class UWidgetComponent;
 class UPlayerBallBehaviorPowerUp;
 class UPlayerBallBehaviorElementReactions;
 class UPlayerBallBehaviorGrapple;
@@ -163,10 +164,16 @@ public:
 	bool bCanPunch = true;
 
 #pragma endregion
-	
+
+public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayImpactEffectsBlueprint();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlaySetProgressStartForceEffect(float NewProgressStartForce);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UWidgetComponent> StartForceEffectWidget;
 	
 #pragma endregion
 
@@ -199,12 +206,16 @@ public:
 
 	virtual void UnlockInput() override;
 
+	virtual void LockButOnlySpecialInput() override;
+
 	virtual int GetLockableInputIndex() override;
 
 	virtual bool IsLocked() override;
 
 private:
 	bool bIsLocked = false;
+
+	bool bIsLockedButSpecial = false;
 	
 #pragma endregion 
 	

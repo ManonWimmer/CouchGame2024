@@ -11,6 +11,7 @@
 #include "PlayerBall/States/PlayerBallStateGrappling.h"
 #include "PlayerBall/States/PlayerBallStateIdle.h"
 #include "PlayerBall/States/PlayerBallStateImpact.h"
+#include "PlayerBall/States/PlayerBallStateLocked.h"
 #include "PlayerBall/States/PlayerBallStateMove.h"
 #include "PlayerBall/States/PlayerBallStatePunch.h"
 #include "PlayerBall/States/PlayerBallStateSnapping.h"
@@ -26,6 +27,7 @@ void UPlayerBallStateMachine::Init(APlayerBall* InPawn)
 
 	InitStates();
 
+	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Purple, TEXT("Idle set"));
 	ChangeState(EPlayerBallStateID::Idle);
 }
 
@@ -129,6 +131,9 @@ void UPlayerBallStateMachine::CreateStateByID(EPlayerBallStateID InStateID)
 			break;
 		case EPlayerBallStateID::Snapping:
 			OutState = NewObject<UPlayerBallStateSnapping>(this);
+			break;
+		case EPlayerBallStateID::Locked:
+			OutState = NewObject<UPlayerBallStateLocked>(this);
 			break;
 
 		default:

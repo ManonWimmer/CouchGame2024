@@ -131,5 +131,19 @@ public:
 	float StartGrapplingForceFactorWhenAlreadyMoving = 0.001f;
 	
 #pragma endregion
+
+
+#pragma region Starting State
+
+	UPROPERTY(EditAnywhere, Category = "Starting State")
+	float StartingStateMinForce = 30000.f;
+
+	UPROPERTY(EditAnywhere, Category = "Starting State")
+	float StartingStateMaxForce = 70000.f;
+
+	UPROPERTY(EditAnywhere, Category = "Starting State")
+	float PercentAddByStartingSpam = 0.05f;
+
+#pragma endregion 
 	
 };

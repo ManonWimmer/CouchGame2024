@@ -30,6 +30,8 @@ public:
 
 	virtual void UnlockInput() = 0;
 
+	virtual void LockButOnlySpecialInput() = 0;
+
 	virtual int GetLockableInputIndex() = 0;
 
 	virtual bool IsLocked() = 0;

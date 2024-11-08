@@ -336,7 +336,11 @@ void URoundsSubsystem::LockAllPlayerButOne(int PlayerIndexUnlock)
 		
 		if (!LockableInputActor->IsLockableInput())	continue;
 		
-		if (LockableInputActor->GetLockableInputIndex() == PlayerIndexUnlock)	continue;
+		if (LockableInputActor->GetLockableInputIndex() == PlayerIndexUnlock)
+		{
+			LockableInputActor->LockButOnlySpecialInput();
+			continue;
+		}
 
 		LockableInputActor->LockInput();
 	}
