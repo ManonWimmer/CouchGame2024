@@ -42,6 +42,7 @@ public:
 	
 	void ChangeRound(int NewRoundIndex);
 
+	UFUNCTION(BlueprintCallable)
 	void ChangeToNextRound();
 	
 	UFUNCTION(BlueprintCallable)
@@ -102,7 +103,8 @@ public:
 	void RemoveResetableObjects(UObject* InResetableObject);
 
 private:
-	
+
+	UFUNCTION(BlueprintCallable)
 	void ResetRound();
 
 	UPROPERTY()

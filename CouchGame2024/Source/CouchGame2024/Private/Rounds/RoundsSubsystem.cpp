@@ -105,6 +105,8 @@ void URoundsSubsystem::InitRoundsPhase()
 void URoundsSubsystem::ChangeRound(int NewRoundIndex)
 {
 	CurrentRoundIndex = NewRoundIndex;
+	ResetRound();
+	StartRound();
 	OnChangeRound.Broadcast(CurrentRoundIndex);
 
 	if (GEngine)
@@ -163,6 +165,7 @@ void URoundsSubsystem::ChangeToNextRoundPhase()
 			ChangeRoundPhase(POST_ROUND);
 			break;
 		case POST_ROUND:
+			ChangeToNextRound();
 			break;
 
 		default:
@@ -269,6 +272,10 @@ void URoundsSubsystem::RemoveResetableObjects(UObject* InResetableObject)
 
 void URoundsSubsystem::ResetRound()
 {
+	InitTimers();
+
+	InitRoundsPhase();
+	
 	for (UObject* Resetable : ResetableObjects)
 	{
 		if (Resetable == nullptr)	continue;

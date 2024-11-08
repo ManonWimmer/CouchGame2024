@@ -3,6 +3,8 @@
 
 #include "Events/EventsManager.h"
 
+#include "Rounds/RoundsSubsystem.h"
+
 
 // Sets default values
 AEventsManager::AEventsManager()
@@ -16,6 +18,10 @@ void AEventsManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	InitResetable();
+
+	BindCountdownToRoundsPhase();
+	
 	CheckProbabilities();
 }
 
@@ -39,6 +45,28 @@ void AEventsManager::Tick(float DeltaTime)
 	}
 }
 
+void AEventsManager::BindCountdownToRoundsPhase()
+{
+	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+	if (RoundsSubsystem == nullptr) return;
+
+	RoundsSubsystem->OnChangeRoundPhases.AddDynamic(this, &AEventsManager::CheckStartCountdown);
+}
+
+void AEventsManager::CheckStartCountdown(ERoundsPhaseID InRoundsPhaseID)
+{
+	switch (InRoundsPhaseID)
+	{
+		case ERoundsPhaseID::IN_ROUND:
+			StartGame();
+			break;
+
+		default:
+			break;
+	}
+}
+
 void AEventsManager::StartGame()
 {
 	StartGameTime = GetWorld()->GetTimeSeconds();
@@ -50,6 +78,12 @@ void AEventsManager::EndGame()
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green,
 												 TEXT("END GAME"));
 	IsGameStarted = false;
+
+	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+	if (RoundsSubsystem == nullptr) return;
+
+	RoundsSubsystem->ChangeToNextRoundPhase();
 }
 
 float AEventsManager::GetCountdownTime() const
@@ -135,4 +169,25 @@ void AEventsManager::CheckProbabilities()
 			LastTotalProbabilities += EventInfo.Probability;
 		}
 	}
+}
+
+void AEventsManager::InitResetable()
+{
+	if (!GetWorld())	return;
+
+	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+	if (RoundsSubsystem == nullptr)	return;
+
+	RoundsSubsystem->AddResetableObject(this);
+}
+
+bool AEventsManager::IsResetable()
+{
+	return true;
+}
+
+void AEventsManager::ResetObject()
+{
+	CurrentTime = 0.f;
 }

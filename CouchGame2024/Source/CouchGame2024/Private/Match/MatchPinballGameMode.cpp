@@ -22,7 +22,7 @@ void AMatchPinballGameMode::BeginPlay()
 	FindPlayerBallSpawnInWorld(PlayerSpawnPoints);
 	SpawnPlayerBalls(PlayerSpawnPoints);
 
-	int RandomPlayerSpecialSpawn = UKismetMathLibrary::RandomIntegerInRange(0, PlayerSpawnPoints.Num());
+	int RandomPlayerSpecialSpawn = UKismetMathLibrary::RandomIntegerInRange(0, PlayerSpawnPoints.Num() - 1);
 	SetLocationStartPlayerBallsSpecial(PlayerSpawnPoints, RandomPlayerSpecialSpawn);
 
 	// Rounds
@@ -104,6 +104,10 @@ void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APla
 				PlayersBallInsideArena[PlayerSpecial]->SetActorLocation(SpawnPoint->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
 				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Set actor special : %d"), PlayerSpecial));
 				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoint->GetName()));
+			}
+			else
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Warning : Player special spawn too high");
 			}
 		}
 		else
