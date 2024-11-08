@@ -20,6 +20,10 @@ public:
 	virtual void BeginPlay() override;
 
 #pragma region Players
+
+public:
+	void SetNewLocationStartPlayerBallsSpecial(int PlayerSpecial);
+
 private:
 
 	void FindPlayerBallSpawnInWorld(TArray<APlayerBallSpawn*> &ResultsActors);
@@ -28,6 +32,7 @@ private:
 
 	void SetLocationStartPlayerBallsSpecial(const TArray<APlayerBallSpawn*> SpawnPoints, int PlayerSpecial);
 
+	
 	TSubclassOf<APlayerBall> GetPlayerBallClassFromInputType(EAutoReceiveInput::Type InputType) const;
 
 	void CreateAndInitPlayers() const;
@@ -36,6 +41,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TArray<APlayerBall*> PlayersBallInsideArena;
 
+	UPROPERTY()
+	TArray<APlayerBallSpawn*> PlayerBallSpawns;
+	
 #pragma endregion
 
 #pragma region Game Match
@@ -64,5 +72,4 @@ private:
 	void InitRoundsSubsystem();
 
 #pragma endregion 
-	
 };

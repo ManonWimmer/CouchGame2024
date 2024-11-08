@@ -42,9 +42,38 @@ void UPlayerBallBehaviorMovements::BindBehaviorEventAction(APlayerBallController
 	Super::BindBehaviorEventAction(InPlayerBallController);
 
 	if (GetPlayerBallController() == nullptr)	return;
-	
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, "Bind");
 	GetPlayerBallController()->OnPlayerMoveXInput.AddDynamic(this, &UPlayerBallBehaviorMovements::MoveXAction);
 	GetPlayerBallController()->OnPlayerMoveYInput.AddDynamic(this, &UPlayerBallBehaviorMovements::MoveYAction);
+}
+
+void UPlayerBallBehaviorMovements::UnbindBehaviorEventAction(APlayerBallController* InPlayerBallController)
+{
+	Super::UnbindBehaviorEventAction(InPlayerBallController);
+
+	if (GetPlayerBallController() == nullptr)	return;
+	
+	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, "UnBind");
+	GetPlayerBallController()->OnPlayerMoveXInput.RemoveDynamic(this, &UPlayerBallBehaviorMovements::MoveXAction);
+	GetPlayerBallController()->OnPlayerMoveYInput.RemoveDynamic(this, &UPlayerBallBehaviorMovements::MoveYAction);
+}
+
+void UPlayerBallBehaviorMovements::LockBehavior()
+{
+	Super::LockBehavior();
+
+	UnbindBehaviorEventAction(GetPlayerBallController());
+
+	MoveXValue = 0.f;
+	MoveYValue = 0.f;
+}
+
+void UPlayerBallBehaviorMovements::UnlockBehavior()
+{
+	Super::UnlockBehavior();
+
+	BindBehaviorEventAction(GetPlayerBallController());
 }
 
 void UPlayerBallBehaviorMovements::SetupData()

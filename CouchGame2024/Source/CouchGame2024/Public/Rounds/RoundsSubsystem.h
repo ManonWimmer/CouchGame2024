@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "RoundsPhasesID.h"
+#include "PlayerBall/LockableInput.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "RoundsSubsystem.generated.h"
 
 class IRoundsResetable;
+class AMatchPinballGameMode;
 /**
  * 
  */
@@ -32,6 +34,11 @@ public:
 	void InitTimers();
 
 	void InitRounds();
+
+private:
+	UPROPERTY()
+	TObjectPtr<AMatchPinballGameMode> MatchPinballGameMode;
+
 	
 #pragma region RoundsChange
 public:
@@ -110,8 +117,31 @@ private:
 	UPROPERTY()
 	TArray<UObject*> ResetableObjects;
 
-#pragma endregion 
+#pragma endregion
+
+
+#pragma region LockInputs Players
+
+public:
+	void AddLockableInput(UObject* Input);
+	void RemoveLockableInput(UObject* Input);
+
+private:
 	
+	UPROPERTY()
+	TArray<UObject*> LockableInputsInWorld;
+	
+public:
+	UFUNCTION()
+	void LockAllPlayerButOne(int PlayerIndexUnlock);
+
+	UFUNCTION()
+	void UnlockAllPlayer();
+
+#pragma endregion
+	
+	
+
 private:
 	int CurrentRoundIndex = 0;
 

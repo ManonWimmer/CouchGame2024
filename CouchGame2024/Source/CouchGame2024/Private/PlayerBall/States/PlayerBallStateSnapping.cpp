@@ -145,6 +145,8 @@ void UPlayerBallStateSnapping::SnappingEffect(float DeltaTime)
 	if (Pawn->BehaviorElementReactions == nullptr)	return;
 	
 	if (Pawn->BehaviorElementReactions->SnappingPlayerBall == nullptr)	return;
+
+	if (Pawn->IsLocked())	return;
 	
 	FVector Start = Pawn->GetActorLocation();
 	FVector End = Pawn->BehaviorElementReactions->SnappingPlayerBall->GetActorLocation();

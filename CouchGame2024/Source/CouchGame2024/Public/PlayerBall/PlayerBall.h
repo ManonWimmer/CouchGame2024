@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "LockableInput.h"
 #include "PlayerBallStateID.h"
 #include "GameFramework/Pawn.h"
 #include "Rounds/RoundsResetable.h"
@@ -23,7 +24,7 @@ class UStaticMeshComponent;
 class UCableComponent;
 
 UCLASS()
-class COUCHGAME2024_API APlayerBall : public APawn, public IRoundsResetable
+class COUCHGAME2024_API APlayerBall : public APawn, public IRoundsResetable, public ILockableInput
 {
 	GENERATED_BODY()
 
@@ -185,6 +186,26 @@ public:
 	void ResetCooldown();
 	void ResetPosition();
 
+#pragma endregion
+
+#pragma region ILockableInput
+
+public:
+	virtual void InitLockableInput() override;
+	
+	virtual bool IsLockableInput() override;
+
+	virtual void LockInput() override;
+
+	virtual void UnlockInput() override;
+
+	virtual int GetLockableInputIndex() override;
+
+	virtual bool IsLocked() override;
+
+private:
+	bool bIsLocked = false;
+	
 #pragma endregion 
 	
 };

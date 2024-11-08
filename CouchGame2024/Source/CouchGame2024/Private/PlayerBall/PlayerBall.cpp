@@ -64,6 +64,7 @@ void APlayerBall::BeginPlay()
 	SetupData();
 
 	InitResetable();
+	InitLockableInput();
 }
 
 // Called every frame
@@ -251,9 +252,11 @@ void APlayerBall::ResetMovement()
 	
 	if (SphereCollision != nullptr)
 	{
-		SphereCollision->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector, false);
+		SphereCollision->SetPhysicsLinearVelocity(FVector::ZeroVector);
 		SphereCollision->SetWorldRotation(FRotator::ZeroRotator);
+		SphereCollision->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector, false);
 		SphereCollision->ComponentVelocity = FVector::ZeroVector;
+		PawnMovement->Velocity = FVector::ZeroVector;
 	}
 }
 
@@ -271,4 +274,63 @@ void APlayerBall::ResetCooldown()
 void APlayerBall::ResetPosition()
 {
 	
+}
+
+void APlayerBall::InitLockableInput()
+{
+	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+	if (RoundsSubsystem == nullptr)	return;
+
+	RoundsSubsystem->AddLockableInput(this);
+}
+
+bool APlayerBall::IsLockableInput()
+{
+	return true;
+}
+
+void APlayerBall::LockInput()
+{
+	if (PlayerBallController == nullptr)	return;
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Purple, TEXT("Lock player"));
+
+	
+	bIsLocked = true;
+
+	if (BehaviorMovements)
+		BehaviorMovements->LockBehavior();
+
+	if (BehaviorElementReactions)
+		BehaviorElementReactions->LockBehavior();
+
+	if (BehaviorPowerUp)
+		BehaviorPowerUp->LockBehavior();
+}
+
+void APlayerBall::UnlockInput()
+{
+	if (PlayerBallController == nullptr)	return;
+
+	bIsLocked = false;
+
+	if (BehaviorMovements)
+		BehaviorMovements->UnlockBehavior();
+
+	if (BehaviorElementReactions)
+		BehaviorElementReactions->UnlockBehavior();
+
+	if (BehaviorPowerUp)
+		BehaviorPowerUp->UnlockBehavior();
+}
+
+int APlayerBall::GetLockableInputIndex()
+{
+	return PlayerIndex;
+}
+
+bool APlayerBall::IsLocked()
+{
+	return bIsLocked;
 }

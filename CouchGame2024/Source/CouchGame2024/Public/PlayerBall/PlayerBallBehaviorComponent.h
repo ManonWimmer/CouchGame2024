@@ -30,6 +30,12 @@ public:
 
 	virtual void BindBehaviorEventAction(APlayerBallController* InPlayerBallController);
 
+	virtual void UnbindBehaviorEventAction(APlayerBallController* InPlayerBallController);
+
+	virtual void LockBehavior();
+
+	virtual void UnlockBehavior();
+	
 	virtual void SetupData();
 	
 protected:

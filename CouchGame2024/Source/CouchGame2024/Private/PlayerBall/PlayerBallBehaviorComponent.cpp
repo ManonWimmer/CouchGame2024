@@ -51,6 +51,21 @@ void UPlayerBallBehaviorComponent::BindBehaviorEventAction(APlayerBallController
 	PlayerBallController = InPlayerBallController;
 }
 
+void UPlayerBallBehaviorComponent::UnbindBehaviorEventAction(APlayerBallController* InPlayerBallController)
+{
+	
+}
+
+void UPlayerBallBehaviorComponent::LockBehavior()
+{
+	
+}
+
+void UPlayerBallBehaviorComponent::UnlockBehavior()
+{
+	
+}
+
 void UPlayerBallBehaviorComponent::SetupData()
 {
 	

@@ -5,6 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Match/MatchPinballGameMode.h"
+#include "PlayerBall/LockableInput.h"
 #include "Rounds/RoundsResetable.h"
 #include "Rounds/RoundsSettings.h"
 #include "Rounds/Datas/RoundsData.h"
@@ -50,7 +51,7 @@ void URoundsSubsystem::InitRoundSubsystem()
 
 	if (GameMode == nullptr)	return;
 	
-	AMatchPinballGameMode* MatchPinballGameMode = Cast<AMatchPinballGameMode>(GameMode);
+	MatchPinballGameMode = Cast<AMatchPinballGameMode>(GameMode);
 
 	if (MatchPinballGameMode == nullptr)
 	{
@@ -63,6 +64,11 @@ void URoundsSubsystem::InitRoundSubsystem()
 
 void URoundsSubsystem::StartRound()
 {
+	LockAllPlayerButOne(0);
+	if (MatchPinballGameMode != nullptr)
+	{
+		MatchPinballGameMode->SetNewLocationStartPlayerBallsSpecial(0);
+	}
 	ChangeRoundPhase(ERoundsPhaseID::PRE_ROUND);
 }
 
@@ -105,7 +111,9 @@ void URoundsSubsystem::InitRoundsPhase()
 void URoundsSubsystem::ChangeRound(int NewRoundIndex)
 {
 	CurrentRoundIndex = NewRoundIndex;
+	
 	ResetRound();
+	
 	StartRound();
 	OnChangeRound.Broadcast(CurrentRoundIndex);
 
@@ -136,6 +144,16 @@ void URoundsSubsystem::ChangeRoundPhase(ERoundsPhaseID RoundsPhaseID)
 	CurrentRoundPhaseID = RoundsPhaseID;
 	OnChangeRoundPhases.Broadcast(CurrentRoundPhaseID);
 
+	switch (CurrentRoundPhaseID)
+	{
+		case IN_ROUND:
+			UnlockAllPlayer();
+			break;
+	
+		default:
+			break;
+	}
+	
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Change Round Phase");
@@ -287,5 +305,57 @@ void URoundsSubsystem::ResetRound()
 		if (!RoundsResetable->IsResetable())	continue;
 
 		RoundsResetable->ResetObject();
+	}
+}
+
+void URoundsSubsystem::AddLockableInput(UObject* Input)
+{
+	if (Input == nullptr)	return;
+
+	if (LockableInputsInWorld.Contains(Input))	return;
+	
+	LockableInputsInWorld.Add(Input);
+}
+
+void URoundsSubsystem::RemoveLockableInput(UObject* Input)
+{
+	if (Input == nullptr)	return;
+
+	if (!LockableInputsInWorld.Contains(Input))	return;
+
+	LockableInputsInWorld.Remove(Input);
+}
+
+void URoundsSubsystem::LockAllPlayerButOne(int PlayerIndexUnlock)
+{
+	for (UObject* LockableInputObject : LockableInputsInWorld)
+	{
+		if (LockableInputObject == nullptr)	continue;
+
+		ILockableInput* LockableInputActor = Cast<ILockableInput>(LockableInputObject);
+		
+		if (!LockableInputActor->IsLockableInput())	continue;
+		
+		if (LockableInputActor->GetLockableInputIndex() == PlayerIndexUnlock)	continue;
+
+		LockableInputActor->LockInput();
+	}
+
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Lock all players but : %d"), PlayerIndexUnlock));
+}
+
+void URoundsSubsystem::UnlockAllPlayer()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "Unlock all players");
+	
+	for (UObject* LockableInputObject : LockableInputsInWorld)
+	{
+		if (LockableInputObject == nullptr)	continue;
+
+		ILockableInput* LockableInputActor = Cast<ILockableInput>(LockableInputObject);
+		
+		if (!LockableInputActor->IsLockableInput())	continue;
+		
+		LockableInputActor->UnlockInput();
 	}
 }

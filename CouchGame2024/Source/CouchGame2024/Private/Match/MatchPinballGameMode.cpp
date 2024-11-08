@@ -20,10 +20,11 @@ void AMatchPinballGameMode::BeginPlay()
 	CreateAndInitPlayers();
 	TArray<APlayerBallSpawn*> PlayerSpawnPoints;
 	FindPlayerBallSpawnInWorld(PlayerSpawnPoints);
+	PlayerBallSpawns = PlayerSpawnPoints;
 	SpawnPlayerBalls(PlayerSpawnPoints);
-
+	
 	int RandomPlayerSpecialSpawn = UKismetMathLibrary::RandomIntegerInRange(0, PlayerSpawnPoints.Num() - 1);
-	SetLocationStartPlayerBallsSpecial(PlayerSpawnPoints, RandomPlayerSpecialSpawn);
+	//SetLocationStartPlayerBallsSpecial(PlayerSpawnPoints, RandomPlayerSpecialSpawn);
 
 	// Rounds
 	InitRoundsSubsystem();
@@ -126,7 +127,7 @@ void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APla
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Orange, "Warning : No SpecialSpawn set, spawn might have bugging behaviors !");
 
-		if (PlayersBallInsideArena.Num() > PlayerSpecial)
+		if (PlayersBallInsideArena.Num() > PlayerSpecial && SpawnPoints.Num() > 0)
 		{
 			PlayersBallInsideArena[PlayerSpecial]->SetActorLocation(SpawnPoints[SpawnPoints.Num()-1]->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Spawn actor : %d"), PlayerSpecial));
@@ -140,6 +141,11 @@ void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APla
 
 		PlayerBall->SetActorHiddenInGame(false);
 	}
+}
+
+void AMatchPinballGameMode::SetNewLocationStartPlayerBallsSpecial(int PlayerSpecial)
+{
+	SetLocationStartPlayerBallsSpecial(PlayerBallSpawns, PlayerSpecial);
 }
 
 TSubclassOf<APlayerBall> AMatchPinballGameMode::GetPlayerBallClassFromInputType(
