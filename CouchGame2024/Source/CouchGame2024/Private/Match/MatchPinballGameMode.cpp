@@ -6,6 +6,7 @@
 #include "LocalMultiplayerSettings.h"
 #include "LocalMultiplayerSubsystem.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Match/MatchSettings.h"
 #include "Match/PlayerBallSpawn.h"
 #include "PlayerBall/PlayerBall.h"
@@ -21,6 +22,8 @@ void AMatchPinballGameMode::BeginPlay()
 	FindPlayerBallSpawnInWorld(PlayerSpawnPoints);
 	SpawnPlayerBalls(PlayerSpawnPoints);
 
+	int RandomPlayerSpecialSpawn = UKismetMathLibrary::RandomIntegerInRange(0, PlayerSpawnPoints.Num());
+	SetLocationStartPlayerBallsSpecial(PlayerSpawnPoints, RandomPlayerSpecialSpawn);
 
 	// Rounds
 	InitRoundsSubsystem();
@@ -68,6 +71,70 @@ void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> Spa
 
 		PlayersBallInsideArena.Add(NewCharacter);
 		PlayerIndex++;
+	}
+}
+
+void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APlayerBallSpawn*> SpawnPoints, int PlayerSpecial)
+{
+	int PlayerCount = 0;
+	
+	bool bHasUsedSpecial = false;
+
+	for (APlayerBall* PlayerBall : PlayersBallInsideArena)
+	{
+		if (PlayerBall == nullptr)	continue;
+
+		PlayerBall->SetActorHiddenInGame(true);
+	}
+	
+	for (APlayerBallSpawn* SpawnPoint : SpawnPoints)
+	{
+		if (PlayerCount == PlayerSpecial)
+		{
+			PlayerCount++;
+		}
+		
+		if (SpawnPoint == nullptr)	continue;
+
+		if (SpawnPoint->ActorHasTag(TEXT("SpecialSpawn")) && !bHasUsedSpecial)
+		{
+			if (PlayersBallInsideArena.Num() > PlayerSpecial)
+			{
+				bHasUsedSpecial = true;
+				PlayersBallInsideArena[PlayerSpecial]->SetActorLocation(SpawnPoint->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Set actor special : %d"), PlayerSpecial));
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoint->GetName()));
+			}
+		}
+		else
+		{
+			if (PlayersBallInsideArena.Num() > PlayerCount)
+			{
+				PlayersBallInsideArena[PlayerCount]->SetActorLocation(SpawnPoint->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Set actor : %d"), PlayerCount));
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoint->GetName()));
+				PlayerCount++;
+			}
+		}
+
+	}
+	if (!bHasUsedSpecial)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Orange, "Warning : No SpecialSpawn set, spawn might have bugging behaviors !");
+
+		if (PlayersBallInsideArena.Num() > PlayerSpecial)
+		{
+			PlayersBallInsideArena[PlayerSpecial]->SetActorLocation(SpawnPoints[SpawnPoints.Num()-1]->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Spawn actor : %d"), PlayerSpecial));
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoints[SpawnPoints.Num()-1]->GetName()));
+		}
+	}
+
+	for (APlayerBall* PlayerBall : PlayersBallInsideArena)
+	{
+		if (PlayerBall == nullptr)	continue;
+
+		PlayerBall->SetActorHiddenInGame(false);
 	}
 }
 

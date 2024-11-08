@@ -26,6 +26,8 @@ private:
 
 	void SpawnPlayerBalls(const TArray<APlayerBallSpawn*> SpawnPoints);
 
+	void SetLocationStartPlayerBallsSpecial(const TArray<APlayerBallSpawn*> SpawnPoints, int PlayerSpecial);
+
 	TSubclassOf<APlayerBall> GetPlayerBallClassFromInputType(EAutoReceiveInput::Type InputType) const;
 
 	void CreateAndInitPlayers() const;
