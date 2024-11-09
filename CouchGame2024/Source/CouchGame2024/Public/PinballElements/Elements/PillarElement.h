@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GrapplingHook/Hookable.h"
 #include "PinballElements/PinballElement.h"
 #include "PillarElement.generated.h"
 
 UCLASS()
-class COUCHGAME2024_API APillarElement : public APinballElement
+class COUCHGAME2024_API APillarElement : public APinballElement, public IHookable
 {
 	GENERATED_BODY()
 
@@ -22,4 +23,17 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void TriggerElement() override;
+	
+	virtual EPinballElementID GetElementID() override;
+
+#pragma region Grappling Interface
+public:
+	virtual FVector GetHookPosition() override;
+
+	virtual bool IsHookable() override;
+
+	virtual bool IsPillar() override;
+#pragma endregion 
 };

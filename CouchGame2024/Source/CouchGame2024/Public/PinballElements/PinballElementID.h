@@ -14,5 +14,6 @@ enum class EPinballElementID : uint8
 {
 	None = 0,
 	Bumper,
-	Flipper
+	Flipper,
+	Pillar
 };

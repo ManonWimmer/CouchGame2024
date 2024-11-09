@@ -24,3 +24,28 @@ void APillarElement::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void APillarElement::TriggerElement()
+{
+	Super::TriggerElement();
+}
+
+EPinballElementID APillarElement::GetElementID()
+{
+	return EPinballElementID::Pillar;
+}
+
+FVector APillarElement::GetHookPosition()
+{
+	return GetActorLocation();
+}
+
+bool APillarElement::IsHookable()
+{
+	return true;
+}
+
+bool APillarElement::IsPillar()
+{
+	return true;
+}
+

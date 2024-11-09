@@ -33,11 +33,12 @@ private:
 	UFUNCTION()
 	void BumpEffect();
 
-	// Grappling interface
+#pragma region Grappling Interface
 public:
 	virtual FVector GetHookPosition() override;
 
 	virtual bool IsHookable() override;
 
 	virtual bool IsPillar() override;
+#pragma endregion 
 };
