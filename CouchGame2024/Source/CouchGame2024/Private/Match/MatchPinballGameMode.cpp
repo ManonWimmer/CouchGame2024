@@ -103,8 +103,8 @@ void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APla
 			{
 				bHasUsedSpecial = true;
 				PlayersBallInsideArena[PlayerSpecial]->SetActorLocation(SpawnPoint->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Set actor special : %d"), PlayerSpecial));
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoint->GetName()));
+				//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Set actor special : %d"), PlayerSpecial));
+				//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoint->GetName()));
 			}
 			else
 			{
@@ -116,8 +116,8 @@ void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APla
 			if (PlayersBallInsideArena.Num() > PlayerCount)
 			{
 				PlayersBallInsideArena[PlayerCount]->SetActorLocation(SpawnPoint->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Set actor : %d"), PlayerCount));
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoint->GetName()));
+				//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Set actor : %d"), PlayerCount));
+				//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoint->GetName()));
 				PlayerCount++;
 			}
 		}
@@ -130,8 +130,8 @@ void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APla
 		if (PlayersBallInsideArena.Num() > PlayerSpecial && SpawnPoints.Num() > 0)
 		{
 			PlayersBallInsideArena[PlayerSpecial]->SetActorLocation(SpawnPoints[SpawnPoints.Num()-1]->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
-			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Spawn actor : %d"), PlayerSpecial));
-			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoints[SpawnPoints.Num()-1]->GetName()));
+			//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Spawn actor : %d"), PlayerSpecial));
+			//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoints[SpawnPoints.Num()-1]->GetName()));
 		}
 	}
 
@@ -198,7 +198,7 @@ void AMatchPinballGameMode::InitRoundsSubsystem()
 
 	if (RoundsSubsystem == nullptr) return;
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Get Round subsystem");
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Get Round subsystem");
 	
 	RoundsSubsystem->InitRoundSubsystem();
 }

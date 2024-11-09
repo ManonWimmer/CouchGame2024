@@ -305,7 +305,8 @@ void APlayerBall::LockInput()
 
 	if (StateMachine == nullptr)	return;
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Purple, TEXT("Lock player"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Purple, TEXT("Lock player"));
+	
 	StateMachine->ChangeState(EPlayerBallStateID::Locked, 0.f);
 }
 

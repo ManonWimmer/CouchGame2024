@@ -32,7 +32,7 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 	Super::StateEnter(PreviousState);
 
 	
-	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("PlayerState : Idle"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("PlayerState : Idle"));
 	
 	UE_LOG(LogTemp, Warning, TEXT("Enter PlayerState : Idle") );
 

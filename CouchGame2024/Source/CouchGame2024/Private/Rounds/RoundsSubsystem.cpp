@@ -64,7 +64,8 @@ void URoundsSubsystem::InitRoundSubsystem()
 
 void URoundsSubsystem::StartRound()
 {
-	LockAllPlayerButOne(0);
+	LockAllPlayer();
+	
 	if (MatchPinballGameMode != nullptr)
 	{
 		MatchPinballGameMode->SetNewLocationStartPlayerBallsSpecial(0);
@@ -146,6 +147,9 @@ void URoundsSubsystem::ChangeRoundPhase(ERoundsPhaseID RoundsPhaseID)
 
 	switch (CurrentRoundPhaseID)
 	{
+		case STARTING_ROUND:
+			LockAllPlayerButOne(0);
+			break;
 		case IN_ROUND:
 			UnlockAllPlayer();
 			break;
@@ -346,6 +350,11 @@ void URoundsSubsystem::LockAllPlayerButOne(int PlayerIndexUnlock)
 	}
 
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Lock all players but : %d"), PlayerIndexUnlock));
+}
+
+void URoundsSubsystem::LockAllPlayer()
+{
+	LockAllPlayerButOne(-1);
 }
 
 void URoundsSubsystem::UnlockAllPlayer()

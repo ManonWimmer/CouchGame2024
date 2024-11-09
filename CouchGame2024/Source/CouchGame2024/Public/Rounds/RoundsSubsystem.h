@@ -44,7 +44,7 @@ private:
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeRound, int, NewRoundIndex);
 
-	UPROPERTY()
+	UPROPERTY(BlueprintAssignable)
 	FOnChangeRound OnChangeRound;
 	
 	void ChangeRound(int NewRoundIndex);
@@ -61,7 +61,7 @@ public:
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeRoundPhases, ERoundsPhaseID, NewPhaseID);
 
-	UPROPERTY()
+	UPROPERTY(BlueprintAssignable)
 	FOnChangeRoundPhases OnChangeRoundPhases;
 	
 	void InitRoundsPhase();
@@ -135,6 +135,9 @@ public:
 	UFUNCTION()
 	void LockAllPlayerButOne(int PlayerIndexUnlock);
 
+	UFUNCTION()
+	void LockAllPlayer();
+	
 	UFUNCTION()
 	void UnlockAllPlayer();
 

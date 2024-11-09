@@ -9,7 +9,7 @@
 /**
  * 
  */
-UENUM()
+UENUM(BlueprintType)
 enum ERoundsPhaseID
 {
 	NONE = 0,

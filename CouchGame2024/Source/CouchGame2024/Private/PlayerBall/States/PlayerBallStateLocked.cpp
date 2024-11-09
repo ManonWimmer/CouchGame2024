@@ -39,7 +39,7 @@ void UPlayerBallStateLocked::StateEnter(EPlayerBallStateID PreviousState, float 
 {
 	Super::StateEnter(PreviousState, InFloatParameter);
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("PlayerState : Locked"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("PlayerState : Locked"));
 
 	
 	CurrentProgressStartForce = 0.f;
