@@ -113,7 +113,7 @@ public:
 	float GrapplingDamping = 0.99f;
 
 	UPROPERTY(EditAnywhere, Category = "Grappling")
-	float GrapplingForce = 0.1f;
+	float GrapplingPillarForce = 0.1f;
 
 	UPROPERTY(EditAnywhere, Category = "Grappling")
 	float GrapplingReleaseForce = 250.f;
@@ -129,6 +129,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Grappling")
 	float StartGrapplingForceFactorWhenAlreadyMoving = 0.001f;
+
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float GrapplingNotPillarForce = 5.f;
 	
 #pragma endregion
 	

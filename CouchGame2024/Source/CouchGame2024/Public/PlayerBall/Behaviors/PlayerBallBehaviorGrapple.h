@@ -88,7 +88,7 @@ public:
 	float GrapplingDamping = 0.99f;
 
 	UPROPERTY()
-	float GrapplingForce = 0.1f;
+	float GrapplingPillarForce = 0.1f;
 
 	UPROPERTY()
 	float GrapplingReleaseForce = 250.f;
@@ -104,6 +104,9 @@ public:
 
 	UPROPERTY()
 	float StartGrapplingForceFactorWhenAlreadyMoving = 0.001f;
+
+	UPROPERTY()
+	float GrapplingNotPillarForce = 5.f;
 
 	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 	UPROPERTY()

@@ -379,7 +379,7 @@ void UPlayerBallStateGrappling::SetGrapplingVelocityAndAnglePillar(float DeltaTi
 	// Get angular velocity with last velocity & input
 	TempGrapplingAngularVelocity = Pawn->BehaviorGrapple->GrapplingDamping * Pawn->BehaviorGrapple->
 		CurrentGrapplingAngularVelocity + (Pawn->BehaviorMovements->MoveXValue * -1 *
-			Pawn->BehaviorGrapple->GrapplingForce) +
+			Pawn->BehaviorGrapple->GrapplingPillarForce) +
 		Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * Pawn->GetVelocity().X;
 	// A modif pour prendre velocity y
 
@@ -394,22 +394,21 @@ void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngleNotPillar(float Delt
 	FVector LastPosToCenter = LastLocation - Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
 	float LastPosAngle = FMath::Atan2(LastPosToCenter.Y, LastPosToCenter.X);
 
-	// (U.X * V.Y) - (U.Y * V.X
+	// (U.X * V.Y) - (U.Y * V.X)
 	float truc = (LastLocation.X * Pawn->GetVelocity().Y) - (LastLocation.Y * Pawn->GetVelocity().X);
 
 	float RotationDirection = truc > 0 ? -1.0f : 1.0f;
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan,
-									 FString::Printf(TEXT("RotationDirection %f"), RotationDirection));
-	
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan,FString::Printf(TEXT("RotationDirection %f"), RotationDirection));
 
-	TempGrapplingAngularVelocity = Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * RotationDirection * 5000.f;
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Magenta,
-									 FString::Printf(TEXT("New Velocity %f"), TempGrapplingAngularVelocity));
+	TempGrapplingAngularVelocity = Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * RotationDirection
+		* Pawn->BehaviorGrapple->GrapplingNotPillarForce * 1000.f;
+
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Magenta,FString::Printf(TEXT("New Velocity %f"), TempGrapplingAngularVelocity));
 
 	//TempGrapplingAngularVelocity = FMath::Clamp(TempGrapplingAngularVelocity, -10.0f, 10.0f); // valeurs temp
-	
+
 	TempGrapplingAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle + TempGrapplingAngularVelocity * DeltaTime;
 }
 
