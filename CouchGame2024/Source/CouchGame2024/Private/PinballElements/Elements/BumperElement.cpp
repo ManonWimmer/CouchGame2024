@@ -41,3 +41,18 @@ void ABumperElement::BumpEffect()
 	
 }
 
+FVector ABumperElement::GetHookPosition()
+{
+	return GetActorLocation();
+}
+
+bool ABumperElement::IsHookable()
+{
+	return true;
+}
+
+bool ABumperElement::IsPillar()
+{
+	return false;
+}
+
