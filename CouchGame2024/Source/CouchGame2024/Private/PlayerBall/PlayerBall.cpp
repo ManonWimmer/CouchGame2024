@@ -261,8 +261,8 @@ void APlayerBall::ResetMovement()
 	if (SphereCollision != nullptr)
 	{
 		SphereCollision->SetPhysicsLinearVelocity(FVector::ZeroVector);
-		SphereCollision->SetWorldRotation(FRotator::ZeroRotator);
 		SphereCollision->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector, false);
+		SphereCollision->SetWorldRotation(FRotator::ZeroRotator);
 		SphereCollision->ComponentVelocity = FVector::ZeroVector;
 		PawnMovement->Velocity = FVector::ZeroVector;
 	}

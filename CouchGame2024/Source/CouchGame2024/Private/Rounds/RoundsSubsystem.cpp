@@ -4,11 +4,13 @@
 #include "Rounds/RoundsSubsystem.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Match/MatchPinballGameMode.h"
 #include "PlayerBall/LockableInput.h"
 #include "Rounds/RoundsResetable.h"
 #include "Rounds/RoundsSettings.h"
 #include "Rounds/Datas/RoundsData.h"
+#include "Score/GlobalScoreSubsystem.h"
 
 
 void URoundsSubsystem::Tick(float DeltaTime)
@@ -39,41 +41,45 @@ void URoundsSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 
 void URoundsSubsystem::InitRoundSubsystem()
 {
-	InitRounds();
-	
-	InitTimers();
+	InitFirstPlayerSpecial();	// Set a lastPlayerWin (playerSpecial) for 1st round
 
-	InitRoundsPhase();
-
-	if (GetWorld() == nullptr)	return;
+	InitRounds();	// Init index rounds
 	
-	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
-
-	if (GameMode == nullptr)	return;
+	InitRoundsWonByPlayers(4);	// Init all data for RoundsWon
 	
-	MatchPinballGameMode = Cast<AMatchPinballGameMode>(GameMode);
+	InitTimers();	// (Re)set timers by data
 
-	if (MatchPinballGameMode == nullptr)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Warning : Match Pinball GameMode not found in roundsSubsystem");
-		return;
-	}
-	
-	MatchPinballGameMode->OnBeginGameMatch.AddDynamic(this, &URoundsSubsystem::StartRound);
+	InitRoundsPhase();	// Init rounds phases data
+
+	InitGamemodeAndBindStartGame();	// Set Gamemode and bind start 1st round to beginGame
+
+	InitGlobalScoreAndReset();	// Set GlobalScore and reset it
 }
 
-void URoundsSubsystem::StartRound()
+void URoundsSubsystem::StartRound()	// Reset AllScores -> Lock players -> set to startLocation	-> roundphase Pre_Round
 {
+	if (GlobalScoreSubsystem != nullptr)
+	{
+		GlobalScoreSubsystem->ResetAllScores();
+	}
+	
 	LockAllPlayer();
 	
 	if (MatchPinballGameMode != nullptr)
 	{
-		MatchPinballGameMode->SetNewLocationStartPlayerBallsSpecial(0);
+		MatchPinballGameMode->SetNewLocationStartPlayerBallsSpecial(PlayerIndexLastRoundWin);
 	}
 	ChangeRoundPhase(ERoundsPhaseID::PRE_ROUND);
 }
 
-void URoundsSubsystem::InitTimers()
+void URoundsSubsystem::EndRoundChecks()	// Check best player & increments rounds Win
+{
+	PlayerIndexLastRoundWin = GlobalScoreSubsystem->GetIndexPlayerBestScore();
+
+	IncreaseRoundsWonByPlayerIndex(PlayerIndexLastRoundWin, 1);
+}
+
+void URoundsSubsystem::InitTimers()	// (Re)set timers by data
 {
 	const URoundsSettings* RoundsSettings = GetDefault<URoundsSettings>();
 
@@ -97,14 +103,55 @@ void URoundsSubsystem::InitTimers()
 	CurrentPostRoundTimer = RoundsData->PostRoundDuration;
 }
 
-void URoundsSubsystem::InitRounds()
+void URoundsSubsystem::InitRounds()	// Init rounds index
 {
-	InitRoundsWonByPlayers(4);
-
 	CurrentRoundIndex = 0;
 }
 
-void URoundsSubsystem::InitRoundsPhase()
+void URoundsSubsystem::InitFirstPlayerSpecial()	// Init a first player randomly for first round
+{
+	if (PlayerIndexLastRoundWin < 0)
+	{
+		PlayerIndexLastRoundWin = UKismetMathLibrary::RandomIntegerInRange(0, 3);
+	}
+}
+
+void URoundsSubsystem::InitGamemodeAndBindStartGame()	// Set Gamemode and bind start 1st round to beginGame
+{
+	if (GetWorld() == nullptr)	return;
+	
+	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
+
+	if (GameMode != nullptr)
+	{
+		MatchPinballGameMode = Cast<AMatchPinballGameMode>(GameMode);
+
+		if (MatchPinballGameMode != nullptr)
+		{
+			MatchPinballGameMode->OnBeginGameMatch.AddDynamic(this, &URoundsSubsystem::StartRound);
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Warning : Match Pinball GameMode not found in roundsSubsystem");
+		}
+	}
+}
+
+void URoundsSubsystem::InitGlobalScoreAndReset()	// Set GlobalScore and reset it
+{
+	if (GetWorld() == nullptr)	return;
+	if (GetWorld()->GetGameInstance() == nullptr)	return;
+	UGlobalScoreSubsystem* ScoreSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
+	
+	if (ScoreSubsystem != nullptr)
+	{
+		GlobalScoreSubsystem = ScoreSubsystem;
+
+		GlobalScoreSubsystem->ResetAllScores();
+	}
+}
+
+void URoundsSubsystem::InitRoundsPhase()	// Init rounds phases data
 {
 	CurrentRoundPhaseID = NONE;
 }
@@ -120,8 +167,8 @@ void URoundsSubsystem::ChangeRound(int NewRoundIndex)
 
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Change Round");
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::FromInt(CurrentRoundIndex));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Change Round");
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::FromInt(CurrentRoundIndex));
 	}
 }
 
@@ -148,21 +195,24 @@ void URoundsSubsystem::ChangeRoundPhase(ERoundsPhaseID RoundsPhaseID)
 	switch (CurrentRoundPhaseID)
 	{
 		case STARTING_ROUND:
-			LockAllPlayerButOne(0);
+			LockAllPlayerButOne(PlayerIndexLastRoundWin);
 			break;
 		case IN_ROUND:
 			UnlockAllPlayer();
 			break;
-	
+		case POST_ROUND:
+			EndRoundChecks();
+			break;
 		default:
 			break;
 	}
 	
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Change Round Phase");
 		const FString PhaseIdString = UEnum::GetValueAsString(CurrentRoundPhaseID);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("New phase Id = %s"), *PhaseIdString));
+		
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Change Round Phase");
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("New phase Id = %s"), *PhaseIdString));
 	}
 }
 
@@ -195,7 +245,7 @@ void URoundsSubsystem::ChangeToNextRoundPhase()
 	}
 }
 
-void URoundsSubsystem::InitRoundsWonByPlayers(int PlayerCount)
+void URoundsSubsystem::InitRoundsWonByPlayers(int PlayerCount)	// Init all data for RoundsWon
 {
 	RoundsWonByPlayersIndex.Empty();
 	
@@ -215,6 +265,8 @@ int URoundsSubsystem::GetRoundsWonByPlayerIndex(int PlayerIndex)
 
 void URoundsSubsystem::IncreaseRoundsWonByPlayerIndex(int PlayerIndex, int IncreaseNumber)
 {
+	if (PlayerIndex < 0)	return;
+	
 	if (RoundsWonByPlayersIndex.Num() >= PlayerIndex)
 		return;
 
@@ -234,9 +286,10 @@ void URoundsSubsystem::CheckForWinPlayer(int PlayerIndex)
 
 	if (RoundsSettings->RoundsData == nullptr)	return;
 	
-	if (RoundsWonByPlayersIndex[PlayerIndex] >= RoundsSettings->RoundsData->RoundsToWin)
+	if (GetRoundsWonByPlayerIndex(PlayerIndex) >= RoundsSettings->RoundsData->RoundsToWin)
 	{
 		// Handle Win of playerIndex
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "WIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIINNNNNNNNNNNN !!!!!!!!!!!!!!!!!!!!");
 	}
 }
 

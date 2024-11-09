@@ -80,3 +80,19 @@ void UGlobalScoreSubsystem::ResetAllScores()
 	ScoreChangedEvent.Broadcast(2, GetScore(2)); 
 	ScoreChangedEvent.Broadcast(3, GetScore(3)); 
 }
+
+int UGlobalScoreSubsystem::GetIndexPlayerBestScore()
+{
+	int PlayerIndexBestScore = 0;
+
+	if (Player1Score > Player0Score)
+		PlayerIndexBestScore = 1;
+
+	if (Player2Score > Player1Score)
+		PlayerIndexBestScore = 2;
+
+	if (Player3Score > Player2Score)
+		PlayerIndexBestScore = 3;
+
+	return PlayerIndexBestScore;
+}

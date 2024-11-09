@@ -8,6 +8,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "RoundsSubsystem.generated.h"
 
+class UGlobalScoreSubsystem;
 class IRoundsResetable;
 class AMatchPinballGameMode;
 /**
@@ -31,14 +32,25 @@ public:
 	UFUNCTION()
 	void StartRound();
 
+	UFUNCTION()
+	void EndRoundChecks();
+
 	void InitTimers();
 
 	void InitRounds();
+
+	void InitFirstPlayerSpecial();
+
+	void InitGamemodeAndBindStartGame();
+
+	void InitGlobalScoreAndReset();
 
 private:
 	UPROPERTY()
 	TObjectPtr<AMatchPinballGameMode> MatchPinballGameMode;
 
+	UPROPERTY()
+	TObjectPtr<UGlobalScoreSubsystem> GlobalScoreSubsystem;
 	
 #pragma region RoundsChange
 public:
@@ -92,6 +104,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CheckForWinPlayer(int PlayerIndex);
 
+	int PlayerIndexLastRoundWin = -1;
+	
 #pragma endregion 
 
 #pragma region Handle Timers

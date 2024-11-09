@@ -28,6 +28,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ResetAllScores();
 
+	UFUNCTION(BlueprintCallable)
+	int GetIndexPlayerBestScore();
+	
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	int Player0Score = 0;

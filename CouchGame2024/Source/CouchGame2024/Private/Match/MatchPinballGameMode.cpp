@@ -6,7 +6,6 @@
 #include "LocalMultiplayerSettings.h"
 #include "LocalMultiplayerSubsystem.h"
 #include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Match/MatchSettings.h"
 #include "Match/PlayerBallSpawn.h"
 #include "PlayerBall/PlayerBall.h"
@@ -22,9 +21,6 @@ void AMatchPinballGameMode::BeginPlay()
 	FindPlayerBallSpawnInWorld(PlayerSpawnPoints);
 	PlayerBallSpawns = PlayerSpawnPoints;
 	SpawnPlayerBalls(PlayerSpawnPoints);
-	
-	int RandomPlayerSpecialSpawn = UKismetMathLibrary::RandomIntegerInRange(0, PlayerSpawnPoints.Num() - 1);
-	//SetLocationStartPlayerBallsSpecial(PlayerSpawnPoints, RandomPlayerSpecialSpawn);
 
 	// Rounds
 	InitRoundsSubsystem();
@@ -145,6 +141,8 @@ void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APla
 
 void AMatchPinballGameMode::SetNewLocationStartPlayerBallsSpecial(int PlayerSpecial)
 {
+	if (PlayerSpecial < 0)	return;
+	
 	SetLocationStartPlayerBallsSpecial(PlayerBallSpawns, PlayerSpecial);
 }
 
