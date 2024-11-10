@@ -60,20 +60,6 @@ void UPlayerBallBehaviorPowerUp::UnbindBehaviorEventAction(APlayerBallController
 	GetPlayerBallController()->OnUsePowerUpInput.RemoveDynamic(this, &UPlayerBallBehaviorPowerUp::UsePowerUpAction);
 }
 
-void UPlayerBallBehaviorPowerUp::LockBehavior()
-{
-	Super::LockBehavior();
-
-	UnbindBehaviorEventAction(GetPlayerBallController());
-}
-
-void UPlayerBallBehaviorPowerUp::UnlockBehavior()
-{
-	Super::UnlockBehavior();
-	
-	BindBehaviorEventAction(GetPlayerBallController());
-}
-
 void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                                                             AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                                             const FHitResult& SweepResult)

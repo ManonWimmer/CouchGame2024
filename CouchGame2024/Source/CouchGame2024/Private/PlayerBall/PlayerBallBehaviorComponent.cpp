@@ -56,16 +56,6 @@ void UPlayerBallBehaviorComponent::UnbindBehaviorEventAction(APlayerBallControll
 	
 }
 
-void UPlayerBallBehaviorComponent::LockBehavior()
-{
-	
-}
-
-void UPlayerBallBehaviorComponent::UnlockBehavior()
-{
-	
-}
-
 void UPlayerBallBehaviorComponent::SetupData()
 {
 	

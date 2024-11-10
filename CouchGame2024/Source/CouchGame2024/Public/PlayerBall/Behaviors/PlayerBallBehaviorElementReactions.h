@@ -30,10 +30,6 @@ public:
 	virtual void BindBehaviorEventAction(APlayerBallController* InPlayerBallController) override;
 
 	virtual void UnbindBehaviorEventAction(APlayerBallController* InPlayerBallController) override;
-
-	virtual void LockBehavior() override;
-
-	virtual void UnlockBehavior() override;
 	
 	virtual void SetupData() override;
 

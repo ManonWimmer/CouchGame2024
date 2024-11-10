@@ -30,10 +30,6 @@ public:
 
 	virtual void UnbindBehaviorEventAction(APlayerBallController* InPlayerBallController) override;
 
-	virtual void LockBehavior() override;
-
-	virtual void UnlockBehavior() override;
-	
 #pragma region PowerUp
 
 public:

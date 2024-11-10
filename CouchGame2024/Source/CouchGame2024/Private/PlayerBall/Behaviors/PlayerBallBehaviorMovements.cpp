@@ -59,23 +59,6 @@ void UPlayerBallBehaviorMovements::UnbindBehaviorEventAction(APlayerBallControll
 	GetPlayerBallController()->OnPlayerMoveYInput.RemoveDynamic(this, &UPlayerBallBehaviorMovements::MoveYAction);
 }
 
-void UPlayerBallBehaviorMovements::LockBehavior()
-{
-	Super::LockBehavior();
-
-	UnbindBehaviorEventAction(GetPlayerBallController());
-
-	MoveXValue = 0.f;
-	MoveYValue = 0.f;
-}
-
-void UPlayerBallBehaviorMovements::UnlockBehavior()
-{
-	Super::UnlockBehavior();
-
-	BindBehaviorEventAction(GetPlayerBallController());
-}
-
 void UPlayerBallBehaviorMovements::SetupData()
 {
 	Super::SetupData();

@@ -65,38 +65,6 @@ void UPlayerBallBehaviorElementReactions::UnbindBehaviorEventAction(APlayerBallC
 	
 }
 
-void UPlayerBallBehaviorElementReactions::LockBehavior()
-{
-	Super::LockBehavior();
-
-	UnbindBehaviorEventAction(GetPlayerBallController());
-
-	if (GetPlayerBall()->SphereCollision != nullptr)
-	{
-		GetPlayerBall()->SphereCollision->OnComponentHit.RemoveDynamic(this, &UPlayerBallBehaviorElementReactions::OnCollisionHit);
-	}
-	if (GetPlayerBall()->AttractionSphere != nullptr)
-	{
-		GetPlayerBall()->AttractionSphere->OnComponentBeginOverlap.RemoveDynamic(this, &UPlayerBallBehaviorElementReactions::OnAttractionBeginOverlap);
-	}
-}
-
-void UPlayerBallBehaviorElementReactions::UnlockBehavior()
-{
-	Super::UnlockBehavior();
-
-	BindBehaviorEventAction(GetPlayerBallController());
-
-	if (GetPlayerBall()->SphereCollision != nullptr)
-	{
-		GetPlayerBall()->SphereCollision->OnComponentHit.AddDynamic(this, &UPlayerBallBehaviorElementReactions::OnCollisionHit);
-	}
-	if (GetPlayerBall()->AttractionSphere != nullptr)
-	{
-		GetPlayerBall()->AttractionSphere->OnComponentBeginOverlap.AddDynamic(this, &UPlayerBallBehaviorElementReactions::OnAttractionBeginOverlap);
-	}
-}
-
 void UPlayerBallBehaviorElementReactions::SetupData()
 {
 	Super::SetupData();
