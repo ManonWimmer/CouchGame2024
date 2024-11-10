@@ -1,20 +1,20 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GrapplingHook/Hookable.h"
 #include "PinballElements/PinballElement.h"
-#include "BumperElement.generated.h"
+#include "PillarElement.generated.h"
 
 UCLASS()
-class COUCHGAME2024_API ABumperElement : public APinballElement, public IHookable
+class COUCHGAME2024_API APillarElement : public APinballElement, public IHookable
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	ABumperElement();
+	APillarElement();
 
 protected:
 	// Called when the game starts or when spawned
@@ -27,11 +27,6 @@ public:
 	virtual void TriggerElement() override;
 	
 	virtual EPinballElementID GetElementID() override;
-	
-private:
-
-	UFUNCTION()
-	void BumpEffect();
 
 #pragma region Grappling Interface
 public:

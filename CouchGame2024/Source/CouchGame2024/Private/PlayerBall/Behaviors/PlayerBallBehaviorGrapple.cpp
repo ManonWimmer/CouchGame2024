@@ -4,10 +4,11 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 
 #include "Components/SphereComponent.h"
+#include "GrapplingHook/Hookable.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallController.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
-
+#include "GrapplingHook/Hookable.h"
 
 UPlayerBallBehaviorGrapple::UPlayerBallBehaviorGrapple()
 {
@@ -55,13 +56,15 @@ void UPlayerBallBehaviorGrapple::SetupData()
 
 	// Grappling
 	GrapplingDamping = GetPlayerBall()->GetPlayerBallData()->GrapplingDamping;
-	GrapplingForce = GetPlayerBall()->GetPlayerBallData()->GrapplingForce;
+	GrapplingPillarForce = GetPlayerBall()->GetPlayerBallData()->GrapplingPillarForce;
 	GrapplingReleaseForce = GetPlayerBall()->GetPlayerBallData()->GrapplingReleaseForce;
 	MinCableDistance = GetPlayerBall()->GetPlayerBallData()->MinCableDistance;
 	MaxCableDistance = GetPlayerBall()->GetPlayerBallData()->MaxCableDistance;
 	MoreOrLessCablePerFrame = GetPlayerBall()->GetPlayerBallData()->MoreOrLessCablePerFrame;
 	StartGrapplingForceFactorWhenAlreadyMoving = GetPlayerBall()->GetPlayerBallData()->
 	                                                              StartGrapplingForceFactorWhenAlreadyMoving;
+	GrapplingNotPillarForce = GetPlayerBall()->GetPlayerBallData()->GrapplingNotPillarForce;
+	
 	GetPlayerBall()->GrapplingSphereCollision->SetSphereRadius(MaxCableDistance); // Max grappling cable distance
 }
 
@@ -74,26 +77,32 @@ void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionStarted(float InGrappling
 
 	GrapplingValue = InGrapplingValue;
 
-	// Check for nearest in grappling radius
 	IsGrappling = false;
+
+
+	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- // 
+	/* 
 	TArray<TObjectPtr<AActor>> OverlappingActors;
 	TArray<TObjectPtr<APlayerBall>> OverlappingPlayers;
 	GetPlayerBall()->SphereCollision->GetOverlappingActors(OverlappingActors, APlayerBall::StaticClass());
-
+	
+	// Return if none
 	if (OverlappingActors.Num() <= 0)
 	{
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "pas de joueur");
-
 		return;
 	}
 
+	// For each player in overlap radius
 	for (TObjectPtr<AActor> Actor : OverlappingActors)
 	{
+		// Check if different from self
 		if (Actor != GetPlayerBall())
 		{
 			TObjectPtr<APlayerBall> OtherPlayer = Cast<APlayerBall>(Actor);
 			if (OtherPlayer)
 			{
+				// Check if both can grapple & be grappled
 				if (OtherPlayer->BehaviorGrapple != nullptr)
 				{
 					if (OtherPlayer->BehaviorGrapple->GrappledPlayerBall == nullptr && OtherPlayer->BehaviorGrapple->
@@ -104,13 +113,14 @@ void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionStarted(float InGrappling
 		}
 	}
 
+	// Return if no player in grappling radius
 	if (OverlappingPlayers.Num() <= 0)
 	{
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "pas de joueur 2");
-
 		return;
 	}
 
+	// Get nearest player in radius between all overlapping
 	TObjectPtr<APlayerBall> NearestPlayerBall = OverlappingPlayers[0];
 	float NearestDistance = FVector::Dist(GetPlayerBall()->GetActorLocation(), NearestPlayerBall->GetActorLocation());
 
@@ -143,7 +153,79 @@ void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionStarted(float InGrappling
 	IsGrappling = true;
 
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "broadcast grappling");
+	*/
+	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
 
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+	TArray<TObjectPtr<AActor>> OverlappingActors;
+	TArray<TObjectPtr<UObject>> OverlappingHookObjects;
+	TArray<TScriptInterface<IHookable>> OverlappingHookInterfaces;
+	GetPlayerBall()->GrapplingSphereCollision->GetOverlappingActors(OverlappingActors);
+
+	// Return if none
+	if (OverlappingActors.Num() <= 0)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "1 - pas de hook point");
+		return;
+	}
+
+	// For each player in overlap radius, add to overlapping hook objects if implements interface hookable
+	for (TObjectPtr<AActor> Actor : OverlappingActors)
+	{
+		FString ActorName = Actor->GetName();
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Actor Name: %s"), *ActorName));
+
+		if (Actor != nullptr && Actor->Implements<UHookable>())
+		{
+			TScriptInterface<IHookable> Interface = Actor;
+
+			// Check if is hookable even if implements interface
+			if (Interface->IsHookable())
+			{
+				OverlappingHookObjects.Add(Actor);
+				OverlappingHookInterfaces.Add(Actor);
+			}
+		}
+	}
+
+	// Return if no hook point in grappling radius
+	if (OverlappingHookObjects.Num() <= 0)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "2 - pas de hook point");
+		return;
+	}
+
+	// Get nearest hook point in radius between all overlapping
+	TObjectPtr<UObject> NearestHookObject = OverlappingHookObjects[0];
+	TScriptInterface<IHookable> NearestHookInterface = OverlappingHookInterfaces[0];
+	float NearestDistance = FVector::Dist(GetPlayerBall()->GetActorLocation(), NearestHookInterface->GetHookPosition());
+
+	for (UObject* OutHookObject : OverlappingHookObjects)
+	{
+		float NewNearestDistance =
+			FVector::Dist(GetPlayerBall()->GetActorLocation(), NearestHookInterface->GetHookPosition());
+		if (NewNearestDistance < NearestDistance)
+		{
+			NearestHookObject = OutHookObject;
+			NearestHookInterface = OutHookObject;
+			NearestDistance = NewNearestDistance;
+		}
+	}
+
+	if (NearestHookObject == nullptr || NearestHookInterface == nullptr) return;
+
+	HookObject = NearestHookObject;
+	HookInterface = NearestHookInterface;
+
+	UE_LOG(LogTemp, Warning, TEXT("Set NearestHookObject"));
+	// UE_LOG(LogTemp, Log, TEXT("Current State : %hhd"), (StateMachine->GetCurrentStateID()) );
+
+	IsGrappling = true;
+
+	IsHookingPillar = HookInterface->IsPillar();
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "broadcast grappling");
 	OnGrapplingActionStarted.Broadcast(GrapplingValue);
 }
 

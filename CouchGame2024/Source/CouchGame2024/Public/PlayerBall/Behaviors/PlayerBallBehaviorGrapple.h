@@ -7,6 +7,8 @@
 #include "PlayerBallBehaviorGrapple.generated.h"
 
 
+class IHookable;
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class COUCHGAME2024_API UPlayerBallBehaviorGrapple : public UPlayerBallBehaviorComponent
 {
@@ -30,7 +32,7 @@ public:
 	virtual void SetupData() override;
 
 
-	#pragma region Grappling
+#pragma region Grappling
 
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGrapplingActionStarted, float, GrapplingValue);
@@ -86,7 +88,7 @@ public:
 	float GrapplingDamping = 0.99f;
 
 	UPROPERTY()
-	float GrapplingForce = 0.1f;
+	float GrapplingPillarForce = 0.1f;
 
 	UPROPERTY()
 	float GrapplingReleaseForce = 250.f;
@@ -102,6 +104,20 @@ public:
 
 	UPROPERTY()
 	float StartGrapplingForceFactorWhenAlreadyMoving = 0.001f;
+
+	UPROPERTY()
+	float GrapplingNotPillarForce = 5.f;
+
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+	UPROPERTY()
+	TObjectPtr<UObject> HookObject;
+
+	UPROPERTY()
+	TScriptInterface<IHookable> HookInterface;
+
+	UPROPERTY()
+	bool IsHookingPillar = false;
+	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 
 #pragma endregion
 

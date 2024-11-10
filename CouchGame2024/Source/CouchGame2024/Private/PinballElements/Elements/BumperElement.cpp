@@ -41,3 +41,20 @@ void ABumperElement::BumpEffect()
 	
 }
 
+#pragma region Grappling Interface
+FVector ABumperElement::GetHookPosition()
+{
+	return GetActorLocation();
+}
+
+bool ABumperElement::IsHookable()
+{
+	return true;
+}
+
+bool ABumperElement::IsPillar()
+{
+	return false;
+}
+#pragma endregion
+
