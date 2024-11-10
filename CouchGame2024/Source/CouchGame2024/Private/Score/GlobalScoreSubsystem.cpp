@@ -84,15 +84,25 @@ void UGlobalScoreSubsystem::ResetAllScores()
 int UGlobalScoreSubsystem::GetIndexPlayerBestScore()
 {
 	int PlayerIndexBestScore = 0;
+	int BestScore = Player0Score;
 
-	if (Player1Score > Player0Score)
+	if (Player1Score > BestScore)
+	{
 		PlayerIndexBestScore = 1;
+		BestScore = Player1Score;	
+	}
 
-	if (Player2Score > Player1Score)
+	if (Player2Score > BestScore)
+	{
 		PlayerIndexBestScore = 2;
+		BestScore = Player2Score;	
+	}
 
-	if (Player3Score > Player2Score)
+	if (Player3Score > BestScore)
+	{
 		PlayerIndexBestScore = 3;
+		BestScore = Player3Score;	
+	}
 
 	return PlayerIndexBestScore;
 }
