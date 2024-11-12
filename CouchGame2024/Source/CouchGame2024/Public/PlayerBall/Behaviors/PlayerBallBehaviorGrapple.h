@@ -50,6 +50,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	bool CanGrappling = false;
+
+	UPROPERTY()
+	bool InGrapplingCooldown = false;
 	
 	UPROPERTY()
 	float GrapplingValue = 0.f;

@@ -72,7 +72,7 @@ void UPlayerBallBehaviorGrapple::SetupData()
 
 void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionStarted(float InGrapplingValue)
 {
-	if (!CanGrappling)
+	if (!CanGrappling || InGrapplingCooldown)
 	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "cant grapple");
 		return;
@@ -240,8 +240,7 @@ void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionEnded(float InGrapplingVa
 
 void UPlayerBallBehaviorGrapple::HandleGrapplingCooldown(float DeltaTime)
 {
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Cooldown %f"), CurrentGrapplingCooldown));
-	if (CanGrappling) return;
+	if (!InGrapplingCooldown) return;
 
 	if (CurrentGrapplingCooldown > 0.f)
 	{
@@ -249,20 +248,20 @@ void UPlayerBallBehaviorGrapple::HandleGrapplingCooldown(float DeltaTime)
 	}
 	else
 	{
-		CanGrappling = true;
+		InGrapplingCooldown = false;
 	}
 }
 
 void UPlayerBallBehaviorGrapple::ResetGrapplingCooldown()
 {
 	CurrentGrapplingCooldown = 0.f;
-	CanGrappling = true;
+	InGrapplingCooldown = false;
 }
 
 void UPlayerBallBehaviorGrapple::StartGrapplingCooldown()
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, "start cooldown");
-	CanGrappling = false;
+	InGrapplingCooldown = true;
 	CurrentGrapplingCooldown = GrapplingCooldown;
 }
 
