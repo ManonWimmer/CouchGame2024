@@ -25,5 +25,6 @@ enum class EPlayerBallStateID : uint8
 	Snapping,
 	Heavy,
 	Strength,
-	Locked
+	Locked,
+	Death
 };

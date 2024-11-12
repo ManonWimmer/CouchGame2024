@@ -6,6 +6,7 @@
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallState.h"
 #include "PlayerBall/States/PlayerBallStateBumped.h"
+#include "PlayerBall/States/PlayerBallStateDeath.h"
 #include "PlayerBall/States/PlayerBallStateFall.h"
 #include "PlayerBall/States/PlayerBallStateGrappled.h"
 #include "PlayerBall/States/PlayerBallStateGrappling.h"
@@ -135,7 +136,9 @@ void UPlayerBallStateMachine::CreateStateByID(EPlayerBallStateID InStateID)
 		case EPlayerBallStateID::Locked:
 			OutState = NewObject<UPlayerBallStateLocked>(this);
 			break;
-
+		case EPlayerBallStateID::Death:
+			OutState = NewObject<UPlayerBallStateDeath>(this);
+			break;
 		default:
 			break;
 	}

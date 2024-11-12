@@ -41,6 +41,7 @@ void UPlayerBallBehaviorElementReactions::InitBehavior()
 		if (GetPlayerBall()->SphereCollision != nullptr)
 		{
 			GetPlayerBall()->SphereCollision->OnComponentHit.AddDynamic(this, &UPlayerBallBehaviorElementReactions::OnCollisionHit);
+			GetPlayerBall()->SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap);
 		}
 	}
 
@@ -123,9 +124,30 @@ void UPlayerBallBehaviorElementReactions::OnCollisionHit(UPrimitiveComponent* Hi
 	}
 }
 
-void UPlayerBallBehaviorElementReactions::OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 	const FHitResult& SweepResult)
+{
+	if (OtherActor == nullptr) return;
+
+	TObjectPtr<APinballElement> OtherElement = Cast<APinballElement>(OtherActor);
+
+	if (OtherElement != nullptr)
+	{
+		switch (OtherElement->GetElementID())
+		{
+			case EPinballElementID::DeathZone:
+				ReceiveDeathReaction();
+				break;
+			default:
+				return;
+		}
+	}
+}
+
+void UPlayerBallBehaviorElementReactions::OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+                                                                   AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                                                   const FHitResult& SweepResult)
 {
 	if (SnappingPlayerBall == nullptr)
 	{
@@ -191,5 +213,10 @@ void UPlayerBallBehaviorElementReactions::ReceiveBumperReaction(APinballElement*
 	NormalBump.Normalize();
 
 	OnBumperReaction.Broadcast(1.f);
+}
+
+void UPlayerBallBehaviorElementReactions::ReceiveDeathReaction()
+{
+	OnDeathReaction.Broadcast(1.f);
 }
 

@@ -39,6 +39,10 @@ public:
 	void OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
 	UFUNCTION()
+	void OnCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                             const FHitResult& SweepResult);
+	
+	UFUNCTION()
 	void OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 	                              const FHitResult& SweepResult);
 	UFUNCTION()
@@ -60,7 +64,7 @@ public:
 
 #pragma	endregion
 
-	
+#pragma region Impact
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnImpactAction, float, ImpactValue);
 	
@@ -136,5 +140,20 @@ private:
 
 #pragma endregion
 
-#pragma endregion 
+#pragma region Death Zones reaction
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathReaction, float, DeathZoneValue);
+
+	FOnDeathReaction OnDeathReaction;
+
+private:
+	UFUNCTION()
+	void ReceiveDeathReaction();
+
+#pragma endregion
+
+	
+#pragma endregion
+	
 };
