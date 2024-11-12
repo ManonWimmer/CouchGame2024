@@ -26,6 +26,8 @@ void UPlayerBallBehaviorGrapple::TickComponent(float DeltaTime, ELevelTick TickT
                                                FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	HandleGrapplingCooldown(DeltaTime);
 }
 
 void UPlayerBallBehaviorGrapple::InitBehavior()
@@ -64,21 +66,23 @@ void UPlayerBallBehaviorGrapple::SetupData()
 	StartGrapplingForceFactorWhenAlreadyMoving = GetPlayerBall()->GetPlayerBallData()->
 	                                                              StartGrapplingForceFactorWhenAlreadyMoving;
 	GrapplingNotPillarForce = GetPlayerBall()->GetPlayerBallData()->GrapplingNotPillarForce;
-	
+
 	GetPlayerBall()->GrapplingSphereCollision->SetSphereRadius(MaxCableDistance); // Max grappling cable distance
 }
 
 void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionStarted(float InGrapplingValue)
 {
 	if (!CanGrappling)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "cant grapple");
 		return;
+	}
 
 	if (GetPlayerBall() == nullptr) return;
 
 	GrapplingValue = InGrapplingValue;
 
 	IsGrappling = false;
-
 
 	// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- // 
 	/* 
@@ -165,7 +169,7 @@ void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionStarted(float InGrappling
 	// Return if none
 	if (OverlappingActors.Num() <= 0)
 	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "1 - pas de hook point");
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, "1 - pas de hook point");
 		return;
 	}
 
@@ -232,6 +236,34 @@ void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionStarted(float InGrappling
 void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionEnded(float InGrapplingValue)
 {
 	OnGrapplingActionEnded.Broadcast(InGrapplingValue);
+}
+
+void UPlayerBallBehaviorGrapple::HandleGrapplingCooldown(float DeltaTime)
+{
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Cooldown %f"), CurrentGrapplingCooldown));
+	if (CanGrappling) return;
+
+	if (CurrentGrapplingCooldown > 0.f)
+	{
+		CurrentGrapplingCooldown -= DeltaTime;
+	}
+	else
+	{
+		CanGrappling = true;
+	}
+}
+
+void UPlayerBallBehaviorGrapple::ResetGrapplingCooldown()
+{
+	CurrentGrapplingCooldown = 0.f;
+	CanGrappling = true;
+}
+
+void UPlayerBallBehaviorGrapple::StartGrapplingCooldown()
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, "start cooldown");
+	CanGrappling = false;
+	CurrentGrapplingCooldown = GrapplingCooldown;
 }
 
 void UPlayerBallBehaviorGrapple::ReceiveGrappledActionStarted(float InGrappledValue)

@@ -119,6 +119,21 @@ public:
 	bool IsHookingPillar = false;
 	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 
+	UPROPERTY()
+	float GrapplingCooldown = 3.f;
+
+	UPROPERTY(VisibleAnywhere)
+	float CurrentGrapplingCooldown = 0.f;
+
+	UFUNCTION()
+	void HandleGrapplingCooldown(float DeltaTime);
+
+	UFUNCTION()
+	void ResetGrapplingCooldown();
+
+	UFUNCTION()
+	void StartGrapplingCooldown();
+
 #pragma endregion
 
 #pragma region Grappled

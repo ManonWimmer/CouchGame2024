@@ -130,6 +130,8 @@ void APlayerBall::SetupData() // Get all data and set them
 	{
 		AttractionSphere->SetSphereRadius(PlayerBallData->SnapTriggerRadius);
 	}
+
+	
 }
 
 TObjectPtr<UPlayerBallData> APlayerBall::GetPlayerBallData() const
@@ -270,7 +272,7 @@ void APlayerBall::ResetMovement()
 
 void APlayerBall::ResetGrapple()
 {
-	
+	BehaviorGrapple->ResetGrapplingCooldown();
 }
 
 void APlayerBall::ResetCooldown()

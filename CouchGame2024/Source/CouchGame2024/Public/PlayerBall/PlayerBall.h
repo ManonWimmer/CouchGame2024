@@ -164,7 +164,7 @@ public:
 	bool bCanPunch = true;
 
 #pragma endregion
-
+	
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayImpactEffectsBlueprint();

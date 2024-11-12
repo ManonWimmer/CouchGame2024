@@ -188,6 +188,8 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 				Pawn->BehaviorGrapple->HookObject = nullptr;
 			}
 			// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+
+			Pawn->BehaviorGrapple->StartGrapplingCooldown();
 		}
 	}
 
