@@ -66,6 +66,9 @@ void UPlayerBallBehaviorGrapple::SetupData()
 	StartGrapplingForceFactorWhenAlreadyMoving = GetPlayerBall()->GetPlayerBallData()->
 	                                                              StartGrapplingForceFactorWhenAlreadyMoving;
 	GrapplingNotPillarForce = GetPlayerBall()->GetPlayerBallData()->GrapplingNotPillarForce;
+	
+	PillarPointsMultiplier = GetPlayerBall()->GetPlayerBallData()->PillarPointsMultiplier;
+	PillarPointsPerSeconds = GetPlayerBall()->GetPlayerBallData()->PillarPointsPerSeconds;
 
 	GetPlayerBall()->GrapplingSphereCollision->SetSphereRadius(MaxCableDistance); // Max grappling cable distance
 }

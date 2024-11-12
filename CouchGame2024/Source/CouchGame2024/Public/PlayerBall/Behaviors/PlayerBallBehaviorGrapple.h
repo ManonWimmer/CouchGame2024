@@ -137,6 +137,12 @@ public:
 	UFUNCTION()
 	void StartGrapplingCooldown();
 
+	UPROPERTY()
+	float PillarPointsMultiplier = 1.05f;
+
+	UPROPERTY()
+	float PillarPointsPerSeconds = 5.f;
+
 #pragma endregion
 
 #pragma region Grappled
