@@ -50,6 +50,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	bool CanGrappling = false;
+
+	UPROPERTY()
+	bool InGrapplingCooldown = false;
 	
 	UPROPERTY()
 	float GrapplingValue = 0.f;
@@ -118,6 +121,27 @@ public:
 	UPROPERTY()
 	bool IsHookingPillar = false;
 	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+
+	UPROPERTY()
+	float GrapplingCooldown = 3.f;
+
+	UPROPERTY(VisibleAnywhere)
+	float CurrentGrapplingCooldown = 0.f;
+
+	UFUNCTION()
+	void HandleGrapplingCooldown(float DeltaTime);
+
+	UFUNCTION()
+	void ResetGrapplingCooldown();
+
+	UFUNCTION()
+	void StartGrapplingCooldown();
+
+	UPROPERTY()
+	float PillarPointsMultiplier = 1.05f;
+
+	UPROPERTY()
+	float PillarPointsPerSeconds = 5.f;
 
 #pragma endregion
 

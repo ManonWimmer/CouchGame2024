@@ -12,11 +12,14 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 
+#include "Score/GlobalScoreSubsystem.h"
+
 
 // Sets default values for this component's properties
 UPlayerBallStateGrappling::UPlayerBallStateGrappling()
 {
 }
+
 
 EPlayerBallStateID UPlayerBallStateGrappling::GetStateID() const
 {
@@ -26,6 +29,12 @@ EPlayerBallStateID UPlayerBallStateGrappling::GetStateID() const
 void UPlayerBallStateGrappling::StateInit(UPlayerBallStateMachine* InStateMachine)
 {
 	Super::StateInit(InStateMachine);
+
+	UWorld* World = GetWorld();
+	if (World != nullptr)
+	{
+		ScoreSubsystem = World->GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
+	}
 }
 
 void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
@@ -188,6 +197,9 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 				Pawn->BehaviorGrapple->HookObject = nullptr;
 			}
 			// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+
+			Pawn->BehaviorGrapple->StartGrapplingCooldown();
+			CurrentTimeOnPillar = 0.f;
 		}
 	}
 
@@ -211,6 +223,7 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	// Get temp angle, velocity & offset
 	if (Pawn->BehaviorGrapple->IsHookingPillar)
 	{
+		CurrentTimeOnPillar += DeltaTime;
 		SetGrapplingVelocityAndAnglePillar(DeltaTime);
 	}
 	else
@@ -267,6 +280,9 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 					MoreOrLessCablePerFrame;
 			}
 		}
+
+		// Gain points on pillar
+		GainPillarPoints();
 	}
 
 	// Stop movement if wall detected & return
@@ -457,4 +473,18 @@ bool UPlayerBallStateGrappling::DetectWalls()
 	*/
 
 	return bHasDetected;
+}
+
+void UPlayerBallStateGrappling::GainPillarPoints()
+{
+	if (ScoreSubsystem)
+	{
+		ScoreSubsystem->AddScore(Pawn->PlayerIndex,
+		                         CurrentTimeOnPillar * Pawn->BehaviorGrapple->PillarPointsMultiplier * Pawn->
+		                         BehaviorGrapple->PillarPointsPerSeconds);
+	}
+	else
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Pas trouvé de score subsystem");
+	}
 }

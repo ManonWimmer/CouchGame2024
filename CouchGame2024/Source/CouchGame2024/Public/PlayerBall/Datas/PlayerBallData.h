@@ -132,6 +132,15 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Grappling")
 	float GrapplingNotPillarForce = 5.f;
+
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float GrapplingCooldown = 3.f;
+
+	UPROPERTY(EditAnywhere, Category = "Pillar Points")
+	float PillarPointsMultiplier = 1.05f;
+
+	UPROPERTY(EditAnywhere, Category = "Pillar Points")
+	float PillarPointsPerSeconds = 5.f;
 	
 #pragma endregion
 
