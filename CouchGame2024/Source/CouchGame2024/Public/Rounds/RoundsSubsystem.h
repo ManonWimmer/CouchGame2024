@@ -105,6 +105,10 @@ public:
 	void CheckForWinPlayer(int PlayerIndex);
 
 	int PlayerIndexLastRoundWin = -1;
+
+	bool bPlayerHasWonGame = false;
+
+	int TotalRoundsToWin = 1;
 	
 #pragma endregion 
 

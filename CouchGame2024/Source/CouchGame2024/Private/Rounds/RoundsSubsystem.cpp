@@ -101,6 +101,8 @@ void URoundsSubsystem::InitTimers()	// (Re)set timers by data
 	CurrentPreRoundTimer = RoundsData->PreRoundDuration;
 	CurrentStartingRoundTimer = RoundsData->StartingRoundDuration;
 	CurrentPostRoundTimer = RoundsData->PostRoundDuration;
+
+	TotalRoundsToWin = RoundsData->RoundsToWin;
 }
 
 void URoundsSubsystem::InitRounds()	// Init rounds index
@@ -237,7 +239,10 @@ void URoundsSubsystem::ChangeToNextRoundPhase()
 			ChangeRoundPhase(POST_ROUND);
 			break;
 		case POST_ROUND:
-			ChangeToNextRound();
+			if (!bPlayerHasWonGame)
+			{
+				ChangeToNextRound();
+			}
 			break;
 
 		default:
@@ -253,12 +258,14 @@ void URoundsSubsystem::InitRoundsWonByPlayers(int PlayerCount)	// Init all data 
 	{
 		RoundsWonByPlayersIndex.Add(i, 0);
 	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("New num winner : %d"), RoundsWonByPlayersIndex.Num()));
+
 }
 
 int URoundsSubsystem::GetRoundsWonByPlayerIndex(int PlayerIndex)
 {
-	if (RoundsWonByPlayersIndex.Num() >= PlayerIndex)
-		return	-1;
+	if (RoundsWonByPlayersIndex.Num() <= PlayerIndex || PlayerIndex < 0)	return	-1;
 	
 	return RoundsWonByPlayersIndex[PlayerIndex];
 }
@@ -267,29 +274,33 @@ void URoundsSubsystem::IncreaseRoundsWonByPlayerIndex(int PlayerIndex, int Incre
 {
 	if (PlayerIndex < 0)	return;
 	
-	if (RoundsWonByPlayersIndex.Num() >= PlayerIndex)
-		return;
+	if (PlayerIndex >= RoundsWonByPlayersIndex.Num())	return;
 
 	RoundsWonByPlayersIndex[PlayerIndex] += IncreaseNumber;
 
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("New score last winner : %d"), RoundsWonByPlayersIndex[PlayerIndex]));
+
+		
 	CheckForWinPlayer(PlayerIndex);
 }
 
 void URoundsSubsystem::CheckForWinPlayer(int PlayerIndex)
 {
-	if (RoundsWonByPlayersIndex.Num() >= PlayerIndex)
-		return;
+	if (RoundsWonByPlayersIndex.Num() <= PlayerIndex)	return;
 
-	const URoundsSettings* RoundsSettings = GetDefault<URoundsSettings>();
+	if (PlayerIndex < 0)	return;
 
-	if (RoundsSettings == nullptr)	return;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("New score last winner by function : %d"), GetRoundsWonByPlayerIndex(PlayerIndex)));
 
-	if (RoundsSettings->RoundsData == nullptr)	return;
 	
-	if (GetRoundsWonByPlayerIndex(PlayerIndex) >= RoundsSettings->RoundsData->RoundsToWin)
+	if (GetRoundsWonByPlayerIndex(PlayerIndex) >= TotalRoundsToWin)
 	{
-		// Handle Win of playerIndex
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "WIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIINNNNNNNNNNNN !!!!!!!!!!!!!!!!!!!!");
+		if (MatchPinballGameMode != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Cuurent score winner : %d"), GetRoundsWonByPlayerIndex(PlayerIndex)));
+			MatchPinballGameMode->MatchWin(PlayerIndex);
+			bPlayerHasWonGame = true;
+		}
 	}
 }
 

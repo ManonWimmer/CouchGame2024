@@ -203,3 +203,14 @@ void AMatchPinballGameMode::InitRoundsSubsystem()
 	
 	RoundsSubsystem->InitRoundSubsystem();
 }
+
+void AMatchPinballGameMode::MatchWin(int InWinPlayerIndex)
+{
+	if (InWinPlayerIndex < 0)	return;
+
+	WinPlayerIndex = InWinPlayerIndex;
+
+	OnMatchWin.Broadcast(WinPlayerIndex);
+
+	EndGame();
+}

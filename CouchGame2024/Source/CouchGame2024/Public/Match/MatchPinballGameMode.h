@@ -71,5 +71,23 @@ private:
 	UFUNCTION()
 	void InitRoundsSubsystem();
 
+#pragma endregion
+
+#pragma region Win
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMatchWin, int, PlayerWinIndex);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnMatchWin OnMatchWin;
+
+	UFUNCTION()
+	void MatchWin(int InWinPlayerIndex);
+	
+private:
+	UPROPERTY()
+	int WinPlayerIndex = -1;
+	
+
 #pragma endregion 
 };
