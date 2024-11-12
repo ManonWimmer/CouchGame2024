@@ -52,4 +52,7 @@ public:
 	float AngularRollForce = 2000.f;
 	UPROPERTY()
 	float BraqueDirectionForceMultiplier = 1.f;
+
+
+	FVector SpecialSpawnForceDir;
 };

@@ -9,6 +9,7 @@
 #include "Match/MatchSettings.h"
 #include "Match/PlayerBallSpawn.h"
 #include "PlayerBall/PlayerBall.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 #include "Rounds/RoundsSubsystem.h"
 
 void AMatchPinballGameMode::BeginPlay()
@@ -99,8 +100,11 @@ void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APla
 			{
 				bHasUsedSpecial = true;
 				PlayersBallInsideArena[PlayerSpecial]->SetActorLocation(SpawnPoint->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
-				//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Set actor special : %d"), PlayerSpecial));
-				//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoint->GetName()));
+
+				if (PlayersBallInsideArena[PlayerSpecial]->BehaviorMovements != nullptr)
+				{
+					PlayersBallInsideArena[PlayerSpecial]->BehaviorMovements->SpecialSpawnForceDir = SpawnPoint->GetSpawnSpecialForceDiretion();
+				}
 			}
 			else
 			{
@@ -112,8 +116,7 @@ void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APla
 			if (PlayersBallInsideArena.Num() > PlayerCount)
 			{
 				PlayersBallInsideArena[PlayerCount]->SetActorLocation(SpawnPoint->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
-				//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Set actor : %d"), PlayerCount));
-				//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoint->GetName()));
+				
 				PlayerCount++;
 			}
 		}

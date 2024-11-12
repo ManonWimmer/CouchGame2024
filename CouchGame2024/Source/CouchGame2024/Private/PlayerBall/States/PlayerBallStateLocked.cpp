@@ -114,12 +114,14 @@ void UPlayerBallStateLocked::ImpulseInDirection()
 	if (Pawn->BehaviorMovements == nullptr)	return;
 
 	// Inverse values X and Y to match world orientation
-	float DirX = Pawn->BehaviorMovements->MoveYValue;
-	float DirY = Pawn->BehaviorMovements->MoveXValue;
+	//float DirX = Pawn->BehaviorMovements->MoveYValue;
+	//float DirY = Pawn->BehaviorMovements->MoveXValue;
+	//FVector Dir = FVector(DirX, DirY, 0.f);
 
-	FVector Dir = FVector(DirX, DirY, 0.f);
+	FVector Dir = Pawn->BehaviorMovements->SpecialSpawnForceDir;
+
 	
-	if (DirX == 0.f && DirY == 0.f)
+	if (Dir.X == 0.f && Dir.Y == 0.f)
 	{
 		float RandomX = UKismetMathLibrary::RandomIntegerInRange(-1.f, 1.f);
 		float RandomY = UKismetMathLibrary::RandomIntegerInRange(-1.f, 1.f);

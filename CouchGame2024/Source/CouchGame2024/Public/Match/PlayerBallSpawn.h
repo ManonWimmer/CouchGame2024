@@ -15,4 +15,13 @@ public:
 	// Sets default values for this actor's properties
 	APlayerBallSpawn();
 
+
+public:
+	FVector GetSpawnSpecialForceDiretion();
+
+private:
+	UPROPERTY(EditAnywhere)
+	FVector SpawnSpecialForceDirection;
+	
+	
 };
