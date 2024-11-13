@@ -66,7 +66,7 @@ void UPlayerBallBehaviorGrapple::SetupData()
 	StartGrapplingForceFactorWhenAlreadyMoving = GetPlayerBall()->GetPlayerBallData()->
 	                                                              StartGrapplingForceFactorWhenAlreadyMoving;
 	GrapplingNotPillarForce = GetPlayerBall()->GetPlayerBallData()->GrapplingNotPillarForce;
-	
+
 	PillarPointsMultiplier = GetPlayerBall()->GetPlayerBallData()->PillarPointsMultiplier;
 	PillarPointsPerSeconds = GetPlayerBall()->GetPlayerBallData()->PillarPointsPerSeconds;
 
@@ -203,18 +203,23 @@ void UPlayerBallBehaviorGrapple::ReceiveGrapplingActionStarted(float InGrappling
 	}
 
 	// Get nearest hook point in radius between all overlapping
-	TObjectPtr<UObject> NearestHookObject = OverlappingHookObjects[0];
-	TScriptInterface<IHookable> NearestHookInterface = OverlappingHookInterfaces[0];
-	float NearestDistance = FVector::Dist(GetPlayerBall()->GetActorLocation(), NearestHookInterface->GetHookPosition());
+	TObjectPtr<UObject> NearestHookObject = nullptr;
+	TScriptInterface<IHookable> NearestHookInterface = nullptr;
+	float NearestDistance = 1000000.f;
 
 	for (UObject* OutHookObject : OverlappingHookObjects)
 	{
+		TScriptInterface<IHookable> TempInterface = OutHookObject;
+
+		if (TempInterface == nullptr) break;
+		
 		float NewNearestDistance =
-			FVector::Dist(GetPlayerBall()->GetActorLocation(), NearestHookInterface->GetHookPosition());
-		if (NewNearestDistance < NearestDistance)
+			FVector::Dist(GetPlayerBall()->GetActorLocation(), TempInterface->GetHookPosition());
+
+		if (NewNearestDistance < NearestDistance && NewNearestDistance >= MinCableDistance)
 		{
 			NearestHookObject = OutHookObject;
-			NearestHookInterface = OutHookObject;
+			NearestHookInterface = TempInterface;
 			NearestDistance = NewNearestDistance;
 		}
 	}
