@@ -9,6 +9,9 @@ APillarElement::APillarElement()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	DisableMaterial = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Project/Assets/Art/03_Mat/Pillar/M_PillarDisable.M_PillarDisable"));
+	EnableMaterial = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Project/Assets/Art/03_Mat/Pillar/M_PillarEnable.M_PillarEnable"));
 }
 
 // Called when the game starts or when spawned
@@ -16,6 +19,9 @@ void APillarElement::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	Mesh = Cast<UStaticMeshComponent>(GetRootComponent());
+
+	DisablePillar();
 }
 
 // Called every frame
@@ -41,11 +47,55 @@ FVector APillarElement::GetHookPosition()
 
 bool APillarElement::IsHookable()
 {
-	return true;
+	return bIsHookable;
 }
 
 bool APillarElement::IsPillar()
 {
 	return true;
+}
+
+void APillarElement::DisablePillar()
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "Disabled");
+	bIsHookable = false;
+	
+	if (Mesh)
+	{
+		if (DisableMaterial)
+		{
+			Mesh->SetMaterial(0, DisableMaterial);
+		}
+		else
+		{
+			if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "pas material");
+		}
+	}
+	else
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "pas mesh");
+	}
+}
+
+void APillarElement::EnablePillar()
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "Enabled");
+	bIsHookable = true;
+	
+	if (Mesh)
+	{
+		if (EnableMaterial)
+		{
+			Mesh->SetMaterial(0, EnableMaterial);
+		}
+		else
+		{
+			if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "pas material");
+		}
+	}
+	else
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "pas mesh");
+	}
 }
 
