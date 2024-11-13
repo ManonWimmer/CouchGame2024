@@ -230,14 +230,15 @@ public:
 
 	FOnDeathReaction OnDeathReaction;
 
+	UFUNCTION(CallInEditor)
+	void TestCallRespawn();
 	
 	virtual void Respawn() override;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRespawnAction, float, RespawnReaction);
 
 	FOnRespawnAction OnRespawnAction;
-
-private:
+	
 	bool bIsDead = false;
 	
 #pragma endregion 

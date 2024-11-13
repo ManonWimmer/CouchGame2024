@@ -15,6 +15,7 @@
 #include "PlayerBall/States/PlayerBallStateLocked.h"
 #include "PlayerBall/States/PlayerBallStateMove.h"
 #include "PlayerBall/States/PlayerBallStatePunch.h"
+#include "PlayerBall/States/PlayerBallStateRespawn.h"
 #include "PlayerBall/States/PlayerBallStateSnapping.h"
 #include "PlayerBall/States/PlayerBallStateStun.h"
 
@@ -138,6 +139,9 @@ void UPlayerBallStateMachine::CreateStateByID(EPlayerBallStateID InStateID)
 			break;
 		case EPlayerBallStateID::Death:
 			OutState = NewObject<UPlayerBallStateDeath>(this);
+			break;
+		case EPlayerBallStateID::Respawn:
+			OutState = NewObject<UPlayerBallStateRespawn>(this);
 			break;
 		default:
 			break;

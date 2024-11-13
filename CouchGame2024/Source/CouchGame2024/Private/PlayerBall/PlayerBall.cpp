@@ -339,6 +339,11 @@ void APlayerBall::Kill()
 	OnDeathReaction.Broadcast(1.f);
 }
 
+void APlayerBall::TestCallRespawn()
+{
+	Respawn();
+}
+
 void APlayerBall::Respawn()
 {
 	if (!bIsDead)	return;

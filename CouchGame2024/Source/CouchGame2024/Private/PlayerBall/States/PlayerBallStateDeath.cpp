@@ -5,6 +5,7 @@
 
 #include "Components/SphereComponent.h"
 #include "PlayerBall/PlayerBall.h"
+#include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 
@@ -26,6 +27,8 @@ void UPlayerBallStateDeath::StateEnter(EPlayerBallStateID PreviousState)
 
 	if (Pawn != nullptr)
 	{
+		Pawn->bIsDead = true;
+		
 		if (Pawn->BehaviorGrapple)
 		{
 			Pawn->BehaviorGrapple->CanGrappling = false;
@@ -46,6 +49,8 @@ void UPlayerBallStateDeath::StateExit(EPlayerBallStateID NextState)
 	{
 		Pawn->OnRespawnAction.RemoveDynamic(this, &UPlayerBallStateDeath::OnRespawn);
 	}
+
+	EndDeathBall();
 }
 
 void UPlayerBallStateDeath::StateTick(float DeltaTime)
@@ -67,9 +72,21 @@ void UPlayerBallStateDeath::DeathBall()
 	Pawn->SetActorHiddenInGame(true);
 }
 
+void UPlayerBallStateDeath::EndDeathBall()
+{
+	if (Pawn == nullptr)	return;
+	
+	if (Pawn->SphereCollision == nullptr)	return;
+
+	Pawn->SphereCollision->SetSimulatePhysics(true);
+	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
+	
+	Pawn->SetActorHiddenInGame(false);
+}
+
 void UPlayerBallStateDeath::OnRespawn(float RespawnValue)
 {
 	if (StateMachine == nullptr)	return;
 
-	
+	StateMachine->ChangeState(EPlayerBallStateID::Respawn);
 }
