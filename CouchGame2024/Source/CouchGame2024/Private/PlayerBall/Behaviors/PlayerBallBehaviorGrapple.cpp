@@ -59,7 +59,8 @@ void UPlayerBallBehaviorGrapple::SetupData()
 	// Grappling
 	GrapplingDamping = GetPlayerBall()->GetPlayerBallData()->GrapplingDamping;
 	GrapplingPillarForce = GetPlayerBall()->GetPlayerBallData()->GrapplingPillarForce;
-	GrapplingReleaseForce = GetPlayerBall()->GetPlayerBallData()->GrapplingReleaseForce;
+	GrapplingReleaseForcePillar = GetPlayerBall()->GetPlayerBallData()->GrapplingReleaseForcePillar;
+	GrapplingReleaseForceNotPillar = GetPlayerBall()->GetPlayerBallData()->GrapplingReleaseForceNotPillar;
 	MinCableDistance = GetPlayerBall()->GetPlayerBallData()->MinCableDistance;
 	MaxCableDistance = GetPlayerBall()->GetPlayerBallData()->MaxCableDistance;
 	MoreOrLessCablePerFrame = GetPlayerBall()->GetPlayerBallData()->MoreOrLessCablePerFrame;

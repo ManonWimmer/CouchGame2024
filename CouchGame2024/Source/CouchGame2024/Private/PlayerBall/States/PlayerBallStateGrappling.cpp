@@ -153,11 +153,22 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			              Pawn->GetActorLocation() + Pawn->BehaviorGrapple->ReleaseDirection * 500.f, FColor::Red,
 			              false, 5.f);
 
+			float ReleaseForce = 0.f;
+			
 			// Add impulse in relase direction
+			if (Pawn->BehaviorGrapple->IsHookingPillar)
+			{
+				ReleaseForce = Pawn->BehaviorGrapple->GrapplingReleaseForcePillar;
+			}
+			else
+			{
+				ReleaseForce = Pawn->BehaviorGrapple->GrapplingReleaseForceNotPillar;
+			}
+			
 			Pawn->SphereCollision->AddImpulse(
 				Pawn->BehaviorGrapple->ReleaseDirection.GetSafeNormal(0.0001f) * FMath::Abs(
 					Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity) *
-				Pawn->BehaviorGrapple->GrapplingReleaseForce,
+				ReleaseForce,
 				"None", true);
 
 			// Reset angle & velocity

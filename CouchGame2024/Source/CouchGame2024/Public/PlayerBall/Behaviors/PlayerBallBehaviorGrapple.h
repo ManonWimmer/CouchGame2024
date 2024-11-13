@@ -94,7 +94,10 @@ public:
 	float GrapplingPillarForce = 0.1f;
 
 	UPROPERTY()
-	float GrapplingReleaseForce = 250.f;
+	float GrapplingReleaseForcePillar = 250.f;
+	
+	UPROPERTY()
+	float GrapplingReleaseForceNotPillar = 250.f;
 
 	UPROPERTY()
 	float MinCableDistance = 200.f;
