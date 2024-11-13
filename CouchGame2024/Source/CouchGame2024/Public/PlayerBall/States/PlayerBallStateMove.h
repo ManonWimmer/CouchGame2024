@@ -58,4 +58,7 @@ private:
 
 	UFUNCTION()
 	void OnSnapped(float InSnapValue);
+
+	UFUNCTION()
+	void OnDeath(float DeathValue);
 };

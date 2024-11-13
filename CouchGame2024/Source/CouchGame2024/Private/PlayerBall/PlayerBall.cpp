@@ -106,16 +106,6 @@ void APlayerBall::SetupData() // Get all data and set them
 	if (SphereCollision == nullptr)
 		return;
 
-#pragma region FallData (Obsolete)
-	/*
-	// Fall Obsolete
-	PawnMovement->Acceleration = PlayerBallData->AirControlSideAcceleration;
-	PawnMovement->MaxSpeed = PlayerBallData->AirControlSideMaxSpeed;
-	PawnMovement->Deceleration = PlayerBallData->AirControlSideDeceleration;
-	SlowFallForce = PlayerBallData->SlowFallForce;
-	AccelerateFallForce = PlayerBallData->AccelerateFallForce;
-	*/
-#pragma endregion 
 
 	// Punch
 	PunchCooldown = PlayerBallData->PunchCooldown;
@@ -341,3 +331,18 @@ bool APlayerBall::IsLocked()
 {
 	return bIsLocked;
 }
+
+void APlayerBall::Kill()
+{
+	if (bIsDead)	return;
+
+	OnDeathReaction.Broadcast(1.f);
+}
+
+void APlayerBall::Respawn()
+{
+	if (!bIsDead)	return;
+	
+	OnRespawnAction.Broadcast(1.f);
+}
+

@@ -142,11 +142,6 @@ private:
 
 #pragma region Death Zones reaction
 
-public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathReaction, float, DeathZoneValue);
-
-	FOnDeathReaction OnDeathReaction;
-
 private:
 	UFUNCTION()
 	void ReceiveDeathReaction();

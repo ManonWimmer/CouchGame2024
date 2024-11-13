@@ -56,4 +56,7 @@ private:
 
 	UFUNCTION()
 	void OnGrappled(float InGrappledValue);
+
+	UFUNCTION()
+	void OnDeath(float DeathValue);
 };

@@ -38,6 +38,8 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 
 	if (Pawn != nullptr)
 	{
+		Pawn->OnDeathReaction.AddDynamic(this, &UPlayerBallStateIdle::OnDeath);
+
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateIdle::OnStunned);
@@ -66,6 +68,8 @@ void UPlayerBallStateIdle::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
 	{
+		Pawn->OnDeathReaction.RemoveDynamic(this, &UPlayerBallStateIdle::OnDeath);
+
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnStunned);
@@ -166,5 +170,12 @@ void UPlayerBallStateIdle::OnSnapped(float InSnapValue)
 	if (StateMachine == nullptr || InSnapValue == 0.f)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Snapping);
+}
+
+void UPlayerBallStateIdle::OnDeath(float DeathValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Death);
 }
 

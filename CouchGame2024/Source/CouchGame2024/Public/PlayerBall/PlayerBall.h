@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Killable.h"
 #include "LockableInput.h"
 #include "PlayerBallStateID.h"
 #include "GameFramework/Pawn.h"
@@ -25,7 +26,7 @@ class UStaticMeshComponent;
 class UCableComponent;
 
 UCLASS()
-class COUCHGAME2024_API APlayerBall : public APawn, public IRoundsResetable, public ILockableInput
+class COUCHGAME2024_API APlayerBall : public APawn, public IRoundsResetable, public ILockableInput, public IKillable
 {
 	GENERATED_BODY()
 
@@ -216,6 +217,28 @@ private:
 	bool bIsLocked = false;
 
 	bool bIsLockedButSpecial = false;
+	
+#pragma endregion
+
+#pragma region IKillable
+
+public:
+
+	virtual void Kill() override;
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathReaction, float, DeathValue);
+
+	FOnDeathReaction OnDeathReaction;
+
+	
+	virtual void Respawn() override;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRespawnAction, float, RespawnReaction);
+
+	FOnRespawnAction OnRespawnAction;
+
+private:
+	bool bIsDead = false;
 	
 #pragma endregion 
 	

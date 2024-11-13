@@ -39,6 +39,8 @@ void UPlayerBallStateSnapping::StateEnter(EPlayerBallStateID PreviousState)
 	
 	if (Pawn != nullptr)
 	{
+		Pawn->OnDeathReaction.AddDynamic(this, &UPlayerBallStateSnapping::OnDeath);
+
 		if (Pawn->BehaviorGrapple != nullptr)
 		{
 			Pawn->BehaviorGrapple->CanGrappling = true;
@@ -57,7 +59,6 @@ void UPlayerBallStateSnapping::StateEnter(EPlayerBallStateID PreviousState)
 			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateSnapping::OnStunned);
 			Pawn->BehaviorElementReactions->OnImpactAction.AddDynamic(this, &UPlayerBallStateSnapping::OnImpacted);
 			Pawn->BehaviorElementReactions->OnBumperReaction.AddDynamic(this, &UPlayerBallStateSnapping::OnBumped);
-
 			
 			if (Pawn->BehaviorElementReactions->SnappingPlayerBall == nullptr)
 			{
@@ -73,6 +74,7 @@ void UPlayerBallStateSnapping::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
 	{
+		Pawn->OnDeathReaction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnDeath);
 		
 		Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnPunch);
 
@@ -214,4 +216,11 @@ void UPlayerBallStateSnapping::OnGrappled(float InGrappledValue)
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Grappled);
+}
+
+void UPlayerBallStateSnapping::OnDeath(float DeathValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Death);
 }

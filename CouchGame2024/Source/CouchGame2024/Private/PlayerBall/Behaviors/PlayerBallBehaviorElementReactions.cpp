@@ -217,6 +217,8 @@ void UPlayerBallBehaviorElementReactions::ReceiveBumperReaction(APinballElement*
 
 void UPlayerBallBehaviorElementReactions::ReceiveDeathReaction()
 {
-	OnDeathReaction.Broadcast(1.f);
+	if (GetPlayerBall() == nullptr) return;
+
+	GetPlayerBall()->Kill();
 }
 

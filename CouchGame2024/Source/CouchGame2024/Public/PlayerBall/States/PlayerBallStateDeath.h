@@ -33,6 +33,7 @@ private:
 	UFUNCTION()
 	void DeathBall();
 
-	void UnDeathBall();
+	UFUNCTION()
+	void OnRespawn(float RespawnValue);
 	
 };
