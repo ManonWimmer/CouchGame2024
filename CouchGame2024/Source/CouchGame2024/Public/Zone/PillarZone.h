@@ -46,24 +46,41 @@ public:
 	void GetLevelPillars(); // to get every round, not just at begin play
 	
 	UFUNCTION()
-	void SwitchPillar();
-	
-	UFUNCTION()
 	void GetRandomPillar();
 
 	UFUNCTION()
-	void MoveToPillar();
+	void MoveToPillar(float DeltaTime);
 
 	UFUNCTION()
-	void Wait();
+	void Wait(float DeltaTime);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Collision")
 	TObjectPtr<USphereComponent> SphereComponent;
 
 	UPROPERTY()
-	TArray<APillarElement*> ScenePillarZones;
+	TArray<APillarElement*> ScenePillars;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<APillarElement> TargetPillar = nullptr;
 
 	UPROPERTY()
-	TObjectPtr<APillarElement> TargetPillar = nullptr;
+	EPillarZoneState CurrentZoneState = EPillarZoneState::Waiting;
 	
+	UPROPERTY()
+	float CurrentWaitTime = 0.f;
+
+	UPROPERTY()
+	float TimeWaited = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	TObjectPtr<APillarElement> SpawnPillar = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
+	float MinTimeWaitingOnPillar = 5.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
+	float MaxTimeWaitingOnPillar = 15.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
+	float MoveSpeed = 500.f;
 };
