@@ -16,5 +16,6 @@ enum class EPinballElementID : uint8
 	Bumper,
 	Flipper,
 	Pillar,
-	DeathZone
+	DeathZone,
+	Rail
 };
