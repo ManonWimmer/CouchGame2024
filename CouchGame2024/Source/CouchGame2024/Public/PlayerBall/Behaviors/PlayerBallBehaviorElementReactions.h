@@ -7,6 +7,7 @@
 #include "PlayerBallBehaviorElementReactions.generated.h"
 
 
+class ARailElement;
 class APinballElement;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -117,7 +118,9 @@ public:
 #pragma region Reaction Pinball Elements
 
 public:
+	UPROPERTY()
 	TObjectPtr<APinballElement> HitPinballElement;
+
 	
 #pragma region Bumper Reaction
 public:
@@ -148,6 +151,22 @@ private:
 
 #pragma endregion
 
+#pragma region Rail Reactions
+
+public:
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRailReaction, float, ReactionValue);
+
+	FOnRailReaction OnRailReaction;
+	
+	UPROPERTY()
+	TObjectPtr<ARailElement> CurrentRailElement;
+
+	UFUNCTION()
+	void ReceiveRailReaction(APinballElement* PinballRailElement);
+
+	
+#pragma endregion
 	
 #pragma endregion
 	

@@ -5,6 +5,7 @@
 
 #include "Components/SphereComponent.h"
 #include "PinballElements/PinballElement.h"
+#include "PinballElements/Elements/RailElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
 
@@ -139,6 +140,9 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 			case EPinballElementID::DeathZone:
 				ReceiveDeathReaction();
 				break;
+			case EPinballElementID::Rail:
+				ReceiveRailReaction(OtherElement);
+				break;
 			default:
 				return;
 		}
@@ -220,5 +224,20 @@ void UPlayerBallBehaviorElementReactions::ReceiveDeathReaction()
 	if (GetPlayerBall() == nullptr) return;
 
 	GetPlayerBall()->Kill();
+}
+
+void UPlayerBallBehaviorElementReactions::ReceiveRailReaction(APinballElement* PinballRailElement)
+{
+	if (PinballRailElement == nullptr) return;
+	
+	ARailElement* RailElement = Cast<ARailElement>(PinballRailElement);
+
+	if (RailElement == nullptr)	return;
+	
+	CurrentRailElement = RailElement;
+
+	if (CurrentRailElement == nullptr) return;
+
+	OnRailReaction.Broadcast(1.f);
 }
 

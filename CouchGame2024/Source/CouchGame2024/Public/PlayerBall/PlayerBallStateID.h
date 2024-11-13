@@ -27,5 +27,6 @@ enum class EPlayerBallStateID : uint8
 	Strength,
 	Locked,
 	Death,
-	Respawn
+	Respawn,
+	Rail
 };
