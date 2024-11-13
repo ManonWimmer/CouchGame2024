@@ -35,5 +35,23 @@ public:
 	virtual bool IsHookable() override;
 
 	virtual bool IsPillar() override;
-#pragma endregion 
+#pragma endregion
+
+	UFUNCTION()
+	void DisablePillar();
+
+	UFUNCTION()
+	void EnablePillar();
+
+	UPROPERTY()
+	bool bIsHookable = true;
+
+	UPROPERTY()
+	TObjectPtr<UStaticMeshComponent> Mesh;
+	
+	UPROPERTY()
+	TObjectPtr<UMaterialInterface> DisableMaterial;
+
+	UPROPERTY()
+	TObjectPtr<UMaterialInterface> EnableMaterial;
 };
