@@ -36,6 +36,7 @@ void UPlayerBallStateRail::StateEnter(EPlayerBallStateID PreviousState)
 		}
 	}
 
+	EnterRail();
 
 	if (CurrentRailElement == nullptr)
 	{
@@ -76,8 +77,6 @@ void UPlayerBallStateRail::EnterRail()
 
 	Pawn->SphereCollision->SetSimulatePhysics(false);
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
-	
-	Pawn->SetActorHiddenInGame(false);
 }
 
 void UPlayerBallStateRail::HandleRailProgressLocation(float DeltaTime)
@@ -101,7 +100,7 @@ void UPlayerBallStateRail::HandleRailProgressLocation(float DeltaTime)
 		FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(InversePercent);
 
 		FVector NewPawnLocationOnRail = Pawn->GetActorLocation();
-		NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 20.f);
+		NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 10.f);
 		
 		Pawn->SetActorLocation(NewPawnLocationOnRail);
 	}
@@ -115,8 +114,6 @@ void UPlayerBallStateRail::ExitRail()
 	
 	Pawn->SphereCollision->SetSimulatePhysics(true);
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
-	
-	Pawn->SetActorHiddenInGame(false);
 
 	
 	StateMachine->ChangeState(EPlayerBallStateID::Idle);

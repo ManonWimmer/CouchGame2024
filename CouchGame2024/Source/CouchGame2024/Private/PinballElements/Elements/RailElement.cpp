@@ -60,8 +60,8 @@ FVector ARailElement::GetLocationAlongRailSpline(float percent)
 	FVector OffsetUp = SplineRail->GetTransformAtDistanceAlongSpline(PercentToDistance, ESplineCoordinateSpace::World).GetRotation().GetUpVector();
 
 	OffsetUp.Normalize();
-
-	OffsetUp *= 50.f;
+	
+	OffsetUp *= 30.f;
 	
 	return SplineRail->GetLocationAtDistanceAlongSpline(PercentToDistance, ESplineCoordinateSpace::World) + OffsetUp;
 }
