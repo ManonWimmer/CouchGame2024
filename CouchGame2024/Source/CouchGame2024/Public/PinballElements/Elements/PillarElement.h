@@ -7,6 +7,8 @@
 #include "PinballElements/PinballElement.h"
 #include "PillarElement.generated.h"
 
+class UPlayerBallStateMachine;
+
 UCLASS()
 class COUCHGAME2024_API APillarElement : public APinballElement, public IHookable
 {
@@ -54,4 +56,7 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<UMaterialInterface> EnableMaterial;
+
+	UPROPERTY()
+	TObjectPtr<UPlayerBallStateMachine> PlayerStateMachineOnPillar = nullptr;
 };

@@ -3,6 +3,9 @@
 
 #include "PinballElements/Elements/PillarElement.h"
 
+#include "PlayerBall/PlayerBall.h"
+#include "PlayerBall/PlayerBallStateMachine.h"
+
 
 // Sets default values
 APillarElement::APillarElement()
@@ -74,6 +77,12 @@ void APillarElement::DisablePillar()
 	else
 	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "pas mesh");
+	}
+
+	if (PlayerStateMachineOnPillar)
+	{
+		PlayerStateMachineOnPillar->ChangeState(EPlayerBallStateID::Idle);
+		PlayerStateMachineOnPillar = nullptr;
 	}
 }
 
