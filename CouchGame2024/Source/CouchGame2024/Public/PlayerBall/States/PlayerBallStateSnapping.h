@@ -59,4 +59,7 @@ private:
 
 	UFUNCTION()
 	void OnDeath(float DeathValue);
+
+	UFUNCTION()
+	void OnRail(float RailValue);
 };

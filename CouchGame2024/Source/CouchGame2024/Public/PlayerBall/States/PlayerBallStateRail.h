@@ -6,6 +6,7 @@
 #include "PlayerBall/PlayerBallState.h"
 #include "PlayerBallStateRail.generated.h"
 
+class ARailElement;
 /**
  * 
  */
@@ -26,4 +27,19 @@ public:
 	virtual void StateExit(EPlayerBallStateID NextState) override;
 
 	virtual void StateTick(float DeltaTime) override;
+
+private:
+
+	void EnterRail();
+
+	void HandleRailProgressLocation(float DeltaTime);
+	
+	void ExitRail();
+
+	float CurrentTimeInRail = 0.f;
+
+	float ProgressRailDuration = 1.f;
+
+	UPROPERTY()
+	TObjectPtr<ARailElement> CurrentRailElement;
 };

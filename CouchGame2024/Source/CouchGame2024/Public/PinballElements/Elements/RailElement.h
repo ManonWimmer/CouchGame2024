@@ -42,4 +42,9 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<USceneComponent> RootSceneComp;
+
+public:
+
+	UFUNCTION()
+	FVector GetLocationAlongRailSpline(float percent);
 };

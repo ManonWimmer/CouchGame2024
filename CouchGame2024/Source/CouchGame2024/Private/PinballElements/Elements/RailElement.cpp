@@ -49,3 +49,11 @@ void ARailElement::TriggerElement()
 	
 }
 
+FVector ARailElement::GetLocationAlongRailSpline(float percent)
+{
+	if (SplineRail == nullptr)
+		return FVector::ZeroVector;
+	
+	return SplineRail->GetLocationAtDistanceAlongSpline(SplineRail->GetSplineLength() * percent, ESplineCoordinateSpace::World);
+}
+

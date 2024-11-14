@@ -46,6 +46,8 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 			Pawn->BehaviorElementReactions->OnImpactAction.AddDynamic(this, &UPlayerBallStateIdle::OnImpacted);
 			Pawn->BehaviorElementReactions->OnBumperReaction.AddDynamic(this, &UPlayerBallStateIdle::OnBumped);
 			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.AddDynamic(this, &UPlayerBallStateIdle::OnSnapped);
+
+			Pawn->BehaviorElementReactions->OnRailReaction.AddDynamic(this, &UPlayerBallStateIdle::OnRail);
 		}
 		
 		if (Pawn->BehaviorGrapple != nullptr)
@@ -76,6 +78,8 @@ void UPlayerBallStateIdle::StateExit(EPlayerBallStateID NextState)
 			Pawn->BehaviorElementReactions->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnImpacted);
 			Pawn->BehaviorElementReactions->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateIdle::OnBumped);
 			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnSnapped);
+
+			Pawn->BehaviorElementReactions->OnRailReaction.RemoveDynamic(this, &UPlayerBallStateIdle::OnRail);
 		}
 
 		if (Pawn->BehaviorGrapple != nullptr)
@@ -177,5 +181,12 @@ void UPlayerBallStateIdle::OnDeath(float DeathValue)
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Death);
+}
+
+void UPlayerBallStateIdle::OnRail(float RailValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Rail);
 }
 

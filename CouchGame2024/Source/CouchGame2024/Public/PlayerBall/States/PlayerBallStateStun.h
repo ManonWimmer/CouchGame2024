@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PlayerBall/PlayerBallState.h"
+#include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBallStateStun.generated.h"
 
 
@@ -53,4 +54,14 @@ private:
 
 	UFUNCTION()
 	void OnDeath(float DeathValue);
+
+	UFUNCTION()
+	void OnRail(float RailValue);
 };
+
+inline void UPlayerBallStateStun::OnRail(float RailValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Rail);
+}
