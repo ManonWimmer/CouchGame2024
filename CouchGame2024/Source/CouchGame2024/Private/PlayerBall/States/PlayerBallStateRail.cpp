@@ -99,8 +99,11 @@ void UPlayerBallStateRail::HandleRailProgressLocation(float DeltaTime)
 		float InversePercent = 1.f - Percent;
 		
 		FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(InversePercent);
+
+		FVector NewPawnLocationOnRail = Pawn->GetActorLocation();
+		NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 20.f);
 		
-		Pawn->SetActorLocation(LocationAlongSpline);
+		Pawn->SetActorLocation(NewPawnLocationOnRail);
 	}
 }
 
