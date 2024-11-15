@@ -44,6 +44,11 @@ void UPlayerBallStateRail::StateEnter(EPlayerBallStateID PreviousState, float In
 
 
 	DirectionRail = InFloatParameter;
+
+	if (CurrentRailElement != nullptr)
+	{
+		ProgressRailDuration = CurrentRailElement->GetRailProgressDuration();
+	}
 	
 	EnterRail();
 

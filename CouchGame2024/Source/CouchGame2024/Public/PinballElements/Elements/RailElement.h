@@ -50,4 +50,17 @@ public:
 
 	UFUNCTION()
 	FVector GetLocationAlongRailSpline(float percent);
+
+	UFUNCTION()
+	float GetRailProgressDuration();
+
+private:
+
+	UPROPERTY(EditAnywhere)
+	float RailProgressDuration = 1.f;
 };
+
+inline float ARailElement::GetRailProgressDuration()
+{
+	return RailProgressDuration;
+}
