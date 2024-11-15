@@ -6,6 +6,7 @@
 #include "CableComponent.h"
 #include "Components/SphereComponent.h"
 #include "GrapplingHook/Hookable.h"
+#include "PinballElements/Elements/PillarElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
@@ -93,6 +94,16 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 				Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity = 0.f;
 
 				StartAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle;
+
+				if (Pawn->BehaviorGrapple->HookInterface->IsPillar())
+				{
+					APillarElement* Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
+					if (Pillar)
+					{
+						if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "set state machine");
+						Pillar->PlayerStateMachineOnPillar = StateMachine;
+					}
+				}
 			}
 			// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 		}
@@ -195,6 +206,16 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			// ---- OLD VERSION - GRAPPLING BETWEEN 2 PLAYERS ----- //
 
 			// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
+			if (Pawn->BehaviorGrapple->HookInterface->IsPillar())
+			{
+				APillarElement* Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
+				if (Pillar)
+				{
+					if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "reset state machine");
+					Pillar->PlayerStateMachineOnPillar = nullptr;
+				}
+			}
+			
 			// Reset hook point
 			if (Pawn->BehaviorGrapple->HookInterface != nullptr)
 			{
