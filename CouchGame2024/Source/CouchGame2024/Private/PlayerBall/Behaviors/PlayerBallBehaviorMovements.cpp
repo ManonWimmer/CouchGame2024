@@ -69,6 +69,9 @@ void UPlayerBallBehaviorMovements::SetupData()
 	
 	AngularRollForce = GetPlayerBall()->GetPlayerBallData()->AngularRollForce;
 	BraqueDirectionForceMultiplier = GetPlayerBall()->GetPlayerBallData()->BraqueDirectionForceMultiplier;
+
+	RollBoostForce = GetPlayerBall()->GetPlayerBallData()->RollBoostForce;
+
 	
 	GetPlayerBall()->SphereCollision->SetAngularDamping(GetPlayerBall()->GetPlayerBallData()->AngularRollDamping);
 	GetPlayerBall()->SphereCollision->SetPhysicsMaxAngularVelocityInDegrees(GetPlayerBall()->GetPlayerBallData()->MaxAngularRollVelocity);
@@ -110,5 +113,15 @@ bool UPlayerBallBehaviorMovements::IsGrounded()
 	//DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 1.0f);
 
 	return bHit;
+}
+
+float UPlayerBallBehaviorMovements::GetContextRollForce()
+{
+	if (bUseBoostRollForce)
+	{
+		return RollBoostForce;
+	}
+
+	return AngularRollForce;
 }
 

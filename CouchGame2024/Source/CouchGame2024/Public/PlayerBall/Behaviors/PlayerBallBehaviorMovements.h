@@ -47,12 +47,19 @@ public:
 	UPROPERTY()
 	float MoveYValue = 0.f;
 
+	UFUNCTION()
+	float GetContextRollForce();
+	
 	// roll Datas
 	UPROPERTY()
 	float AngularRollForce = 2000.f;
 	UPROPERTY()
 	float BraqueDirectionForceMultiplier = 1.f;
 
+	bool bUseBoostRollForce = false;
+	
+	float RollBoostForce = 30000.f;
+	
 
 	FVector SpecialSpawnForceDir;
 };

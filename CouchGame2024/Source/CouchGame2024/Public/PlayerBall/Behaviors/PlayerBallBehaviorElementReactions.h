@@ -166,6 +166,7 @@ public:
 	void ReceiveRailReaction(APinballElement* PinballRailElement, float DirectionValue);
 
 	
+	
 #pragma endregion
 	
 #pragma endregion

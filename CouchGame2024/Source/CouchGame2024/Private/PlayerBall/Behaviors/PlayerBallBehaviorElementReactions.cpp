@@ -140,7 +140,9 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 			case EPinballElementID::DeathZone:
 				ReceiveDeathReaction();
 				break;
-			case EPinballElementID::Rail:
+		case EPinballElementID::Rail:
+				if (OtherActor->ActorHasTag(TEXT("RespawnRail")))
+					break;
 				if (OtherComp->ComponentHasTag(TEXT("DirectionInverse")))	// To define in which direction the ball will follow rail
 				{
 					ReceiveRailReaction(OtherElement, -1.f);
@@ -149,7 +151,8 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 				{
 					ReceiveRailReaction(OtherElement, 1.f);
 				}
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Direction: %s"), *OtherComp->GetName()));
+				break;
+			case EPinballElementID::BoostPad:
 
 				break;
 			default:

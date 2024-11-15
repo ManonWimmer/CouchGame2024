@@ -30,6 +30,13 @@ public:
 	float BraqueDirectionForceMultiplier = 2.f;
 #pragma endregion
 
+#pragma region Roll Boost Movements
+
+	UPROPERTY(EditAnywhere, Category = "Roll Boost Movements")
+	float RollBoostForce = 30000.f;
+
+#pragma endregion 
+	
 #pragma region Falling Movements (Obsolete)
 	/*
 	UPROPERTY(EditAnywhere, Category = "Falling Movements Obsolete")

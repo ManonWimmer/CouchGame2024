@@ -128,7 +128,7 @@ void UPlayerBallStateMove::Move(float DeltaTime) const	// Move ball on X and Y A
 
 	//DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 500.f, FColor::Orange, false, 5.f);
 
-	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->BehaviorMovements->AngularRollForce, NAME_None, true);	// Roll ball
+	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->BehaviorMovements->GetContextRollForce(), NAME_None, true);	// Roll ball
 }
 
 void UPlayerBallStateMove::CheckNotMoving()	// Check if ball is still moving
