@@ -183,10 +183,10 @@ void UPlayerBallStateIdle::OnDeath(float DeathValue)
 	StateMachine->ChangeState(EPlayerBallStateID::Death);
 }
 
-void UPlayerBallStateIdle::OnRail(float RailValue)
+void UPlayerBallStateIdle::OnRail(float RailDirectionValue)
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Rail);
+	StateMachine->ChangeState(EPlayerBallStateID::Rail, RailDirectionValue);
 }
 

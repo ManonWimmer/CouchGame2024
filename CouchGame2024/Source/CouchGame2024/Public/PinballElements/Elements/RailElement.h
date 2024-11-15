@@ -38,6 +38,9 @@ public:
 	TObjectPtr<USphereComponent> SphereTriggerRail;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> SphereTriggerRailInverse;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USplineComponent> SplineRail;
 
 	UPROPERTY()

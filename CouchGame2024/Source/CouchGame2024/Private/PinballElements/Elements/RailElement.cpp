@@ -17,11 +17,13 @@ ARailElement::ARailElement()
 	RootSceneComp = CreateDefaultSubobject<USceneComponent>(TEXT("RootScene"));
 	SplineRail = CreateDefaultSubobject<USplineComponent>("SplineRail");
 	SphereTriggerRail = CreateDefaultSubobject<USphereComponent>("SphereTriggerRail");
+	SphereTriggerRailInverse = CreateDefaultSubobject<USphereComponent>("SphereTriggerRailInverse");
 
 	RootComponent = RootSceneComp;
 
 	SplineRail->SetupAttachment(RootSceneComp);
 	SphereTriggerRail->SetupAttachment(SplineRail);
+	SphereTriggerRailInverse->SetupAttachment(SplineRail);
 }
 
 // Called when the game starts or when spawned

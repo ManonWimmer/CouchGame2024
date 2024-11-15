@@ -228,9 +228,9 @@ void UPlayerBallStateSnapping::OnDeath(float DeathValue)
 	StateMachine->ChangeState(EPlayerBallStateID::Death);
 }
 
-void UPlayerBallStateSnapping::OnRail(float RailValue)
+void UPlayerBallStateSnapping::OnRail(float RailDirectionValue)
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Rail);
+	StateMachine->ChangeState(EPlayerBallStateID::Rail, RailDirectionValue);
 }

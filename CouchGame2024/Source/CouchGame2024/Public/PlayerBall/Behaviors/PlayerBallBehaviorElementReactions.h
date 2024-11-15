@@ -163,7 +163,7 @@ public:
 	TObjectPtr<ARailElement> CurrentRailElement;
 
 	UFUNCTION()
-	void ReceiveRailReaction(APinballElement* PinballRailElement);
+	void ReceiveRailReaction(APinballElement* PinballRailElement, float DirectionValue);
 
 	
 #pragma endregion

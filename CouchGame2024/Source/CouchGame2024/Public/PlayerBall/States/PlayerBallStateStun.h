@@ -56,12 +56,6 @@ private:
 	void OnDeath(float DeathValue);
 
 	UFUNCTION()
-	void OnRail(float RailValue);
+	void OnRail(float RailDirectionValue);
 };
 
-inline void UPlayerBallStateStun::OnRail(float RailValue)
-{
-	if (StateMachine == nullptr)	return;
-
-	StateMachine->ChangeState(EPlayerBallStateID::Rail);
-}

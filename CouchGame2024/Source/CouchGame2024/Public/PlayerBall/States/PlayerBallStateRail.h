@@ -24,6 +24,8 @@ public:
 
 	virtual void StateEnter(EPlayerBallStateID PreviousState) override;
 
+	virtual void StateEnter(EPlayerBallStateID PreviousState, float InFloatParameter) override;
+
 	virtual void StateExit(EPlayerBallStateID NextState) override;
 
 	virtual void StateTick(float DeltaTime) override;
@@ -36,10 +38,15 @@ private:
 	
 	void ExitRail();
 
+	float DirectionRail = 0.f;
+	
+
 	float CurrentTimeInRail = 0.f;
 
 	float ProgressRailDuration = 1.f;
 
+	float EndProgressOffset = 0.2;
+	
 	UPROPERTY()
 	TObjectPtr<ARailElement> CurrentRailElement;
 };

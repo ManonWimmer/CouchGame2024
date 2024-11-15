@@ -163,4 +163,11 @@ void UPlayerBallStateStun::OnDeath(float DeathValue)
 	StateMachine->ChangeState(EPlayerBallStateID::Death);
 }
 
+void UPlayerBallStateStun::OnRail(float RailDirectionValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Rail, RailDirectionValue);
+}
+
 

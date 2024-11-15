@@ -141,10 +141,19 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 				ReceiveDeathReaction();
 				break;
 			case EPinballElementID::Rail:
-				ReceiveRailReaction(OtherElement);
+				if (OtherComp->ComponentHasTag(TEXT("DirectionInverse")))	// To define in which direction the ball will follow rail
+				{
+					ReceiveRailReaction(OtherElement, -1.f);
+				}
+				else
+				{
+					ReceiveRailReaction(OtherElement, 1.f);
+				}
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Direction: %s"), *OtherComp->GetName()));
+
 				break;
 			default:
-				return;
+				break;
 		}
 	}
 }
@@ -226,7 +235,7 @@ void UPlayerBallBehaviorElementReactions::ReceiveDeathReaction()
 	GetPlayerBall()->Kill();
 }
 
-void UPlayerBallBehaviorElementReactions::ReceiveRailReaction(APinballElement* PinballRailElement)
+void UPlayerBallBehaviorElementReactions::ReceiveRailReaction(APinballElement* PinballRailElement, float DirectionValue)
 {
 	if (PinballRailElement == nullptr) return;
 	
@@ -238,6 +247,8 @@ void UPlayerBallBehaviorElementReactions::ReceiveRailReaction(APinballElement* P
 
 	if (CurrentRailElement == nullptr) return;
 
-	OnRailReaction.Broadcast(1.f);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Direction: %f"), DirectionValue));
+	
+	OnRailReaction.Broadcast(DirectionValue);
 }
 

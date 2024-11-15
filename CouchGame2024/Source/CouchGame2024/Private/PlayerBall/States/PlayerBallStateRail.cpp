@@ -35,7 +35,15 @@ void UPlayerBallStateRail::StateEnter(EPlayerBallStateID PreviousState)
 			CurrentRailElement = Pawn->BehaviorElementReactions->CurrentRailElement;
 		}
 	}
+}
 
+void UPlayerBallStateRail::StateEnter(EPlayerBallStateID PreviousState, float InFloatParameter)
+{
+	Super::StateEnter(PreviousState, InFloatParameter);
+
+
+	DirectionRail = InFloatParameter;
+	
 	EnterRail();
 
 	if (CurrentRailElement == nullptr)
@@ -84,25 +92,36 @@ void UPlayerBallStateRail::HandleRailProgressLocation(float DeltaTime)
 	if (Pawn == nullptr)	return;
 	if (CurrentRailElement == nullptr)	return;
 
-	if (CurrentTimeInRail >= ProgressRailDuration)
+	if (CurrentTimeInRail - EndProgressOffset >= ProgressRailDuration)
 	{
 		ExitRail();
 	}
 	else
 	{
 		CurrentTimeInRail += DeltaTime;
-		CurrentTimeInRail = FMath::Clamp(CurrentTimeInRail, 0.f, ProgressRailDuration);
 
 		float Percent = CurrentTimeInRail / ProgressRailDuration;
 
-		float InversePercent = 1.f - Percent;
+		if (DirectionRail >= 0.f)
+		{
+			float InversePercent = 1.f - Percent;
 		
-		FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(InversePercent);
+			FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(InversePercent);
 
-		FVector NewPawnLocationOnRail = Pawn->GetActorLocation();
-		NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 10.f);
+			FVector NewPawnLocationOnRail = Pawn->GetActorLocation();
+			NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 10.f);
 		
-		Pawn->SetActorLocation(NewPawnLocationOnRail);
+			Pawn->SetActorLocation(NewPawnLocationOnRail);
+		}
+		else
+		{
+			FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(Percent);
+
+			FVector NewPawnLocationOnRail = Pawn->GetActorLocation();
+			NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 10.f);
+		
+			Pawn->SetActorLocation(NewPawnLocationOnRail);
+		}
 	}
 }
 
