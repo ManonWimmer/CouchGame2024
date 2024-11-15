@@ -38,8 +38,13 @@ private:
 	
 	void ExitRail();
 
+	void ChangeDirection();
+
+	void CheckForwardCollisionBallRail();
+
 	float DirectionRail = 0.f;
-	
+
+	float CurrentPercent = 0.f;
 
 	float CurrentTimeInRail = 0.f;
 

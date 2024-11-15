@@ -26,6 +26,7 @@ void UPlayerBallStateRail::StateEnter(EPlayerBallStateID PreviousState)
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "PlayerState : Rail");
 
+	CurrentPercent = 0.f;
 	CurrentTimeInRail = 0.f;
 	
 	if (Pawn != nullptr)
@@ -84,7 +85,7 @@ void UPlayerBallStateRail::EnterRail()
 	if (Pawn->SphereCollision == nullptr)	return;
 
 	Pawn->SphereCollision->SetSimulatePhysics(false);
-	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
 }
 
 void UPlayerBallStateRail::HandleRailProgressLocation(float DeltaTime)
@@ -98,13 +99,15 @@ void UPlayerBallStateRail::HandleRailProgressLocation(float DeltaTime)
 	}
 	else
 	{
+		CheckForwardCollisionBallRail();
+		
 		CurrentTimeInRail += DeltaTime;
 
-		float Percent = CurrentTimeInRail / ProgressRailDuration;
+		CurrentPercent = CurrentTimeInRail / ProgressRailDuration;
 
 		if (DirectionRail >= 0.f)
 		{
-			float InversePercent = 1.f - Percent;
+			float InversePercent = 1.f - CurrentPercent;
 		
 			FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(InversePercent);
 
@@ -115,7 +118,7 @@ void UPlayerBallStateRail::HandleRailProgressLocation(float DeltaTime)
 		}
 		else
 		{
-			FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(Percent);
+			FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(CurrentPercent);
 
 			FVector NewPawnLocationOnRail = Pawn->GetActorLocation();
 			NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 10.f);
@@ -136,4 +139,60 @@ void UPlayerBallStateRail::ExitRail()
 
 	
 	StateMachine->ChangeState(EPlayerBallStateID::Idle);
+}
+
+void UPlayerBallStateRail::ChangeDirection()
+{
+	DirectionRail *= -1;
+
+	CurrentTimeInRail = 1.f - CurrentTimeInRail;
+}
+
+void UPlayerBallStateRail::CheckForwardCollisionBallRail()
+{
+	FVector CheckPosition = Pawn->GetActorLocation();
+
+	float CurrentCheckPercent = (CurrentTimeInRail + GetWorld()->GetDeltaSeconds()) / ProgressRailDuration;
+
+	if (DirectionRail >= 0.f)
+	{
+		CurrentCheckPercent = 1.f - CurrentCheckPercent;
+	}
+	
+	if (GetWorld())
+		CheckPosition = CurrentRailElement->GetLocationAlongRailSpline(CurrentCheckPercent);
+	
+	
+	FVector Start = CheckPosition;
+	
+	// Array of hit results
+	TArray<FOverlapResult> OverlapResults;
+
+	// Set parameters
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(Pawn);
+	
+	FCollisionObjectQueryParams ObjectQueryParams(ECollisionChannel::ECC_Pawn);	// Look only for pawn
+
+	// Detect Collision With sphere overlap
+	bool bHasDetected = Pawn->GetWorld()->OverlapMultiByObjectType(
+		OverlapResults,
+		Start,
+		FQuat::Identity,
+		ObjectQueryParams,
+		FCollisionShape::MakeSphere(Pawn->SphereCollision->GetScaledSphereRadius()/2.f),
+		CollisionParams
+	);
+
+	//if (Pawn->GetWorld())
+	//	DrawDebugSphere(Pawn->GetWorld(), CheckPosition, Pawn->SphereCollision->GetScaledSphereRadius()/2.f, 12, FColor::Yellow, false, 1.f);
+
+	
+	if (bHasDetected)
+	{
+		if (OverlapResults.Num() > 0)
+		{
+			ChangeDirection();
+		}
+	}
 }
