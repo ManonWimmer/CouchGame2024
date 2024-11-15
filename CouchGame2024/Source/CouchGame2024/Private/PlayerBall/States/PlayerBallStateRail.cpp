@@ -3,9 +3,7 @@
 
 #include "PlayerBall/States/PlayerBallStateRail.h"
 
-#include "MaterialHLSLTree.h"
 #include "Components/SphereComponent.h"
-#include "Components/SplineComponent.h"
 #include "PinballElements/Elements/RailElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"

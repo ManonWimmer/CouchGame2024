@@ -8,6 +8,8 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "RoundsSubsystem.generated.h"
 
+class ARailElement;
+class APlayerBall;
 class UGlobalScoreSubsystem;
 class IRoundsResetable;
 class AMatchPinballGameMode;
@@ -160,7 +162,22 @@ public:
 	void UnlockAllPlayer();
 
 #pragma endregion
+
+#pragma region Respawn Players
+
+public:
+	UFUNCTION()
+	void SetRespawnRailElement(ARailElement* InRespawnRailElement);
 	
+	UFUNCTION()
+	ARailElement* GetRespawnRailElement();
+
+private:
+
+	UPROPERTY()
+	TObjectPtr<ARailElement> RespawnRailElement;
+	
+#pragma endregion 
 	
 
 private:

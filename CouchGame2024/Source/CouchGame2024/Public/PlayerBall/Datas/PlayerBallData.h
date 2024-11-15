@@ -159,6 +159,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Starting State")
 	float PercentAddByStartingSpam = 0.05f;
 
+#pragma endregion
+
+#pragma region Respawn
+
+	UPROPERTY(EditAnywhere, Category = "Death / Respawn")
+	float DeathDurationBeforeRespawn = 1.f;
+
 #pragma endregion 
 	
 };

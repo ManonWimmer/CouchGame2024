@@ -235,11 +235,13 @@ public:
 	
 	virtual void Respawn() override;
 
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRespawnAction, float, RespawnReaction);
 
 	FOnRespawnAction OnRespawnAction;
 	
 	bool bIsDead = false;
+	float DeathDurationBeforeRespawn = 1.f;
 	
 #pragma endregion 
 	

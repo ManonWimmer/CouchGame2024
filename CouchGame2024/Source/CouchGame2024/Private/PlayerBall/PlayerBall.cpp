@@ -121,6 +121,9 @@ void APlayerBall::SetupData() // Get all data and set them
 		AttractionSphere->SetSphereRadius(PlayerBallData->SnapTriggerRadius);
 	}
 
+
+	// Respawn
+	DeathDurationBeforeRespawn = PlayerBallData->DeathDurationBeforeRespawn;
 	
 }
 
@@ -335,7 +338,7 @@ bool APlayerBall::IsLocked()
 void APlayerBall::Kill()
 {
 	if (bIsDead)	return;
-
+	
 	OnDeathReaction.Broadcast(1.f);
 }
 
@@ -350,4 +353,5 @@ void APlayerBall::Respawn()
 	
 	OnRespawnAction.Broadcast(1.f);
 }
+
 
