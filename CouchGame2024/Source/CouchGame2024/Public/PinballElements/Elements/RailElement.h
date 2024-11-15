@@ -54,6 +54,9 @@ public:
 	UFUNCTION()
 	float GetRailProgressDuration();
 
+	UFUNCTION()
+	FVector GetTangentAtSplinePercent(float Percent);
+
 private:
 
 	UPROPERTY(EditAnywhere)

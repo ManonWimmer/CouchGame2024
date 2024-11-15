@@ -38,6 +38,8 @@ private:
 	
 	void ExitRail();
 
+	void ExitImpulse();
+
 	void ChangeDirection();
 
 	void CheckForwardCollisionBallRail();
@@ -51,6 +53,8 @@ private:
 	float ProgressRailDuration = 1.f;
 
 	float EndProgressOffset = 0.2;
+	
+	FVector LastPos = FVector::ZeroVector;
 	
 	UPROPERTY()
 	TObjectPtr<ARailElement> CurrentRailElement;

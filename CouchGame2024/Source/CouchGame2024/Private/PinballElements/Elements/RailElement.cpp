@@ -68,3 +68,12 @@ FVector ARailElement::GetLocationAlongRailSpline(float percent)
 	return SplineRail->GetLocationAtDistanceAlongSpline(PercentToDistance, ESplineCoordinateSpace::World) + OffsetUp;
 }
 
+FVector ARailElement::GetTangentAtSplinePercent(float Percent)
+{
+	if (SplineRail == nullptr)	return FVector::ZeroVector;
+
+	float PercentToDistance = SplineRail->GetSplineLength() * Percent;
+
+	return SplineRail->GetWorldTangentAtDistanceAlongSpline(PercentToDistance);
+}
+

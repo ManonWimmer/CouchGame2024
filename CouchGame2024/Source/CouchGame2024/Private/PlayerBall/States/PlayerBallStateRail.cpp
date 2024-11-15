@@ -5,6 +5,7 @@
 
 #include "MaterialHLSLTree.h"
 #include "Components/SphereComponent.h"
+#include "Components/SplineComponent.h"
 #include "PinballElements/Elements/RailElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
@@ -104,6 +105,8 @@ void UPlayerBallStateRail::HandleRailProgressLocation(float DeltaTime)
 	}
 	else
 	{
+		LastPos = Pawn->GetActorLocation();
+		
 		CheckForwardCollisionBallRail();
 		
 		CurrentTimeInRail += DeltaTime;
@@ -142,8 +145,28 @@ void UPlayerBallStateRail::ExitRail()
 	Pawn->SphereCollision->SetSimulatePhysics(true);
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
 
+	ExitImpulse();
 	
 	StateMachine->ChangeState(EPlayerBallStateID::Idle);
+}
+
+void UPlayerBallStateRail::ExitImpulse()
+{
+	if (Pawn == nullptr)	return;
+	if (Pawn->SphereCollision == nullptr)	return;
+
+	if (CurrentRailElement == nullptr)	return;
+	
+	//FVector Dir = CurrentRailElement->GetTangentAtSplinePercent(FMath::Clamp(CurrentPercent, 0.01f, 0.99f));
+	FVector Dir = Pawn->GetActorLocation() - LastPos;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Rail Tangent : %s"), *Dir.ToString()));
+
+	Dir.Normalize();
+
+	
+	Pawn->SphereCollision->AddImpulse(Dir * 30000.f, NAME_None, false);	// impulse
+
+	DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 1500.f, FColor::Yellow, false, 3.f);
 }
 
 void UPlayerBallStateRail::ChangeDirection()
