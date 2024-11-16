@@ -139,6 +139,7 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 		{
 			case EPinballElementID::DeathZone:
 				ReceiveDeathReaction();
+				OtherElement->TriggerElement();
 				break;
 		case EPinballElementID::Rail:
 				if (OtherActor->ActorHasTag(TEXT("RespawnRail")))
@@ -153,7 +154,8 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 				}
 				break;
 			case EPinballElementID::BoostPad:
-
+				ReceiveBoostPadReaction();
+				OtherElement->TriggerElement();
 				break;
 			default:
 				break;
@@ -253,5 +255,10 @@ void UPlayerBallBehaviorElementReactions::ReceiveRailReaction(APinballElement* P
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Direction: %f"), DirectionValue));
 	
 	OnRailReaction.Broadcast(DirectionValue);
+}
+
+void UPlayerBallBehaviorElementReactions::ReceiveBoostPadReaction()
+{
+	OnBoostPadReaction.Broadcast(1.f);
 }
 

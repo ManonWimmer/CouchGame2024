@@ -35,6 +35,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Roll Boost Movements")
 	float RollBoostForce = 30000.f;
 
+	UPROPERTY(EditAnywhere, Category = "Roll Boost Movements")
+	float TotalRollBoostDuration = 5.f;
+
 #pragma endregion 
 	
 #pragma region Falling Movements (Obsolete)

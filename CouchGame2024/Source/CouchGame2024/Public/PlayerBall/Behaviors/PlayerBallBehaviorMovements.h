@@ -37,6 +37,13 @@ private:
 	UFUNCTION()	
 	void MoveYAction(float YValue);
 
+	UFUNCTION()
+	void ReceiveRollBoost(float InBoostValue);
+
+	void StopRollBoost();
+	
+	void HandleRollBoostDuration(float DeltaTime);
+	
 public:
 
 	UFUNCTION(BlueprintCallable)
@@ -59,7 +66,12 @@ public:
 	bool bUseBoostRollForce = false;
 	
 	float RollBoostForce = 30000.f;
-	
 
 	FVector SpecialSpawnForceDir;
+
+
+private:
+	float CurrentRollDuration = 0.f;
+
+	float TotalRollBoostDuration = 0.f;
 };

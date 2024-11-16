@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallController.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
 
 
@@ -29,12 +30,21 @@ void UPlayerBallBehaviorMovements::TickComponent(float DeltaTime, ELevelTick Tic
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+
+	HandleRollBoostDuration(DeltaTime);
 }
 
 void UPlayerBallBehaviorMovements::InitBehavior()
 {
 	Super::InitBehavior();
-	
+
+	if (GetPlayerBall() != nullptr)
+	{
+		if (GetPlayerBall()->BehaviorElementReactions != nullptr)
+		{
+			GetPlayerBall()->BehaviorElementReactions->OnBoostPadReaction.AddDynamic(this, &UPlayerBallBehaviorMovements::ReceiveRollBoost);
+		}
+	}
 }
 
 void UPlayerBallBehaviorMovements::BindBehaviorEventAction(APlayerBallController* InPlayerBallController)
@@ -71,6 +81,7 @@ void UPlayerBallBehaviorMovements::SetupData()
 	BraqueDirectionForceMultiplier = GetPlayerBall()->GetPlayerBallData()->BraqueDirectionForceMultiplier;
 
 	RollBoostForce = GetPlayerBall()->GetPlayerBallData()->RollBoostForce;
+	TotalRollBoostDuration = GetPlayerBall()->GetPlayerBallData()->TotalRollBoostDuration;
 
 	
 	GetPlayerBall()->SphereCollision->SetAngularDamping(GetPlayerBall()->GetPlayerBallData()->AngularRollDamping);
@@ -87,6 +98,31 @@ void UPlayerBallBehaviorMovements::MoveYAction(float YValue)
 	MoveYValue = YValue;
 }
 
+void UPlayerBallBehaviorMovements::ReceiveRollBoost(float InBoostValue)
+{
+	CurrentRollDuration = 0.f;
+	bUseBoostRollForce = true;
+}
+
+void UPlayerBallBehaviorMovements::StopRollBoost()
+{
+	bUseBoostRollForce = false;
+}
+
+
+void UPlayerBallBehaviorMovements::HandleRollBoostDuration(float DeltaTime)
+{
+	if (!bUseBoostRollForce)	return;
+
+	if (CurrentRollDuration >= TotalRollBoostDuration)
+	{
+		StopRollBoost();
+	}
+	else
+	{
+		CurrentRollDuration += DeltaTime;
+	}
+}
 
 bool UPlayerBallBehaviorMovements::IsGrounded()
 {

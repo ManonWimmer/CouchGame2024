@@ -168,6 +168,20 @@ public:
 	
 	
 #pragma endregion
+
+#pragma region BoostPadReactions
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBoostPadReaction, float, BoostPadValue);
+
+	FOnBoostPadReaction OnBoostPadReaction;
+	
+private:
+	UFUNCTION()
+	void ReceiveBoostPadReaction();
+
+
+#pragma endregion
 	
 #pragma endregion
 	
