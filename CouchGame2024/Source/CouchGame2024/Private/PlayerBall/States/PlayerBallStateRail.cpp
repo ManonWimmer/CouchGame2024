@@ -48,6 +48,8 @@ void UPlayerBallStateRail::StateEnter(EPlayerBallStateID PreviousState, float In
 	{
 		ProgressRailDuration = CurrentRailElement->GetRailProgressDuration();
 	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("PlayerState : Rail : -> %s"), *Pawn->GetVelocity().ToString()));
 	
 	EnterRail();
 
@@ -77,13 +79,20 @@ void UPlayerBallStateRail::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
 
-	HandleRailProgressLocation(DeltaTime);
+	//HandleRailProgressLocationByPercent(DeltaTime);
+	HandleRailProgressLocationByVelocity(DeltaTime);
 }
 
 void UPlayerBallStateRail::EnterRail()
 {
 	if (Pawn == nullptr)	return;
+	
+	CurrentPercentVelocityFromTarget = Pawn->GetVelocity().Length() / RefEnteringVelocity;
 
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Velocity when entering rails = : -> %s"), *Pawn->GetVelocity().ToString()));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Percent Velocity when entering rails = : -> %f"), CurrentPercentVelocityFromTarget));
+
+	
 	Pawn->ResetMovement();
 	
 	if (Pawn->SphereCollision == nullptr)	return;
@@ -92,7 +101,7 @@ void UPlayerBallStateRail::EnterRail()
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
 }
 
-void UPlayerBallStateRail::HandleRailProgressLocation(float DeltaTime)
+void UPlayerBallStateRail::HandleRailProgressLocationByPercent(float DeltaTime)	// Method ignoring entering velocity
 {
 	if (Pawn == nullptr)	return;
 	if (CurrentRailElement == nullptr)	return;
@@ -108,6 +117,52 @@ void UPlayerBallStateRail::HandleRailProgressLocation(float DeltaTime)
 		CheckForwardCollisionBallRail();
 		
 		CurrentTimeInRail += DeltaTime;
+
+		CurrentPercent = CurrentTimeInRail / ProgressRailDuration;
+
+		if (DirectionRail >= 0.f)
+		{
+			float InversePercent = 1.f - CurrentPercent;
+		
+			FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(InversePercent);
+
+			FVector NewPawnLocationOnRail = Pawn->GetActorLocation();
+			NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 10.f);
+		
+			Pawn->SetActorLocation(NewPawnLocationOnRail);
+		}
+		else
+		{
+			FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(CurrentPercent);
+
+			FVector NewPawnLocationOnRail = Pawn->GetActorLocation();
+			NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 10.f);
+		
+			Pawn->SetActorLocation(NewPawnLocationOnRail);
+		}
+	}
+}
+
+void UPlayerBallStateRail::HandleRailProgressLocationByVelocity(float DeltaTime)	// Method using entering velocity
+{
+	if (Pawn == nullptr)	return;
+	if (CurrentRailElement == nullptr)	return;
+
+	if (CurrentTimeInRail - EndProgressOffset >= ProgressRailDuration)
+	{
+		ExitRail();
+	}
+	else
+	{
+		LastPos = Pawn->GetActorLocation();
+		
+		CheckForwardCollisionBallRail();
+
+		CurrentPercentVelocityFromTarget = FMath::FInterpTo(CurrentPercentVelocityFromTarget, 1.f, DeltaTime, AccelerationVelocity);
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("New Percent Velocity when entering rails = : -> %f"), CurrentPercentVelocityFromTarget));
+
+		
+		CurrentTimeInRail += DeltaTime * CurrentPercentVelocityFromTarget;
 
 		CurrentPercent = CurrentTimeInRail / ProgressRailDuration;
 
@@ -157,7 +212,7 @@ void UPlayerBallStateRail::ExitImpulse()
 	
 	//FVector Dir = CurrentRailElement->GetTangentAtSplinePercent(FMath::Clamp(CurrentPercent, 0.01f, 0.99f));
 	FVector Dir = Pawn->GetActorLocation() - LastPos;
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Rail Tangent : %s"), *Dir.ToString()));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Rail Impulse dir : %s"), *Dir.ToString()));
 
 	Dir.Normalize();
 

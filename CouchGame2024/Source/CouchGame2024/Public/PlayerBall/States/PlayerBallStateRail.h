@@ -34,7 +34,9 @@ private:
 
 	void EnterRail();
 
-	void HandleRailProgressLocation(float DeltaTime);
+	void HandleRailProgressLocationByPercent(float DeltaTime);
+
+	void HandleRailProgressLocationByVelocity(float DeltaTime);
 	
 	void ExitRail();
 
@@ -55,6 +57,13 @@ private:
 	float EndProgressOffset = 0.2;
 	
 	FVector LastPos = FVector::ZeroVector;
+
+	
+	// Method using entering velocity
+	float RefEnteringVelocity = 800.f;
+	float CurrentPercentVelocityFromTarget = 0.f;
+
+	float AccelerationVelocity = 1.2f;
 	
 	UPROPERTY()
 	TObjectPtr<ARailElement> CurrentRailElement;
