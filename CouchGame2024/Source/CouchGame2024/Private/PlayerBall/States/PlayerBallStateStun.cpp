@@ -80,7 +80,7 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState, float In
 	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("PlayerState : stun id : %f"), InFloatParameter));
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("PlayerState : stun duration : %f"), CurrentStunRemaining));
+	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("PlayerState : stun duration : %f"), CurrentStunRemaining));
 	
 
 }

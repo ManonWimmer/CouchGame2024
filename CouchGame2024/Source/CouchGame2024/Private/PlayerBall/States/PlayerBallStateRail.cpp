@@ -79,8 +79,14 @@ void UPlayerBallStateRail::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
 
-	//HandleRailProgressLocationByPercent(DeltaTime);
-	HandleRailProgressLocationByVelocity(DeltaTime);
+	if (bOnRespawnRail)
+	{
+		HandleRailProgressLocationByPercent(DeltaTime);
+	}
+	else
+	{
+		HandleRailProgressLocationByVelocity(DeltaTime);
+	}
 }
 
 void UPlayerBallStateRail::EnterRail()
@@ -93,7 +99,10 @@ void UPlayerBallStateRail::EnterRail()
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Percent Velocity when entering rails = : -> %f"), CurrentPercentVelocityFromTarget));
 
 
-	bOnRespawnRail = CurrentRailElement->ActorHasTag("RespawnRail");
+	if (CurrentRailElement != nullptr)
+	{
+		bOnRespawnRail = CurrentRailElement->ActorHasTag("RespawnRail");
+	}
 	
 	Pawn->ResetMovement();
 	
@@ -103,7 +112,7 @@ void UPlayerBallStateRail::EnterRail()
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
 }
 
-void UPlayerBallStateRail::HandleRailProgressLocationByPercent(float DeltaTime)	// Method ignoring entering velocity
+void UPlayerBallStateRail::HandleRailProgressLocationByPercent(float DeltaTime)	// Method ignoring entering velocity -> for respawn
 {
 	if (Pawn == nullptr)	return;
 	if (CurrentRailElement == nullptr)	return;
@@ -145,7 +154,7 @@ void UPlayerBallStateRail::HandleRailProgressLocationByPercent(float DeltaTime)	
 	}
 }
 
-void UPlayerBallStateRail::HandleRailProgressLocationByVelocity(float DeltaTime)	// Method using entering velocity
+void UPlayerBallStateRail::HandleRailProgressLocationByVelocity(float DeltaTime)	// Method using entering velocity	-> for classic rail
 {
 	if (Pawn == nullptr)	return;
 	if (CurrentRailElement == nullptr)	return;

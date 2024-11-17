@@ -165,7 +165,7 @@ public:
 	UFUNCTION()
 	void ReceiveRailReaction(APinballElement* PinballRailElement, float DirectionValue);
 
-	bool CheckRightDirectionForRail(UPrimitiveComponent* EntryComponent, APlayerBall* PlayerBall);
+	bool CheckRightDirectionForRail(ARailElement* InRailElement, float InEntryDirection);
 	
 	
 #pragma endregion
