@@ -144,6 +144,15 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 		case EPinballElementID::Rail:
 				if (OtherActor->ActorHasTag(TEXT("RespawnRail")))
 					break;
+				if (!CheckRightDirectionForRail(OtherComp, GetPlayerBall()))
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Not right direction");
+					break;
+				}
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "right direction");
+				{
+					
+				}
 				if (OtherComp->ComponentHasTag(TEXT("DirectionInverse")))	// To define in which direction the ball will follow rail
 				{
 					ReceiveRailReaction(OtherElement, -1.f);
@@ -255,6 +264,34 @@ void UPlayerBallBehaviorElementReactions::ReceiveRailReaction(APinballElement* P
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Direction: %f"), DirectionValue));
 	
 	OnRailReaction.Broadcast(DirectionValue);
+}
+
+bool UPlayerBallBehaviorElementReactions::CheckRightDirectionForRail(UPrimitiveComponent* EntryComponent,
+	APlayerBall* InPlayerBall)
+{
+
+	FVector EntryRightDirection = EntryComponent->GetRightVector();
+
+	/*
+	FVector PlayerVelocity = InPlayerBall->GetVelocity();
+
+	float DotProductPlayerVelocityAndEntryRight = FVector::DotProduct(PlayerVelocity, EntryRightDirection);
+
+	if (DotProductPlayerVelocityAndEntryRight < 0.f)	// velocity and right same direction -> can't enter
+	{
+		return false;
+	}
+	*/
+	FVector EntryToPlayer = InPlayerBall->GetActorLocation() - EntryComponent->GetComponentLocation();
+
+	float DotProductEntryToPlayerAndEntryRight = FVector::DotProduct(EntryToPlayer, EntryRightDirection);
+
+	if (DotProductEntryToPlayerAndEntryRight > 0.f)	// Right and vector playerToEntry not same direction -> can't enter
+	{
+		return false;
+	}
+	
+	return true;
 }
 
 void UPlayerBallBehaviorElementReactions::ReceiveBoostPadReaction()
