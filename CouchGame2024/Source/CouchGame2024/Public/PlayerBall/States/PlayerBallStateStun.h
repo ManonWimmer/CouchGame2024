@@ -35,7 +35,9 @@ private:
 	UPROPERTY()
 	float CurrentStunRemaining = 0.f;
 
-
+	UFUNCTION()
+	void FreezeStunVariant();
+	
 	UFUNCTION()
 	void DecreaseCooldownStun(float DeltaTime);
 

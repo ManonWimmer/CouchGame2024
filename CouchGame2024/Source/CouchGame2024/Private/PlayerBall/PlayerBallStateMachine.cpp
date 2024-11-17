@@ -14,11 +14,13 @@
 #include "PlayerBall/States/PlayerBallStateImpact.h"
 #include "PlayerBall/States/PlayerBallStateLocked.h"
 #include "PlayerBall/States/PlayerBallStateMove.h"
+#include "PlayerBall/States/PlayerBallStatePowerUpHub.h"
 #include "PlayerBall/States/PlayerBallStatePunch.h"
 #include "PlayerBall/States/PlayerBallStateRail.h"
 #include "PlayerBall/States/PlayerBallStateRespawn.h"
 #include "PlayerBall/States/PlayerBallStateSnapping.h"
 #include "PlayerBall/States/PlayerBallStateStun.h"
+#include "PlayerBall/States/PowerUpSubStates/PlayerBallPowerUpSubStateFreeze.h"
 
 void UPlayerBallStateMachine::Init(APlayerBall* InPawn)
 {
@@ -146,6 +148,12 @@ void UPlayerBallStateMachine::CreateStateByID(EPlayerBallStateID InStateID)
 			break;
 		case EPlayerBallStateID::Rail:
 			OutState = NewObject<UPlayerBallStateRail>(this);
+			break;
+		case EPlayerBallStateID::PowerUpHub:
+			OutState = NewObject<UPlayerBallStatePowerUpHub>(this);
+			break;
+		case EPlayerBallStateID::Freeze:
+			OutState = NewObject<UPlayerBallPowerUpSubStateFreeze>(this);
 			break;
 		default:
 			break;

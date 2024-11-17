@@ -11,6 +11,7 @@
 #include "PlayerBall.generated.h"
 
 
+class UPlayerPowerUpData;
 class UWidgetComponent;
 class UPlayerBallBehaviorPowerUp;
 class UPlayerBallBehaviorElementReactions;
@@ -60,10 +61,15 @@ public:
 	void SetupData();
 
 	TObjectPtr<UPlayerBallData> GetPlayerBallData() const;
+
+	TObjectPtr<UPlayerPowerUpData> GetPlayerPowerUpData() const;
 	
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UPlayerBallData> PlayerBallData;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPlayerPowerUpData> PlayerPowerUpData;
 
 #pragma endregion 
 	

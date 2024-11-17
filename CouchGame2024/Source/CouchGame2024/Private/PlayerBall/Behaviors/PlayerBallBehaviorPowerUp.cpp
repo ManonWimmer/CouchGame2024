@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallController.h"
+#include "PlayerBall/Datas/PlayerPowerUpData.h"
 #include "PowerUp/PowerUp.h"
 
 
@@ -58,6 +59,17 @@ void UPlayerBallBehaviorPowerUp::UnbindBehaviorEventAction(APlayerBallController
 	if (GetPlayerBallController() == nullptr)	return;
 	
 	GetPlayerBallController()->OnUsePowerUpInput.RemoveDynamic(this, &UPlayerBallBehaviorPowerUp::UsePowerUpAction);
+}
+
+void UPlayerBallBehaviorPowerUp::SetupData()
+{
+	Super::SetupData();
+
+	if (GetPlayerBall() == nullptr)	return;
+	if (GetPlayerBall()->GetPlayerPowerUpData() == nullptr)	return;
+		
+	FreezeRange = GetPlayerBall()->GetPlayerPowerUpData()->FreezeRange;
+	FreezeDuration = GetPlayerBall()->GetPlayerPowerUpData()->FreezeDuration;
 }
 
 void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -131,12 +143,14 @@ void UPlayerBallBehaviorPowerUp::UsePowerUpCarried()
 	
 	switch (CurrentPowerUpCarried)
 	{
-	case EPowerUpID::Freeze:
+	case EPowerUpID::Freeze:	// substate id -> 1.f
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Freeze PowerUp");
+		OnUsePowerUpAction.Broadcast(1.f);
 		break;
 			
-	case EPowerUpID::Strength:
+	case EPowerUpID::Strength:	// substate id -> 2.f
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Strength PowerUp");
+		OnUsePowerUpAction.Broadcast(2.f);
 		break;
 			
 	case EPowerUpID::Heavy:
@@ -146,7 +160,8 @@ void UPlayerBallBehaviorPowerUp::UsePowerUpCarried()
 	default:
 		break;
 	}
-
+	
+	
 	CurrentPowerUpCarried = EPowerUpID::None;
 }
 

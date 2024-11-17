@@ -61,4 +61,7 @@ private:
 
 	UFUNCTION()
 	void OnRail(float RailDirectionValue);
+
+	UFUNCTION()
+	void OnUsePowerUp(float InPowerUpId);
 };

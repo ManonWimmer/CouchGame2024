@@ -132,6 +132,11 @@ TObjectPtr<UPlayerBallData> APlayerBall::GetPlayerBallData() const
 	return PlayerBallData;
 }
 
+TObjectPtr<UPlayerPowerUpData> APlayerBall::GetPlayerPowerUpData() const
+{
+	return PlayerPowerUpData;
+}
+
 
 void APlayerBall::InitPlayerBallBehaviors() const
 {
