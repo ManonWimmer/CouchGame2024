@@ -46,6 +46,8 @@ private:
 
 	void CheckForwardCollisionBallRail();
 
+	bool bOnRespawnRail = false;
+	
 	float DirectionRail = 0.f;
 
 	float CurrentPercent = 0.f;

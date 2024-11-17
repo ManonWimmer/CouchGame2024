@@ -92,6 +92,8 @@ void UPlayerBallStateRail::EnterRail()
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Velocity when entering rails = : -> %s"), *Pawn->GetVelocity().ToString()));
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Percent Velocity when entering rails = : -> %f"), CurrentPercentVelocityFromTarget));
 
+
+	bOnRespawnRail = CurrentRailElement->ActorHasTag("RespawnRail");
 	
 	Pawn->ResetMovement();
 	
@@ -224,6 +226,8 @@ void UPlayerBallStateRail::ExitImpulse()
 
 void UPlayerBallStateRail::ChangeDirection()
 {
+	if (bOnRespawnRail)	return;
+	
 	DirectionRail *= -1;
 
 	CurrentTimeInRail = 1.f - CurrentTimeInRail;
