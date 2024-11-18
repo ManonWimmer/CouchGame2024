@@ -20,6 +20,7 @@
 #include "PlayerBall/States/PlayerBallStateRespawn.h"
 #include "PlayerBall/States/PlayerBallStateSnapping.h"
 #include "PlayerBall/States/PlayerBallStateStun.h"
+#include "PlayerBall/States/PlayerBallStateTourniquet.h"
 #include "PlayerBall/States/PowerUpSubStates/PlayerBallPowerUpSubStateFreeze.h"
 
 void UPlayerBallStateMachine::Init(APlayerBall* InPawn)
@@ -154,6 +155,9 @@ void UPlayerBallStateMachine::CreateStateByID(EPlayerBallStateID InStateID)
 			break;
 		case EPlayerBallStateID::Freeze:
 			OutState = NewObject<UPlayerBallPowerUpSubStateFreeze>(this);
+			break;
+		case EPlayerBallStateID::Tourniquet:
+			OutState = NewObject<UPlayerBallStateTourniquet>(this);
 			break;
 		default:
 			break;

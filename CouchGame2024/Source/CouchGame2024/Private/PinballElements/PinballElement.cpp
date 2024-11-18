@@ -34,3 +34,8 @@ void APinballElement::TriggerElement()
 	TriggerElementEffects();
 }
 
+void APinballElement::TriggerElementWithPlayer(APlayerBall* InPlayerBall)
+{
+	TriggerElement();
+}
+

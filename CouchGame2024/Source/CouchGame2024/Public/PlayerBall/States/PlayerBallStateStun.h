@@ -59,5 +59,8 @@ private:
 
 	UFUNCTION()
 	void OnRail(float RailDirectionValue);
+
+	UFUNCTION()
+	void OnTourniquet(float TourniquetValue);
 };
 

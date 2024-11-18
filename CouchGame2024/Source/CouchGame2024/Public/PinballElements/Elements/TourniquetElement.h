@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "PinballElements/PinballElement.h"
+#include "Rounds/RoundsResetable.h"
 #include "TourniquetElement.generated.h"
 
+class APlayerBall;
 class USphereComponent;
 
 UCLASS()
-class COUCHGAME2024_API ATourniquetElement : public APinballElement
+class COUCHGAME2024_API ATourniquetElement : public APinballElement, public IRoundsResetable
 {
 	GENERATED_BODY()
 
@@ -31,6 +33,8 @@ public:
 
 	virtual void TriggerElement() override;
 
+	virtual void TriggerElementWithPlayer(APlayerBall* InPlayerBall = nullptr) override;
+	
 #pragma region Components
 	
 private:
@@ -60,14 +64,72 @@ private:
 
 #pragma region Turning
 
+public:
+	
+	void AddBallToTourniquet(APlayerBall* InPlayerBall);
 
+	virtual void InitResetable() override;
+
+	virtual bool IsResetable() override;
+	
+	virtual void ResetObject() override;
 	
 private:
+
+	UFUNCTION()
+	void ExpulsePlayerFromTourniquet(APlayerBall* InPlayerBall, int Index);
+
+	UFUNCTION()
+	void IncreaseSpeedTourniquetByVelocity(float InVelocity);
+	
+	UFUNCTION()
 	void HandleTurningEffect(float DeltaTime);
 
+	UFUNCTION()
+	void HandleDecreaseSpeedEffect(float DeltaTime);
+
+	UFUNCTION()
+	void HandleTimeInTourniquet(float DeltaTime);
+	
+	UFUNCTION()
+	int GetNextEmptyBallPositionTourniquet();
+
+	UFUNCTION()
+	USceneComponent* GetTourniquetAnchorFromIndex(int InIndex);
+
+	void InitAssociatedBallInTourniquetArray();
+
+	float GetForceExpulseBall();
+	
+	UPROPERTY()
+	TArray<APlayerBall*> AssociatedBallInTourniquet;
+
+	UPROPERTY()
+	TArray<float> AssociatedTimeToBallInTourniquet;
+
+	float TurningDuration = 3.f;
+	
 	UPROPERTY(EditAnywhere)
-	float TurningSpeed = 30.f;
+	float MinTurningTurningSpeed = 0.f;
+	
+	UPROPERTY(EditAnywhere)
+	float MaxTurningTurningSpeed = 1000.f;
+	
+	UPROPERTY(EditAnywhere)
+	float CurrentTurningSpeed = 0.f;
+
+	UPROPERTY(EditAnywhere)
+	float TurningSpeedDecceleration = 60.f;
+
+
+	UPROPERTY(EditAnywhere)
+	float MinExpulseForce = 20000.f;
+
+	UPROPERTY(EditAnywhere)
+	float MaxExpulseForce = 60000.f;
+	
 
 #pragma endregion 
 	
 };
+

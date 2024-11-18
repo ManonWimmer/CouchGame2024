@@ -245,6 +245,7 @@ void APlayerBall::ResetObject()
 	ResetGrapple();
 	ResetCooldown();
 	ResetPosition();
+	ResetPhysics();
 }
 
 void APlayerBall::ResetState()
@@ -282,6 +283,15 @@ void APlayerBall::ResetCooldown()
 void APlayerBall::ResetPosition()
 {
 	
+}
+
+void APlayerBall::ResetPhysics()
+{
+	if (SphereCollision == nullptr)	return;
+
+	SphereCollision->SetSimulatePhysics(true);
+
+	SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
 }
 
 void APlayerBall::InitLockableInput()

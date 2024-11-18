@@ -7,6 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "PinballElement.generated.h"
 
+class APlayerBall;
+
 UCLASS()
 class COUCHGAME2024_API APinballElement : public AActor
 {
@@ -29,6 +31,9 @@ public:
 
 	UFUNCTION()	
 	virtual void TriggerElement();
+
+	UFUNCTION()
+	virtual void TriggerElementWithPlayer(APlayerBall* InPlayerBall = nullptr);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void TriggerElementEffects();
