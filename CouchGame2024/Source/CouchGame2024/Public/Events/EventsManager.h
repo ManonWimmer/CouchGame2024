@@ -9,6 +9,8 @@
 #include "Rounds/RoundsResetable.h"
 #include "EventsManager.generated.h"
 
+class UEventData;
+
 USTRUCT(Blueprintable, BlueprintType)
 struct FEventInfos
 {
@@ -59,8 +61,13 @@ public:
 	// Sets default values for this actor's properties
 	AEventsManager();
 
+	/*
 	UPROPERTY(config, EditAnywhere, BlueprintReadWrite, Category="Events")
 	TArray<FLevelEventEntry> LevelEvents;
+	*/
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Events")
+	TArray<UEventData*> Events; 
 
 protected:
 	// Called when the game starts or when spawned
@@ -75,6 +82,12 @@ public:
 	void BindCountdownToRoundsPhase();
 	
 	UFUNCTION()
+	void BindCountdownToRoundsChange();
+
+	UFUNCTION()
+	void SetupNewRoundEvent(int RoundIndex);
+	
+	UFUNCTION()
 	void CheckStartCountdown(ERoundsPhaseID InRoundsPhaseID);
 	
 	UFUNCTION(BlueprintCallable, CallInEditor, Category = "Events")
@@ -86,21 +99,35 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Events")
 	float GetCountdownTime() const;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Events")
+	UPROPERTY()
 	int GameTimeInSec = 100;
-	
-	UPROPERTY()
-	float StartGameTime;
-	
-	UPROPERTY()
-	float CurrentTime;
 
+	UPROPERTY()
+	int Phase1Time = 100;
+
+	UPROPERTY()
+	int Phase2Time = 100;
+	
+	UPROPERTY()
+	float StartGameTime = 0.f;
+	
+	UPROPERTY()
+	float CurrentTime = 0.f;
+
+	UPROPERTY()
+	UEventData* LastEventData = nullptr;
+
+	UPROPERTY()
+	UEventData* CurrentEventData = nullptr;
+	
 private:
 	void CheckAndTriggerEvents();
 
-	void CheckProbabilities();
-
 	bool IsGameStarted = false;
+
+	void GetRandomEvent();
+
+	void SetupEventTimes();
 
 
 #pragma region Resetable
