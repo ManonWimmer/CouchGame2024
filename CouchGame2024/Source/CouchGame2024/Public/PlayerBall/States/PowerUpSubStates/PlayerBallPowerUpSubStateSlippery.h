@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "PlayerBall/PlayerBallState.h"
-#include "PlayerBallStatePowerUpHub.generated.h"
+#include "PlayerBallPowerUpSubStateSlippery.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class COUCHGAME2024_API UPlayerBallStatePowerUpHub : public UPlayerBallState
+class COUCHGAME2024_API UPlayerBallPowerUpSubStateSlippery : public UPlayerBallState
 {
 	GENERATED_BODY()
 
@@ -23,22 +23,15 @@ public:
 
 	virtual void StateEnter(EPlayerBallStateID PreviousState) override;
 
-	virtual void StateEnter(EPlayerBallStateID PreviousState, float InFloatParameter) override;
-
 	virtual void StateExit(EPlayerBallStateID NextState) override;
 
 	virtual void StateTick(float DeltaTime) override;
 
 
 private:
-	
-	UFUNCTION()
-	void SwitchToFreezePowerUp();
+
+	void UseSlipperyPowerUp();
 
 	UFUNCTION()
-	void SwitchToStrengthPowerUp();
-
-	UFUNCTION()
-	void SwitchToSlipperyPowerUp();
-	
+	APlayerBall* GetNearestPlayerBallInSlipperyRadius();
 };

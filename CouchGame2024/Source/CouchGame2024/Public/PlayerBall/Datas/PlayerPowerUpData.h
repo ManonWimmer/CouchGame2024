@@ -38,5 +38,20 @@ public:
 
 #pragma endregion
 
+#pragma region Slippery
+
+	UPROPERTY(EditAnywhere, Category = "Activate Slippery Power Up")
+	float SlipperyRadius = 100.f;
+
+	UPROPERTY(EditAnywhere, Category = "Receive Slippery Power Up")
+	float TotalSlipperyEffectDuration = 5.f;
+
+	UPROPERTY(EditAnywhere, Category = "Receive Slippery Power Up")
+	TObjectPtr<UPhysicalMaterial> SlipperyPhysicsAsset;
+
+	UPROPERTY(EditAnywhere, Category = "Receive Slippery Power Up")
+	TObjectPtr<UPhysicalMaterial> ClassicPhysicsAsset;
+
+#pragma endregion
 	
 };

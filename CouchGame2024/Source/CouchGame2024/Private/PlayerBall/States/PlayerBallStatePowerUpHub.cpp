@@ -36,6 +36,10 @@ void UPlayerBallStatePowerUpHub::StateEnter(EPlayerBallStateID PreviousState, fl
 	{
 		SwitchToStrengthPowerUp();
 	}
+	else if (InFloatParameter == 3.f)	// id 2 -> Slippery
+	{
+		SwitchToSlipperyPowerUp();
+	}
 	else
 	{
 		StateMachine->ChangeState(EPlayerBallStateID::Idle);
@@ -72,4 +76,11 @@ void UPlayerBallStatePowerUpHub::SwitchToStrengthPowerUp()
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Strength);
+}
+
+void UPlayerBallStatePowerUpHub::SwitchToSlipperyPowerUp()
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Slippery);
 }

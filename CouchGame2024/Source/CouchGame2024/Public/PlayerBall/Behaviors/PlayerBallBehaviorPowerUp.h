@@ -96,8 +96,26 @@ private:
 
 	float CurrentStrengthDuration = 0.f;
 
+#pragma endregion
 
+#pragma region SlipperyPowerUp
 
-#pragma endregion 
+public:
+	float SlipperyRadius = 100.f;
+
+	void ReceiveSlipperyEffect();
+
+	void EndSlipperyEffect();
+
+	void HandleSlipperyEffectDuration(float DeltaTime);
+	
+private:
+	bool bIsSlippery = false;
+
+	float CurrentSlipperyEffectDuration = 0.f;
+	
+	float TotalSlipperyEffectDuration = 5.f;
+
+#pragma endregion
 	
 };
