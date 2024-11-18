@@ -7,6 +7,7 @@
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 
 
 // Sets default values for this component's properties
@@ -29,15 +30,7 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
-	/*
-	GEngine->AddOnScreenDebugMessage
-	(
-		-1,
-		2.f,
-		FColor::Red,
-		TEXT("PlayerState : Stun")
-	);
-	*/
+	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("PlayerState : Stun"));
 
 	UE_LOG(LogTemp, Warning, TEXT("Enter PlayerState : Stun") );
 	
@@ -57,7 +50,7 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState)
 		{
 			Pawn->BehaviorElementReactions->OnImpactAction.AddDynamic(this, &UPlayerBallStateStun::OnImpacted);
 			Pawn->BehaviorElementReactions->OnBumperReaction.AddDynamic(this, &UPlayerBallStateStun::OnBumped);
-			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.AddDynamic(this, &UPlayerBallStateStun::OnSnapped);
+			//Pawn->BehaviorElementReactions->OnReceiveSnappingAction.AddDynamic(this, &UPlayerBallStateStun::OnSnapped);
 
 			Pawn->BehaviorElementReactions->OnRailReaction.AddDynamic(this, &UPlayerBallStateStun::OnRail);
 		}
@@ -68,16 +61,26 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState, float In
 {
 	Super::StateEnter(PreviousState, InFloatParameter);
 
-	CurrentStunRemaining = InFloatParameter;
+	if (InFloatParameter == 1.f)	// id 1.f -> bumped stun
+	{
+		CurrentStunRemaining = Pawn->BehaviorElementReactions->BumpedHitLagCooldown;
+	}
+	else if (InFloatParameter == 2.f)	//id 2.f -> Impact stun
+	{
+		CurrentStunRemaining = Pawn->BehaviorElementReactions->ImpactStunCooldown;
+	}
+	else if (InFloatParameter == 3.f)	//id 3.f -> Freeze stun
+	{
+		CurrentStunRemaining = Pawn->BehaviorPowerUp->FreezeDuration;
+		FreezeStunVariant();
+	}
+	else
+	{
+		CurrentStunRemaining = InFloatParameter;
+	}
 
-	/*
-	GEngine->AddOnScreenDebugMessage
-	(
-		-1,
-		2.f,
-		FColor::Yellow, FString::Printf(TEXT("PlayerState : stun : %f"), CurrentStunRemaining)
-	);
-	*/
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("PlayerState : stun id : %f"), InFloatParameter));
+	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("PlayerState : stun duration : %f"), CurrentStunRemaining));
 	
 
 }
@@ -94,7 +97,7 @@ void UPlayerBallStateStun::StateExit(EPlayerBallStateID NextState)
 		{
 			Pawn->BehaviorElementReactions->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateStun::OnImpacted);
 			Pawn->BehaviorElementReactions->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateStun::OnBumped);
-			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateStun::OnSnapped);
+			//Pawn->BehaviorElementReactions->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateStun::OnSnapped);
 
 			Pawn->BehaviorElementReactions->OnRailReaction.RemoveDynamic(this, &UPlayerBallStateStun::OnRail);
 		}
@@ -111,6 +114,14 @@ void UPlayerBallStateStun::StateTick(float DeltaTime)
 	Super::StateTick(DeltaTime);
 
 	DecreaseCooldownStun(DeltaTime);
+}
+
+
+void UPlayerBallStateStun::FreezeStunVariant()
+{
+	if (Pawn == nullptr)	return;
+
+	Pawn->ResetMovement();
 }
 
 void UPlayerBallStateStun::DecreaseCooldownStun(float DeltaTime)	// cooldown before exit stun -> Idle
@@ -146,7 +157,7 @@ void UPlayerBallStateStun::OnSnapped(float InSnapValue)
 {
 	if (StateMachine == nullptr || InSnapValue == 0.f)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Snapping);
+	//StateMachine->ChangeState(EPlayerBallStateID::Snapping);
 }
 
 void UPlayerBallStateStun::OnGrappled(float GrappledValue)

@@ -121,12 +121,20 @@ void APlayerBall::SetupData() // Get all data and set them
 		AttractionSphere->SetSphereRadius(PlayerBallData->SnapTriggerRadius);
 	}
 
+
+	// Respawn
+	DeathDurationBeforeRespawn = PlayerBallData->DeathDurationBeforeRespawn;
 	
 }
 
 TObjectPtr<UPlayerBallData> APlayerBall::GetPlayerBallData() const
 {
 	return PlayerBallData;
+}
+
+TObjectPtr<UPlayerPowerUpData> APlayerBall::GetPlayerPowerUpData() const
+{
+	return PlayerPowerUpData;
 }
 
 
@@ -335,7 +343,7 @@ bool APlayerBall::IsLocked()
 void APlayerBall::Kill()
 {
 	if (bIsDead)	return;
-
+	
 	OnDeathReaction.Broadcast(1.f);
 }
 
@@ -350,4 +358,5 @@ void APlayerBall::Respawn()
 	
 	OnRespawnAction.Broadcast(1.f);
 }
+
 
