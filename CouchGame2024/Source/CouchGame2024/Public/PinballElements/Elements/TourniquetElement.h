@@ -7,6 +7,7 @@
 #include "Rounds/RoundsResetable.h"
 #include "TourniquetElement.generated.h"
 
+class UTourniquetElementData;
 class APlayerBall;
 class USphereComponent;
 
@@ -99,7 +100,13 @@ private:
 
 	void InitAssociatedBallInTourniquetArray();
 
+	void InitDataTourniquet();
+	
 	float GetForceExpulseBall();
+
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UTourniquetElementData> TourniquetData;
 	
 	UPROPERTY()
 	TArray<APlayerBall*> AssociatedBallInTourniquet;
@@ -109,23 +116,17 @@ private:
 
 	float TurningDuration = 3.f;
 	
-	UPROPERTY(EditAnywhere)
 	float MinTurningTurningSpeed = 0.f;
 	
-	UPROPERTY(EditAnywhere)
 	float MaxTurningTurningSpeed = 1000.f;
 	
-	UPROPERTY(EditAnywhere)
 	float CurrentTurningSpeed = 0.f;
 
-	UPROPERTY(EditAnywhere)
 	float TurningSpeedDecceleration = 60.f;
 
 
-	UPROPERTY(EditAnywhere)
 	float MinExpulseForce = 20000.f;
 
-	UPROPERTY(EditAnywhere)
 	float MaxExpulseForce = 60000.f;
 	
 

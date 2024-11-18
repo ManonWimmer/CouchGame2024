@@ -4,6 +4,7 @@
 #include "PinballElements/Elements/TourniquetElement.h"
 
 #include "Components/SphereComponent.h"
+#include "PinballElements/Data/TourniquetElementData.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 
@@ -40,6 +41,7 @@ void ATourniquetElement::BeginPlay()
 {
 	Super::BeginPlay();
 
+	InitDataTourniquet();
 	InitAssociatedBallInTourniquetArray();
 }
 
@@ -97,7 +99,7 @@ void ATourniquetElement::AddBallToTourniquet(APlayerBall* InPlayerBall)
 
 	float TempVelocityLength = InPlayerBall->GetVelocity().Length();
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Ball speed in tourniquet : %f"), TempVelocityLength));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Ball speed in tourniquet : %f"), TempVelocityLength));
 	
 	InPlayerBall->BehaviorElementReactions->ReceiveTourniquetReaction();
 	InPlayerBall->SphereCollision->AttachToComponent(OutTourniquetAnchor, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -140,7 +142,7 @@ void ATourniquetElement::ExpulsePlayerFromTourniquet(APlayerBall* InPlayerBall, 
 
 	USceneComponent* OutAnchor = GetTourniquetAnchorFromIndex(Index);
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, "Expulse from tourniquet");
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, "Expulse from tourniquet");
 
 	InPlayerBall->SphereCollision->AddImpulse(OutAnchor->GetRightVector() * GetForceExpulseBall());
 }
@@ -196,6 +198,19 @@ void ATourniquetElement::InitAssociatedBallInTourniquetArray()
 	}
 }
 
+void ATourniquetElement::InitDataTourniquet()
+{
+	if (TourniquetData == nullptr)	return;
+	
+	TurningDuration = TourniquetData->TurningDuration;
+
+	MinTurningTurningSpeed = TourniquetData->MinTurningTurningSpeed;
+	MaxTurningTurningSpeed = TourniquetData->MaxTurningTurningSpeed;
+
+	MinExpulseForce = TourniquetData->MinExpulseForce;
+	MaxExpulseForce = TourniquetData->MaxExpulseForce;
+}
+
 float ATourniquetElement::GetForceExpulseBall()
 {
 	float Percent = (CurrentTurningSpeed - MinTurningTurningSpeed)/(MaxTurningTurningSpeed - MinTurningTurningSpeed);
@@ -204,9 +219,8 @@ float ATourniquetElement::GetForceExpulseBall()
 
 	float OutExpulseForce = FMath::Lerp(MinExpulseForce, MaxExpulseForce, Percent);
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("PercentForce : %f"), Percent));
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("CurrentSpeed : %f"), CurrentTurningSpeed));
-
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("PercentForce : %f"), Percent));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("CurrentSpeed : %f"), CurrentTurningSpeed));
 	
 	return OutExpulseForce;
 }
@@ -240,8 +254,7 @@ void ATourniquetElement::HandleTimeInTourniquet(float DeltaTime)
 			if (AssociatedBallInTourniquet[i] == nullptr)
 				continue;
 
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Turning ball Index %f"), i));
-
+			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Turning ball Index %f"), i));
 			
 			ExpulsePlayerFromTourniquet(AssociatedBallInTourniquet[i], i);
 			AssociatedBallInTourniquet[i] = nullptr;
