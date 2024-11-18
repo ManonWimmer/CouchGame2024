@@ -113,12 +113,7 @@ void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent*
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Slippery power up");
 			OtherPowerUp->TriggerPowerUp();
 			break;
-				
-		case EPowerUpID::Heavy:
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Heavy power up");
-			OtherPowerUp->TriggerPowerUp();
-			break;
-				
+		
 		default:
 			break;
 		}
@@ -138,6 +133,11 @@ void UPlayerBallBehaviorPowerUp::AssignPowerUpCarried(EPowerUpID PowerUpID)
 	if (CurrentPowerUpCarried != EPowerUpID::None || PowerUpID == EPowerUpID::Collectible)	return;
 
 	CurrentPowerUpCarried = PowerUpID;
+}
+
+void UPlayerBallBehaviorPowerUp::EmptyCurrentPowerUpCarried()
+{
+	CurrentPowerUpCarried = EPowerUpID::None;
 }
 
 void UPlayerBallBehaviorPowerUp::UsePowerUpAction(float UsePowerUpValue)
@@ -169,17 +169,10 @@ void UPlayerBallBehaviorPowerUp::UsePowerUpCarried()
         	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Slippery PowerUp");
         	OnUsePowerUpAction.Broadcast(3.f);
         	break;
-		
-	case EPowerUpID::Heavy:
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Heavy PowerUp");
-		break;
 			
 	default:
 		break;
 	}
-	
-	
-	CurrentPowerUpCarried = EPowerUpID::None;
 }
 
 void UPlayerBallBehaviorPowerUp::ActivateStrengthPowerUp()

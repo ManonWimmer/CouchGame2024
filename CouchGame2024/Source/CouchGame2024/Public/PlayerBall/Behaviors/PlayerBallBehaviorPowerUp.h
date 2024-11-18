@@ -45,6 +45,9 @@ public:
 
 	void AssignPowerUpCarried(EPowerUpID PowerUpID);
 
+	void EmptyCurrentPowerUpCarried();
+	
+	
 	UFUNCTION()
 	void UsePowerUpAction(float UsePowerUpValue);
 	
@@ -54,7 +57,7 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUsePowerUpAction, float, PowerUpValueId);
 
 	FOnUsePowerUpAction OnUsePowerUpAction;
-	
+
 	
 private:
 	UPROPERTY(VisibleAnywhere)

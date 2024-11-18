@@ -31,6 +31,10 @@ public:
 
 
 private:
+
+	UFUNCTION()
+	void ConsumeCurrentPowerUpPlayerBall();
+
 	
 	UFUNCTION()
 	void SwitchToFreezePowerUp();
@@ -42,3 +46,4 @@ private:
 	void SwitchToSlipperyPowerUp();
 	
 };
+
