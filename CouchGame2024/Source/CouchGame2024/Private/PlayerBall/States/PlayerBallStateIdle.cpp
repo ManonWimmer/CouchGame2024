@@ -9,6 +9,7 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 
 
 // Sets default values for this component's properties
@@ -32,7 +33,7 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 	Super::StateEnter(PreviousState);
 
 	
-	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("PlayerState : Idle"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("PlayerState : Idle"));
 	
 	UE_LOG(LogTemp, Warning, TEXT("Enter PlayerState : Idle") );
 
@@ -58,6 +59,11 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 			Pawn->BehaviorGrapple->OnGrapplingActionStarted.AddDynamic(this, &UPlayerBallStateIdle::OnGrappling);
 			Pawn->BehaviorGrapple->OnGrappledActionStarted.AddDynamic(this, &UPlayerBallStateIdle::OnGrappled);
 		}
+
+		if (Pawn->BehaviorPowerUp != nullptr)
+		{
+			Pawn->BehaviorPowerUp->OnUsePowerUpAction.AddDynamic(this, &UPlayerBallStateIdle::OnUsePowerUp);
+		}
 		
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateIdle::OnPunch);
 
@@ -80,6 +86,11 @@ void UPlayerBallStateIdle::StateExit(EPlayerBallStateID NextState)
 			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnSnapped);
 
 			Pawn->BehaviorElementReactions->OnRailReaction.RemoveDynamic(this, &UPlayerBallStateIdle::OnRail);
+		}
+
+		if (Pawn->BehaviorPowerUp != nullptr)
+		{
+			Pawn->BehaviorPowerUp->OnUsePowerUpAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnUsePowerUp);
 		}
 
 		if (Pawn->BehaviorGrapple != nullptr)
@@ -183,10 +194,17 @@ void UPlayerBallStateIdle::OnDeath(float DeathValue)
 	StateMachine->ChangeState(EPlayerBallStateID::Death);
 }
 
-void UPlayerBallStateIdle::OnRail(float RailValue)
+void UPlayerBallStateIdle::OnRail(float RailDirectionValue)
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Rail);
+	StateMachine->ChangeState(EPlayerBallStateID::Rail, RailDirectionValue);
+}
+
+void UPlayerBallStateIdle::OnUsePowerUp(float InPowerUpId)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::PowerUpHub, InPowerUpId);
 }
 

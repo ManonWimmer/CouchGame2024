@@ -38,6 +38,9 @@ public:
 	TObjectPtr<USphereComponent> SphereTriggerRail;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> SphereTriggerRailInverse;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<USplineComponent> SplineRail;
 
 	UPROPERTY()
@@ -47,4 +50,17 @@ public:
 
 	UFUNCTION()
 	FVector GetLocationAlongRailSpline(float percent);
+
+	UFUNCTION()
+	float GetRailProgressDuration();
+
+	UFUNCTION()
+	FVector GetTangentAtSplinePercent(float Percent);
+
+private:
+	
+	void InitRail();
+
+	UPROPERTY(EditAnywhere)
+	float RailProgressDuration = 1.f;
 };

@@ -3,10 +3,12 @@
 
 #include "PlayerBall/States/PlayerBallStateRespawn.h"
 
-#include "MaterialHLSLTree.h"
 #include "Components/SphereComponent.h"
+#include "PinballElements/Elements/RailElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
+#include "Rounds/RoundsSubsystem.h"
 
 EPlayerBallStateID UPlayerBallStateRespawn::GetStateID() const
 {
@@ -23,6 +25,12 @@ void UPlayerBallStateRespawn::StateEnter(EPlayerBallStateID PreviousState)
 	Super::StateEnter(PreviousState);
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "PlayerState : Respawn");
+
+	if (RespawnRailElement == nullptr)
+	{
+		InitRailRespawn();
+	}
+
 	
 	if (Pawn != nullptr)
 	{
@@ -37,7 +45,14 @@ void UPlayerBallStateRespawn::StateEnter(EPlayerBallStateID PreviousState)
 void UPlayerBallStateRespawn::StateExit(EPlayerBallStateID NextState)
 {
 	Super::StateExit(NextState);
-
+	
+	if (Pawn != nullptr)
+	{
+		if (Pawn->BehaviorElementReactions != nullptr)
+		{
+			Pawn->BehaviorElementReactions->CurrentRailElement = RespawnRailElement;
+		}
+	}
 	
 	EndRespawnBall();
 }
@@ -53,6 +68,11 @@ void UPlayerBallStateRespawn::RespawnBall()
 {
 	if (Pawn == nullptr)	return;
 
+	if (RespawnRailElement != nullptr)
+	{
+		Pawn->SetActorLocation(RespawnRailElement->GetLocationAlongRailSpline(1.f));
+	}
+	
 	Pawn->ResetMovement();
 	
 	if (Pawn->SphereCollision == nullptr)	return;
@@ -79,7 +99,7 @@ void UPlayerBallStateRespawn::ExitRespawn()
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Idle);
+	StateMachine->ChangeState(EPlayerBallStateID::Rail, 1.f);
 }
 
 void UPlayerBallStateRespawn::EndRespawnBall()
@@ -92,5 +112,18 @@ void UPlayerBallStateRespawn::EndRespawnBall()
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
 	
 	Pawn->SetActorHiddenInGame(false);
+}
+
+void UPlayerBallStateRespawn::InitRailRespawn()
+{
+	if (Pawn == nullptr)	return;
+	
+	if (Pawn->GetWorld() == nullptr)	return;
+
+	URoundsSubsystem* RoundsSubsystem = Pawn->GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+	if (RoundsSubsystem == nullptr)	return;
+
+	RespawnRailElement = RoundsSubsystem->GetRespawnRailElement();
 }
 

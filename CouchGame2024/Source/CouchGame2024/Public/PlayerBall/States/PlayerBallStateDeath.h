@@ -37,5 +37,11 @@ private:
 	
 	UFUNCTION()
 	void OnRespawn(float RespawnValue);
+
+	UFUNCTION()
+	void HandleDeathDuration(float DeltaTime);
+
+
+	float CurrentDeathDuration = 1.f;
 	
 };

@@ -139,12 +139,26 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 		{
 			case EPinballElementID::DeathZone:
 				ReceiveDeathReaction();
+				OtherElement->TriggerElement();
 				break;
-			case EPinballElementID::Rail:
-				ReceiveRailReaction(OtherElement);
+		case EPinballElementID::Rail:
+				if (OtherActor->ActorHasTag(TEXT("RespawnRail")))
+					break;
+				if (OtherComp->ComponentHasTag(TEXT("DirectionInverse")))	// To define in which direction the ball will follow rail
+				{
+					ReceiveRailReaction(OtherElement, -1.f);
+				}
+				else
+				{
+					ReceiveRailReaction(OtherElement, 1.f);
+				}
+				break;
+			case EPinballElementID::BoostPad:
+				ReceiveBoostPadReaction();
+				OtherElement->TriggerElement();
 				break;
 			default:
-				return;
+				break;
 		}
 	}
 }
@@ -226,7 +240,7 @@ void UPlayerBallBehaviorElementReactions::ReceiveDeathReaction()
 	GetPlayerBall()->Kill();
 }
 
-void UPlayerBallBehaviorElementReactions::ReceiveRailReaction(APinballElement* PinballRailElement)
+void UPlayerBallBehaviorElementReactions::ReceiveRailReaction(APinballElement* PinballRailElement, float DirectionValue)
 {
 	if (PinballRailElement == nullptr) return;
 	
@@ -234,10 +248,69 @@ void UPlayerBallBehaviorElementReactions::ReceiveRailReaction(APinballElement* P
 
 	if (RailElement == nullptr)	return;
 	
+	if (!CheckRightDirectionForRail(RailElement, DirectionValue))
+	{
+		return;
+	}
+	
 	CurrentRailElement = RailElement;
 
 	if (CurrentRailElement == nullptr) return;
 
-	OnRailReaction.Broadcast(1.f);
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Direction: %f"), DirectionValue));
+	
+	OnRailReaction.Broadcast(DirectionValue);
+}
+
+bool UPlayerBallBehaviorElementReactions::CheckRightDirectionForRail(ARailElement* InRailElement,
+	float InEntryDirection)
+{
+
+	if (InRailElement == nullptr) return false;
+
+	if (GetPlayerBall() == nullptr) return false;
+	
+	FVector Tangent = InRailElement->GetActorForwardVector();
+	FVector EntryToPlayer = GetPlayerBall()->GetActorLocation();
+
+	
+	if (InEntryDirection == 1.f)
+	{
+		Tangent = InRailElement->GetTangentAtSplinePercent(0.95f);
+		EntryToPlayer = GetPlayerBall()->GetActorLocation() - InRailElement->GetLocationAlongRailSpline(0.99f);
+		//DrawDebugLine(GetWorld(), InRailElement->GetLocationAlongRailSpline(0.99f), InRailElement->GetLocationAlongRailSpline(0.99f) + (Tangent * 500.f), FColor::Red, false, 5.f);
+		//DrawDebugLine(GetWorld(), InRailElement->GetLocationAlongRailSpline(0.99f), InRailElement->GetLocationAlongRailSpline(0.99f) + (EntryToPlayer * 500.f), FColor::Blue, false, 5.f);
+	}
+	else if (InEntryDirection == -1.f)
+	{
+		Tangent = InRailElement->GetTangentAtSplinePercent(0.01f);
+		Tangent *= -1.f;
+		EntryToPlayer = GetPlayerBall()->GetActorLocation() - InRailElement->GetLocationAlongRailSpline(0.01f);
+		//DrawDebugLine(GetWorld(), InRailElement->GetLocationAlongRailSpline(0.01f), InRailElement->GetLocationAlongRailSpline(0.01f) + (Tangent * 500.f), FColor::Red, false, 5.f);
+		//DrawDebugLine(GetWorld(), InRailElement->GetLocationAlongRailSpline(0.01f), InRailElement->GetLocationAlongRailSpline(0.01f) + (EntryToPlayer * 500.f), FColor::Blue, false, 5.f);
+	}
+
+	FVector2D Tangent2D = FVector2D(Tangent.X, Tangent.Y);
+	FVector2D EntryToPlayer2D = FVector2D(EntryToPlayer.X, EntryToPlayer.Y);
+
+	Tangent2D.Normalize();
+	EntryToPlayer2D.Normalize();
+	
+	float DotProductEntryToPlayerAndTangent = FVector2D::DotProduct(EntryToPlayer2D, Tangent2D);
+
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Dot product result : %f"), DotProductEntryToPlayerAndTangent));
+	
+	if (DotProductEntryToPlayerAndTangent < 0.f)	// Tangent and vector playerToEntry not same direction -> can't enter
+	{
+		return false;
+	}
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "right direction");
+	return true;
+}
+
+void UPlayerBallBehaviorElementReactions::ReceiveBoostPadReaction()
+{
+	OnBoostPadReaction.Broadcast(1.f);
 }
 

@@ -60,5 +60,8 @@ private:
 	void OnDeath(float DeathValue);
 
 	UFUNCTION()
-	void OnRail(float RailValue);
+	void OnRail(float RailDirectionValue);
+
+	UFUNCTION()
+	void OnUsePowerUp(float InPowerUpId);
 };

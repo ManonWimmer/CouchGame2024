@@ -30,6 +30,16 @@ public:
 	float BraqueDirectionForceMultiplier = 2.f;
 #pragma endregion
 
+#pragma region Roll Boost Movements
+
+	UPROPERTY(EditAnywhere, Category = "Roll Boost Movements")
+	float RollBoostForce = 30000.f;
+
+	UPROPERTY(EditAnywhere, Category = "Roll Boost Movements")
+	float TotalRollBoostDuration = 5.f;
+
+#pragma endregion 
+	
 #pragma region Falling Movements (Obsolete)
 	/*
 	UPROPERTY(EditAnywhere, Category = "Falling Movements Obsolete")
@@ -158,6 +168,13 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Starting State")
 	float PercentAddByStartingSpam = 0.05f;
+
+#pragma endregion
+
+#pragma region Respawn
+
+	UPROPERTY(EditAnywhere, Category = "Death / Respawn")
+	float DeathDurationBeforeRespawn = 1.f;
 
 #pragma endregion 
 	

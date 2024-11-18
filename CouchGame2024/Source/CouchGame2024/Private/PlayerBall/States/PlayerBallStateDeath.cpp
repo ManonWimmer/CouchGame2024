@@ -27,6 +27,8 @@ void UPlayerBallStateDeath::StateEnter(EPlayerBallStateID PreviousState)
 
 	if (Pawn != nullptr)
 	{
+		CurrentDeathDuration = 0.f;
+		
 		Pawn->bIsDead = true;
 		
 		if (Pawn->BehaviorGrapple)
@@ -56,6 +58,8 @@ void UPlayerBallStateDeath::StateExit(EPlayerBallStateID NextState)
 void UPlayerBallStateDeath::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
+
+	HandleDeathDuration(DeltaTime);
 }
 
 void UPlayerBallStateDeath::DeathBall()
@@ -89,4 +93,20 @@ void UPlayerBallStateDeath::OnRespawn(float RespawnValue)
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Respawn);
+}
+
+void UPlayerBallStateDeath::HandleDeathDuration(float DeltaTime)
+{
+	if (Pawn == nullptr)	return;
+
+	if (!Pawn->bIsDead)	return;
+	
+	if (CurrentDeathDuration >= Pawn->DeathDurationBeforeRespawn)
+	{
+		Pawn->Respawn();
+	}
+	else
+	{
+		CurrentDeathDuration += DeltaTime;	
+	}
 }

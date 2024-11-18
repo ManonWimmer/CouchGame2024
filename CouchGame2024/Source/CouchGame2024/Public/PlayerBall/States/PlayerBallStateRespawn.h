@@ -6,6 +6,7 @@
 #include "PlayerBall/PlayerBallState.h"
 #include "PlayerBallStateRespawn.generated.h"
 
+class ARailElement;
 /**
  * 
  */
@@ -33,11 +34,16 @@ private:
 	
 	void HandleRespawnDuration(float DeltaTime);
 
-	float TotalRespawnDuration = 5.f;
+	float TotalRespawnDuration = 1.f;
 
 	float CurrentRespawnDuration = 0.f;
-
+	
 	void ExitRespawn();
 	
 	void EndRespawnBall();
+
+	void InitRailRespawn();
+
+	UPROPERTY()
+	TObjectPtr<ARailElement> RespawnRailElement;
 };

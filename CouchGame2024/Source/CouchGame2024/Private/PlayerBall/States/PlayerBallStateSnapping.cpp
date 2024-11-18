@@ -10,6 +10,7 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
 
 
@@ -52,6 +53,11 @@ void UPlayerBallStateSnapping::StateEnter(EPlayerBallStateID PreviousState)
 		
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateSnapping::OnPunch);
 
+
+		if (Pawn->BehaviorPowerUp != nullptr)
+		{
+			Pawn->BehaviorPowerUp->OnUsePowerUpAction.AddDynamic(this, &UPlayerBallStateSnapping::OnUsePowerUp);
+		}
 		
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
@@ -84,6 +90,11 @@ void UPlayerBallStateSnapping::StateExit(EPlayerBallStateID NextState)
 		{
 			Pawn->BehaviorGrapple->OnGrapplingActionStarted.RemoveDynamic(this, &UPlayerBallStateSnapping::OnGrappling);
 			Pawn->BehaviorGrapple->OnGrappledActionStarted.RemoveDynamic(this, &UPlayerBallStateSnapping::OnGrappled);
+		}
+
+		if (Pawn->BehaviorPowerUp != nullptr)
+		{
+			Pawn->BehaviorPowerUp->OnUsePowerUpAction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnUsePowerUp);
 		}
 
 		if (Pawn->BehaviorElementReactions != nullptr)
@@ -142,7 +153,7 @@ void UPlayerBallStateSnapping::Move(float DeltaTime)
 		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
 
-	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->BehaviorMovements->AngularRollForce / Pawn->GetPlayerBallData()->SnapControlMoveRollDivider), NAME_None, true);
+	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->BehaviorMovements->GetContextRollForce() / Pawn->GetPlayerBallData()->SnapControlMoveRollDivider), NAME_None, true);
 }
 
 void UPlayerBallStateSnapping::SnappingEffect(float DeltaTime)
@@ -228,9 +239,16 @@ void UPlayerBallStateSnapping::OnDeath(float DeathValue)
 	StateMachine->ChangeState(EPlayerBallStateID::Death);
 }
 
-void UPlayerBallStateSnapping::OnRail(float RailValue)
+void UPlayerBallStateSnapping::OnRail(float RailDirectionValue)
 {
 	if (StateMachine == nullptr)	return;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Rail);
+	StateMachine->ChangeState(EPlayerBallStateID::Rail, RailDirectionValue);
+}
+
+void UPlayerBallStateSnapping::OnUsePowerUp(float InPowerUpId)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::PowerUpHub, InPowerUpId);
 }
