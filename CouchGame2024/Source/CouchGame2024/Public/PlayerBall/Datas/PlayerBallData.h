@@ -30,6 +30,16 @@ public:
 	float BraqueDirectionForceMultiplier = 2.f;
 #pragma endregion
 
+#pragma region Roll Boost Movements
+
+	UPROPERTY(EditAnywhere, Category = "Roll Boost Movements")
+	float RollBoostForce = 30000.f;
+
+	UPROPERTY(EditAnywhere, Category = "Roll Boost Movements")
+	float TotalRollBoostDuration = 5.f;
+
+#pragma endregion 
+	
 #pragma region Falling Movements (Obsolete)
 	/*
 	UPROPERTY(EditAnywhere, Category = "Falling Movements Obsolete")
@@ -113,10 +123,13 @@ public:
 	float GrapplingDamping = 0.99f;
 
 	UPROPERTY(EditAnywhere, Category = "Grappling")
-	float GrapplingForce = 0.1f;
+	float GrapplingPillarForce = 0.1f;
 
 	UPROPERTY(EditAnywhere, Category = "Grappling")
-	float GrapplingReleaseForce = 250.f;
+	float GrapplingReleaseForcePillar = 250.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float GrapplingReleaseForceNotPillar = 250.f;
 
 	UPROPERTY(EditAnywhere, Category = "Grappling")
 	float MinCableDistance = 200.f;
@@ -129,7 +142,40 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Grappling")
 	float StartGrapplingForceFactorWhenAlreadyMoving = 0.001f;
+
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float GrapplingNotPillarForce = 5.f;
+
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float GrapplingCooldown = 3.f;
+
+	UPROPERTY(EditAnywhere, Category = "Pillar Points")
+	float PillarPointsMultiplier = 1.05f;
+
+	UPROPERTY(EditAnywhere, Category = "Pillar Points")
+	float PillarPointsPerSeconds = 5.f;
 	
 #pragma endregion
+
+
+#pragma region Starting State
+
+	UPROPERTY(EditAnywhere, Category = "Starting State")
+	float StartingStateMinForce = 30000.f;
+
+	UPROPERTY(EditAnywhere, Category = "Starting State")
+	float StartingStateMaxForce = 70000.f;
+
+	UPROPERTY(EditAnywhere, Category = "Starting State")
+	float PercentAddByStartingSpam = 0.05f;
+
+#pragma endregion
+
+#pragma region Respawn
+
+	UPROPERTY(EditAnywhere, Category = "Death / Respawn")
+	float DeathDurationBeforeRespawn = 1.f;
+
+#pragma endregion 
 	
 };

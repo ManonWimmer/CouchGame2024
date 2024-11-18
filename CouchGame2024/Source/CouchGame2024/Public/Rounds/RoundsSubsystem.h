@@ -4,14 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "RoundsPhasesID.h"
+#include "PlayerBall/LockableInput.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "RoundsSubsystem.generated.h"
 
+class ARailElement;
+class APlayerBall;
+class UGlobalScoreSubsystem;
+class IRoundsResetable;
+class AMatchPinballGameMode;
 /**
  * 
  */
 UCLASS()
-class COUCHGAME2024_API URoundsSubsystem : public UGameInstanceSubsystem, public FTickableGameObject
+class COUCHGAME2024_API URoundsSubsystem : public UTickableWorldSubsystem
 {
 	GENERATED_BODY()
 #pragma region Tickable
@@ -19,22 +25,45 @@ class COUCHGAME2024_API URoundsSubsystem : public UGameInstanceSubsystem, public
 	virtual TStatId GetStatId() const override { return TStatId(); };
 
 #pragma endregion 
+
+	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 	
 public:
-	
+	void InitRoundSubsystem();
+
+	UFUNCTION()
 	void StartRound();
 
+	UFUNCTION()
+	void EndRoundChecks();
+
 	void InitTimers();
+
+	void InitRounds();
+
+	void InitFirstPlayerSpecial();
+
+	void InitGamemodeAndBindStartGame();
+
+	void InitGlobalScoreAndReset();
+
+private:
+	UPROPERTY()
+	TObjectPtr<AMatchPinballGameMode> MatchPinballGameMode;
+
+	UPROPERTY()
+	TObjectPtr<UGlobalScoreSubsystem> GlobalScoreSubsystem;
 	
 #pragma region RoundsChange
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeRound, int, NewRoundIndex);
 
-	UPROPERTY()
+	UPROPERTY(BlueprintAssignable)
 	FOnChangeRound OnChangeRound;
 	
 	void ChangeRound(int NewRoundIndex);
 
+	UFUNCTION(BlueprintCallable)
 	void ChangeToNextRound();
 	
 	UFUNCTION(BlueprintCallable)
@@ -46,8 +75,10 @@ public:
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeRoundPhases, ERoundsPhaseID, NewPhaseID);
 
-	UPROPERTY()
+	UPROPERTY(BlueprintAssignable)
 	FOnChangeRoundPhases OnChangeRoundPhases;
+	
+	void InitRoundsPhase();
 	
 	UFUNCTION(BlueprintCallable)
 	ERoundsPhaseID GetCurrentRoundPhaseID();
@@ -75,6 +106,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CheckForWinPlayer(int PlayerIndex);
 
+	int PlayerIndexLastRoundWin = -1;
+
+	bool bPlayerHasWonGame = false;
+
+	int TotalRoundsToWin = 1;
+	
 #pragma endregion 
 
 #pragma region Handle Timers
@@ -86,12 +123,69 @@ private:
 	
 #pragma endregion 
 
+#pragma region ResetRound
 	
+public:
+	void AddResetableObject(UObject* InResetableObject);
+	void RemoveResetableObjects(UObject* InResetableObject);
+
+private:
+
+	UFUNCTION(BlueprintCallable)
+	void ResetRound();
+
+	UPROPERTY()
+	TArray<UObject*> ResetableObjects;
+
+#pragma endregion
+
+
+#pragma region LockInputs Players
+
+public:
+	void AddLockableInput(UObject* Input);
+	void RemoveLockableInput(UObject* Input);
+
+private:
+	
+	UPROPERTY()
+	TArray<UObject*> LockableInputsInWorld;
+	
+public:
+	UFUNCTION()
+	void LockAllPlayerButOne(int PlayerIndexUnlock);
+
+	UFUNCTION()
+	void LockAllPlayer();
+	
+	UFUNCTION()
+	void UnlockAllPlayer();
+
+#pragma endregion
+
+#pragma region Respawn Players
+
+public:
+	UFUNCTION()
+	void SetRespawnRailElement(ARailElement* InRespawnRailElement);
+	
+	UFUNCTION()
+	ARailElement* GetRespawnRailElement();
+
+private:
+
+	UPROPERTY()
+	TObjectPtr<ARailElement> RespawnRailElement;
+	
+#pragma endregion 
+	
+
 private:
 	int CurrentRoundIndex = 0;
 
 	ERoundsPhaseID CurrentRoundPhaseID = ERoundsPhaseID::NONE;
 
+	UPROPERTY()
 	TMap<int, int> RoundsWonByPlayersIndex;
 
 

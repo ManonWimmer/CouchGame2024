@@ -9,6 +9,7 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 
 
 // Sets default values for this component's properties
@@ -32,18 +33,22 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 	Super::StateEnter(PreviousState);
 
 	
-	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("PlayerState : Idle"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("PlayerState : Idle"));
 	
 	UE_LOG(LogTemp, Warning, TEXT("Enter PlayerState : Idle") );
 
 	if (Pawn != nullptr)
 	{
+		Pawn->OnDeathReaction.AddDynamic(this, &UPlayerBallStateIdle::OnDeath);
+
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateIdle::OnStunned);
 			Pawn->BehaviorElementReactions->OnImpactAction.AddDynamic(this, &UPlayerBallStateIdle::OnImpacted);
 			Pawn->BehaviorElementReactions->OnBumperReaction.AddDynamic(this, &UPlayerBallStateIdle::OnBumped);
 			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.AddDynamic(this, &UPlayerBallStateIdle::OnSnapped);
+
+			Pawn->BehaviorElementReactions->OnRailReaction.AddDynamic(this, &UPlayerBallStateIdle::OnRail);
 		}
 		
 		if (Pawn->BehaviorGrapple != nullptr)
@@ -53,6 +58,11 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 			
 			Pawn->BehaviorGrapple->OnGrapplingActionStarted.AddDynamic(this, &UPlayerBallStateIdle::OnGrappling);
 			Pawn->BehaviorGrapple->OnGrappledActionStarted.AddDynamic(this, &UPlayerBallStateIdle::OnGrappled);
+		}
+
+		if (Pawn->BehaviorPowerUp != nullptr)
+		{
+			Pawn->BehaviorPowerUp->OnUsePowerUpAction.AddDynamic(this, &UPlayerBallStateIdle::OnUsePowerUp);
 		}
 		
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateIdle::OnPunch);
@@ -66,12 +76,21 @@ void UPlayerBallStateIdle::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
 	{
+		Pawn->OnDeathReaction.RemoveDynamic(this, &UPlayerBallStateIdle::OnDeath);
+
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnStunned);
 			Pawn->BehaviorElementReactions->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnImpacted);
 			Pawn->BehaviorElementReactions->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateIdle::OnBumped);
 			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnSnapped);
+
+			Pawn->BehaviorElementReactions->OnRailReaction.RemoveDynamic(this, &UPlayerBallStateIdle::OnRail);
+		}
+
+		if (Pawn->BehaviorPowerUp != nullptr)
+		{
+			Pawn->BehaviorPowerUp->OnUsePowerUpAction.RemoveDynamic(this, &UPlayerBallStateIdle::OnUsePowerUp);
 		}
 
 		if (Pawn->BehaviorGrapple != nullptr)
@@ -166,5 +185,26 @@ void UPlayerBallStateIdle::OnSnapped(float InSnapValue)
 	if (StateMachine == nullptr || InSnapValue == 0.f)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Snapping);
+}
+
+void UPlayerBallStateIdle::OnDeath(float DeathValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Death);
+}
+
+void UPlayerBallStateIdle::OnRail(float RailDirectionValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Rail, RailDirectionValue);
+}
+
+void UPlayerBallStateIdle::OnUsePowerUp(float InPowerUpId)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::PowerUpHub, InPowerUpId);
 }
 

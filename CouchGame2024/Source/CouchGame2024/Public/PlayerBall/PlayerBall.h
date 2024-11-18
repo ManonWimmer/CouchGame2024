@@ -3,11 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Killable.h"
+#include "LockableInput.h"
 #include "PlayerBallStateID.h"
 #include "GameFramework/Pawn.h"
+#include "Rounds/RoundsResetable.h"
 #include "PlayerBall.generated.h"
 
 
+class UPlayerPowerUpData;
+class UWidgetComponent;
 class UPlayerBallBehaviorPowerUp;
 class UPlayerBallBehaviorElementReactions;
 class UPlayerBallBehaviorGrapple;
@@ -22,7 +27,7 @@ class UStaticMeshComponent;
 class UCableComponent;
 
 UCLASS()
-class COUCHGAME2024_API APlayerBall : public APawn
+class COUCHGAME2024_API APlayerBall : public APawn, public IRoundsResetable, public ILockableInput, public IKillable
 {
 	GENERATED_BODY()
 
@@ -56,10 +61,15 @@ public:
 	void SetupData();
 
 	TObjectPtr<UPlayerBallData> GetPlayerBallData() const;
+
+	TObjectPtr<UPlayerPowerUpData> GetPlayerPowerUpData() const;
 	
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UPlayerBallData> PlayerBallData;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPlayerPowerUpData> PlayerPowerUpData;
 
 #pragma endregion 
 	
@@ -131,8 +141,6 @@ protected:
 private:
 	UFUNCTION()
 	void BindEventActions();
-
-
 	
 #pragma region States
 
@@ -164,10 +172,83 @@ public:
 
 #pragma endregion
 	
+public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayImpactEffectsBlueprint();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlaySetProgressStartForceEffect(float NewProgressStartForce);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UWidgetComponent> StartForceEffectWidget;
 	
 #pragma endregion
+
+#pragma region IRoundsResetable
+
+private:
+	virtual void InitResetable() override;
+	
+public:
+	virtual bool IsResetable() override;
+
+	virtual void ResetObject() override;
+	
+	void ResetState();
+	void ResetMovement();
+	void ResetGrapple();
+	void ResetCooldown();
+	void ResetPosition();
+
+#pragma endregion
+
+#pragma region ILockableInput
+
+public:
+	virtual void InitLockableInput() override;
+	
+	virtual bool IsLockableInput() override;
+
+	virtual void LockInput() override;
+
+	virtual void UnlockInput() override;
+
+	virtual void LockButOnlySpecialInput() override;
+
+	virtual int GetLockableInputIndex() override;
+
+	virtual bool IsLocked() override;
+
+private:
+	bool bIsLocked = false;
+
+	bool bIsLockedButSpecial = false;
+	
+#pragma endregion
+
+#pragma region IKillable
+
+public:
+
+	virtual void Kill() override;
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathReaction, float, DeathValue);
+
+	FOnDeathReaction OnDeathReaction;
+
+	UFUNCTION(CallInEditor)
+	void TestCallRespawn();
+	
+	virtual void Respawn() override;
+
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRespawnAction, float, RespawnReaction);
+
+	FOnRespawnAction OnRespawnAction;
+	
+	bool bIsDead = false;
+	float DeathDurationBeforeRespawn = 1.f;
+	
+#pragma endregion 
 	
 };

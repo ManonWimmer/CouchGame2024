@@ -55,7 +55,7 @@ void UPlayerBallStateImpact::StateEnter(EPlayerBallStateID PreviousState)
 
 	if (Pawn->BehaviorElementReactions != nullptr)
 	{
-		StateMachine->ChangeState(EPlayerBallStateID::Stun, Pawn->BehaviorElementReactions->ImpactStunCooldown);	// Stun
+		StateMachine->ChangeState(EPlayerBallStateID::Stun, 2.f);	// Stun id 2.f -> ImpactStunCooldown
 	}
 	else
 	{

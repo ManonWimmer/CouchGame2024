@@ -7,6 +7,8 @@
 #include "PlayerBallStateGrappling.generated.h"
 
 
+class UGlobalScoreSubsystem;
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class COUCHGAME2024_API UPlayerBallStateGrappling : public UPlayerBallState
 {
@@ -42,8 +44,14 @@ private:
 	void SetCable();
 
 	UFUNCTION()
-	void SetGrapplingVelocityAndAngle(float DeltaTime);
+	void SetGrapplingVelocityAndAnglePillar(float DeltaTime);
+	
+	UFUNCTION()
+	void SetGrapplingVelocityAndAngleNotPillar(float DeltaTime);
 
+	UFUNCTION()
+	bool DetectWalls();
+	
 	UPROPERTY()
 	FVector LastLocation = FVector::ZeroVector;
 
@@ -52,4 +60,16 @@ private:
 
 	UPROPERTY()
 	float TempGrapplingAngle = 0.f;
+
+	UPROPERTY()
+	float StartAngle = 0.f;
+
+	UFUNCTION()
+	void GainPillarPoints();
+
+	UPROPERTY()
+	float CurrentTimeOnPillar = 0.f;
+
+	UPROPERTY()
+	UGlobalScoreSubsystem* ScoreSubsystem;
 };

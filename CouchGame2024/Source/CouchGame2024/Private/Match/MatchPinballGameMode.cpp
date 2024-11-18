@@ -9,16 +9,25 @@
 #include "Match/MatchSettings.h"
 #include "Match/PlayerBallSpawn.h"
 #include "PlayerBall/PlayerBall.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
+#include "Rounds/RoundsSubsystem.h"
 
 void AMatchPinballGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Players
 	CreateAndInitPlayers();
-
 	TArray<APlayerBallSpawn*> PlayerSpawnPoints;
 	FindPlayerBallSpawnInWorld(PlayerSpawnPoints);
+	PlayerBallSpawns = PlayerSpawnPoints;
 	SpawnPlayerBalls(PlayerSpawnPoints);
+
+	// Rounds
+	InitRoundsSubsystem();
+
+	// Launch game
+	BeginGame();
 }
 
 void AMatchPinballGameMode::FindPlayerBallSpawnInWorld(TArray<APlayerBallSpawn*>& ResultsActors)
@@ -63,6 +72,83 @@ void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> Spa
 	}
 }
 
+void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APlayerBallSpawn*> SpawnPoints, int PlayerSpecial)
+{
+	int PlayerCount = 0;
+	
+	bool bHasUsedSpecial = false;
+
+	for (APlayerBall* PlayerBall : PlayersBallInsideArena)
+	{
+		if (PlayerBall == nullptr)	continue;
+
+		PlayerBall->SetActorHiddenInGame(true);
+	}
+	
+	for (APlayerBallSpawn* SpawnPoint : SpawnPoints)
+	{
+		if (PlayerCount == PlayerSpecial)
+		{
+			PlayerCount++;
+		}
+		
+		if (SpawnPoint == nullptr)	continue;
+
+		if (SpawnPoint->ActorHasTag(TEXT("SpecialSpawn")) && !bHasUsedSpecial)
+		{
+			if (PlayersBallInsideArena.Num() > PlayerSpecial)
+			{
+				bHasUsedSpecial = true;
+				PlayersBallInsideArena[PlayerSpecial]->SetActorLocation(SpawnPoint->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
+
+				if (PlayersBallInsideArena[PlayerSpecial]->BehaviorMovements != nullptr)
+				{
+					PlayersBallInsideArena[PlayerSpecial]->BehaviorMovements->SpecialSpawnForceDir = SpawnPoint->GetSpawnSpecialForceDiretion();
+				}
+			}
+			else
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Warning : Player special spawn too high");
+			}
+		}
+		else
+		{
+			if (PlayersBallInsideArena.Num() > PlayerCount)
+			{
+				PlayersBallInsideArena[PlayerCount]->SetActorLocation(SpawnPoint->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
+				
+				PlayerCount++;
+			}
+		}
+
+	}
+	if (!bHasUsedSpecial)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Orange, "Warning : No SpecialSpawn set, spawn might have bugging behaviors !");
+
+		if (PlayersBallInsideArena.Num() > PlayerSpecial && SpawnPoints.Num() > 0)
+		{
+			PlayersBallInsideArena[PlayerSpecial]->SetActorLocation(SpawnPoints[SpawnPoints.Num()-1]->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
+			//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Spawn actor : %d"), PlayerSpecial));
+			//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoints[SpawnPoints.Num()-1]->GetName()));
+		}
+	}
+
+	for (APlayerBall* PlayerBall : PlayersBallInsideArena)
+	{
+		if (PlayerBall == nullptr)	continue;
+
+		PlayerBall->SetActorHiddenInGame(false);
+	}
+}
+
+void AMatchPinballGameMode::SetNewLocationStartPlayerBallsSpecial(int PlayerSpecial)
+{
+	if (PlayerSpecial < 0)	return;
+	
+	SetLocationStartPlayerBallsSpecial(PlayerBallSpawns, PlayerSpecial);
+}
+
 TSubclassOf<APlayerBall> AMatchPinballGameMode::GetPlayerBallClassFromInputType(
 	EAutoReceiveInput::Type InputType) const
 {
@@ -95,4 +181,36 @@ void AMatchPinballGameMode::CreateAndInitPlayers() const
 	if (LocalMultiplayerSubsystem == nullptr) return;
 
 	LocalMultiplayerSubsystem->CreateAndInitPlayers(ELocalMultiplayerInputMappingType::InGame);
+}
+
+void AMatchPinballGameMode::BeginGame()
+{
+	OnBeginGameMatch.Broadcast();
+}
+
+void AMatchPinballGameMode::EndGame()
+{
+	OnEndGameMatch.Broadcast();
+}
+
+void AMatchPinballGameMode::InitRoundsSubsystem()
+{
+	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+	if (RoundsSubsystem == nullptr) return;
+
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Get Round subsystem");
+	
+	RoundsSubsystem->InitRoundSubsystem();
+}
+
+void AMatchPinballGameMode::MatchWin(int InWinPlayerIndex)
+{
+	if (InWinPlayerIndex < 0)	return;
+
+	WinPlayerIndex = InWinPlayerIndex;
+
+	OnMatchWin.Broadcast(WinPlayerIndex);
+
+	EndGame();
 }

@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallController.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
 
 
@@ -29,12 +30,21 @@ void UPlayerBallBehaviorMovements::TickComponent(float DeltaTime, ELevelTick Tic
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+
+	HandleRollBoostDuration(DeltaTime);
 }
 
 void UPlayerBallBehaviorMovements::InitBehavior()
 {
 	Super::InitBehavior();
-	
+
+	if (GetPlayerBall() != nullptr)
+	{
+		if (GetPlayerBall()->BehaviorElementReactions != nullptr)
+		{
+			GetPlayerBall()->BehaviorElementReactions->OnBoostPadReaction.AddDynamic(this, &UPlayerBallBehaviorMovements::ReceiveRollBoost);
+		}
+	}
 }
 
 void UPlayerBallBehaviorMovements::BindBehaviorEventAction(APlayerBallController* InPlayerBallController)
@@ -42,9 +52,21 @@ void UPlayerBallBehaviorMovements::BindBehaviorEventAction(APlayerBallController
 	Super::BindBehaviorEventAction(InPlayerBallController);
 
 	if (GetPlayerBallController() == nullptr)	return;
-	
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, "Bind");
 	GetPlayerBallController()->OnPlayerMoveXInput.AddDynamic(this, &UPlayerBallBehaviorMovements::MoveXAction);
 	GetPlayerBallController()->OnPlayerMoveYInput.AddDynamic(this, &UPlayerBallBehaviorMovements::MoveYAction);
+}
+
+void UPlayerBallBehaviorMovements::UnbindBehaviorEventAction(APlayerBallController* InPlayerBallController)
+{
+	Super::UnbindBehaviorEventAction(InPlayerBallController);
+
+	if (GetPlayerBallController() == nullptr)	return;
+	
+	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, "UnBind");
+	GetPlayerBallController()->OnPlayerMoveXInput.RemoveDynamic(this, &UPlayerBallBehaviorMovements::MoveXAction);
+	GetPlayerBallController()->OnPlayerMoveYInput.RemoveDynamic(this, &UPlayerBallBehaviorMovements::MoveYAction);
 }
 
 void UPlayerBallBehaviorMovements::SetupData()
@@ -57,6 +79,10 @@ void UPlayerBallBehaviorMovements::SetupData()
 	
 	AngularRollForce = GetPlayerBall()->GetPlayerBallData()->AngularRollForce;
 	BraqueDirectionForceMultiplier = GetPlayerBall()->GetPlayerBallData()->BraqueDirectionForceMultiplier;
+
+	RollBoostForce = GetPlayerBall()->GetPlayerBallData()->RollBoostForce;
+	TotalRollBoostDuration = GetPlayerBall()->GetPlayerBallData()->TotalRollBoostDuration;
+
 	
 	GetPlayerBall()->SphereCollision->SetAngularDamping(GetPlayerBall()->GetPlayerBallData()->AngularRollDamping);
 	GetPlayerBall()->SphereCollision->SetPhysicsMaxAngularVelocityInDegrees(GetPlayerBall()->GetPlayerBallData()->MaxAngularRollVelocity);
@@ -72,6 +98,31 @@ void UPlayerBallBehaviorMovements::MoveYAction(float YValue)
 	MoveYValue = YValue;
 }
 
+void UPlayerBallBehaviorMovements::ReceiveRollBoost(float InBoostValue)
+{
+	CurrentRollDuration = 0.f;
+	bUseBoostRollForce = true;
+}
+
+void UPlayerBallBehaviorMovements::StopRollBoost()
+{
+	bUseBoostRollForce = false;
+}
+
+
+void UPlayerBallBehaviorMovements::HandleRollBoostDuration(float DeltaTime)
+{
+	if (!bUseBoostRollForce)	return;
+
+	if (CurrentRollDuration >= TotalRollBoostDuration)
+	{
+		StopRollBoost();
+	}
+	else
+	{
+		CurrentRollDuration += DeltaTime;
+	}
+}
 
 bool UPlayerBallBehaviorMovements::IsGrounded()
 {
@@ -98,5 +149,15 @@ bool UPlayerBallBehaviorMovements::IsGrounded()
 	//DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f, 0, 1.0f);
 
 	return bHit;
+}
+
+float UPlayerBallBehaviorMovements::GetContextRollForce()
+{
+	if (bUseBoostRollForce)
+	{
+		return RollBoostForce;
+	}
+
+	return AngularRollForce;
 }
 

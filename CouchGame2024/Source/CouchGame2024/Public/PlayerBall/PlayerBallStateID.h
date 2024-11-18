@@ -23,6 +23,11 @@ enum class EPlayerBallStateID : uint8
 	Grappling,
 	Grappled,
 	Snapping,
-	Heavy,
-	Strength,
+	Locked,
+	Death,
+	Respawn,
+	Rail,
+	PowerUpHub,
+	Freeze,
+	Strength
 };

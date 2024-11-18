@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Event.h"
 #include "GameFramework/Actor.h"
+#include "Rounds/RoundsPhasesID.h"
+#include "Rounds/RoundsResetable.h"
 #include "EventsManager.generated.h"
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -49,7 +51,7 @@ struct FLevelEventEntry
 };
 
 UCLASS(Blueprintable)
-class COUCHGAME2024_API AEventsManager : public AActor
+class COUCHGAME2024_API AEventsManager : public AActor, public IRoundsResetable
 {
 	GENERATED_BODY()
 
@@ -68,6 +70,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+
+	UFUNCTION()
+	void BindCountdownToRoundsPhase();
+	
+	UFUNCTION()
+	void CheckStartCountdown(ERoundsPhaseID InRoundsPhaseID);
+	
 	UFUNCTION(BlueprintCallable, CallInEditor, Category = "Events")
 	void StartGame();
 
@@ -92,4 +101,17 @@ private:
 	void CheckProbabilities();
 
 	bool IsGameStarted = false;
+
+
+#pragma region Resetable
+
+public:
+	virtual void InitResetable() override;
+	
+	virtual bool IsResetable() override;
+
+	virtual void ResetObject() override;
+
+
+#pragma endregion 
 };

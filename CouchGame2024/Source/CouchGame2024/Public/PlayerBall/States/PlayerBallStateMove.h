@@ -58,4 +58,13 @@ private:
 
 	UFUNCTION()
 	void OnSnapped(float InSnapValue);
+
+	UFUNCTION()
+	void OnDeath(float DeathValue);
+
+	UFUNCTION()
+	void OnRail(float RailDirectionValue);
+
+	UFUNCTION()
+	void OnUsePowerUp(float InPowerUpId);
 };

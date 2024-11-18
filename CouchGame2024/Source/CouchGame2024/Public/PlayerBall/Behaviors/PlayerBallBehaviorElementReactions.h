@@ -7,6 +7,7 @@
 #include "PlayerBallBehaviorElementReactions.generated.h"
 
 
+class ARailElement;
 class APinballElement;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -29,12 +30,18 @@ public:
 
 	virtual void BindBehaviorEventAction(APlayerBallController* InPlayerBallController) override;
 
+	virtual void UnbindBehaviorEventAction(APlayerBallController* InPlayerBallController) override;
+	
 	virtual void SetupData() override;
 
 
 	
 	UFUNCTION()
 	void OnCollisionHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	
+	UFUNCTION()
+	void OnCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                             const FHitResult& SweepResult);
 	
 	UFUNCTION()
 	void OnAttractionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
@@ -58,7 +65,7 @@ public:
 
 #pragma	endregion
 
-	
+#pragma region Impact
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnImpactAction, float, ImpactValue);
 	
@@ -111,7 +118,9 @@ public:
 #pragma region Reaction Pinball Elements
 
 public:
+	UPROPERTY()
 	TObjectPtr<APinballElement> HitPinballElement;
+
 	
 #pragma region Bumper Reaction
 public:
@@ -134,5 +143,47 @@ private:
 
 #pragma endregion
 
-#pragma endregion 
+#pragma region Death Zones reaction
+
+private:
+	UFUNCTION()
+	void ReceiveDeathReaction();
+
+#pragma endregion
+
+#pragma region Rail Reactions
+
+public:
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRailReaction, float, ReactionValue);
+
+	FOnRailReaction OnRailReaction;
+	
+	UPROPERTY()
+	TObjectPtr<ARailElement> CurrentRailElement;
+
+	UFUNCTION()
+	void ReceiveRailReaction(APinballElement* PinballRailElement, float DirectionValue);
+
+	bool CheckRightDirectionForRail(ARailElement* InRailElement, float InEntryDirection);
+	
+	
+#pragma endregion
+
+#pragma region BoostPadReactions
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBoostPadReaction, float, BoostPadValue);
+
+	FOnBoostPadReaction OnBoostPadReaction;
+	
+private:
+	UFUNCTION()
+	void ReceiveBoostPadReaction();
+
+
+#pragma endregion
+	
+#pragma endregion
+	
 };

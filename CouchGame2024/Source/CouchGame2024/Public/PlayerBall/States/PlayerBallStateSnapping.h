@@ -56,4 +56,13 @@ private:
 
 	UFUNCTION()
 	void OnGrappled(float InGrappledValue);
+
+	UFUNCTION()
+	void OnDeath(float DeathValue);
+
+	UFUNCTION()
+	void OnRail(float RailDirectionValue);
+
+	UFUNCTION()
+	void OnUsePowerUp(float InPowerUpId);
 };

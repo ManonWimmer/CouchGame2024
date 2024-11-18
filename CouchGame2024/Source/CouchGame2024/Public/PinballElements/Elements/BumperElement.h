@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GrapplingHook/Hookable.h"
 #include "PinballElements/PinballElement.h"
 #include "BumperElement.generated.h"
 
 UCLASS()
-class COUCHGAME2024_API ABumperElement : public APinballElement
+class COUCHGAME2024_API ABumperElement : public APinballElement, public IHookable
 {
 	GENERATED_BODY()
 
@@ -31,4 +32,13 @@ private:
 
 	UFUNCTION()
 	void BumpEffect();
+
+#pragma region Grappling Interface
+public:
+	virtual FVector GetHookPosition() override;
+
+	virtual bool IsHookable() override;
+
+	virtual bool IsPillar() override;
+#pragma endregion 
 };

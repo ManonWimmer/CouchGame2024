@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PlayerBall/PlayerBallState.h"
+#include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBallStateStun.generated.h"
 
 
@@ -34,7 +35,9 @@ private:
 	UPROPERTY()
 	float CurrentStunRemaining = 0.f;
 
-
+	UFUNCTION()
+	void FreezeStunVariant();
+	
 	UFUNCTION()
 	void DecreaseCooldownStun(float DeltaTime);
 
@@ -50,4 +53,11 @@ private:
 
 	UFUNCTION()
 	void OnGrappled(float GrappledValue);
+
+	UFUNCTION()
+	void OnDeath(float DeathValue);
+
+	UFUNCTION()
+	void OnRail(float RailDirectionValue);
 };
+

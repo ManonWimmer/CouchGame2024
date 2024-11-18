@@ -10,6 +10,7 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
 
 
@@ -33,12 +34,14 @@ void UPlayerBallStateSnapping::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("PlayerState : Snapping"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("PlayerState : Snapping"));
 
 	UE_LOG(LogTemp, Warning, TEXT("Enter PlayerState : Snapping") );
 	
 	if (Pawn != nullptr)
 	{
+		Pawn->OnDeathReaction.AddDynamic(this, &UPlayerBallStateSnapping::OnDeath);
+
 		if (Pawn->BehaviorGrapple != nullptr)
 		{
 			Pawn->BehaviorGrapple->CanGrappling = true;
@@ -50,6 +53,11 @@ void UPlayerBallStateSnapping::StateEnter(EPlayerBallStateID PreviousState)
 		
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateSnapping::OnPunch);
 
+
+		if (Pawn->BehaviorPowerUp != nullptr)
+		{
+			Pawn->BehaviorPowerUp->OnUsePowerUpAction.AddDynamic(this, &UPlayerBallStateSnapping::OnUsePowerUp);
+		}
 		
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
@@ -58,6 +66,7 @@ void UPlayerBallStateSnapping::StateEnter(EPlayerBallStateID PreviousState)
 			Pawn->BehaviorElementReactions->OnImpactAction.AddDynamic(this, &UPlayerBallStateSnapping::OnImpacted);
 			Pawn->BehaviorElementReactions->OnBumperReaction.AddDynamic(this, &UPlayerBallStateSnapping::OnBumped);
 
+			Pawn->BehaviorElementReactions->OnRailReaction.AddDynamic(this, &UPlayerBallStateSnapping::OnRail);
 			
 			if (Pawn->BehaviorElementReactions->SnappingPlayerBall == nullptr)
 			{
@@ -73,6 +82,7 @@ void UPlayerBallStateSnapping::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
 	{
+		Pawn->OnDeathReaction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnDeath);
 		
 		Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnPunch);
 
@@ -82,6 +92,11 @@ void UPlayerBallStateSnapping::StateExit(EPlayerBallStateID NextState)
 			Pawn->BehaviorGrapple->OnGrappledActionStarted.RemoveDynamic(this, &UPlayerBallStateSnapping::OnGrappled);
 		}
 
+		if (Pawn->BehaviorPowerUp != nullptr)
+		{
+			Pawn->BehaviorPowerUp->OnUsePowerUpAction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnUsePowerUp);
+		}
+
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnEndSnapping);
@@ -89,6 +104,7 @@ void UPlayerBallStateSnapping::StateExit(EPlayerBallStateID NextState)
 			Pawn->BehaviorElementReactions->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnImpacted);
 			Pawn->BehaviorElementReactions->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnBumped);
 
+			Pawn->BehaviorElementReactions->OnRailReaction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnRail);
 
 			Pawn->BehaviorElementReactions->SnappingPlayerBall = nullptr;
 		}
@@ -137,7 +153,7 @@ void UPlayerBallStateSnapping::Move(float DeltaTime)
 		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
 
-	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->BehaviorMovements->AngularRollForce / Pawn->GetPlayerBallData()->SnapControlMoveRollDivider), NAME_None, true);
+	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->BehaviorMovements->GetContextRollForce() / Pawn->GetPlayerBallData()->SnapControlMoveRollDivider), NAME_None, true);
 }
 
 void UPlayerBallStateSnapping::SnappingEffect(float DeltaTime)
@@ -145,6 +161,8 @@ void UPlayerBallStateSnapping::SnappingEffect(float DeltaTime)
 	if (Pawn->BehaviorElementReactions == nullptr)	return;
 	
 	if (Pawn->BehaviorElementReactions->SnappingPlayerBall == nullptr)	return;
+
+	if (Pawn->IsLocked())	return;
 	
 	FVector Start = Pawn->GetActorLocation();
 	FVector End = Pawn->BehaviorElementReactions->SnappingPlayerBall->GetActorLocation();
@@ -212,4 +230,25 @@ void UPlayerBallStateSnapping::OnGrappled(float InGrappledValue)
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Grappled);
+}
+
+void UPlayerBallStateSnapping::OnDeath(float DeathValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Death);
+}
+
+void UPlayerBallStateSnapping::OnRail(float RailDirectionValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Rail, RailDirectionValue);
+}
+
+void UPlayerBallStateSnapping::OnUsePowerUp(float InPowerUpId)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::PowerUpHub, InPowerUpId);
 }

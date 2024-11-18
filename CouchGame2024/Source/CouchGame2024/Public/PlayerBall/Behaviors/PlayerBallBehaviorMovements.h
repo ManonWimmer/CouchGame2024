@@ -26,6 +26,8 @@ public:
 
 	virtual void BindBehaviorEventAction(APlayerBallController* InPlayerBallController) override;
 
+	virtual void UnbindBehaviorEventAction(APlayerBallController* InPlayerBallController) override;
+
 	virtual void SetupData() override;
 
 private:
@@ -35,6 +37,13 @@ private:
 	UFUNCTION()	
 	void MoveYAction(float YValue);
 
+	UFUNCTION()
+	void ReceiveRollBoost(float InBoostValue);
+
+	void StopRollBoost();
+	
+	void HandleRollBoostDuration(float DeltaTime);
+	
 public:
 
 	UFUNCTION(BlueprintCallable)
@@ -45,9 +54,24 @@ public:
 	UPROPERTY()
 	float MoveYValue = 0.f;
 
+	UFUNCTION()
+	float GetContextRollForce();
+	
 	// roll Datas
 	UPROPERTY()
 	float AngularRollForce = 2000.f;
 	UPROPERTY()
 	float BraqueDirectionForceMultiplier = 1.f;
+
+	bool bUseBoostRollForce = false;
+	
+	float RollBoostForce = 30000.f;
+
+	FVector SpecialSpawnForceDir;
+
+
+private:
+	float CurrentRollDuration = 0.f;
+
+	float TotalRollBoostDuration = 0.f;
 };

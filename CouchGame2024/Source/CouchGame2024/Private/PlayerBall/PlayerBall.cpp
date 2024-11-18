@@ -9,12 +9,14 @@
 #include "CouchGame2024/Public/PlayerBall/PlayerBallController.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/WidgetComponent.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
+#include "Rounds/RoundsSubsystem.h"
 
 
 // Sets default values
@@ -28,10 +30,15 @@ APlayerBall::APlayerBall()
 	SphereMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereComponent"));
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
 	AttractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AttractionSphere"));
+
+	StartForceEffectWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("StartForceEffectWidget"));
 	
 	RootComponent = SphereCollision;
 	SphereMesh->SetupAttachment(SphereCollision);
 	AttractionSphere->SetupAttachment(SphereCollision);
+
+	StartForceEffectWidget->SetupAttachment(SphereCollision);
+	
 
 	BehaviorMovements = CreateDefaultSubobject<UPlayerBallBehaviorMovements>(TEXT("BehaviorMovement"));
 	BehaviorGrapple = CreateDefaultSubobject<UPlayerBallBehaviorGrapple>(TEXT("BehaviorGrapple"));
@@ -54,7 +61,6 @@ APlayerBall::APlayerBall()
 void APlayerBall::BeginPlay()
 {
 	Super::BeginPlay();
-
 	
 	CreateStateMachine();
 	InitStateMachine();
@@ -62,6 +68,11 @@ void APlayerBall::BeginPlay()
 	InitPlayerBallBehaviors();
 	
 	SetupData();
+
+	InitResetable();
+	InitLockableInput();
+
+	StartForceEffectWidget->SetHiddenInGame(true);
 }
 
 // Called every frame
@@ -95,16 +106,6 @@ void APlayerBall::SetupData() // Get all data and set them
 	if (SphereCollision == nullptr)
 		return;
 
-#pragma region FallData (Obsolete)
-	/*
-	// Fall Obsolete
-	PawnMovement->Acceleration = PlayerBallData->AirControlSideAcceleration;
-	PawnMovement->MaxSpeed = PlayerBallData->AirControlSideMaxSpeed;
-	PawnMovement->Deceleration = PlayerBallData->AirControlSideDeceleration;
-	SlowFallForce = PlayerBallData->SlowFallForce;
-	AccelerateFallForce = PlayerBallData->AccelerateFallForce;
-	*/
-#pragma endregion 
 
 	// Punch
 	PunchCooldown = PlayerBallData->PunchCooldown;
@@ -119,11 +120,21 @@ void APlayerBall::SetupData() // Get all data and set them
 	{
 		AttractionSphere->SetSphereRadius(PlayerBallData->SnapTriggerRadius);
 	}
+
+
+	// Respawn
+	DeathDurationBeforeRespawn = PlayerBallData->DeathDurationBeforeRespawn;
+	
 }
 
 TObjectPtr<UPlayerBallData> APlayerBall::GetPlayerBallData() const
 {
 	return PlayerBallData;
+}
+
+TObjectPtr<UPlayerPowerUpData> APlayerBall::GetPlayerPowerUpData() const
+{
+	return PlayerPowerUpData;
 }
 
 
@@ -210,3 +221,142 @@ void APlayerBall::HandlePunchCooldown(float DeltaTime)
 		bCanPunch = true;
 	}
 }
+
+void APlayerBall::InitResetable()
+{
+	if (!GetWorld())	return;
+
+	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+	if (RoundsSubsystem == nullptr)	return;
+
+	RoundsSubsystem->AddResetableObject(this);
+}
+
+bool APlayerBall::IsResetable()
+{
+	return true;
+}
+
+void APlayerBall::ResetObject()
+{
+	ResetState();
+	ResetMovement();
+	ResetGrapple();
+	ResetCooldown();
+	ResetPosition();
+}
+
+void APlayerBall::ResetState()
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Idle);
+}
+
+void APlayerBall::ResetMovement()
+{
+	this->GetVelocity() = FVector::ZeroVector;
+	
+	if (SphereCollision != nullptr)
+	{
+		SphereCollision->SetPhysicsLinearVelocity(FVector::ZeroVector);
+		SphereCollision->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector, false);
+		SphereCollision->SetWorldRotation(FRotator::ZeroRotator);
+		SphereCollision->ComponentVelocity = FVector::ZeroVector;
+		PawnMovement->Velocity = FVector::ZeroVector;
+	}
+}
+
+void APlayerBall::ResetGrapple()
+{
+	BehaviorGrapple->ResetGrapplingCooldown();
+}
+
+void APlayerBall::ResetCooldown()
+{
+	CurrentPunchCooldown = 0.f;
+	bCanPunch = true;
+}
+
+void APlayerBall::ResetPosition()
+{
+	
+}
+
+void APlayerBall::InitLockableInput()
+{
+	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+	if (RoundsSubsystem == nullptr)	return;
+
+	RoundsSubsystem->AddLockableInput(this);
+}
+
+bool APlayerBall::IsLockableInput()
+{
+	return true;
+}
+
+void APlayerBall::LockInput()
+{
+	
+	bIsLocked = true;
+
+	if (StateMachine == nullptr)	return;
+
+	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Purple, TEXT("Lock player"));
+	
+	StateMachine->ChangeState(EPlayerBallStateID::Locked, 0.f);
+}
+
+void APlayerBall::UnlockInput()
+{
+	if (StateMachine == nullptr)	return;
+	
+	bIsLocked = false;
+	bIsLockedButSpecial = false;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Idle);
+}
+
+void APlayerBall::LockButOnlySpecialInput()
+{
+	if (StateMachine == nullptr)	return;
+	
+	bIsLocked = true;
+	bIsLockedButSpecial = true;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Locked, 1.f);
+}
+
+int APlayerBall::GetLockableInputIndex()
+{
+	return PlayerIndex;
+}
+
+bool APlayerBall::IsLocked()
+{
+	return bIsLocked;
+}
+
+void APlayerBall::Kill()
+{
+	if (bIsDead)	return;
+	
+	OnDeathReaction.Broadcast(1.f);
+}
+
+void APlayerBall::TestCallRespawn()
+{
+	Respawn();
+}
+
+void APlayerBall::Respawn()
+{
+	if (!bIsDead)	return;
+	
+	OnRespawnAction.Broadcast(1.f);
+}
+
+

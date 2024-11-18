@@ -6,15 +6,21 @@
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallState.h"
 #include "PlayerBall/States/PlayerBallStateBumped.h"
+#include "PlayerBall/States/PlayerBallStateDeath.h"
 #include "PlayerBall/States/PlayerBallStateFall.h"
 #include "PlayerBall/States/PlayerBallStateGrappled.h"
 #include "PlayerBall/States/PlayerBallStateGrappling.h"
 #include "PlayerBall/States/PlayerBallStateIdle.h"
 #include "PlayerBall/States/PlayerBallStateImpact.h"
+#include "PlayerBall/States/PlayerBallStateLocked.h"
 #include "PlayerBall/States/PlayerBallStateMove.h"
+#include "PlayerBall/States/PlayerBallStatePowerUpHub.h"
 #include "PlayerBall/States/PlayerBallStatePunch.h"
+#include "PlayerBall/States/PlayerBallStateRail.h"
+#include "PlayerBall/States/PlayerBallStateRespawn.h"
 #include "PlayerBall/States/PlayerBallStateSnapping.h"
 #include "PlayerBall/States/PlayerBallStateStun.h"
+#include "PlayerBall/States/PowerUpSubStates/PlayerBallPowerUpSubStateFreeze.h"
 
 void UPlayerBallStateMachine::Init(APlayerBall* InPawn)
 {
@@ -26,6 +32,7 @@ void UPlayerBallStateMachine::Init(APlayerBall* InPawn)
 
 	InitStates();
 
+	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Purple, TEXT("Idle set"));
 	ChangeState(EPlayerBallStateID::Idle);
 }
 
@@ -130,7 +137,24 @@ void UPlayerBallStateMachine::CreateStateByID(EPlayerBallStateID InStateID)
 		case EPlayerBallStateID::Snapping:
 			OutState = NewObject<UPlayerBallStateSnapping>(this);
 			break;
-
+		case EPlayerBallStateID::Locked:
+			OutState = NewObject<UPlayerBallStateLocked>(this);
+			break;
+		case EPlayerBallStateID::Death:
+			OutState = NewObject<UPlayerBallStateDeath>(this);
+			break;
+		case EPlayerBallStateID::Respawn:
+			OutState = NewObject<UPlayerBallStateRespawn>(this);
+			break;
+		case EPlayerBallStateID::Rail:
+			OutState = NewObject<UPlayerBallStateRail>(this);
+			break;
+		case EPlayerBallStateID::PowerUpHub:
+			OutState = NewObject<UPlayerBallStatePowerUpHub>(this);
+			break;
+		case EPlayerBallStateID::Freeze:
+			OutState = NewObject<UPlayerBallPowerUpSubStateFreeze>(this);
+			break;
 		default:
 			break;
 	}

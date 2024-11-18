@@ -28,6 +28,11 @@ public:
 
 	virtual void BindBehaviorEventAction(APlayerBallController* InPlayerBallController) override;
 
+	virtual void UnbindBehaviorEventAction(APlayerBallController* InPlayerBallController) override;
+
+	virtual void SetupData() override;
+
+
 	
 #pragma region PowerUp
 
@@ -45,10 +50,27 @@ public:
 	
 	UFUNCTION()
 	void UsePowerUpCarried();
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUsePowerUpAction, float, PowerUpValueId);
+
+	FOnUsePowerUpAction OnUsePowerUpAction;
+	
 	
 private:
 	UPROPERTY(VisibleAnywhere)
 	EPowerUpID CurrentPowerUpCarried;
 	
-#pragma endregion 
+#pragma endregion
+
+
+
+#pragma region FreezePowerUp
+
+public:
+	float FreezeRange = 40.f;
+
+	float FreezeDuration = 3.f;
+	
+
+#pragma endregion
 };
