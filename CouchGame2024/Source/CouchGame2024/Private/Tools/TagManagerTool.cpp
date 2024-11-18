@@ -10,11 +10,6 @@
 // Sets default values
 UATagManagerTool::UATagManagerTool()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-
-
-	// Initialisation des tags par défaut
-	AvailableTags = { "Minigame1", "Minigame2", "Minigame3" };
 }
 
 // Called when the game starts or when spawned
@@ -24,20 +19,27 @@ UATagManagerTool::UATagManagerTool()
 
 void UATagManagerTool::AssignTag(FName TagName)
 {
+	for (FName Tag : AvailableTags)
+	{
+		if (Tag != TagName)
+		{
+			RemoveTag(Tag);
+		}
+	}
 	
 	if (GEditor)
 	{
-		// Obtenir les acteurs sélectionnés dans l'éditeur
+		// Get selected actors in editor
 		TArray<AActor*> SelectedActors;
 		GEditor->GetSelectedActors()->GetSelectedObjects<AActor>(SelectedActors);
 
-		// Assigner le tag à chaque acteur
+		// Add tag to each actor
 		for (AActor* Actor : SelectedActors)
 		{
 			if (Actor && !Actor->Tags.Contains(TagName))
 			{
 				Actor->Tags.Add(TagName);
-				UE_LOG(LogTemp, Log, TEXT("Tag '%s' assigné à %s"), *TagName.ToString(), *Actor->GetName());
+				UE_LOG(LogTemp, Log, TEXT("Tag '%s' added to %s"), *TagName.ToString(), *Actor->GetName());
 			}
 		}
 	}
@@ -47,17 +49,17 @@ void UATagManagerTool::RemoveTag(FName TagName)
 {
 	if (GEditor)
 	{
-		// Obtenir les acteurs sélectionnés dans l'éditeur
+		// Get selected actors in editor
 		TArray<AActor*> SelectedActors;
 		GEditor->GetSelectedActors()->GetSelectedObjects<AActor>(SelectedActors);
 
-		// Assigner le tag à chaque acteur
+		// Remove tag from each actor
 		for (AActor* Actor : SelectedActors)
 		{
 			if (Actor && Actor->Tags.Contains(TagName))
 			{
 				Actor->Tags.Remove(TagName);
-				UE_LOG(LogTemp, Log, TEXT("Tag '%s' retiré à %s"), *TagName.ToString(), *Actor->GetName());
+				UE_LOG(LogTemp, Log, TEXT("Tag '%s' removed from %s"), *TagName.ToString(), *Actor->GetName());
 			}
 		}
 	}
@@ -65,13 +67,15 @@ void UATagManagerTool::RemoveTag(FName TagName)
 
 void UATagManagerTool::ShowObjectsWithTag(FName TagName)
 {
+	HideOtherTags(TagName);
+	
 	TArray<AActor*> Actors = GetActorsWithTag(TagName);
 	for (AActor* Actor : Actors)
 	{
 		if (Actor)
 		{
-			Actor->SetActorHiddenInGame(false);
-			UE_LOG(LogTemp, Log, TEXT("%s est maintenant visible."), *Actor->GetName());
+			Actor->SetIsTemporarilyHiddenInEditor(false);
+			UE_LOG(LogTemp, Log, TEXT("%s set visible to true."), *Actor->GetName());
 		}
 	}
 }
@@ -83,8 +87,57 @@ void UATagManagerTool::HideObjectsWithTag(FName TagName)
 	{
 		if (Actor)
 		{
-			Actor->SetActorHiddenInGame(true);
-			UE_LOG(LogTemp, Log, TEXT("%s est maintenant caché."), *Actor->GetName());
+			Actor->SetIsTemporarilyHiddenInEditor(true);
+			UE_LOG(LogTemp, Log, TEXT("%s set visible to false."), *Actor->GetName());
+		}
+	}
+}
+
+void UATagManagerTool::HideOtherTags(FName TagName)
+{
+	for (FName Tag : AvailableTags)
+	{
+		if (Tag != TagName && Tag != "Constant")
+		{
+			HideObjectsWithTag(Tag);
+		}
+	}
+}
+
+void UATagManagerTool::SetMissingTagsToConstant()
+{
+	for (TActorIterator<AActor> It(GetWorld()); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (Actor && HasTagInList(Actor) == "")
+		{
+			Actor->Tags.Add("Constant");
+			UE_LOG(LogTemp, Log, TEXT("%s missing tag, add constant."), *Actor->GetName());
+		}
+	}
+}
+
+void UATagManagerTool::ShowAll()
+{
+	for (TActorIterator<AActor> It(GetWorld()); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (Actor)
+		{
+			Actor->SetIsTemporarilyHiddenInEditor(false);
+		}
+	}
+}
+
+
+void UATagManagerTool::RemoveAllTags()
+{
+	for (TActorIterator<AActor> It(GetWorld()); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (Actor && HasTagInList(Actor) != "")
+		{
+			Actor->Tags.Remove(HasTagInList(Actor));
 		}
 	}
 }
@@ -92,8 +145,7 @@ void UATagManagerTool::HideObjectsWithTag(FName TagName)
 TArray<AActor*> UATagManagerTool::GetActorsWithTag(FName TagName)
 {
 	TArray<AActor*> TaggedActors;
-
-	// Parcourir tous les acteurs dans le niveau
+	
 	for (TActorIterator<AActor> It(GetWorld()); It; ++It)
 	{
 		AActor* Actor = *It;
@@ -104,5 +156,21 @@ TArray<AActor*> UATagManagerTool::GetActorsWithTag(FName TagName)
 	}
 
 	return TaggedActors;
+}
+
+FName UATagManagerTool::HasTagInList(AActor* Actor)
+{
+	if (!Actor) return "";
+
+	// Iterate over the tag list
+	for (FName Tag : AvailableTags)
+	{
+		if (Actor->ActorHasTag(Tag))
+		{
+			return Tag; // Found a matching tag
+		}
+	}
+
+	return ""; // No matching tag found
 }
 

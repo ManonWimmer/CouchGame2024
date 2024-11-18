@@ -17,30 +17,38 @@ public:
 	UATagManagerTool();
 
 public:
-
-
-	// Liste des tags disponibles
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tags")
 	TArray<FName> AvailableTags;
-
-	// Assigner un tag
+	
 	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Tag Manager")
 	void AssignTag(FName TagName);
 
 	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Tag Manager")
 	void RemoveTag(FName TagName);
-
-	// Afficher les objets avec un tag
+	
 	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Tag Manager")
 	void ShowObjectsWithTag(FName TagName);
-
-	// Cacher les objets avec un tag
+	
 	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Tag Manager")
 	void HideObjectsWithTag(FName TagName);
+
+	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Tag Manager")
+	void HideOtherTags(FName TagName);
+
+	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Tag Manager")
+	void SetMissingTagsToConstant();
+	
+	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Tag Manager")
+	void ShowAll();
+
+	UFUNCTION(CallInEditor, BlueprintCallable, Category = "Tag Manager")
+	void RemoveAllTags();
 
 private:
 	// Trouve tous les acteurs dans le niveau avec un tag donné
 	TArray<AActor*> GetActorsWithTag(FName TagName);
+
+	FName HasTagInList(AActor* Actor);
 
 
 
