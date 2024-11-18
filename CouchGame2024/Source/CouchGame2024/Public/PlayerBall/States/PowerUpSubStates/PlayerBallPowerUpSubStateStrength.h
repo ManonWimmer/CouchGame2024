@@ -26,4 +26,10 @@ public:
 	virtual void StateExit(EPlayerBallStateID NextState) override;
 
 	virtual void StateTick(float DeltaTime) override;
+
+
+private:
+
+	void UseStrengthPowerUp();
+	
 };

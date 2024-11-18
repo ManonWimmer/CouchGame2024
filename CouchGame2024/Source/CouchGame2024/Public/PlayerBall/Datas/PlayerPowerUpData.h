@@ -25,7 +25,18 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Freeze Power Up")
 	float FreezeDuration = 3.f;
 
-#pragma endregion 
+#pragma endregion
+
+
+#pragma region Strength
+
+	UPROPERTY(EditAnywhere, Category = "Strength Power Up")
+	float StrengthImpactForceDivider = 3.f;
+
+	UPROPERTY(EditAnywhere, Category = "Strength Power Up")
+	float StrengthImpactStunDurationDivider = 2.f;
+
+#pragma endregion
 
 	
 };

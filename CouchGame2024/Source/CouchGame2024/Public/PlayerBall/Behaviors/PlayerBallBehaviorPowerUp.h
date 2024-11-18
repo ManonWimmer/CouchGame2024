@@ -73,4 +73,31 @@ public:
 	
 
 #pragma endregion
+
+#pragma region StrengthPowerUp
+
+public:
+	void ActivateStrengthPowerUp();
+
+	void DesactivateStrengthPowerUp();
+	
+	void HandleStrengthDuration(float DeltaTime);
+
+	bool GetIsUsingStrengthPowerUp();
+	
+	float StrengthImpactForceDivider = 3.f;
+
+	float StrengthImpactStunDurationDivider = 2.f;
+
+private:
+	bool bUsingStrength = false;
+
+	float TotalStrengthDuration = 5.f;
+
+	float CurrentStrengthDuration = 0.f;
+
+
+
+#pragma endregion 
+	
 };

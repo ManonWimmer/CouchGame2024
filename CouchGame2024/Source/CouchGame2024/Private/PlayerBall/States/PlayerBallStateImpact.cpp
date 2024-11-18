@@ -8,6 +8,7 @@
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 
 
 // Sets default values for this component's properties
@@ -55,7 +56,17 @@ void UPlayerBallStateImpact::StateEnter(EPlayerBallStateID PreviousState)
 
 	if (Pawn->BehaviorElementReactions != nullptr)
 	{
-		StateMachine->ChangeState(EPlayerBallStateID::Stun, 2.f);	// Stun id 2.f -> ImpactStunCooldown
+		float ImpactStunDurationDivider = 1.f;
+
+		if (Pawn->BehaviorPowerUp != nullptr)
+		{
+			if (Pawn->BehaviorPowerUp->GetIsUsingStrengthPowerUp() && ImpactStunDurationDivider != 0.f)
+			{
+				ImpactStunDurationDivider = Pawn->BehaviorPowerUp->StrengthImpactStunDurationDivider;
+			}
+		}
+		
+		StateMachine->ChangeState(EPlayerBallStateID::Stun, 2.f / ImpactStunDurationDivider);	// Stun id 2.f -> ImpactStunCooldown
 	}
 	else
 	{
@@ -110,8 +121,18 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 	}
 
 	Pawn->PlayImpactEffectsBlueprint();
+
+	float ImpactForceDivider = 1.f;
 	
-	Pawn->SphereCollision->AddImpulse(Dir * TotalForce, NAME_None, false);	// impulse
+	if (Pawn->BehaviorPowerUp != nullptr)
+	{
+		if (Pawn->BehaviorPowerUp->GetIsUsingStrengthPowerUp() && Pawn->BehaviorPowerUp->StrengthImpactForceDivider != 0.f)
+		{
+			ImpactForceDivider = Pawn->BehaviorPowerUp->StrengthImpactForceDivider;
+		}
+	}
+	
+	Pawn->SphereCollision->AddImpulse(Dir * TotalForce / ImpactForceDivider, NAME_None, false);	// impulse
 }
 
 

@@ -30,7 +30,7 @@ void UPlayerBallBehaviorPowerUp::TickComponent(float DeltaTime, ELevelTick TickT
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	
+	HandleStrengthDuration(DeltaTime);
 }
 
 void UPlayerBallBehaviorPowerUp::InitBehavior()
@@ -70,6 +70,9 @@ void UPlayerBallBehaviorPowerUp::SetupData()
 		
 	FreezeRange = GetPlayerBall()->GetPlayerPowerUpData()->FreezeRange;
 	FreezeDuration = GetPlayerBall()->GetPlayerPowerUpData()->FreezeDuration;
+
+	StrengthImpactForceDivider = GetPlayerBall()->GetPlayerPowerUpData()->StrengthImpactForceDivider;
+	StrengthImpactStunDurationDivider = GetPlayerBall()->GetPlayerPowerUpData()->StrengthImpactStunDurationDivider;
 }
 
 void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -163,5 +166,37 @@ void UPlayerBallBehaviorPowerUp::UsePowerUpCarried()
 	
 	
 	CurrentPowerUpCarried = EPowerUpID::None;
+}
+
+void UPlayerBallBehaviorPowerUp::ActivateStrengthPowerUp()
+{
+	bUsingStrength = true;
+	
+	CurrentStrengthDuration = 0.f;
+}
+
+void UPlayerBallBehaviorPowerUp::DesactivateStrengthPowerUp()
+{
+	bUsingStrength = false;
+}
+
+void UPlayerBallBehaviorPowerUp::HandleStrengthDuration(float DeltaTime)
+{
+	if (!bUsingStrength)
+		return;
+
+	if (CurrentStrengthDuration >= TotalStrengthDuration)
+	{
+		DesactivateStrengthPowerUp();
+	}
+	else
+	{
+		CurrentStrengthDuration += DeltaTime;
+	}
+}
+
+bool UPlayerBallBehaviorPowerUp::GetIsUsingStrengthPowerUp()
+{
+	return bUsingStrength;
 }
 
