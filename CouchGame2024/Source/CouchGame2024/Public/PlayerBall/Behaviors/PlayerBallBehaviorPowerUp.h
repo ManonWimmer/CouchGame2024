@@ -61,7 +61,7 @@ public:
 	
 private:
 	UPROPERTY(VisibleAnywhere)
-	EPowerUpID CurrentPowerUpCarried;
+	EPowerUpID CurrentPowerUpCarried = EPowerUpID::None;
 	
 #pragma endregion
 
