@@ -9,7 +9,9 @@
 #include "Events/EventsChildren/EventMole.h"
 #include "Events/EventsChildren/EventPush.h"
 #include "Events/EventsChildren/EventZones.h"
+#include "Kismet/GameplayStatics.h"
 #include "Rounds/RoundsSubsystem.h"
+#include "UI/UIManager.h"
 
 
 // Sets default values
@@ -24,6 +26,13 @@ void AEventsManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Get UI Manager
+	UIManager = Cast<AUIManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AUIManager::StaticClass()));
+	if (UIManager == nullptr)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "MISSING UI MANAGER");
+	}
+	
 	InitResetable();
 
 	CreateEvents();
@@ -115,10 +124,13 @@ void AEventsManager::EndGame()
 		                                 TEXT("END GAME"));
 	IsGameStarted = false;
 
+	if (UIManager != nullptr && CurrentEventData != nullptr)
+		UIManager->HideWidgetForEvent(CurrentEventData->EventName);
+
 	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
 
 	if (RoundsSubsystem == nullptr) return;
-
+	
 	RoundsSubsystem->ChangeToNextRoundPhase();
 }
 
@@ -156,6 +168,10 @@ void AEventsManager::StartEvent()
 	// Setup phase 1 
 	if (AEvent* CurrentEvent = GetEventClassFromEventData(CurrentEventData))
 		CurrentEvent->SetupEventPhase1();
+
+	// Show UI
+	if (UIManager != nullptr && CurrentEventData != nullptr)
+		UIManager->ShowWidgetForEvent(CurrentEventData->EventName);
 }
 
 UEventData* AEventsManager::GetEventDataFromName(EEventName EventName)
