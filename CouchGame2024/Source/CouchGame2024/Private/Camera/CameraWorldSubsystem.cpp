@@ -32,6 +32,8 @@ void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 
 	InitCameraZoomParameters();
 
+	InitCameraShake();
+	
 	SetupData();
 }
 
@@ -48,12 +50,17 @@ void UCameraWorldSubsystem::SetupData()
 	
 	if (CameraSettings == nullptr)	return;
 	
-	UCameraData* CameraData = CameraSettings->CameraData.LoadSynchronous();
+	CameraData = CameraSettings->CameraData.LoadSynchronous();
 
 	if (CameraData == nullptr)	return;
-
+	
 	CameraSmoothSpeed = CameraData->CameraSmoothSpeed;
 
+}
+
+AActor* UCameraWorldSubsystem::GetCameraMainActor()	const
+{
+	return CameraMain->GetOwner();
 }
 
 void UCameraWorldSubsystem::AddFollowTarget(UObject* FollowTarget)
@@ -312,4 +319,31 @@ void UCameraWorldSubsystem::InitCameraZoomParameters()
 	{
 		CameraZoomZMax = CameraDistanceMax->GetOwner()->GetActorLocation().Z;
 	}
+}
+
+void UCameraWorldSubsystem::PlayPunchCameraShake()
+{
+	if (CameraShakePlayerController == nullptr)	return;
+	if (CameraShakePlayerController->PlayerCameraManager == nullptr)	return;
+
+	if (CameraData == nullptr)	return;
+	if (CameraData->CameraShakePunch == nullptr)	return;
+	
+	CameraShakePlayerController->PlayerCameraManager->StartCameraShake(CameraData->CameraShakePunch);
+}
+
+void UCameraWorldSubsystem::InitCameraShake()
+{
+	if (GetWorld() == nullptr)	return;
+	if (CameraMain == nullptr)	return;
+	if (CameraMain->GetOwner() == nullptr)	return;
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+	if (PlayerController == nullptr)	return;
+	CameraShakePlayerController = PlayerController;
+
+	CameraShakePlayerController->SetViewTarget(CameraMain->GetOwner());
+
+	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Orange, "Init camera shake");
 }

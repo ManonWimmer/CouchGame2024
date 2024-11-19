@@ -7,6 +7,7 @@
 #include "CameraWorldSubsystem.generated.h"
 
 
+class UCameraData;
 class UCameraComponent;
 /**
  * 
@@ -32,8 +33,17 @@ public:
 
 public:
 	void SetupData();
+
+private:
+	
+	UPROPERTY()
+	TObjectPtr<UCameraData> CameraData;
 	
 #pragma region MainCamera
+
+public:
+	UFUNCTION(BlueprintPure)
+	AActor* GetCameraMainActor() const;
 	
 protected:
 	UPROPERTY()
@@ -114,7 +124,26 @@ protected:
 
 #pragma endregion
 
+#pragma region Smooth
 private:
 	float CameraSmoothSpeed = 2.f;
+
+#pragma endregion
+
+#pragma region Camera Shakes
+
+public:
+
+	UFUNCTION(BlueprintCallable)
+	void PlayPunchCameraShake();
 	
+private:
+	void InitCameraShake();
+
+	UPROPERTY()
+	TObjectPtr<APlayerController> CameraShakePlayerController;
+
+
+#pragma endregion 
+
 };

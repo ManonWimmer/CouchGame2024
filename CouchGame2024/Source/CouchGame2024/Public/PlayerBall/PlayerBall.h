@@ -155,6 +155,9 @@ public:
 
 	UFUNCTION()
 	void ReceivePunchAction(float InPunchValue);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayPunchGamefeelEffects();
 	
 	UPROPERTY()
 	float PunchRadius = 50.f;

@@ -20,4 +20,6 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category="Settings")
 	TSoftObjectPtr<UCameraData> CameraData;
+
+	
 };
