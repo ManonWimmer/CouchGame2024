@@ -142,7 +142,7 @@ void UATagManagerTool::RemoveAllTags()
 	}
 }
 
-TArray<AActor*> UATagManagerTool::GetActorsWithTag(FName TagName)
+TArray<AActor*> UATagManagerTool::GetActorsWithTag(FName TagName) const
 {
 	TArray<AActor*> TaggedActors;
 	

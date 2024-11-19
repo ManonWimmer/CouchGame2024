@@ -3,6 +3,12 @@
 
 #include "Events/EventsManager.h"
 
+#include "EngineUtils.h"
+#include "Events/EventData.h"
+#include "Events/EventsChildren/EventDuck.h"
+#include "Events/EventsChildren/EventMole.h"
+#include "Events/EventsChildren/EventPush.h"
+#include "Events/EventsChildren/EventZones.h"
 #include "Rounds/RoundsSubsystem.h"
 
 
@@ -20,9 +26,12 @@ void AEventsManager::BeginPlay()
 
 	InitResetable();
 
+	CreateEvents();
+
 	BindCountdownToRoundsPhase();
-	
-	CheckProbabilities();
+	BindCountdownToRoundsChange();
+
+	SetupNewRoundEvent(0);
 }
 
 // Called every frame
@@ -45,6 +54,7 @@ void AEventsManager::Tick(float DeltaTime)
 	}
 }
 
+#pragma region Countdown
 void AEventsManager::BindCountdownToRoundsPhase()
 {
 	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
@@ -54,29 +64,55 @@ void AEventsManager::BindCountdownToRoundsPhase()
 	RoundsSubsystem->OnChangeRoundPhases.AddDynamic(this, &AEventsManager::CheckStartCountdown);
 }
 
+void AEventsManager::BindCountdownToRoundsChange()
+{
+	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+	if (RoundsSubsystem == nullptr) return;
+
+	RoundsSubsystem->OnChangeRound.AddDynamic(this, &AEventsManager::SetupNewRoundEvent);
+}
+
 void AEventsManager::CheckStartCountdown(ERoundsPhaseID InRoundsPhaseID)
 {
 	switch (InRoundsPhaseID)
 	{
-		case ERoundsPhaseID::IN_ROUND:
-			StartGame();
-			break;
+	case ERoundsPhaseID::IN_ROUND:
+		StartGame();
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
+}
+
+float AEventsManager::GetCountdownTime() const
+{
+	return GameTimeInSec - CurrentTime;
+}
+#pragma endregion Countdown
+
+void AEventsManager::SetupNewRoundEvent(int RoundIndex)
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "setup new round event");
+
+	GetRandomEvent();
+	SetupEventTimes();
+	StartEvent();
 }
 
 void AEventsManager::StartGame()
 {
 	StartGameTime = GetWorld()->GetTimeSeconds();
 	IsGameStarted = true;
+	TriggerEventPhase1(CurrentEventData);
 }
 
 void AEventsManager::EndGame()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green,
-												 TEXT("END GAME"));
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green,
+		                                 TEXT("END GAME"));
 	IsGameStarted = false;
 
 	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
@@ -86,98 +122,257 @@ void AEventsManager::EndGame()
 	RoundsSubsystem->ChangeToNextRoundPhase();
 }
 
-float AEventsManager::GetCountdownTime() const
+void AEventsManager::RegisterEvent(UEventData* EventData, AEvent* Event)
 {
-	return GameTimeInSec - CurrentTime;
+	if (Event)
+	{
+		EventsMap.Add(EventData, Event);
+	}
+}
+
+void AEventsManager::TriggerEventPhase1(const UEventData* EventData)
+{
+	if (AEvent* CurrentEvent = GetEventClassFromEventData(EventData))
+		CurrentEvent->TriggerEventPhase1();
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
+		                                              "COULDN'T FIND CURRENT EVENT TO TRIGGER PHASE 1");
+}
+
+void AEventsManager::TriggerEventPhase2(const UEventData* EventData)
+{
+	if (AEvent* CurrentEvent = GetEventClassFromEventData(EventData))
+		CurrentEvent->TriggerEventPhase2();
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
+		                                              "COULDN'T FIND CURRENT EVENT TO TRIGGER PHASE 2");
+}
+
+void AEventsManager::StartEvent()
+{
+	// Hide or show objects depending on current tag
+	ShowObjectsWithCurrentEventTag();
+	
+	// Setup phase 1 
+	if (AEvent* CurrentEvent = GetEventClassFromEventData(CurrentEventData))
+		CurrentEvent->SetupEventPhase1();
+}
+
+UEventData* AEventsManager::GetEventDataFromName(EEventName EventName)
+{
+	if (Events.Num() == 0) return nullptr;
+
+	for (UEventData* Event : Events)
+	{
+		if (Event->EventName == EventName) return Event;
+	}
+
+	return nullptr;
+}
+
+AEvent* AEventsManager::GetEventClassFromEventData(const UEventData* EventData)
+{
+	if (AEvent** FoundEvent = EventsMap.Find(EventData))
+		return *FoundEvent;
+
+	return nullptr;
 }
 
 void AEventsManager::CheckAndTriggerEvents()
 {
-	for (FLevelEventEntry& EventEntry : LevelEvents)
+	if (!bPhase2Triggered && CurrentTime > Phase1Time)
 	{
-		if (!EventEntry.HasBeenTriggered && CurrentTime > EventEntry.TriggerTime)
-		{
-			TArray<FEventInfos> EventsInfos = EventEntry.EventArray.Events;
-
-			if (EventsInfos.Num() == 0)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
-				                                 TEXT("NO EVENT INFOS"));
-				return;
-			}
-
-			float Random = FMath::FRandRange(0.f, 1.f);
-
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta,
-			                                 FString::Printf(TEXT("Random : %f"), Random));
-
-			float LastTotalProbabilities = 0.f;
-
-			for (FEventInfos EventInfo : EventsInfos)
-			{
-				float CurrentProbability = EventInfo.Probability + LastTotalProbabilities;
-
-				if (CurrentProbability > 1.f)
-				{
-					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
-					                                 TEXT("PROBABILITY TOTAL > 1"));
-					break;
-				}
-
-				if (CurrentProbability > Random)
-				{
-					EventInfo.Event->TriggerEvent();
-					break;
-				}
-
-				LastTotalProbabilities += EventInfo.Probability;
-			}
-
-			EventEntry.HasBeenTriggered = true;
-		}
+		bPhase2Triggered = true;
+		TriggerEventPhase2(CurrentEventData);
 	}
 }
 
-void AEventsManager::CheckProbabilities()
+void AEventsManager::GetRandomEvent()
 {
-	for (FLevelEventEntry& EventEntry : LevelEvents)
+	if (CurrentEventData != nullptr) LastEventData = CurrentEventData;
+
+	TArray<UEventData*> EventDataList;
+
+	if (LastEventData != nullptr) // Round > 0
 	{
-		TArray<FEventInfos> EventsInfos = EventEntry.EventArray.Events;
-
-		if (EventsInfos.Num() == 0)
+		UEventData* ExcludedEventData = LastEventData;
+		EventDataList = Events.FilterByPredicate([ExcludedEventData](const UEventData* Item)
 		{
+			return Item != ExcludedEventData;
+		});
+	}
+	else
+	{
+		EventDataList = Events;
+	}
+
+	// Check list
+	if (EventDataList.Num() <= 0)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("No valid event to choose from!"));
+		return;
+	}
+
+	// Get random from filtered list
+	if (UEventData* RandomEventData = EventDataList[FMath::RandRange(0, EventDataList.Num() - 1)])
+	{
+		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
-			                                 TEXT("NO EVENT INFOS"));
-			return;
-		}
+			                                 FString::Printf(
+				                                 TEXT("New Random Event: %hhd"), RandomEventData->EventName));
 
-		float LastTotalProbabilities = 0.f;
+		CurrentEventData = RandomEventData;
+	}
+	else
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Failed to pick a random event!"));
+	}
+}
 
-		for (FEventInfos EventInfo : EventsInfos)
+void AEventsManager::SetupEventTimes()
+{
+	if (CurrentEventData == nullptr) return;
+
+	GameTimeInSec = CurrentEventData->EventRoundTime;
+
+	Phase1Time = FMath::RoundToInt(FMath::RandRange(CurrentEventData->Phase1MinTime, CurrentEventData->Phase1MaxTime));
+	Phase2Time = GameTimeInSec - Phase1Time;
+
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
+		                                 FString::Printf(
+			                                 TEXT("Time - Game : %i, Phase1: %i, Phase2: %i"), GameTimeInSec,
+			                                 Phase1Time, Phase2Time));
+}
+
+void AEventsManager::CreateEvents()
+{
+	// Duck
+	AEventDuck* EventDuck = GetWorld()->SpawnActor<AEventDuck>();
+	UEventData* EventDuckData = GetEventDataFromName(EEventName::Duck);
+	if (EventDuck && EventDuckData)
+	{
+		RegisterEvent(EventDuckData, EventDuck);
+	}
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO DUCK EVENT AND/OR DATA");
+
+	// Zones
+	AEvent* EventZones = GetWorld()->SpawnActor<AEventZones>();
+	UEventData* EventZonesData = GetEventDataFromName(EEventName::Zones);
+	if (EventZones && EventZonesData)
+	{
+		RegisterEvent(EventZonesData, EventZones);
+	}
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO ZONES EVENT AND/OR DATA");
+
+	// Mole
+	AEvent* EventMole = GetWorld()->SpawnActor<AEventMole>();
+	UEventData* EventMoleData = GetEventDataFromName(EEventName::Mole);
+	if (EventMole && EventMoleData)
+	{
+		RegisterEvent(EventMoleData, EventMole);
+	}
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO MOLE EVENT AND/OR DATA");
+
+	// Push
+	AEvent* EventPush = GetWorld()->SpawnActor<AEventPush>();
+	UEventData* EventPushData = GetEventDataFromName(EEventName::Push);
+	if (EventPush && EventPushData)
+	{
+		RegisterEvent(EventPushData, EventPush);
+	}
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO PUSH EVENT AND/OR DATA");
+
+	GetTags();
+}
+
+#pragma region Tags
+
+void AEventsManager::GetTags()
+{
+	EventsTags.Reset();
+	EventsTags.Add(TEXT("Constant"));
+
+	for (const TTuple<UEventData*, AEvent*> Item : EventsMap)
+	{
+		EventsTags.Add(Item.Key->EventTag);
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("add tag %s"), *Item.Key->EventTag.ToString()));
+	}
+}
+
+void AEventsManager::ShowObjectsWithCurrentEventTag()
+{
+	if (CurrentEventData == nullptr) return;
+	
+	HideOtherTags();
+	
+	TArray<AActor*> Actors = GetActorsWithTag(CurrentEventData->EventTag);
+	for (AActor* Actor : Actors)
+	{
+		if (Actor)
 		{
-			float CurrentProbability = EventInfo.Probability + LastTotalProbabilities;
-
-			if (CurrentProbability > 1.f)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
-				                                 FString::Printf(
-					                                 TEXT("PROBABILITY TOTAL > 1 FOR EVENT : %s"),
-					                                 *EventInfo.Event->EventName.ToString()));
-				break;
-			}
-
-			LastTotalProbabilities += EventInfo.Probability;
+			Actor->SetActorHiddenInGame(false);
+			Actor->SetActorEnableCollision(true);
+			UE_LOG(LogTemp, Log, TEXT("%s set visible to true."), *Actor->GetName());
 		}
 	}
 }
 
+void AEventsManager::HideOtherTags()
+{
+	for (FName Tag : EventsTags)
+	{
+		if (Tag != CurrentEventData->EventTag && Tag != "Constant")
+		{
+			HideObjectsWithTag(Tag);
+		}
+	}
+}
+
+void AEventsManager::HideObjectsWithTag(FName TagName) const
+{
+	TArray<AActor*> Actors = GetActorsWithTag(TagName);
+	for (AActor* Actor : Actors)
+	{
+		if (Actor)
+		{
+			Actor->SetActorHiddenInGame(true);
+			Actor->SetActorEnableCollision(false);
+			UE_LOG(LogTemp, Log, TEXT("%s set visible to false."), *Actor->GetName());
+		}
+	}
+}
+
+TArray<AActor*> AEventsManager::GetActorsWithTag(FName TagName) const
+{
+	TArray<AActor*> TaggedActors;
+	
+	for (TActorIterator<AActor> It(GetWorld()); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (Actor && Actor->Tags.Contains(TagName))
+		{
+			TaggedActors.Add(Actor);
+		}
+	}
+
+	return TaggedActors;
+}
+
+#pragma endregion Tags
+
+#pragma region Reset
 void AEventsManager::InitResetable()
 {
-	if (!GetWorld())	return;
+	if (!GetWorld()) return;
 
 	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
 
-	if (RoundsSubsystem == nullptr)	return;
+	if (RoundsSubsystem == nullptr) return;
 
 	RoundsSubsystem->AddResetableObject(this);
 }
@@ -193,4 +388,6 @@ void AEventsManager::ResetObject()
 
 	StartGameTime = GetWorld()->GetTimeSeconds();
 	IsGameStarted = false;
+	bPhase2Triggered = false;
 }
+#pragma endregion Reset

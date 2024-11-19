@@ -3,17 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Event.h"
-#include "TestEvent01.generated.h"
+#include "Events/Event.h"
+#include "EventMole.generated.h"
 
 UCLASS()
-class COUCHGAME2024_API ATestEvent01 : public AEvent
+class COUCHGAME2024_API AEventMole : public AEvent
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	ATestEvent01();
+	AEventMole();
 
 protected:
 	// Called when the game starts or when spawned

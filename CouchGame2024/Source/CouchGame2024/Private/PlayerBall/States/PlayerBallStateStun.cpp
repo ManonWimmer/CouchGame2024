@@ -65,15 +65,24 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState, float In
 
 	if (InFloatParameter == 1.f)	// id 1.f -> bumped stun
 	{
-		CurrentStunRemaining = Pawn->BehaviorElementReactions->BumpedHitLagCooldown;
+		if (Pawn->BehaviorElementReactions->BumpedHitLagCooldown >= CurrentStunRemaining)
+		{
+			CurrentStunRemaining = Pawn->BehaviorElementReactions->BumpedHitLagCooldown;
+		}
 	}
 	else if (InFloatParameter == 2.f)	//id 2.f -> Impact stun
 	{
-		CurrentStunRemaining = Pawn->BehaviorElementReactions->ImpactStunCooldown;
+		if (Pawn->BehaviorElementReactions->BumpedHitLagCooldown >= CurrentStunRemaining)
+		{
+			CurrentStunRemaining = Pawn->BehaviorElementReactions->ImpactStunCooldown;
+		}
 	}
 	else if (InFloatParameter == 3.f)	//id 3.f -> Freeze stun
 	{
-		CurrentStunRemaining = Pawn->BehaviorPowerUp->FreezeDuration;
+		if (Pawn->BehaviorElementReactions->BumpedHitLagCooldown >= CurrentStunRemaining)
+		{
+			CurrentStunRemaining = Pawn->BehaviorPowerUp->FreezeDuration;
+		}
 		FreezeStunVariant();
 	}
 	else
