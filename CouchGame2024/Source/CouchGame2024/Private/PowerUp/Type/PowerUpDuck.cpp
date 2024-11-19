@@ -38,6 +38,8 @@ void APowerUpDuck::TriggerPowerUp(int PlayerIndex)
 	{
 		ScoreSubsystem->AddDuck(PlayerIndex, 1);
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow, FString::Printf(TEXT("Add Duck to player ID: %i"), PlayerIndex));
+
+		OnDuckCollected.Broadcast();
 	}
 	
 	Super::TriggerPowerUp(PlayerIndex); // Destroy object

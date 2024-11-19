@@ -34,6 +34,8 @@ void AEventDuck::SetupEventPhase1()
 void AEventDuck::TriggerEventPhase1()
 {
 	Super::TriggerEventPhase1();
+	
+	OnDuckStartedEvent.Broadcast();
 }
 
 void AEventDuck::TriggerEventPhase2()
@@ -54,6 +56,8 @@ void AEventDuck::TickPhase2()
 void AEventDuck::EndEvent()
 {
 	Super::EndEvent();
+
+	OnDuckEndedEvent.Broadcast();
 }
 
 

@@ -9,6 +9,7 @@
 #include "Rounds/RoundsResetable.h"
 #include "EventsManager.generated.h"
 
+class UDuckData;
 class AUIManager;
 enum class EEventName : uint8;
 class UEventData;

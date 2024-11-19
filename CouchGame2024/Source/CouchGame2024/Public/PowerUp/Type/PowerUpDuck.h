@@ -26,4 +26,9 @@ public:
 	virtual EPowerUpID GetPowerUpID() const override;
     
 	virtual void TriggerPowerUp(int PlayerIndex) override;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDuckCollected);
+
+	UPROPERTY()
+	FDuckCollected OnDuckCollected;
 };

@@ -24,6 +24,15 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 #pragma region Event
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDuckStartedEvent);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDuckEndedEvent);
+
+	UPROPERTY(BlueprintAssignable)
+	FDuckStartedEvent OnDuckStartedEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FDuckEndedEvent OnDuckEndedEvent;
 	
 	virtual void SetupEventPhase1() override;
 
