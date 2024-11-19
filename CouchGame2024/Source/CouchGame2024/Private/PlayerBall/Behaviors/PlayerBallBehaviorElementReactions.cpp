@@ -73,6 +73,11 @@ void UPlayerBallBehaviorElementReactions::SetupData()
 
 	if (GetPlayerBall() == nullptr)	return;
 	if (GetPlayerBall()->GetPlayerBallData() == nullptr)	return;
+
+
+	// Punch stun
+	PunchStunCooldown = GetPlayerBall()->GetPlayerBallData()->PunchStunCooldown;
+
 	
 	// Impact
 	ImpactForceMultiplier = GetPlayerBall()->GetPlayerBallData()->ImpactForceMultiplier;

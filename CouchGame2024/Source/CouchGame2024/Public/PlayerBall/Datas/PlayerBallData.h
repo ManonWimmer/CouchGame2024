@@ -61,8 +61,8 @@ public:
 
 #pragma region Stun
 	UPROPERTY(EditAnywhere, Category = "Stun")
-	
 	float PunchStunCooldown = 3.f;
+	
 	UPROPERTY(EditAnywhere, Category = "Stun")
 	float ImpactStunCooldown = 1.f;
 	
