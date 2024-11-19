@@ -53,7 +53,6 @@ void UCameraWorldSubsystem::SetupData()
 	if (CameraData == nullptr)	return;
 
 	CameraSmoothSpeed = CameraData->CameraSmoothSpeed;
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, "Get camera data succed !!!!!!!!!!!!!!!!!!!!!!!!!");
 
 }
 
@@ -233,15 +232,19 @@ void UCameraWorldSubsystem::ClampPositionIntoCameraBounds(FVector& Position)
 	FVector WorldBoundsMin = CalculateWorldPositionFromViewportPosition(ViewportBoundsMin);
 	FVector WorldBoundsMax = CalculateWorldPositionFromViewportPosition(ViewportBoundsMax);
 
-	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Purple, FString::Printf(TEXT("WorldBoundsMin: X=%f, Z=%f"), WorldBoundsMin.X, WorldBoundsMin.Z));
-	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Purple, FString::Printf(TEXT("WorldBoundsMax: X=%f, Z=%f"), WorldBoundsMax.X, WorldBoundsMax.Z));
-
 	FVector WorldBoundsRange = WorldBoundsMax - WorldBoundsMin;
 	FVector WorldBoundsExtents = WorldBoundsRange / 2.f;
-	
-	Position.X = FMath::Clamp(Position.X, CameraBoundsMin.X + WorldBoundsExtents.X, CameraBoundsMax.X - WorldBoundsExtents.X);
-	Position.Y = FMath::Clamp(Position.Y, CameraBoundsMin.Y + WorldBoundsExtents.Y, CameraBoundsMax.Y - WorldBoundsExtents.Y);
 
+	/*
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("ViewportBounds Min: X=%f, Y=%f"), ViewportBoundsMin.X, ViewportBoundsMin.Y));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("ViewportBounds Max: X=%f, Y=%f"), ViewportBoundsMax.X, ViewportBoundsMax.Y));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("WorldBounds Min: X=%f, Y=%f, Z=%f"), WorldBoundsMin.X, WorldBoundsMin.Y, WorldBoundsMin.Z));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("WorldBounds Max: X=%f, Y=%f, Z=%f"), WorldBoundsMax.X, WorldBoundsMax.Y, WorldBoundsMax.Z));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("WorldBoundsExtents: X=%f, Y=%f"), WorldBoundsExtents.X, WorldBoundsExtents.Y));
+	*/
+	
+	Position.X = FMath::Clamp(Position.X, CameraBoundsMin.X - WorldBoundsExtents.X, CameraBoundsMax.X + WorldBoundsExtents.X);	// !!!! signes car WorldBoundsExtents.X negatif
+	Position.Y = FMath::Clamp(Position.Y, CameraBoundsMin.Y + WorldBoundsExtents.Y, CameraBoundsMax.Y - WorldBoundsExtents.Y);	// !!!! signes car WorldBoundsExtents.Y positif
 }
 
 void UCameraWorldSubsystem::GetViewportBounds(FVector2D& OutViewportBoundsMin, FVector2D& OutViewportBoundsMax)
@@ -288,6 +291,9 @@ FVector UCameraWorldSubsystem::CalculateWorldPositionFromViewportPosition(const 
 
 	WorldPosition += CameraWorldProjectDir * ZDistanceToCenter;
 
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("WorldPosition: X=%f, Y=%f, Z=%f"), WorldPosition.X, WorldPosition.Y, WorldPosition.Z));
+
+	
 	return WorldPosition;
 }
 
