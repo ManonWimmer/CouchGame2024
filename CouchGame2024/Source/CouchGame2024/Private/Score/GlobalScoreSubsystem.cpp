@@ -142,3 +142,31 @@ int UGlobalScoreSubsystem::GetIndexPlayerBestScore()
 
 	return PlayerIndexBestScore;
 }
+
+void UGlobalScoreSubsystem::PlayerInDuckBank(int PlayerIndex, int DuckToPointsMultiplier)
+{
+	switch (PlayerIndex)
+	{
+	case 0:
+		AddScore(0, Player0DuckCounter * DuckToPointsMultiplier);
+		Player0DuckCounter = 0;
+		break;
+	case 1:
+		AddScore(1, Player1DuckCounter * DuckToPointsMultiplier);
+		Player1DuckCounter = 0;
+		break;
+	case 2:
+		AddScore(2, Player2DuckCounter * DuckToPointsMultiplier);
+		Player2DuckCounter = 0;
+		break;
+	case 3:
+		AddScore(3, Player3DuckCounter * DuckToPointsMultiplier);
+		Player3DuckCounter = 0;
+		break;
+	default:
+		break;
+	}
+
+	ScoreChangedEvent.Broadcast(PlayerIndex, GetScore(PlayerIndex));
+	DuckCounterChangedEvent.Broadcast(PlayerIndex, GetDuckCounter(PlayerIndex));
+}

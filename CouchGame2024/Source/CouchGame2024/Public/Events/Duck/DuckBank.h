@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "DuckBank.generated.h"
 
+class USphereComponent;
+
 UCLASS()
 class COUCHGAME2024_API ADuckBank : public AActor
 {
@@ -32,4 +34,7 @@ public:
 	UFUNCTION()
 	void OnBankBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 								 const FHitResult& SweepResult);
+
+	UPROPERTY(EditAnywhere)
+	int DuckToPointsMultiplier = 200;
 };

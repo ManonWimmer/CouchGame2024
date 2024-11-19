@@ -4,6 +4,8 @@
 #include "Events/Duck/DuckBank.h"
 
 #include "Components/SphereComponent.h"
+#include "PlayerBall/PlayerBall.h"
+#include "Score/GlobalScoreSubsystem.h"
 
 
 // Sets default values
@@ -16,6 +18,7 @@ ADuckBank::ADuckBank()
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision")); // overlap player balls
 	
 	RootComponent = SphereCollision;
+	BankMesh->SetupAttachment(SphereCollision);
 	
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &ADuckBank::OnBankBeginOverlap);
 }
@@ -36,6 +39,15 @@ void ADuckBank::Tick(float DeltaTime)
 void ADuckBank::OnBankBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
+	if (OtherActor == nullptr) return;
+
+	if (TObjectPtr<APlayerBall> BallInBank = Cast<APlayerBall>(OtherActor))
+	{
+		UGlobalScoreSubsystem* ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
+		if (ScoreSubsystem != nullptr)
+		{
+			ScoreSubsystem->PlayerInDuckBank(BallInBank->PlayerIndex, DuckToPointsMultiplier);
+		}
+	}
 }
 
