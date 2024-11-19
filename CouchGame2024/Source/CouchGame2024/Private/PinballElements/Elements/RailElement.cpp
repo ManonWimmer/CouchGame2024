@@ -5,6 +5,7 @@
 
 #include "Components/SphereComponent.h"
 #include "Components/SplineComponent.h"
+#include "Rounds/RoundsSubsystem.h"
 
 
 // Sets default values
@@ -30,7 +31,9 @@ ARailElement::ARailElement()
 void ARailElement::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+
+	InitRail();
 }
 
 // Called every frame
@@ -66,5 +69,33 @@ FVector ARailElement::GetLocationAlongRailSpline(float percent)
 	OffsetUp *= 30.f;
 	
 	return SplineRail->GetLocationAtDistanceAlongSpline(PercentToDistance, ESplineCoordinateSpace::World) + OffsetUp;
+}
+
+float ARailElement::GetRailProgressDuration()
+{
+	return RailProgressDuration;
+}
+
+FVector ARailElement::GetTangentAtSplinePercent(float Percent)
+{
+	if (SplineRail == nullptr)	return FVector::ZeroVector;
+
+	float PercentToDistance = SplineRail->GetSplineLength() * Percent;
+
+	return SplineRail->GetWorldTangentAtDistanceAlongSpline(PercentToDistance);
+}
+
+void ARailElement::InitRail()
+{
+	if (this->ActorHasTag(TEXT("RespawnRail")))
+	{
+		if (GetWorld() == nullptr)	return;
+		
+		URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+		if (RoundsSubsystem == nullptr)	return;
+
+		RoundsSubsystem->SetRespawnRailElement(this);
+	}
 }
 

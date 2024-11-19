@@ -7,6 +7,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Match/MatchPinballGameMode.h"
 #include "PlayerBall/LockableInput.h"
+#include "PlayerBall/PlayerBall.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "Rounds/RoundsResetable.h"
 #include "Rounds/RoundsSettings.h"
 #include "Rounds/Datas/RoundsData.h"
@@ -436,3 +438,17 @@ void URoundsSubsystem::UnlockAllPlayer()
 		LockableInputActor->UnlockInput();
 	}
 }
+
+void URoundsSubsystem::SetRespawnRailElement(ARailElement* InRespawnRailElement)
+{
+	if (InRespawnRailElement == nullptr)	return;
+
+	RespawnRailElement = InRespawnRailElement;
+}
+
+ARailElement* URoundsSubsystem::GetRespawnRailElement()
+{
+	return RespawnRailElement;
+}
+
+

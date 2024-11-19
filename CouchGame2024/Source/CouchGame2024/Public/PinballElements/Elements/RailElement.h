@@ -54,13 +54,13 @@ public:
 	UFUNCTION()
 	float GetRailProgressDuration();
 
+	UFUNCTION()
+	FVector GetTangentAtSplinePercent(float Percent);
+
 private:
+	
+	void InitRail();
 
 	UPROPERTY(EditAnywhere)
 	float RailProgressDuration = 1.f;
 };
-
-inline float ARailElement::GetRailProgressDuration()
-{
-	return RailProgressDuration;
-}

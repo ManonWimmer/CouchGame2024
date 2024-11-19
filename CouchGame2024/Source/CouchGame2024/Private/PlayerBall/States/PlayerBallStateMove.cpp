@@ -9,6 +9,7 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 
 
 // Sets default values for this component's properties
@@ -58,6 +59,11 @@ void UPlayerBallStateMove::StateEnter(EPlayerBallStateID PreviousState)
 
 			Pawn->BehaviorElementReactions->OnRailReaction.AddDynamic(this, &UPlayerBallStateMove::OnRail);
 		}
+
+		if (Pawn->BehaviorPowerUp != nullptr)
+		{
+			Pawn->BehaviorPowerUp->OnUsePowerUpAction.AddDynamic(this, &UPlayerBallStateMove::OnUsePowerUp);
+		}
 		
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateMove::OnPunch);
 	}
@@ -79,6 +85,11 @@ void UPlayerBallStateMove::StateExit(EPlayerBallStateID NextState)
 			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateMove::OnSnapped);
 
 			Pawn->BehaviorElementReactions->OnRailReaction.RemoveDynamic(this, &UPlayerBallStateMove::OnRail);
+		}
+
+		if (Pawn->BehaviorPowerUp != nullptr)
+		{
+			Pawn->BehaviorPowerUp->OnUsePowerUpAction.RemoveDynamic(this, &UPlayerBallStateMove::OnUsePowerUp);
 		}
 		
 		Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateMove::OnPunch);
@@ -128,7 +139,7 @@ void UPlayerBallStateMove::Move(float DeltaTime) const	// Move ball on X and Y A
 
 	//DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 500.f, FColor::Orange, false, 5.f);
 
-	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->BehaviorMovements->AngularRollForce, NAME_None, true);	// Roll ball
+	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->BehaviorMovements->GetContextRollForce(), NAME_None, true);	// Roll ball
 }
 
 void UPlayerBallStateMove::CheckNotMoving()	// Check if ball is still moving
@@ -218,5 +229,12 @@ void UPlayerBallStateMove::OnRail(float RailDirectionValue)
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Rail, RailDirectionValue);
+}
+
+void UPlayerBallStateMove::OnUsePowerUp(float InPowerUpId)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::PowerUpHub, InPowerUpId);
 }
 
