@@ -26,5 +26,21 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void TriggerEvent();
+	virtual void SetupEventPhase1();
+	
+	virtual void TriggerEventPhase1();
+
+	virtual void TriggerEventPhase2();
+
+	virtual void EndEvent();
+
+	virtual void TickPhase1();
+
+	virtual void TickPhase2();
+
+	UPROPERTY()
+	bool bInTickPhase1 = false;
+
+	UPROPERTY()
+	bool bInTickPhase2 = false;
 };

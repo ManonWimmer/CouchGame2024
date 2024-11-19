@@ -31,7 +31,6 @@ void AEventsManager::BeginPlay()
 	BindCountdownToRoundsChange();
 
 	SetupNewRoundEvent(0);
-	//CheckProbabilities();
 }
 
 // Called every frame
@@ -98,12 +97,14 @@ void AEventsManager::SetupNewRoundEvent(int RoundIndex)
 	
 	GetRandomEvent();
 	SetupEventTimes();
+	StartEvent();
 }
 
 void AEventsManager::StartGame()
 {
 	StartGameTime = GetWorld()->GetTimeSeconds();
 	IsGameStarted = true;
+	TriggerEventPhase1(CurrentEventData);
 }
 
 void AEventsManager::EndGame()
@@ -130,18 +131,33 @@ void AEventsManager::RegisterEvent(UEventData* EventData, AEvent* Event)
 
 void AEventsManager::TriggerEventPhase1(const UEventData* EventData)
 {
+	if (AEvent* CurrentEvent = GetEventClassFromEventData(EventData))
+		CurrentEvent->TriggerEventPhase1();
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "COULDN'T FIND CURRENT EVENT TO TRIGGER PHASE 1");
 }
 
 void AEventsManager::TriggerEventPhase2(const UEventData* EventData)
 {
+	if (AEvent* CurrentEvent = GetEventClassFromEventData(EventData))
+		CurrentEvent->TriggerEventPhase2();
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "COULDN'T FIND CURRENT EVENT TO TRIGGER PHASE 2");
+
 }
 
 void AEventsManager::StartEvent() // show tag
 {
+	
+	
+	// Setup phase 1 
+	if (AEvent* CurrentEvent = GetEventClassFromEventData(CurrentEventData))
+		CurrentEvent->SetupEventPhase1();
 }
 
 void AEventsManager::EndEvent() // hide tag
 {
+	
 }
 
 UEventData* AEventsManager::GetEventDataFromName(EEventName EventName)
@@ -156,55 +172,21 @@ UEventData* AEventsManager::GetEventDataFromName(EEventName EventName)
 	return nullptr;
 }
 
+AEvent* AEventsManager::GetEventClassFromEventData(const UEventData* EventData)
+{
+	if (AEvent** FoundEvent = EventsMap.Find(EventData))
+		return *FoundEvent;
+
+	return nullptr;
+}
+
 void AEventsManager::CheckAndTriggerEvents()
 {
-	// todo: check phase1 time & switch phase
-	
-	/*
-	for (FLevelEventEntry& EventEntry : LevelEvents)
+	if (!bPhase2Triggered && CurrentTime > Phase1Time)
 	{
-		if (!EventEntry.HasBeenTriggered && CurrentTime > EventEntry.TriggerTime)
-		{
-			TArray<FEventInfos> EventsInfos = EventEntry.EventArray.Events;
-
-			if (EventsInfos.Num() == 0)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
-				                                 TEXT("NO EVENT INFOS"));
-				return;
-			}
-
-			float Random = FMath::FRandRange(0.f, 1.f);
-
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta,
-			                                 FString::Printf(TEXT("Random : %f"), Random));
-
-			float LastTotalProbabilities = 0.f;
-
-			for (FEventInfos EventInfo : EventsInfos)
-			{
-				float CurrentProbability = EventInfo.Probability + LastTotalProbabilities;
-
-				if (CurrentProbability > 1.f)
-				{
-					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
-					                                 TEXT("PROBABILITY TOTAL > 1"));
-					break;
-				}
-
-				if (CurrentProbability > Random)
-				{
-					EventInfo.Event->TriggerEvent();
-					break;
-				}
-
-				LastTotalProbabilities += EventInfo.Probability;
-			}
-
-			EventEntry.HasBeenTriggered = true;
-		}
+		bPhase2Triggered = true;
+		TriggerEventPhase2(CurrentEventData);
 	}
-	*/
 }
 
 void AEventsManager::GetRandomEvent()
@@ -234,9 +216,7 @@ void AEventsManager::GetRandomEvent()
 	}
 
 	// Get random from filtered list
-	UEventData* RandomEventData = EventDataList[FMath::RandRange(0, EventDataList.Num() - 1)];
-
-	if (RandomEventData)
+	if (UEventData* RandomEventData = EventDataList[FMath::RandRange(0, EventDataList.Num() - 1)])
 	{
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
@@ -269,7 +249,7 @@ void AEventsManager::SetupEventTimes()
 void AEventsManager::CreateEvents()
 {
 	// Duck
-	AEvent* EventDuck = NewObject<AEventDuck>();
+	AEventDuck* EventDuck = GetWorld()->SpawnActor<AEventDuck>();
 	UEventData* EventDuckData = GetEventDataFromName(EEventName::Duck);
 	if (EventDuck && EventDuckData)
 	{
@@ -279,7 +259,7 @@ void AEventsManager::CreateEvents()
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO DUCK EVENT AND/OR DATA");
 
 	// Zones
-	AEvent* EventZones = NewObject<AEventZones>();
+	AEvent* EventZones = GetWorld()->SpawnActor<AEventZones>();
 	UEventData* EventZonesData = GetEventDataFromName(EEventName::Zones);
 	if (EventZones && EventZonesData)
 	{
@@ -289,7 +269,7 @@ void AEventsManager::CreateEvents()
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO ZONES EVENT AND/OR DATA");
 
 	// Mole
-	AEvent* EventMole = NewObject<AEventMole>();
+	AEvent* EventMole = GetWorld()->SpawnActor<AEventMole>();
 	UEventData* EventMoleData = GetEventDataFromName(EEventName::Mole);
 	if (EventMole && EventMoleData)
 	{
@@ -299,7 +279,7 @@ void AEventsManager::CreateEvents()
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO MOLE EVENT AND/OR DATA");
 
 	// Push
-	AEvent* EventPush = NewObject<AEventPush>();
+	AEvent* EventPush = GetWorld()->SpawnActor<AEventPush>();
 	UEventData* EventPushData = GetEventDataFromName(EEventName::Push);
 	if (EventPush && EventPushData)
 	{
@@ -332,5 +312,6 @@ void AEventsManager::ResetObject()
 
 	StartGameTime = GetWorld()->GetTimeSeconds();
 	IsGameStarted = false;
+	bPhase2Triggered = false;
 }
 #pragma endregion Reset

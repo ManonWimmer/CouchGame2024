@@ -131,16 +131,22 @@ public:
 	void TriggerEventPhase2(const UEventData* EventData);
 
 	UFUNCTION()
-	void StartEvent(); // show tag
+	void StartEvent();
 	
 	UFUNCTION()
-	void EndEvent(); // hide tag
+	void EndEvent();
 
 	UFUNCTION()
 	UEventData* GetEventDataFromName(EEventName EventName);
 
+	UFUNCTION()
+	AEvent* GetEventClassFromEventData(const UEventData* EventData);
+
 	UPROPERTY()
 	TMap<UEventData*, AEvent*> EventsMap;
+
+	UPROPERTY()
+	bool bPhase2Triggered = false;
 	
 private:
 	void CheckAndTriggerEvents();

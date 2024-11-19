@@ -28,6 +28,9 @@ class COUCHGAME2024_API UEventData : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere, Category = "Event")
 	EEventName EventName = EEventName::Undefined;
+
+	UPROPERTY(EditAnywhere, Category = "Event")
+	FString EventDescription = "Event Description";
 	
 	UPROPERTY(EditAnywhere, Category = "Event")
 	float Phase1MinTime = 30.f;
