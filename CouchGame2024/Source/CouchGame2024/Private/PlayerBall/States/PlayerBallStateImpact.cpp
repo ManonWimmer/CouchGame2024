@@ -120,8 +120,6 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 		TotalForce = Pawn->BehaviorElementReactions->ImpactMinTotalForce;
 	}
 
-	Pawn->PlayImpactEffectsBlueprint();
-
 	float ImpactForceDivider = 1.f;
 	
 	if (Pawn->BehaviorPowerUp != nullptr)
@@ -133,6 +131,8 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 	}
 	
 	Pawn->SphereCollision->AddImpulse(Dir * TotalForce / ImpactForceDivider, NAME_None, false);	// impulse
+
+	Pawn->PlayImpactGamefeelEffectsBlueprint();
 }
 
 

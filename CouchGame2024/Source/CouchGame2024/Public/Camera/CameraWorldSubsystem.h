@@ -136,6 +136,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void PlayPunchCameraShake();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayImpactCameraShake();
+	
+	UFUNCTION(BlueprintCallable)
+	void PlayDeathZoneCameraShake();
 	
 private:
 	void InitCameraShake();

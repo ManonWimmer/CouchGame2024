@@ -332,6 +332,28 @@ void UCameraWorldSubsystem::PlayPunchCameraShake()
 	CameraShakePlayerController->PlayerCameraManager->StartCameraShake(CameraData->CameraShakePunch);
 }
 
+void UCameraWorldSubsystem::PlayImpactCameraShake()
+{
+	if (CameraShakePlayerController == nullptr)	return;
+	if (CameraShakePlayerController->PlayerCameraManager == nullptr)	return;
+
+	if (CameraData == nullptr)	return;
+	if (CameraData->CameraShakeImpact == nullptr)	return;
+	
+	CameraShakePlayerController->PlayerCameraManager->StartCameraShake(CameraData->CameraShakeImpact);
+}
+
+void UCameraWorldSubsystem::PlayDeathZoneCameraShake()
+{
+	if (CameraShakePlayerController == nullptr)	return;
+	if (CameraShakePlayerController->PlayerCameraManager == nullptr)	return;
+
+	if (CameraData == nullptr)	return;
+	if (CameraData->CameraShakeDeathZone == nullptr)	return;
+	
+	CameraShakePlayerController->PlayerCameraManager->StartCameraShake(CameraData->CameraShakeDeathZone);
+}
+
 void UCameraWorldSubsystem::InitCameraShake()
 {
 	if (GetWorld() == nullptr)	return;

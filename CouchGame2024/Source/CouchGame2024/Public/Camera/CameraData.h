@@ -22,4 +22,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Shakes")
 	TSubclassOf<UCameraShakeBase> CameraShakePunch;
+
+	UPROPERTY(EditAnywhere, Category="Shakes")
+	TSubclassOf<UCameraShakeBase> CameraShakeImpact;
+
+	UPROPERTY(EditAnywhere, Category="Shakes")
+	TSubclassOf<UCameraShakeBase> CameraShakeDeathZone;
 };

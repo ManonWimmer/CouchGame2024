@@ -88,7 +88,7 @@ void UPlayerBallStatePunch::PunchPlayerBall()
 	}
 	PlayerBall->SphereCollision->AddImpulse(Dir * Pawn->PunchForceMultiplier, NAME_None, false);
 	
-	Pawn->PlayPunchGamefeelEffects();
+	Pawn->PlayPunchGamefeelEffectsBlueprint();
 }
 
 APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()

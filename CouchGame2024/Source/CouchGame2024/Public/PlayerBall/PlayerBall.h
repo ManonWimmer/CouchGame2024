@@ -157,7 +157,7 @@ public:
 	void ReceivePunchAction(float InPunchValue);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void PlayPunchGamefeelEffects();
+	void PlayPunchGamefeelEffectsBlueprint();
 	
 	UPROPERTY()
 	float PunchRadius = 50.f;
@@ -175,10 +175,16 @@ public:
 	bool bCanPunch = true;
 
 #pragma endregion
+
+public:
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayImpactGamefeelEffectsBlueprint();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayDeathZoneGamefeelEffectsBlueprint();
 	
 public:
-	UFUNCTION(BlueprintImplementableEvent)
-	void PlayImpactEffectsBlueprint();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlaySetProgressStartForceEffect(float NewProgressStartForce);
