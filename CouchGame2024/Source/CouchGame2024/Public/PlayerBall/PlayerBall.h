@@ -184,6 +184,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayDeathZoneGamefeelEffectsBlueprint();
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayReleaseTourniquetGamefeelEffectsBlueprint();
+	
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)

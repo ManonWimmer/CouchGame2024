@@ -193,7 +193,7 @@ void UPlayerBallStateRail::HandleRailProgressLocationByVelocity(float DeltaTime)
 			FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(CurrentPercent);
 
 			FVector NewPawnLocationOnRail = Pawn->GetActorLocation();
-			NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 10.f);
+			NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 25.f);
 		
 			Pawn->SetActorLocation(NewPawnLocationOnRail);
 		}
@@ -230,7 +230,7 @@ void UPlayerBallStateRail::ExitImpulse()
 	
 	Pawn->SphereCollision->AddImpulse(Dir * 30000.f, NAME_None, false);	// impulse
 
-	DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 1500.f, FColor::Yellow, false, 3.f);
+	//DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 1500.f, FColor::Yellow, false, 3.f);
 }
 
 void UPlayerBallStateRail::ChangeDirection()
