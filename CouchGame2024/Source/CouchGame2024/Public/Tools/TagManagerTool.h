@@ -46,7 +46,7 @@ public:
 
 private:
 	// Trouve tous les acteurs dans le niveau avec un tag donné
-	TArray<AActor*> GetActorsWithTag(FName TagName);
+	TArray<AActor*> GetActorsWithTag(FName TagName) const;
 
 	FName HasTagInList(AActor* Actor);
 
