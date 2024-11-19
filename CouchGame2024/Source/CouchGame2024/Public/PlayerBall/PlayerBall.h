@@ -6,6 +6,7 @@
 #include "Killable.h"
 #include "LockableInput.h"
 #include "PlayerBallStateID.h"
+#include "Camera/CameraFollowTarget.h"
 #include "GameFramework/Pawn.h"
 #include "Rounds/RoundsResetable.h"
 #include "PlayerBall.generated.h"
@@ -27,7 +28,7 @@ class UStaticMeshComponent;
 class UCableComponent;
 
 UCLASS()
-class COUCHGAME2024_API APlayerBall : public APawn, public IRoundsResetable, public ILockableInput, public IKillable
+class COUCHGAME2024_API APlayerBall : public APawn, public IRoundsResetable, public ILockableInput, public IKillable, public ICameraFollowTarget
 {
 	GENERATED_BODY()
 
@@ -251,5 +252,18 @@ public:
 	float DeathDurationBeforeRespawn = 1.f;
 	
 #pragma endregion 
+
+#pragma region ICameraFollowTarget
+
+public:
+	virtual void InitFollowTarget() override;
+	
+	virtual FVector GetFollowPosition() const override;
+	
+	virtual bool IsFollowable() const override;
+
+
+#pragma endregion 
+
 	
 };
