@@ -179,6 +179,8 @@ private:
 	UFUNCTION()
 	TArray<AActor*> GetActorsWithTag(FName TagName) const;
 
+	UFUNCTION()
+	void OpenUI
 
 #pragma region Resetable
 
