@@ -157,6 +157,9 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 				ReceiveBoostPadReaction();
 				OtherElement->TriggerElement();
 				break;
+			case EPinballElementID::Tourniquet:
+				OtherElement->TriggerElementWithPlayer(GetPlayerBall());
+				break;
 			default:
 				break;
 		}
@@ -312,5 +315,15 @@ bool UPlayerBallBehaviorElementReactions::CheckRightDirectionForRail(ARailElemen
 void UPlayerBallBehaviorElementReactions::ReceiveBoostPadReaction()
 {
 	OnBoostPadReaction.Broadcast(1.f);
+}
+
+void UPlayerBallBehaviorElementReactions::ReceiveTourniquetReaction()
+{
+	OnTourniquetReaction.Broadcast(1.f);
+}
+
+void UPlayerBallBehaviorElementReactions::ReceiveEndTourniquetReaction()
+{
+	OnEndTourniquetReaction.Broadcast(1.f);
 }
 

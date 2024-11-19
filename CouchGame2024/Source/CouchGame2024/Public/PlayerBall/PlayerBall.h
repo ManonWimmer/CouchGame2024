@@ -199,6 +199,7 @@ public:
 	void ResetGrapple();
 	void ResetCooldown();
 	void ResetPosition();
+	void ResetPhysics();
 
 #pragma endregion
 

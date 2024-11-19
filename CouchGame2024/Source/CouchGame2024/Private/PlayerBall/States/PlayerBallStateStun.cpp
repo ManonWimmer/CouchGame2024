@@ -53,6 +53,8 @@ void UPlayerBallStateStun::StateEnter(EPlayerBallStateID PreviousState)
 			//Pawn->BehaviorElementReactions->OnReceiveSnappingAction.AddDynamic(this, &UPlayerBallStateStun::OnSnapped);
 
 			Pawn->BehaviorElementReactions->OnRailReaction.AddDynamic(this, &UPlayerBallStateStun::OnRail);
+
+			Pawn->BehaviorElementReactions->OnTourniquetReaction.AddDynamic(this, &UPlayerBallStateStun::OnTourniquet);
 		}
 	}
 }
@@ -100,6 +102,9 @@ void UPlayerBallStateStun::StateExit(EPlayerBallStateID NextState)
 			//Pawn->BehaviorElementReactions->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateStun::OnSnapped);
 
 			Pawn->BehaviorElementReactions->OnRailReaction.RemoveDynamic(this, &UPlayerBallStateStun::OnRail);
+
+			Pawn->BehaviorElementReactions->OnTourniquetReaction.RemoveDynamic(this, &UPlayerBallStateStun::OnTourniquet);
+
 		}
 		
 		if (Pawn->BehaviorGrapple != nullptr)
@@ -179,6 +184,13 @@ void UPlayerBallStateStun::OnRail(float RailDirectionValue)
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Rail, RailDirectionValue);
+}
+
+void UPlayerBallStateStun::OnTourniquet(float TourniquetValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Tourniquet);
 }
 
 

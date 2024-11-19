@@ -31,11 +31,19 @@ public:
 
 
 private:
+
+	UFUNCTION()
+	void ConsumeCurrentPowerUpPlayerBall();
+
 	
 	UFUNCTION()
 	void SwitchToFreezePowerUp();
 
 	UFUNCTION()
 	void SwitchToStrengthPowerUp();
+
+	UFUNCTION()
+	void SwitchToSlipperyPowerUp();
 	
 };
+

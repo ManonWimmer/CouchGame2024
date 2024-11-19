@@ -30,7 +30,8 @@ void UPlayerBallBehaviorPowerUp::TickComponent(float DeltaTime, ELevelTick TickT
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	
+	HandleStrengthDuration(DeltaTime);
+	HandleSlipperyEffectDuration(DeltaTime);
 }
 
 void UPlayerBallBehaviorPowerUp::InitBehavior()
@@ -70,6 +71,12 @@ void UPlayerBallBehaviorPowerUp::SetupData()
 		
 	FreezeRange = GetPlayerBall()->GetPlayerPowerUpData()->FreezeRange;
 	FreezeDuration = GetPlayerBall()->GetPlayerPowerUpData()->FreezeDuration;
+
+	StrengthImpactForceDivider = GetPlayerBall()->GetPlayerPowerUpData()->StrengthImpactForceDivider;
+	StrengthImpactStunDurationDivider = GetPlayerBall()->GetPlayerPowerUpData()->StrengthImpactStunDurationDivider;
+
+	SlipperyRadius = GetPlayerBall()->GetPlayerPowerUpData()->SlipperyRadius;
+	TotalSlipperyEffectDuration = GetPlayerBall()->GetPlayerPowerUpData()->TotalSlipperyEffectDuration;
 }
 
 void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -101,12 +108,12 @@ void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent*
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Strength power up");
 			OtherPowerUp->TriggerPowerUp();
 			break;
-				
-		case EPowerUpID::Heavy:
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Heavy power up");
+
+		case EPowerUpID::Slippery:
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Slippery power up");
 			OtherPowerUp->TriggerPowerUp();
 			break;
-				
+		
 		default:
 			break;
 		}
@@ -126,6 +133,11 @@ void UPlayerBallBehaviorPowerUp::AssignPowerUpCarried(EPowerUpID PowerUpID)
 	if (CurrentPowerUpCarried != EPowerUpID::None || PowerUpID == EPowerUpID::Collectible)	return;
 
 	CurrentPowerUpCarried = PowerUpID;
+}
+
+void UPlayerBallBehaviorPowerUp::EmptyCurrentPowerUpCarried()
+{
+	CurrentPowerUpCarried = EPowerUpID::None;
 }
 
 void UPlayerBallBehaviorPowerUp::UsePowerUpAction(float UsePowerUpValue)
@@ -152,16 +164,87 @@ void UPlayerBallBehaviorPowerUp::UsePowerUpCarried()
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Strength PowerUp");
 		OnUsePowerUpAction.Broadcast(2.f);
 		break;
-			
-	case EPowerUpID::Heavy:
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Heavy PowerUp");
-		break;
+		
+	case EPowerUpID::Slippery:	// substate id -> 3.f
+        	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Slippery PowerUp");
+        	OnUsePowerUpAction.Broadcast(3.f);
+        	break;
 			
 	default:
 		break;
 	}
+}
+
+void UPlayerBallBehaviorPowerUp::ActivateStrengthPowerUp()
+{
+	bUsingStrength = true;
 	
+	CurrentStrengthDuration = 0.f;
+}
+
+void UPlayerBallBehaviorPowerUp::DesactivateStrengthPowerUp()
+{
+	bUsingStrength = false;
+}
+
+void UPlayerBallBehaviorPowerUp::HandleStrengthDuration(float DeltaTime)
+{
+	if (!bUsingStrength)
+		return;
+
+	if (CurrentStrengthDuration >= TotalStrengthDuration)
+	{
+		DesactivateStrengthPowerUp();
+	}
+	else
+	{
+		CurrentStrengthDuration += DeltaTime;
+	}
+}
+
+bool UPlayerBallBehaviorPowerUp::GetIsUsingStrengthPowerUp()
+{
+	return bUsingStrength;
+}
+
+void UPlayerBallBehaviorPowerUp::ReceiveSlipperyEffect()
+{
+	if (GetPlayerBall() == nullptr)	return;
+	if (GetPlayerBall()->GetPlayerPowerUpData() == nullptr)	return;
+
+	bIsSlippery = true;
+
+	CurrentSlipperyEffectDuration = 0.f;
 	
-	CurrentPowerUpCarried = EPowerUpID::None;
+	if (GetPlayerBall()->SphereCollision == nullptr)	return;
+	if (GetPlayerBall()->GetPlayerPowerUpData()->SlipperyPhysicsAsset == nullptr)	return;
+
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "Set slippery Material");
+	GetPlayerBall()->SphereCollision->SetPhysMaterialOverride(GetPlayerBall()->GetPlayerPowerUpData()->SlipperyPhysicsAsset);
+}
+
+void UPlayerBallBehaviorPowerUp::EndSlipperyEffect()
+{
+	bIsSlippery = false;
+
+	if (GetPlayerBall()->SphereCollision == nullptr)	return;
+	if (GetPlayerBall()->GetPlayerPowerUpData()->ClassicPhysicsAsset == nullptr)	return;
+
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "Set classic Material");
+	GetPlayerBall()->SphereCollision->SetPhysMaterialOverride(GetPlayerBall()->GetPlayerPowerUpData()->ClassicPhysicsAsset);
+}
+
+void UPlayerBallBehaviorPowerUp::HandleSlipperyEffectDuration(float DeltaTime)
+{
+	if (!bIsSlippery)	return;
+
+	if (CurrentSlipperyEffectDuration >= TotalSlipperyEffectDuration)
+	{
+		EndSlipperyEffect();
+	}
+	else
+	{
+		CurrentSlipperyEffectDuration += DeltaTime;
+	}
 }
 

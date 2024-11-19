@@ -27,7 +27,9 @@ enum class EPlayerBallStateID : uint8
 	Death,
 	Respawn,
 	Rail,
+	Tourniquet,
 	PowerUpHub,
 	Freeze,
-	Strength
+	Strength,
+	Slippery
 };

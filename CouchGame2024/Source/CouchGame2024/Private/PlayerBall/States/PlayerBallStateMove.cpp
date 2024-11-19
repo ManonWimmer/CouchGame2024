@@ -58,6 +58,9 @@ void UPlayerBallStateMove::StateEnter(EPlayerBallStateID PreviousState)
 			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.AddDynamic(this, &UPlayerBallStateMove::OnSnapped);
 
 			Pawn->BehaviorElementReactions->OnRailReaction.AddDynamic(this, &UPlayerBallStateMove::OnRail);
+			
+			Pawn->BehaviorElementReactions->OnTourniquetReaction.AddDynamic(this, &UPlayerBallStateMove::OnTourniquet);
+
 		}
 
 		if (Pawn->BehaviorPowerUp != nullptr)
@@ -85,6 +88,9 @@ void UPlayerBallStateMove::StateExit(EPlayerBallStateID NextState)
 			Pawn->BehaviorElementReactions->OnReceiveSnappingAction.RemoveDynamic(this, &UPlayerBallStateMove::OnSnapped);
 
 			Pawn->BehaviorElementReactions->OnRailReaction.RemoveDynamic(this, &UPlayerBallStateMove::OnRail);
+
+			Pawn->BehaviorElementReactions->OnTourniquetReaction.RemoveDynamic(this, &UPlayerBallStateMove::OnTourniquet);
+
 		}
 
 		if (Pawn->BehaviorPowerUp != nullptr)
@@ -236,5 +242,12 @@ void UPlayerBallStateMove::OnUsePowerUp(float InPowerUpId)
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::PowerUpHub, InPowerUpId);
+}
+
+void UPlayerBallStateMove::OnTourniquet(float TourniquetValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Tourniquet);
 }
 

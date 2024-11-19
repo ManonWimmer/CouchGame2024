@@ -17,5 +17,6 @@ enum class EPowerUpID : uint8
  Collectible,
  Freeze,
  Strength,
+ Slippery,
  Heavy
 };
