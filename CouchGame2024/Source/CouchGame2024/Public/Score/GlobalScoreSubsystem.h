@@ -35,6 +35,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int GetIndexPlayerBestScore();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayerInDuckBank(int PlayerIndex, int DuckToPointsMultiplier);
 	
 protected:
 	UPROPERTY(BlueprintReadOnly)
