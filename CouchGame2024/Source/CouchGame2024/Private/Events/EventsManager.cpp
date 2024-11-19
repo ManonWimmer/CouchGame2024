@@ -4,6 +4,10 @@
 #include "Events/EventsManager.h"
 
 #include "Events/EventData.h"
+#include "Events/EventsChildren/EventDuck.h"
+#include "Events/EventsChildren/EventMole.h"
+#include "Events/EventsChildren/EventPush.h"
+#include "Events/EventsChildren/EventZones.h"
 #include "Rounds/RoundsSubsystem.h"
 
 
@@ -20,6 +24,8 @@ void AEventsManager::BeginPlay()
 	Super::BeginPlay();
 
 	InitResetable();
+
+	CreateEvents();
 
 	BindCountdownToRoundsPhase();
 	BindCountdownToRoundsChange();
@@ -48,6 +54,7 @@ void AEventsManager::Tick(float DeltaTime)
 	}
 }
 
+#pragma region Countdown
 void AEventsManager::BindCountdownToRoundsPhase()
 {
 	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
@@ -66,14 +73,6 @@ void AEventsManager::BindCountdownToRoundsChange()
 	RoundsSubsystem->OnChangeRound.AddDynamic(this, &AEventsManager::SetupNewRoundEvent);
 }
 
-void AEventsManager::SetupNewRoundEvent(int RoundIndex)
-{
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "setup new round event");
-	
-	GetRandomEvent();
-	SetupEventTimes();
-}
-
 void AEventsManager::CheckStartCountdown(ERoundsPhaseID InRoundsPhaseID)
 {
 	switch (InRoundsPhaseID)
@@ -85,6 +84,20 @@ void AEventsManager::CheckStartCountdown(ERoundsPhaseID InRoundsPhaseID)
 	default:
 		break;
 	}
+}
+
+float AEventsManager::GetCountdownTime() const
+{
+	return GameTimeInSec - CurrentTime;
+}
+#pragma endregion Countdown
+
+void AEventsManager::SetupNewRoundEvent(int RoundIndex)
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "setup new round event");
+	
+	GetRandomEvent();
+	SetupEventTimes();
 }
 
 void AEventsManager::StartGame()
@@ -107,13 +120,46 @@ void AEventsManager::EndGame()
 	RoundsSubsystem->ChangeToNextRoundPhase();
 }
 
-float AEventsManager::GetCountdownTime() const
+void AEventsManager::RegisterEvent(UEventData* EventData, AEvent* Event)
 {
-	return GameTimeInSec - CurrentTime;
+	if (Event)
+	{
+		EventsMap.Add(EventData, Event);
+	}
+}
+
+void AEventsManager::TriggerEventPhase1(const UEventData* EventData)
+{
+}
+
+void AEventsManager::TriggerEventPhase2(const UEventData* EventData)
+{
+}
+
+void AEventsManager::StartEvent() // show tag
+{
+}
+
+void AEventsManager::EndEvent() // hide tag
+{
+}
+
+UEventData* AEventsManager::GetEventDataFromName(EEventName EventName)
+{
+	if (Events.Num() == 0) return nullptr;
+
+	for (UEventData* Event : Events)
+	{
+		if (Event->EventName == EventName) return Event;
+	}
+
+	return nullptr;
 }
 
 void AEventsManager::CheckAndTriggerEvents()
 {
+	// todo: check phase1 time & switch phase
+	
 	/*
 	for (FLevelEventEntry& EventEntry : LevelEvents)
 	{
@@ -220,6 +266,50 @@ void AEventsManager::SetupEventTimes()
 		                                              Phase1Time, Phase2Time));
 }
 
+void AEventsManager::CreateEvents()
+{
+	// Duck
+	AEvent* EventDuck = NewObject<AEventDuck>();
+	UEventData* EventDuckData = GetEventDataFromName(EEventName::Duck);
+	if (EventDuck && EventDuckData)
+	{
+		RegisterEvent(EventDuckData, EventDuck);
+	}
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO DUCK EVENT AND/OR DATA");
+
+	// Zones
+	AEvent* EventZones = NewObject<AEventZones>();
+	UEventData* EventZonesData = GetEventDataFromName(EEventName::Zones);
+	if (EventZones && EventZonesData)
+	{
+		RegisterEvent(EventZonesData, EventZones);
+	}
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO ZONES EVENT AND/OR DATA");
+
+	// Mole
+	AEvent* EventMole = NewObject<AEventMole>();
+	UEventData* EventMoleData = GetEventDataFromName(EEventName::Mole);
+	if (EventMole && EventMoleData)
+	{
+		RegisterEvent(EventMoleData, EventMole);
+	}
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO MOLE EVENT AND/OR DATA");
+
+	// Push
+	AEvent* EventPush = NewObject<AEventPush>();
+	UEventData* EventPushData = GetEventDataFromName(EEventName::Push);
+	if (EventPush && EventPushData)
+	{
+		RegisterEvent(EventPushData, EventPush);
+	}
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO PUSH EVENT AND/OR DATA");
+}
+
+#pragma region Reset
 void AEventsManager::InitResetable()
 {
 	if (!GetWorld()) return;
@@ -243,3 +333,4 @@ void AEventsManager::ResetObject()
 	StartGameTime = GetWorld()->GetTimeSeconds();
 	IsGameStarted = false;
 }
+#pragma endregion Reset

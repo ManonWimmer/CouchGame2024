@@ -9,6 +9,7 @@
 #include "Rounds/RoundsResetable.h"
 #include "EventsManager.generated.h"
 
+enum class EEventName : uint8;
 class UEventData;
 
 USTRUCT(Blueprintable, BlueprintType)
@@ -119,6 +120,27 @@ public:
 
 	UPROPERTY()
 	UEventData* CurrentEventData = nullptr;
+
+	UFUNCTION()
+	void RegisterEvent(UEventData* EventData, AEvent* Event);
+
+	UFUNCTION()
+	void TriggerEventPhase1(const UEventData* EventData);
+
+	UFUNCTION()
+	void TriggerEventPhase2(const UEventData* EventData);
+
+	UFUNCTION()
+	void StartEvent(); // show tag
+	
+	UFUNCTION()
+	void EndEvent(); // hide tag
+
+	UFUNCTION()
+	UEventData* GetEventDataFromName(EEventName EventName);
+
+	UPROPERTY()
+	TMap<UEventData*, AEvent*> EventsMap;
 	
 private:
 	void CheckAndTriggerEvents();
@@ -128,6 +150,8 @@ private:
 	void GetRandomEvent();
 
 	void SetupEventTimes();
+
+	void CreateEvents();
 
 
 #pragma region Resetable
