@@ -3,6 +3,7 @@
 
 #include "Events/EventsManager.h"
 
+#include "EngineUtils.h"
 #include "Events/EventData.h"
 #include "Events/EventsChildren/EventDuck.h"
 #include "Events/EventsChildren/EventMole.h"
@@ -94,7 +95,7 @@ float AEventsManager::GetCountdownTime() const
 void AEventsManager::SetupNewRoundEvent(int RoundIndex)
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "setup new round event");
-	
+
 	GetRandomEvent();
 	SetupEventTimes();
 	StartEvent();
@@ -134,7 +135,8 @@ void AEventsManager::TriggerEventPhase1(const UEventData* EventData)
 	if (AEvent* CurrentEvent = GetEventClassFromEventData(EventData))
 		CurrentEvent->TriggerEventPhase1();
 	else
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "COULDN'T FIND CURRENT EVENT TO TRIGGER PHASE 1");
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
+		                                              "COULDN'T FIND CURRENT EVENT TO TRIGGER PHASE 1");
 }
 
 void AEventsManager::TriggerEventPhase2(const UEventData* EventData)
@@ -142,22 +144,18 @@ void AEventsManager::TriggerEventPhase2(const UEventData* EventData)
 	if (AEvent* CurrentEvent = GetEventClassFromEventData(EventData))
 		CurrentEvent->TriggerEventPhase2();
 	else
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "COULDN'T FIND CURRENT EVENT TO TRIGGER PHASE 2");
-
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
+		                                              "COULDN'T FIND CURRENT EVENT TO TRIGGER PHASE 2");
 }
 
-void AEventsManager::StartEvent() // show tag
+void AEventsManager::StartEvent()
 {
-	
+	// Hide or show objects depending on current tag
+	ShowObjectsWithCurrentEventTag();
 	
 	// Setup phase 1 
 	if (AEvent* CurrentEvent = GetEventClassFromEventData(CurrentEventData))
 		CurrentEvent->SetupEventPhase1();
-}
-
-void AEventsManager::EndEvent() // hide tag
-{
-	
 }
 
 UEventData* AEventsManager::GetEventDataFromName(EEventName EventName)
@@ -240,10 +238,11 @@ void AEventsManager::SetupEventTimes()
 	Phase1Time = FMath::RoundToInt(FMath::RandRange(CurrentEventData->Phase1MinTime, CurrentEventData->Phase1MaxTime));
 	Phase2Time = GameTimeInSec - Phase1Time;
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
-	                                              FString::Printf(
-		                                              TEXT("Time - Game : %i, Phase1: %i, Phase2: %i"), GameTimeInSec,
-		                                              Phase1Time, Phase2Time));
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
+		                                 FString::Printf(
+			                                 TEXT("Time - Game : %i, Phase1: %i, Phase2: %i"), GameTimeInSec,
+			                                 Phase1Time, Phase2Time));
 }
 
 void AEventsManager::CreateEvents()
@@ -287,7 +286,84 @@ void AEventsManager::CreateEvents()
 	}
 	else
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO PUSH EVENT AND/OR DATA");
+
+	GetTags();
 }
+
+#pragma region Tags
+
+void AEventsManager::GetTags()
+{
+	EventsTags.Reset();
+	EventsTags.Add(TEXT("Constant"));
+
+	for (const TTuple<UEventData*, AEvent*> Item : EventsMap)
+	{
+		EventsTags.Add(Item.Key->EventTag);
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("add tag %s"), *Item.Key->EventTag.ToString()));
+	}
+}
+
+void AEventsManager::ShowObjectsWithCurrentEventTag()
+{
+	if (CurrentEventData == nullptr) return;
+	
+	HideOtherTags();
+	
+	TArray<AActor*> Actors = GetActorsWithTag(CurrentEventData->EventTag);
+	for (AActor* Actor : Actors)
+	{
+		if (Actor)
+		{
+			Actor->SetActorHiddenInGame(false);
+			Actor->SetActorEnableCollision(true);
+			UE_LOG(LogTemp, Log, TEXT("%s set visible to true."), *Actor->GetName());
+		}
+	}
+}
+
+void AEventsManager::HideOtherTags()
+{
+	for (FName Tag : EventsTags)
+	{
+		if (Tag != CurrentEventData->EventTag && Tag != "Constant")
+		{
+			HideObjectsWithTag(Tag);
+		}
+	}
+}
+
+void AEventsManager::HideObjectsWithTag(FName TagName) const
+{
+	TArray<AActor*> Actors = GetActorsWithTag(TagName);
+	for (AActor* Actor : Actors)
+	{
+		if (Actor)
+		{
+			Actor->SetActorHiddenInGame(true);
+			Actor->SetActorEnableCollision(false);
+			UE_LOG(LogTemp, Log, TEXT("%s set visible to false."), *Actor->GetName());
+		}
+	}
+}
+
+TArray<AActor*> AEventsManager::GetActorsWithTag(FName TagName) const
+{
+	TArray<AActor*> TaggedActors;
+	
+	for (TActorIterator<AActor> It(GetWorld()); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (Actor && Actor->Tags.Contains(TagName))
+		{
+			TaggedActors.Add(Actor);
+		}
+	}
+
+	return TaggedActors;
+}
+
+#pragma endregion Tags
 
 #pragma region Reset
 void AEventsManager::InitResetable()

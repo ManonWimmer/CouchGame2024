@@ -134,9 +134,6 @@ public:
 	void StartEvent();
 	
 	UFUNCTION()
-	void EndEvent();
-
-	UFUNCTION()
 	UEventData* GetEventDataFromName(EEventName EventName);
 
 	UFUNCTION()
@@ -147,17 +144,40 @@ public:
 
 	UPROPERTY()
 	bool bPhase2Triggered = false;
+
+	UPROPERTY()
+	TArray<FName> EventsTags;
 	
 private:
+	UFUNCTION()
 	void CheckAndTriggerEvents();
 
+	UPROPERTY()
 	bool IsGameStarted = false;
 
+	UFUNCTION()
 	void GetRandomEvent();
 
+	UFUNCTION()
 	void SetupEventTimes();
 
+	UFUNCTION()
 	void CreateEvents();
+
+	UFUNCTION()
+	void GetTags();
+
+	UFUNCTION()
+	void ShowObjectsWithCurrentEventTag();
+
+	UFUNCTION()
+	void HideOtherTags();
+
+	UFUNCTION()
+	void HideObjectsWithTag(FName TagName) const;
+	
+	UFUNCTION()
+	TArray<AActor*> GetActorsWithTag(FName TagName) const;
 
 
 #pragma region Resetable

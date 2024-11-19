@@ -31,6 +31,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Event")
 	FString EventDescription = "Event Description";
+
+	UPROPERTY(EditAnywhere, Category = "Event")
+	FName EventTag = "EventTag";
 	
 	UPROPERTY(EditAnywhere, Category = "Event")
 	float Phase1MinTime = 30.f;
