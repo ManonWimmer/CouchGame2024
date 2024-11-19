@@ -42,32 +42,6 @@ void UGlobalScoreSubsystem::AddScore(int PlayerIndex, int Value)
 	ScoreChangedEvent.Broadcast(PlayerIndex, GetScore(PlayerIndex));
 }
 
-void UGlobalScoreSubsystem::RemoveScore(int PlayerIndex, int Value)
-{
-	switch (PlayerIndex)
-	{
-		case 0:
-			Player0Score -= Value;
-			if (Player0Score < 0) Player0Score = 0;
-			break;
-		case 1:
-			Player1Score -= Value;
-			if (Player1Score < 0) Player1Score = 0;
-			break;
-		case 2:
-			Player2Score -= Value;
-			if (Player2Score < 0) Player2Score = 0;
-			break;
-		case 3:
-			Player3Score -= Value;
-			if (Player3Score < 0) Player3Score = 0;
-			break;
-		default: ;
-	}
-
-	ScoreChangedEvent.Broadcast(PlayerIndex, GetScore(PlayerIndex)); // A voir si on appelle quand meme si on passe de 0 à 0 :)
-}
-
 void UGlobalScoreSubsystem::ResetAllScores()
 {
 	Player0Score = 0;
@@ -105,4 +79,9 @@ int UGlobalScoreSubsystem::GetIndexPlayerBestScore()
 	}
 
 	return PlayerIndexBestScore;
+}
+
+void UGlobalScoreSubsystem::UpdateDuckCounter(int PlayerIndex, int NewDuckCounter) const
+{
+	DuckCounterChangedEvent.Broadcast(PlayerIndex, NewDuckCounter);
 }

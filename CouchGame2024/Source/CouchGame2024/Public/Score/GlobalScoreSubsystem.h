@@ -16,6 +16,7 @@ class COUCHGAME2024_API UGlobalScoreSubsystem : public UGameInstanceSubsystem
 
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FScoreChangedEvent, int, PlayerIndex, int, NewScore);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDuckCounterChangedEvent, int, PlayerIndex, int, NewScore);
 
 	int GetScore(int PlayerIndex) const;
 
@@ -23,13 +24,13 @@ public:
 	void AddScore(int PlayerIndex, int Value);
 
 	UFUNCTION(BlueprintCallable)
-	void RemoveScore(int PlayerIndex, int Value);
-
-	UFUNCTION(BlueprintCallable)
 	void ResetAllScores();
 
 	UFUNCTION(BlueprintCallable)
 	int GetIndexPlayerBestScore();
+
+	UFUNCTION()
+	void UpdateDuckCounter(int PlayerIndex, int NewDuckCounter) const;
 	
 protected:
 	UPROPERTY(BlueprintReadOnly)
@@ -46,4 +47,7 @@ protected:
 
 	UPROPERTY(BlueprintAssignable)
 	FScoreChangedEvent ScoreChangedEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FDuckCounterChangedEvent DuckCounterChangedEvent;
 };

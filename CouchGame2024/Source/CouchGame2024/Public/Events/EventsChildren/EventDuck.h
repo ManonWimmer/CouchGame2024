@@ -22,4 +22,39 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION()
+	void AddDuckToPlayer(int PlayerIndex);
+
+	UFUNCTION()
+	void ResetValues();
+
+	UPROPERTY()
+	int Player0DuckCounter = 0;
+
+	UPROPERTY()
+	int Player1DuckCounter = 0;
+	
+	UPROPERTY()
+	int Player2DuckCounter = 0;
+
+	UPROPERTY()
+	int Player3DuckCounter = 0;
+
+#pragma region Event
+	
+	virtual void SetupEventPhase1() override;
+
+	virtual void TriggerEventPhase1() override;
+
+	virtual void TriggerEventPhase2() override;
+	
+	virtual void TickPhase1() override;
+
+	virtual void TickPhase2() override;
+	
+	virtual void EndEvent() override;
+
+	
+#pragma endregion
 };
