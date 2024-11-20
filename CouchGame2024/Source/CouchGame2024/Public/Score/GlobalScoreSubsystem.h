@@ -38,6 +38,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void PlayerInDuckBank(int PlayerIndex, int DuckToPointsMultiplier);
+
+	UFUNCTION(BlueprintCallable)
+	void StealDuck(int PlayerIndexAdd, int PlayerIndexLose);
 	
 protected:
 	UPROPERTY(BlueprintReadOnly)
