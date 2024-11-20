@@ -19,5 +19,6 @@ enum class EPowerUpID : uint8
  Strength,
  Slippery,
  Heavy,
- Duck
+ Duck,
+ Mole
 };
