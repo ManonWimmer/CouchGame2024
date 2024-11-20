@@ -24,3 +24,37 @@ void AEventMole::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void AEventMole::SetupEventPhase1()
+{
+	Super::SetupEventPhase1();
+}
+
+void AEventMole::TriggerEventPhase1()
+{
+	Super::TriggerEventPhase1();
+
+	OnMoleStartedEvent.Broadcast();
+}
+
+void AEventMole::TriggerEventPhase2()
+{
+	Super::TriggerEventPhase2();
+}
+
+void AEventMole::TickPhase1()
+{
+	Super::TickPhase1();
+}
+
+void AEventMole::TickPhase2()
+{
+	Super::TickPhase2();
+}
+
+void AEventMole::EndEvent()
+{
+	Super::EndEvent();
+
+	OnMoleEndedEvent.Broadcast();
+}
+
