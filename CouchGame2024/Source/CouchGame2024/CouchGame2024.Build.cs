@@ -8,7 +8,7 @@ public class CouchGame2024 : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "DeveloperSettings", "Blutility", "EditorScriptingUtilities", "UnrealEd", "EditorSubsystem", "PhysicsCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "DeveloperSettings", "Blutility", "EditorScriptingUtilities", "UnrealEd", "EditorSubsystem", "PhysicsCore", "MetasoundEngine" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "GeometryFramework", "LocalMultiplayer", "CableComponent", "EditorScriptingUtilities", "UnrealEd", "UMGEditor" ,"UMG" });
 

@@ -1,18 +1,17 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PowerUp/Type/PowerUpMole.h"
+#include "PinballElements/Elements/MoleElement.h"
 
-#include "Components/SphereComponent.h"
 #include "Events/EventData.h"
 #include "Events/EventsManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "PlayerBall/PlayerBall.h"
 #include "Score/GlobalScoreSubsystem.h"
 
 
-class UGlobalScoreSubsystem;
 // Sets default values
-APowerUpMole::APowerUpMole()
+AMoleElement::AMoleElement()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -24,11 +23,12 @@ APowerUpMole::APowerUpMole()
 }
 
 // Called when the game starts or when spawned
-void APowerUpMole::BeginPlay()
+void AMoleElement::BeginPlay()
 {
 	Super::BeginPlay();
 
 	// Timelines
+	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z - Height));
 	InitialZ = GetActorLocation().Z;
 	TargetZ = InitialZ + Height; 
 
@@ -42,31 +42,38 @@ void APowerUpMole::BeginPlay()
 }
 
 // Called every frame
-void APowerUpMole::Tick(float DeltaTime)
+void AMoleElement::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-EPowerUpID APowerUpMole::GetPowerUpID() const
+void AMoleElement::TriggerElementWithPlayer(APlayerBall* InPlayerBall)
 {
-	return EPowerUpID::Mole;
-}
+	if (bHasBeenHitByPlayer) return;
+	bHasBeenHitByPlayer = true;
+	
+	Super::TriggerElementWithPlayer(InPlayerBall);
 
-void APowerUpMole::TriggerPowerUp(int PlayerIndex)
-{
 	UGlobalScoreSubsystem* ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
 	if (ScoreSubsystem != nullptr)
 	{
-		ScoreSubsystem->AddScore(PlayerIndex, MoleToPoints);
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow, FString::Printf(TEXT("Add Mole Score to player ID: %i"), PlayerIndex));
+		ScoreSubsystem->AddScore(InPlayerBall->PlayerIndex, MoleToPoints);
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f, FColor::Yellow, FString::Printf(TEXT("Add Mole Score to player ID: %i"), InPlayerBall->PlayerIndex));
 
 		OnMoleCollected.Broadcast();
 	}
 
 	DespawnMole();
+
+	BumpEffect();
 }
 
-void APowerUpMole::SpawnMole() const
+EPinballElementID AMoleElement::GetElementID()
+{
+	return EPinballElementID::Mole;
+}
+
+void AMoleElement::SpawnMole() const
 {
 	if (SpawnAnimationCurve)
 	{
@@ -76,7 +83,7 @@ void APowerUpMole::SpawnMole() const
 	}
 }
 
-void APowerUpMole::DespawnMole() const
+void AMoleElement::DespawnMole() const
 {
 	//SphereTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
@@ -86,18 +93,22 @@ void APowerUpMole::DespawnMole() const
 	}
 }
 
-void APowerUpMole::HandleTimelineProgress(float Value)
+void AMoleElement::HandleTimelineProgress(float Value)
 {
-	FVector NewLocation = GetActorLocation();
-	NewLocation.Z = FMath::Lerp(InitialZ, TargetZ, Value); 
-	SetActorLocation(NewLocation);
+		FVector NewLocation = GetActorLocation();
+		NewLocation.Z = FMath::Lerp(InitialZ, TargetZ, Value); 
+		SetActorLocation(NewLocation);
 }
 
-void APowerUpMole::OnTimelineFinished()
+void AMoleElement::OnTimelineFinished()
 {
 	if (SpawnTimeline->GetPlaybackPosition() == 0.0f) // Si c'est le despawn
 	{
 		Destroy();
 	}
+}
+
+void AMoleElement::BumpEffect()
+{
 }
 

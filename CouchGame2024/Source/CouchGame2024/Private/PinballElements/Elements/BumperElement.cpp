@@ -28,17 +28,12 @@ void ABumperElement::TriggerElement()
 {
 	Super::TriggerElement();
 
-	BumpEffect();
+	PlayBumperGamefeelEffectsBlueprint();
 }
 
 EPinballElementID ABumperElement::GetElementID()
 {
 	return EPinballElementID::Bumper;
-}
-
-void ABumperElement::BumpEffect()
-{
-	
 }
 
 #pragma region Grappling Interface

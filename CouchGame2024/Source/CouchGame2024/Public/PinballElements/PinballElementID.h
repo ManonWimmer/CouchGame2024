@@ -19,5 +19,6 @@ enum class EPinballElementID : uint8
 	DeathZone,
 	Rail,
 	BoostPad,
-	Tourniquet
+	Tourniquet,
+	Mole
 };
