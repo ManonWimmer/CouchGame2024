@@ -444,8 +444,11 @@ void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngleNotPillar(float Delt
 	FVector LastPosToCenter = LastLocation - Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
 	float LastPosAngle = FMath::Atan2(LastPosToCenter.Y, LastPosToCenter.X);
 
+	FVector NormalizedLastLocation = LastLocation.GetSafeNormal();
+	FVector NormalizeVelocity = Pawn->GetVelocity().GetSafeNormal();
+	
 	// (U.X * V.Y) - (U.Y * V.X)
-	float truc = (LastLocation.X * Pawn->GetVelocity().Y) - (LastLocation.Y * Pawn->GetVelocity().X);
+	float truc = (NormalizedLastLocation.X * NormalizeVelocity.Y) - (NormalizedLastLocation.Y * NormalizeVelocity.X);
 
 	float RotationDirection = truc > 0 ? -1.0f : 1.0f;
 
