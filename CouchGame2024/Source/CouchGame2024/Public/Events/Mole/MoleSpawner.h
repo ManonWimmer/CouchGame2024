@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "MoleSpawner.generated.h"
 
+class AMoleElement;
 class APowerUpMole;
 
 UCLASS()
@@ -47,7 +48,7 @@ public:
 	void GetRandomStayTime();
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<APowerUpMole> MoleClass;
+	TSubclassOf<AMoleElement> MoleClass;
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -81,5 +82,5 @@ private:
 	bool bCanStay = false;
 
 	UPROPERTY()
-	APowerUpMole* SpawnedMole = nullptr;
+	AMoleElement* SpawnedMole = nullptr;
 };

@@ -5,7 +5,7 @@
 
 #include "Events/EventsChildren/EventMole.h"
 #include "Kismet/GameplayStatics.h"
-#include "PowerUp/Type/PowerUpMole.h"
+#include "PinballElements/Elements/MoleElement.h"
 
 
 // Sets default values
@@ -79,7 +79,7 @@ void AMoleSpawner::SpawnMole()
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Spawn Duck");
 
 	// Spawn Mole
-	SpawnedMole = GetWorld()->SpawnActor<APowerUpMole>(MoleClass, GetActorLocation(), GetActorRotation());
+	SpawnedMole = GetWorld()->SpawnActor<AMoleElement>(MoleClass, GetActorLocation(), GetActorRotation());
 	SpawnedMole->OnMoleCollected.AddDynamic(this, &AMoleSpawner::StartCountdownSpawning);
 
 	StopCountdownSpawning();

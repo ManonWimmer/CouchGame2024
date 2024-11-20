@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/TimelineComponent.h"
-#include "PowerUp/PowerUp.h"
-#include "PowerUpMole.generated.h"
+#include "PinballElements/PinballElement.h"
+#include "MoleElement.generated.h"
 
 UCLASS()
-class COUCHGAME2024_API APowerUpMole : public APowerUp
+class COUCHGAME2024_API AMoleElement : public APinballElement
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	APowerUpMole();
+	AMoleElement();
 
 protected:
 	// Called when the game starts or when spawned
@@ -24,9 +24,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual EPowerUpID GetPowerUpID() const override;
-    
-	virtual void TriggerPowerUp(int PlayerIndex) override;
+	virtual void TriggerElementWithPlayer(APlayerBall* InPlayerBall) override;
+	
+	virtual EPinballElementID GetElementID() override;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMoleCollected);
 
@@ -68,4 +68,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	float Height = 300.f;
+	
+private:
+
+	UFUNCTION()
+	void BumpEffect();
+
+	UPROPERTY()
+	bool bHasBeenHitByPlayer = false;
 };
