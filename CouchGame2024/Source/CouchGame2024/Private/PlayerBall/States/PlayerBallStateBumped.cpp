@@ -109,6 +109,8 @@ void UPlayerBallStateBumped::Bump()
 	
 	Pawn->SphereCollision->AddImpulse(Dir * Pawn->BehaviorElementReactions->BumpedForceMultiplier, NAME_None, false);	// impulse
 
+	Pawn->PlayBumpedGamefeelEffectsBlueprint();
+	
 	Pawn->BehaviorElementReactions->ReceiveStunnedAction(1.f);	// stun id 1.f -> BumpedStunDuration
 }
 

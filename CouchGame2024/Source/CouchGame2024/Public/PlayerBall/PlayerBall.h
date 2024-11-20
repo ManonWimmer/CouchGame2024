@@ -161,6 +161,11 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayIsPunchedGamefeelEffectsBlueprint();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayBumpedGamefeelEffectsBlueprint();
+
+	
 	
 	UPROPERTY()
 	float PunchRadius = 50.f;
