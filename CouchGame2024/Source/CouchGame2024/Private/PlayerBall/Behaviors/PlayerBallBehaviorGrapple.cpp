@@ -57,6 +57,8 @@ void UPlayerBallBehaviorGrapple::SetupData()
 	if (GetPlayerBall()->GetPlayerBallData() == nullptr) return;
 
 	// Grappling
+	GrapplingCooldown = GetPlayerBall()->GetPlayerBallData()->GrapplingCooldown;
+	
 	GrapplingDamping = GetPlayerBall()->GetPlayerBallData()->GrapplingDamping;
 	GrapplingPillarForce = GetPlayerBall()->GetPlayerBallData()->GrapplingPillarForce;
 	GrapplingReleaseForcePillar = GetPlayerBall()->GetPlayerBallData()->GrapplingReleaseForcePillar;

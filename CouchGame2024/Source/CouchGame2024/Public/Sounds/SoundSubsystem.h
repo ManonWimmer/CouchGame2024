@@ -3,23 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Subsystems/GameInstanceSubsystem.h"
-#include "SoundsSubsystem.generated.h"
+#include "Subsystems/WorldSubsystem.h"
+#include "SoundSubsystem.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class COUCHGAME2024_API USoundsSubsystem : public UGameInstanceSubsystem
+class COUCHGAME2024_API USoundSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
 
-
-
+virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 	
-public:
-
-
 private:
 	void InitSoundSubsystem();
 	
