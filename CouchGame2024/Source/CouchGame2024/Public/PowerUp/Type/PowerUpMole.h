@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/TimelineComponent.h"
 #include "PowerUp/PowerUp.h"
 #include "PowerUpMole.generated.h"
 
@@ -33,11 +34,38 @@ public:
 	FMoleCollected OnMoleCollected;
 
 	UFUNCTION()
-	void SpawnMole();
+	void SpawnMole() const;
 
 	UFUNCTION()
-	void DespawnMole();
+	void DespawnMole() const;
 
 	UPROPERTY()
 	int MoleToPoints = 200;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	UCurveFloat* SpawnAnimationCurve;
+
+	UPROPERTY()
+	UTimelineComponent* SpawnTimeline;
+
+	UPROPERTY()
+	FOnTimelineFloat InterpFunction{};
+
+	UPROPERTY()
+	FOnTimelineEvent TimelineFinished{};
+
+	UFUNCTION()
+	void HandleTimelineProgress(float Value);
+
+	UFUNCTION()
+	void OnTimelineFinished();
+
+	UPROPERTY()
+	float InitialZ = 0.f;
+
+	UPROPERTY()
+	float TargetZ = 0.f;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	float Height = 300.f;
 };

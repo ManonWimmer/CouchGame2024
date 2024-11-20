@@ -3,6 +3,7 @@
 
 #include "PowerUp/Type/PowerUpMole.h"
 
+#include "Components/SphereComponent.h"
 #include "Events/EventData.h"
 #include "Events/EventsManager.h"
 #include "Kismet/GameplayStatics.h"
@@ -15,12 +16,20 @@ APowerUpMole::APowerUpMole()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	SpawnTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("SpawnTimeline"));
+	InterpFunction.BindUFunction(this, FName("HandleTimelineProgress"));
+	TimelineFinished.BindUFunction(this, FName("OnTimelineFinished"));
 }
 
 // Called when the game starts or when spawned
 void APowerUpMole::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Timelines
+	InitialZ = GetActorLocation().Z;
+	TargetZ = InitialZ + Height; 
 
 	// Data
 	if (AEventsManager* EventsManager = Cast<AEventsManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventsManager::StaticClass())))
@@ -56,15 +65,38 @@ void APowerUpMole::TriggerPowerUp(int PlayerIndex)
 	DespawnMole();
 }
 
-void APowerUpMole::SpawnMole()
+void APowerUpMole::SpawnMole() const
 {
-	// timeline go up
+	if (SpawnAnimationCurve)
+	{
+		SpawnTimeline->AddInterpFloat(SpawnAnimationCurve, InterpFunction, FName("Alpha"));
+		SpawnTimeline->SetTimelineFinishedFunc(TimelineFinished);
+		SpawnTimeline->PlayFromStart();
+	}
 }
 
-void APowerUpMole::DespawnMole()
+void APowerUpMole::DespawnMole() const
 {
-	// stop collision
-	// timeline go down & only after destroy
-	this->Destroy();
+	//SphereTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+	if (SpawnAnimationCurve)
+	{
+		SpawnTimeline->ReverseFromEnd();
+	}
+}
+
+void APowerUpMole::HandleTimelineProgress(float Value)
+{
+	FVector NewLocation = GetActorLocation();
+	NewLocation.Z = FMath::Lerp(InitialZ, TargetZ, Value); 
+	SetActorLocation(NewLocation);
+}
+
+void APowerUpMole::OnTimelineFinished()
+{
+	if (SpawnTimeline->GetPlaybackPosition() == 0.0f) // Si c'est le despawn
+	{
+		Destroy();
+	}
 }
 
