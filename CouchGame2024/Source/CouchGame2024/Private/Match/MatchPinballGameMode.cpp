@@ -98,12 +98,15 @@ void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APla
 		{
 			if (PlayersBallInsideArena.Num() > PlayerSpecial)
 			{
-				bHasUsedSpecial = true;
-				PlayersBallInsideArena[PlayerSpecial]->SetActorLocation(SpawnPoint->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
-
-				if (PlayersBallInsideArena[PlayerSpecial]->BehaviorMovements != nullptr)
+				if (PlayersBallInsideArena[PlayerSpecial] != nullptr)
 				{
-					PlayersBallInsideArena[PlayerSpecial]->BehaviorMovements->SpecialSpawnForceDir = SpawnPoint->GetSpawnSpecialForceDiretion();
+					bHasUsedSpecial = true;
+					PlayersBallInsideArena[PlayerSpecial]->SetActorLocation(SpawnPoint->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
+
+					if (PlayersBallInsideArena[PlayerSpecial]->BehaviorMovements != nullptr)
+					{
+						PlayersBallInsideArena[PlayerSpecial]->BehaviorMovements->SpecialSpawnForceDir = SpawnPoint->GetSpawnSpecialForceDiretion();
+					}
 				}
 			}
 			else
@@ -115,12 +118,14 @@ void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APla
 		{
 			if (PlayersBallInsideArena.Num() > PlayerCount)
 			{
-				PlayersBallInsideArena[PlayerCount]->SetActorLocation(SpawnPoint->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
-				
-				PlayerCount++;
+				if (PlayersBallInsideArena[PlayerCount] != nullptr)
+				{
+					PlayersBallInsideArena[PlayerCount]->SetActorLocation(SpawnPoint->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
+
+					PlayerCount++;
+				}
 			}
 		}
-
 	}
 	if (!bHasUsedSpecial)
 	{
@@ -128,9 +133,12 @@ void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APla
 
 		if (PlayersBallInsideArena.Num() > PlayerSpecial && SpawnPoints.Num() > 0)
 		{
-			PlayersBallInsideArena[PlayerSpecial]->SetActorLocation(SpawnPoints[SpawnPoints.Num()-1]->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
-			//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Spawn actor : %d"), PlayerSpecial));
-			//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoints[SpawnPoints.Num()-1]->GetName()));
+			if (PlayersBallInsideArena[PlayerSpecial] != nullptr)
+			{
+				PlayersBallInsideArena[PlayerSpecial]->SetActorLocation(SpawnPoints[SpawnPoints.Num()-1]->GetActorLocation(), false, nullptr, ETeleportType::TeleportPhysics);
+				//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Spawn actor : %d"), PlayerSpecial));
+				//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("To spawn : %s"), *SpawnPoints[SpawnPoints.Num()-1]->GetName()));
+			}
 		}
 	}
 
