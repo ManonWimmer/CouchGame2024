@@ -18,6 +18,7 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
 #include "Rounds/RoundsSubsystem.h"
+#include "Score/GlobalScoreSubsystem.h"
 
 
 // Sets default values
@@ -390,7 +391,12 @@ bool APlayerBall::IsFollowable() const
 
 void APlayerBall::ReceiveDuckReaction(int PlayerIndexReceiving, int PlayerIndexLosing)
 {
-	// fonction pour ajouter duck ou retirer
+	// Fonction pour ajouter duck ou retirer
+	UGlobalScoreSubsystem* ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
+	if (ScoreSubsystem != nullptr)
+	{
+		ScoreSubsystem->StealDuck(PlayerIndexReceiving, PlayerIndexLosing);
+	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Receive Duck Reaction RECEIVING : %d	/	LOSING : %d"), PlayerIndexReceiving, PlayerIndexLosing));
 }

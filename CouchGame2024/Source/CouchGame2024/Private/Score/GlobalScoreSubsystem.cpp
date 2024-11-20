@@ -3,6 +3,10 @@
 
 #include "Score/GlobalScoreSubsystem.h"
 
+#include "Events/EventData.h"
+#include "Events/EventsManager.h"
+#include "Kismet/GameplayStatics.h"
+
 #pragma region Score
 
 int UGlobalScoreSubsystem::GetScore(int PlayerIndex) const
@@ -90,6 +94,66 @@ void UGlobalScoreSubsystem::AddDuck(int PlayerIndex, int Value)
 	DuckCounterChangedEvent.Broadcast(PlayerIndex, GetDuckCounter(PlayerIndex));
 }
 
+void UGlobalScoreSubsystem::PlayerInDuckBank(int PlayerIndex, int DuckToPointsMultiplier)
+{
+	switch (PlayerIndex)
+	{
+	case 0:
+		AddScore(0, Player0DuckCounter * DuckToPointsMultiplier);
+		Player0DuckCounter = 0;
+		break;
+	case 1:
+		AddScore(1, Player1DuckCounter * DuckToPointsMultiplier);
+		Player1DuckCounter = 0;
+		break;
+	case 2:
+		AddScore(2, Player2DuckCounter * DuckToPointsMultiplier);
+		Player2DuckCounter = 0;
+		break;
+	case 3:
+		AddScore(3, Player3DuckCounter * DuckToPointsMultiplier);
+		Player3DuckCounter = 0;
+		break;
+	default:
+		break;
+	}
+
+	ScoreChangedEvent.Broadcast(PlayerIndex, GetScore(PlayerIndex));
+	DuckCounterChangedEvent.Broadcast(PlayerIndex, GetDuckCounter(PlayerIndex));
+}
+
+void UGlobalScoreSubsystem::StealDuck(int PlayerIndexAdd, int PlayerIndexLose)
+{
+	// Check if duck event
+	if (AEventsManager* EventsManager = Cast<AEventsManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventsManager::StaticClass())))
+	{
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "event manager");
+		if (EventsManager->CurrentEventData != nullptr)
+			if (EventsManager->CurrentEventData->EventName != EEventName::Duck) return;
+			else
+			{
+				//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "pas return");
+			}
+		else return;
+	}
+	else
+	{
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "StealDuck - No events manager");
+		return;
+	}
+
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "steal duck");
+	
+	// Steal duck
+	if (GetDuckCounter(PlayerIndexLose) < 1) return;
+
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "StealDuck");
+
+	AddDuck(PlayerIndexAdd, 1);
+	AddDuck(PlayerIndexLose, -1);
+}
+
+
 #pragma endregion Duck Counter
 
 void UGlobalScoreSubsystem::ResetAllScores()
@@ -143,30 +207,4 @@ int UGlobalScoreSubsystem::GetIndexPlayerBestScore()
 	return PlayerIndexBestScore;
 }
 
-void UGlobalScoreSubsystem::PlayerInDuckBank(int PlayerIndex, int DuckToPointsMultiplier)
-{
-	switch (PlayerIndex)
-	{
-	case 0:
-		AddScore(0, Player0DuckCounter * DuckToPointsMultiplier);
-		Player0DuckCounter = 0;
-		break;
-	case 1:
-		AddScore(1, Player1DuckCounter * DuckToPointsMultiplier);
-		Player1DuckCounter = 0;
-		break;
-	case 2:
-		AddScore(2, Player2DuckCounter * DuckToPointsMultiplier);
-		Player2DuckCounter = 0;
-		break;
-	case 3:
-		AddScore(3, Player3DuckCounter * DuckToPointsMultiplier);
-		Player3DuckCounter = 0;
-		break;
-	default:
-		break;
-	}
 
-	ScoreChangedEvent.Broadcast(PlayerIndex, GetScore(PlayerIndex));
-	DuckCounterChangedEvent.Broadcast(PlayerIndex, GetDuckCounter(PlayerIndex));
-}
