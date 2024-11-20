@@ -9,6 +9,11 @@
 #include "Rounds/RoundsResetable.h"
 #include "EventsManager.generated.h"
 
+class UDuckData;
+class AUIManager;
+enum class EEventName : uint8;
+class UEventData;
+
 USTRUCT(Blueprintable, BlueprintType)
 struct FEventInfos
 {
@@ -59,8 +64,13 @@ public:
 	// Sets default values for this actor's properties
 	AEventsManager();
 
+	/*
 	UPROPERTY(config, EditAnywhere, BlueprintReadWrite, Category="Events")
 	TArray<FLevelEventEntry> LevelEvents;
+	*/
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Events")
+	TArray<UEventData*> Events; 
 
 protected:
 	// Called when the game starts or when spawned
@@ -75,6 +85,12 @@ public:
 	void BindCountdownToRoundsPhase();
 	
 	UFUNCTION()
+	void BindCountdownToRoundsChange();
+
+	UFUNCTION()
+	void SetupNewRoundEvent(int RoundIndex);
+	
+	UFUNCTION()
 	void CheckStartCountdown(ERoundsPhaseID InRoundsPhaseID);
 	
 	UFUNCTION(BlueprintCallable, CallInEditor, Category = "Events")
@@ -86,22 +102,87 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Events")
 	float GetCountdownTime() const;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Events")
+	UPROPERTY()
 	int GameTimeInSec = 100;
-	
-	UPROPERTY()
-	float StartGameTime;
-	
-	UPROPERTY()
-	float CurrentTime;
 
+	UPROPERTY()
+	int Phase1Time = 100;
+
+	UPROPERTY()
+	int Phase2Time = 100;
+	
+	UPROPERTY()
+	float StartGameTime = 0.f;
+	
+	UPROPERTY()
+	float CurrentTime = 0.f;
+
+	UPROPERTY()
+	UEventData* LastEventData = nullptr;
+
+	UPROPERTY()
+	UEventData* CurrentEventData = nullptr;
+
+	UFUNCTION()
+	void RegisterEvent(UEventData* EventData, AEvent* Event);
+
+	UFUNCTION()
+	void TriggerEventPhase1(const UEventData* EventData);
+
+	UFUNCTION()
+	void TriggerEventPhase2(const UEventData* EventData);
+
+	UFUNCTION()
+	void StartEvent();
+	
+	UFUNCTION()
+	UEventData* GetEventDataFromName(EEventName EventName);
+
+	UFUNCTION()
+	AEvent* GetEventClassFromEventData(const UEventData* EventData);
+
+	UPROPERTY()
+	TMap<UEventData*, AEvent*> EventsMap;
+
+	UPROPERTY()
+	bool bPhase2Triggered = false;
+
+	UPROPERTY()
+	TArray<FName> EventsTags;
+	
 private:
+	UFUNCTION()
 	void CheckAndTriggerEvents();
 
-	void CheckProbabilities();
-
+	UPROPERTY()
 	bool IsGameStarted = false;
 
+	UFUNCTION()
+	void GetRandomEvent();
+
+	UFUNCTION()
+	void SetupEventTimes();
+
+	UFUNCTION()
+	void CreateEvents();
+
+	UFUNCTION()
+	void GetTags();
+
+	UFUNCTION()
+	void ShowObjectsWithCurrentEventTag();
+
+	UFUNCTION()
+	void HideOtherTags();
+
+	UFUNCTION()
+	void HideObjectsWithTag(FName TagName) const;
+	
+	UFUNCTION()
+	TArray<AActor*> GetActorsWithTag(FName TagName) const;
+
+	UPROPERTY()
+	TObjectPtr<AUIManager> UIManager = nullptr;
 
 #pragma region Resetable
 
@@ -111,7 +192,6 @@ public:
 	virtual bool IsResetable() override;
 
 	virtual void ResetObject() override;
-
 
 #pragma endregion 
 };

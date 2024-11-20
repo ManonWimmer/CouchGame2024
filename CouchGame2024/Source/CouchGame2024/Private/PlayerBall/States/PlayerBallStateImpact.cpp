@@ -8,6 +8,7 @@
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 
 
 // Sets default values for this component's properties
@@ -55,7 +56,17 @@ void UPlayerBallStateImpact::StateEnter(EPlayerBallStateID PreviousState)
 
 	if (Pawn->BehaviorElementReactions != nullptr)
 	{
-		StateMachine->ChangeState(EPlayerBallStateID::Stun, 2.f);	// Stun id 2.f -> ImpactStunCooldown
+		float ImpactStunDurationDivider = 1.f;
+
+		if (Pawn->BehaviorPowerUp != nullptr)
+		{
+			if (Pawn->BehaviorPowerUp->GetIsUsingStrengthPowerUp() && ImpactStunDurationDivider != 0.f)
+			{
+				ImpactStunDurationDivider = Pawn->BehaviorPowerUp->StrengthImpactStunDurationDivider;
+			}
+		}
+		
+		StateMachine->ChangeState(EPlayerBallStateID::Stun, 2.f / ImpactStunDurationDivider);	// Stun id 2.f -> ImpactStunCooldown
 	}
 	else
 	{
@@ -109,9 +120,47 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 		TotalForce = Pawn->BehaviorElementReactions->ImpactMinTotalForce;
 	}
 
-	Pawn->PlayImpactEffectsBlueprint();
+	float ImpactForceDivider = 1.f;
 	
-	Pawn->SphereCollision->AddImpulse(Dir * TotalForce, NAME_None, false);	// impulse
+	if (Pawn->BehaviorPowerUp != nullptr)
+	{
+		if (Pawn->BehaviorPowerUp->GetIsUsingStrengthPowerUp() && Pawn->BehaviorPowerUp->StrengthImpactForceDivider != 0.f)
+		{
+			ImpactForceDivider = Pawn->BehaviorPowerUp->StrengthImpactForceDivider;
+		}
+	}
+	
+	// if (Pawn->BehaviorElementReactions->ImpactedPlayerBall != nullptr)
+	// {
+	// 	if (HasBestVelocity())
+	// 	{
+	// 		Pawn->ReceiveDuckReaction(Pawn->PlayerIndex, Pawn->BehaviorElementReactions->ImpactedPlayerBall->PlayerIndex);	// Here the player is impacted -> lose duck
+	// 	}
+	// }
+	
+	Pawn->SphereCollision->AddImpulse(Dir * TotalForce / ImpactForceDivider, NAME_None, false);	// impulse
+
+	
+	Pawn->PlayImpactGamefeelEffectsBlueprint();
+}
+
+bool UPlayerBallStateImpact::HasBestVelocity()
+{
+	if (Pawn == nullptr)	return false;
+	if (Pawn->BehaviorElementReactions == nullptr)	return false;
+	if (Pawn->BehaviorElementReactions->ImpactedPlayerBall == nullptr)	return false;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Compare best VELOCITY : %f   /   %f"), Pawn->GetVelocity().Length(), Pawn->BehaviorElementReactions->ImpactedPlayerBall->GetVelocity().Length()));
+
+	
+	if (Pawn->GetVelocity().Length() > Pawn->BehaviorElementReactions->ImpactedPlayerBall->GetVelocity().Length())
+	{
+		float IndexFloat = Pawn->PlayerIndex;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Has best VELOCITY : %f"), IndexFloat));
+		return true;
+	}
+
+	return false;
 }
 
 

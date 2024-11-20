@@ -45,6 +45,9 @@ public:
 
 	void AssignPowerUpCarried(EPowerUpID PowerUpID);
 
+	void EmptyCurrentPowerUpCarried();
+	
+	
 	UFUNCTION()
 	void UsePowerUpAction(float UsePowerUpValue);
 	
@@ -54,11 +57,11 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUsePowerUpAction, float, PowerUpValueId);
 
 	FOnUsePowerUpAction OnUsePowerUpAction;
-	
+
 	
 private:
 	UPROPERTY(VisibleAnywhere)
-	EPowerUpID CurrentPowerUpCarried;
+	EPowerUpID CurrentPowerUpCarried = EPowerUpID::None;
 	
 #pragma endregion
 
@@ -73,4 +76,49 @@ public:
 	
 
 #pragma endregion
+
+#pragma region StrengthPowerUp
+
+public:
+	void ActivateStrengthPowerUp();
+
+	void DesactivateStrengthPowerUp();
+	
+	void HandleStrengthDuration(float DeltaTime);
+
+	bool GetIsUsingStrengthPowerUp();
+	
+	float StrengthImpactForceDivider = 3.f;
+
+	float StrengthImpactStunDurationDivider = 2.f;
+
+private:
+	bool bUsingStrength = false;
+
+	float TotalStrengthDuration = 5.f;
+
+	float CurrentStrengthDuration = 0.f;
+
+#pragma endregion
+
+#pragma region SlipperyPowerUp
+
+public:
+	float SlipperyRadius = 100.f;
+
+	void ReceiveSlipperyEffect();
+
+	void EndSlipperyEffect();
+
+	void HandleSlipperyEffectDuration(float DeltaTime);
+	
+private:
+	bool bIsSlippery = false;
+
+	float CurrentSlipperyEffectDuration = 0.f;
+	
+	float TotalSlipperyEffectDuration = 5.f;
+
+#pragma endregion
+	
 };

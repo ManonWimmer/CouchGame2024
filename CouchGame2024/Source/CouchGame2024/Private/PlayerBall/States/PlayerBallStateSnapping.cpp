@@ -67,6 +67,8 @@ void UPlayerBallStateSnapping::StateEnter(EPlayerBallStateID PreviousState)
 			Pawn->BehaviorElementReactions->OnBumperReaction.AddDynamic(this, &UPlayerBallStateSnapping::OnBumped);
 
 			Pawn->BehaviorElementReactions->OnRailReaction.AddDynamic(this, &UPlayerBallStateSnapping::OnRail);
+
+			Pawn->BehaviorElementReactions->OnTourniquetReaction.AddDynamic(this, &UPlayerBallStateSnapping::OnTourniquet);
 			
 			if (Pawn->BehaviorElementReactions->SnappingPlayerBall == nullptr)
 			{
@@ -105,6 +107,9 @@ void UPlayerBallStateSnapping::StateExit(EPlayerBallStateID NextState)
 			Pawn->BehaviorElementReactions->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnBumped);
 
 			Pawn->BehaviorElementReactions->OnRailReaction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnRail);
+
+			Pawn->BehaviorElementReactions->OnTourniquetReaction.RemoveDynamic(this, &UPlayerBallStateSnapping::OnTourniquet);
+
 
 			Pawn->BehaviorElementReactions->SnappingPlayerBall = nullptr;
 		}
@@ -251,4 +256,11 @@ void UPlayerBallStateSnapping::OnUsePowerUp(float InPowerUpId)
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::PowerUpHub, InPowerUpId);
+}
+
+void UPlayerBallStateSnapping::OnTourniquet(float TourniquetValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Tourniquet);
 }

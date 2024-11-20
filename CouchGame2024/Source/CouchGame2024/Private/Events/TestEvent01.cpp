@@ -28,14 +28,3 @@ void ATestEvent01::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ATestEvent01::TriggerEvent()
-{
-	Super::TriggerEvent();
-
-	UGlobalScoreSubsystem* ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
-	if (ScoreSubsystem != nullptr)
-	{
-		ScoreSubsystem->AddScore(0, 100);
-	}
-}
-

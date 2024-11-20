@@ -65,4 +65,7 @@ private:
 
 	UFUNCTION()
 	void OnUsePowerUp(float InPowerUpId);
+
+	UFUNCTION()
+	void OnTourniquet(float TourniquetValue);
 };

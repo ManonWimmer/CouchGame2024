@@ -3,7 +3,9 @@
 
 #include "PlayerBall/States/PowerUpSubStates/PlayerBallPowerUpSubStateStrength.h"
 
+#include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 
 EPlayerBallStateID UPlayerBallPowerUpSubStateStrength::GetStateID() const
 {
@@ -19,7 +21,15 @@ void UPlayerBallPowerUpSubStateStrength::StateEnter(EPlayerBallStateID PreviousS
 {
 	Super::StateEnter(PreviousState);
 
-	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, TEXT("Player SubState powerUp : Strength"));
+
+
+	UseStrengthPowerUp();
+
+	if (StateMachine != nullptr)
+	{
+		StateMachine->ChangeState(EPlayerBallStateID::Idle);
+	}
 }
 
 void UPlayerBallPowerUpSubStateStrength::StateExit(EPlayerBallStateID NextState)
@@ -28,10 +38,6 @@ void UPlayerBallPowerUpSubStateStrength::StateExit(EPlayerBallStateID NextState)
 
 
 	
-	if (StateMachine != nullptr)
-	{
-		StateMachine->ChangeState(EPlayerBallStateID::Idle);
-	}
 }
 
 void UPlayerBallPowerUpSubStateStrength::StateTick(float DeltaTime)
@@ -39,4 +45,13 @@ void UPlayerBallPowerUpSubStateStrength::StateTick(float DeltaTime)
 	Super::StateTick(DeltaTime);
 	
 	
+}
+
+
+void UPlayerBallPowerUpSubStateStrength::UseStrengthPowerUp()
+{
+	if (Pawn == nullptr)	return;
+	if (Pawn->BehaviorPowerUp == nullptr)	return;
+
+	Pawn->BehaviorPowerUp->ActivateStrengthPowerUp();
 }

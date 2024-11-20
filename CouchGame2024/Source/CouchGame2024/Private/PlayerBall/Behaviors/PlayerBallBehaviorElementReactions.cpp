@@ -73,6 +73,11 @@ void UPlayerBallBehaviorElementReactions::SetupData()
 
 	if (GetPlayerBall() == nullptr)	return;
 	if (GetPlayerBall()->GetPlayerBallData() == nullptr)	return;
+
+
+	// Punch stun
+	PunchStunCooldown = GetPlayerBall()->GetPlayerBallData()->PunchStunCooldown;
+
 	
 	// Impact
 	ImpactForceMultiplier = GetPlayerBall()->GetPlayerBallData()->ImpactForceMultiplier;
@@ -156,6 +161,9 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 			case EPinballElementID::BoostPad:
 				ReceiveBoostPadReaction();
 				OtherElement->TriggerElement();
+				break;
+			case EPinballElementID::Tourniquet:
+				OtherElement->TriggerElementWithPlayer(GetPlayerBall());
 				break;
 			default:
 				break;
@@ -312,5 +320,15 @@ bool UPlayerBallBehaviorElementReactions::CheckRightDirectionForRail(ARailElemen
 void UPlayerBallBehaviorElementReactions::ReceiveBoostPadReaction()
 {
 	OnBoostPadReaction.Broadcast(1.f);
+}
+
+void UPlayerBallBehaviorElementReactions::ReceiveTourniquetReaction()
+{
+	OnTourniquetReaction.Broadcast(1.f);
+}
+
+void UPlayerBallBehaviorElementReactions::ReceiveEndTourniquetReaction()
+{
+	OnEndTourniquetReaction.Broadcast(1.f);
 }
 
