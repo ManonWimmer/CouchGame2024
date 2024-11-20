@@ -13,4 +13,14 @@ UCLASS()
 class COUCHGAME2024_API USoundsSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
+
+
+
+	
+public:
+
+
+private:
+	void InitSoundSubsystem();
+	
 };
