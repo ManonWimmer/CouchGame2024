@@ -37,7 +37,16 @@ public:
 	void PlayGrapplingGrabSound();
 
 
-#pragma endregion 
+#pragma endregion
+
+
+#pragma region Play Players Sounds
+
+	UFUNCTION(BlueprintCallable)
+	void PlayPlayerRespawnSound();
+
+
+#pragma endregion
 
 	
 private:
