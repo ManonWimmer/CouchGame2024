@@ -37,4 +37,7 @@ public:
 
 	UFUNCTION()
 	void DespawnMole();
+
+	UPROPERTY()
+	int MoleToPoints = 200;
 };

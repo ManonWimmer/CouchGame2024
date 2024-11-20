@@ -3,6 +3,9 @@
 
 #include "PowerUp/Type/PowerUpMole.h"
 
+#include "Events/EventData.h"
+#include "Events/EventsManager.h"
+#include "Kismet/GameplayStatics.h"
 #include "Score/GlobalScoreSubsystem.h"
 
 
@@ -19,6 +22,12 @@ void APowerUpMole::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Data
+	if (AEventsManager* EventsManager = Cast<AEventsManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventsManager::StaticClass())))
+		MoleToPoints = EventsManager->CurrentEventData->MoleToPoints; // Forcement dans l'event mole
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "MISSING EVENTS MANAGER");
+	
 	SpawnMole();
 }
 
@@ -38,8 +47,8 @@ void APowerUpMole::TriggerPowerUp(int PlayerIndex)
 	UGlobalScoreSubsystem* ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
 	if (ScoreSubsystem != nullptr)
 	{
-		//ScoreSubsystem->AddDuck(PlayerIndex, 1);
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow, FString::Printf(TEXT("Add Duck to player ID: %i"), PlayerIndex));
+		ScoreSubsystem->AddScore(PlayerIndex, MoleToPoints);
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow, FString::Printf(TEXT("Add Mole Score to player ID: %i"), PlayerIndex));
 
 		OnMoleCollected.Broadcast();
 	}
