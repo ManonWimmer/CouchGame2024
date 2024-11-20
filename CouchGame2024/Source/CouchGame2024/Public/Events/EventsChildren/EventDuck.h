@@ -22,30 +22,4 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-#pragma region Event
-
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDuckStartedEvent);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDuckEndedEvent);
-
-	UPROPERTY(BlueprintAssignable)
-	FDuckStartedEvent OnDuckStartedEvent;
-
-	UPROPERTY(BlueprintAssignable)
-	FDuckEndedEvent OnDuckEndedEvent;
-	
-	virtual void SetupEventPhase1() override;
-
-	virtual void TriggerEventPhase1() override;
-
-	virtual void TriggerEventPhase2() override;
-	
-	virtual void TickPhase1() override;
-
-	virtual void TickPhase2() override;
-	
-	virtual void EndEvent() override;
-
-	
-#pragma endregion
 };

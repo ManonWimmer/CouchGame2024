@@ -74,8 +74,6 @@ void UPlayerBallStateDeath::DeathBall()
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 	
 	Pawn->SetActorHiddenInGame(true);
-
-	Pawn->PlayDeathZoneGamefeelEffectsBlueprint();
 }
 
 void UPlayerBallStateDeath::EndDeathBall()

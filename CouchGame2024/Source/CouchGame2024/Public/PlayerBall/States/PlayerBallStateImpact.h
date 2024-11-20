@@ -31,6 +31,4 @@ public:
 private:
 	UFUNCTION()
 	void ImpactedBall(float ImpactValue);
-
-	bool HasBestVelocity();
 };

@@ -5,7 +5,6 @@
 
 #include "Components/SphereComponent.h"
 #include "Components/SplineComponent.h"
-#include "PinballElements/Data/RailElementData.h"
 #include "Rounds/RoundsSubsystem.h"
 
 
@@ -74,7 +73,7 @@ FVector ARailElement::GetLocationAlongRailSpline(float percent)
 
 float ARailElement::GetRailProgressDuration()
 {
-	return SpawnProgressRailDuration;
+	return RailProgressDuration;
 }
 
 FVector ARailElement::GetTangentAtSplinePercent(float Percent)
@@ -84,13 +83,6 @@ FVector ARailElement::GetTangentAtSplinePercent(float Percent)
 	float PercentToDistance = SplineRail->GetSplineLength() * Percent;
 
 	return SplineRail->GetWorldTangentAtDistanceAlongSpline(PercentToDistance);
-}
-
-void ARailElement::SetupData()
-{
-	if (RailData == nullptr)	return;
-	
-	SpawnProgressRailDuration = RailData->SpawnProgressRailDuration;
 }
 
 void ARailElement::InitRail()
@@ -105,7 +97,5 @@ void ARailElement::InitRail()
 
 		RoundsSubsystem->SetRespawnRailElement(this);
 	}
-
-	SetupData();
 }
 

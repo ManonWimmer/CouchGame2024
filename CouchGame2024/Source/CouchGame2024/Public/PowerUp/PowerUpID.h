@@ -18,6 +18,5 @@ enum class EPowerUpID : uint8
  Freeze,
  Strength,
  Slippery,
- Heavy,
- Duck
+ Heavy
 };

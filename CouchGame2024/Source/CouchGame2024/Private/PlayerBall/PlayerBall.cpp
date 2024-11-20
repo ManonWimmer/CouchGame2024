@@ -5,7 +5,6 @@
 
 #include "CableComponent.h"
 #include "EnhancedInputComponent.h"
-#include "Camera/CameraWorldSubsystem.h"
 #include "Components/SphereComponent.h"
 #include "CouchGame2024/Public/PlayerBall/PlayerBallController.h"
 #include "GameFramework/FloatingPawnMovement.h"
@@ -72,7 +71,6 @@ void APlayerBall::BeginPlay()
 
 	InitResetable();
 	InitLockableInput();
-	InitFollowTarget();
 
 	StartForceEffectWidget->SetHiddenInGame(true);
 }
@@ -371,26 +369,4 @@ void APlayerBall::Respawn()
 	OnRespawnAction.Broadcast(1.f);
 }
 
-void APlayerBall::InitFollowTarget()
-{
-	if (GetWorld() == nullptr)	return;
-	if (GetWorld()->GetSubsystem<UCameraWorldSubsystem>() == nullptr)	return;
-	GetWorld()->GetSubsystem<UCameraWorldSubsystem>()->AddFollowTarget(this);
-}
 
-FVector APlayerBall::GetFollowPosition() const
-{
-	return GetActorLocation();
-}
-
-bool APlayerBall::IsFollowable() const
-{
-	return true;
-}
-
-void APlayerBall::ReceiveDuckReaction(int PlayerIndexReceiving, int PlayerIndexLosing)
-{
-	// fonction pour ajouter duck ou retirer
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Receive Duck Reaction RECEIVING : %d	/	LOSING : %d"), PlayerIndexReceiving, PlayerIndexLosing));
-}

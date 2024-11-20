@@ -98,10 +98,6 @@ void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent*
 		case EPowerUpID::Collectible:
 			OtherPowerUp->TriggerPowerUp(GetPlayerBall()->PlayerIndex);
 			break;
-		
-		case EPowerUpID::Duck:
-			OtherPowerUp->TriggerPowerUp(GetPlayerBall()->PlayerIndex);
-			break;
 				
 		case EPowerUpID::Freeze:
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Freeze power up");
@@ -134,7 +130,7 @@ EPowerUpID UPlayerBallBehaviorPowerUp::GetCurrentPowerUpCarried() const
 
 void UPlayerBallBehaviorPowerUp::AssignPowerUpCarried(EPowerUpID PowerUpID)
 {
-	if (CurrentPowerUpCarried != EPowerUpID::None || PowerUpID == EPowerUpID::Collectible || PowerUpID == EPowerUpID::Duck)	return;
+	if (CurrentPowerUpCarried != EPowerUpID::None || PowerUpID == EPowerUpID::Collectible)	return;
 
 	CurrentPowerUpCarried = PowerUpID;
 }

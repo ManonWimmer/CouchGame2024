@@ -6,7 +6,6 @@
 #include "PinballElements/PinballElement.h"
 #include "RailElement.generated.h"
 
-class URailElementData;
 class USplineComponent;
 class USphereComponent;
 
@@ -49,11 +48,6 @@ public:
 
 public:
 
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<URailElementData> RailData;
-
-public:
-	
 	UFUNCTION()
 	FVector GetLocationAlongRailSpline(float percent);
 
@@ -64,10 +58,9 @@ public:
 	FVector GetTangentAtSplinePercent(float Percent);
 
 private:
-
-	void SetupData();
 	
 	void InitRail();
 
-	float SpawnProgressRailDuration = 1.f;
+	UPROPERTY(EditAnywhere)
+	float RailProgressDuration = 1.f;
 };

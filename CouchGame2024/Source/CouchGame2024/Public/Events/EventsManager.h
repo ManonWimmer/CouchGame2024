@@ -9,8 +9,6 @@
 #include "Rounds/RoundsResetable.h"
 #include "EventsManager.generated.h"
 
-class UDuckData;
-class AUIManager;
 enum class EEventName : uint8;
 class UEventData;
 
@@ -181,8 +179,6 @@ private:
 	UFUNCTION()
 	TArray<AActor*> GetActorsWithTag(FName TagName) const;
 
-	UPROPERTY()
-	TObjectPtr<AUIManager> UIManager = nullptr;
 
 #pragma region Resetable
 
@@ -192,6 +188,7 @@ public:
 	virtual bool IsResetable() override;
 
 	virtual void ResetObject() override;
+
 
 #pragma endregion 
 };

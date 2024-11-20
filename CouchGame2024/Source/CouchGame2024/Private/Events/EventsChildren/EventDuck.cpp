@@ -3,8 +3,6 @@
 
 #include "Events/EventsChildren/EventDuck.h"
 
-#include "AsyncTreeDifferences.h"
-
 
 // Sets default values
 AEventDuck::AEventDuck()
@@ -25,39 +23,4 @@ void AEventDuck::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-void AEventDuck::SetupEventPhase1()
-{
-	Super::SetupEventPhase1();
-}
-
-void AEventDuck::TriggerEventPhase1()
-{
-	Super::TriggerEventPhase1();
-	
-	OnDuckStartedEvent.Broadcast();
-}
-
-void AEventDuck::TriggerEventPhase2()
-{
-	Super::TriggerEventPhase2();
-}
-
-void AEventDuck::TickPhase1()
-{
-	Super::TickPhase1();
-}
-
-void AEventDuck::TickPhase2()
-{
-	Super::TickPhase2();
-}
-
-void AEventDuck::EndEvent()
-{
-	Super::EndEvent();
-
-	OnDuckEndedEvent.Broadcast();
-}
-
 
