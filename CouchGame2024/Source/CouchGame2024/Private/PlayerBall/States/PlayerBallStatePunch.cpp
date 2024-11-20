@@ -84,9 +84,16 @@ void UPlayerBallStatePunch::PunchPlayerBall()
 	if (PlayerBall->BehaviorElementReactions != nullptr && Pawn->BehaviorElementReactions != nullptr)
 	{
 		PlayerBall->BehaviorElementReactions->ReceiveStunnedAction(Pawn->BehaviorElementReactions->PunchStunCooldown);
-	
+
+		
 	}
 	PlayerBall->SphereCollision->AddImpulse(Dir * Pawn->PunchForceMultiplier, NAME_None, false);
+
+	PlayerBall->PlayIsPunchedGamefeelEffectsBlueprint();
+	
+	Pawn->ReceiveDuckReaction(Pawn->PlayerIndex, PlayerBall->PlayerIndex);	// Here the player has punched -> win duck
+	
+	Pawn->PlayPunchGamefeelEffectsBlueprint();
 }
 
 APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()

@@ -86,7 +86,6 @@ public:
 	
 	UFUNCTION()
 	void ReceiveImpactAction(float ImpactValue, const FVector &InNormalImpact);
-
 	
 	UPROPERTY()
 	FVector NormalImpact = FVector(0, 0, 0);
@@ -183,6 +182,25 @@ private:
 
 
 #pragma endregion
+
+#pragma region Tourniquet Reactions
+
+public:
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTourniquetReaction, float, TourniquetValue);
+
+	FOnTourniquetReaction OnTourniquetReaction;
+
+	void ReceiveTourniquetReaction();
+
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEndTourniquetReaction, float, EndTourniquetValue);
+
+	FOnEndTourniquetReaction OnEndTourniquetReaction;
+
+	void ReceiveEndTourniquetReaction();
+
+#pragma endregion 
 	
 #pragma endregion
 	

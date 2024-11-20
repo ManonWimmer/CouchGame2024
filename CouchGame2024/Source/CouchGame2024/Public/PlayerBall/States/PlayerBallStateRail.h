@@ -54,6 +54,8 @@ private:
 
 	float CurrentTimeInRail = 0.f;
 
+	float SpawnProgressRailDuration = 1.f;
+	
 	float ProgressRailDuration = 1.f;
 
 	float EndProgressOffset = 0.2;

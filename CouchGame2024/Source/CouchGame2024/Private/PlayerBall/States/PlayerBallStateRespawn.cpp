@@ -79,7 +79,9 @@ void UPlayerBallStateRespawn::RespawnBall()
 
 	Pawn->SphereCollision->SetSimulatePhysics(false);
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
-	
+
+	Pawn->PlayRespawnGamefeelEffectsBlueprint();
+		
 	Pawn->SetActorHiddenInGame(false);
 }
 

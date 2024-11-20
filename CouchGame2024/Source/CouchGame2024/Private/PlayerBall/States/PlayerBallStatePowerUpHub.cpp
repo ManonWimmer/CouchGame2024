@@ -3,7 +3,9 @@
 
 #include "PlayerBall/States/PlayerBallStatePowerUpHub.h"
 
+#include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 
 EPlayerBallStateID UPlayerBallStatePowerUpHub::GetStateID() const
 {
@@ -30,11 +32,21 @@ void UPlayerBallStatePowerUpHub::StateEnter(EPlayerBallStateID PreviousState, fl
 
 	if (InFloatParameter == 1.f)	// id 1 -> freeze
 	{
+		ConsumeCurrentPowerUpPlayerBall();
+		
 		SwitchToFreezePowerUp();
 	}
 	else if (InFloatParameter == 2.f)	// id 2 -> Strength
 	{
+		ConsumeCurrentPowerUpPlayerBall();
+		
 		SwitchToStrengthPowerUp();
+	}
+	else if (InFloatParameter == 3.f)	// id 2 -> Slippery
+	{
+		ConsumeCurrentPowerUpPlayerBall();
+		
+		SwitchToSlipperyPowerUp();
 	}
 	else
 	{
@@ -58,6 +70,16 @@ void UPlayerBallStatePowerUpHub::StateTick(float DeltaTime)
 	
 }
 
+void UPlayerBallStatePowerUpHub::ConsumeCurrentPowerUpPlayerBall()
+{
+	if (Pawn != nullptr)
+	{
+		if (Pawn->BehaviorPowerUp != nullptr)
+		{
+			Pawn->BehaviorPowerUp->EmptyCurrentPowerUpCarried();
+		}
+	}
+}
 
 void UPlayerBallStatePowerUpHub::SwitchToFreezePowerUp()
 {
@@ -72,4 +94,11 @@ void UPlayerBallStatePowerUpHub::SwitchToStrengthPowerUp()
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Strength);
+}
+
+void UPlayerBallStatePowerUpHub::SwitchToSlipperyPowerUp()
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Slippery);
 }
