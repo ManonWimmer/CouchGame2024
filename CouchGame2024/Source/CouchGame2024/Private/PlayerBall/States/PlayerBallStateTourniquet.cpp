@@ -73,7 +73,8 @@ void UPlayerBallStateTourniquet::ExitTourniquet(float ExitValues)
 	
 	Pawn->SphereCollision->SetSimulatePhysics(true);
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
-	
+
+	Pawn->PlayReleaseTourniquetGamefeelEffectsBlueprint();
 	
 	StateMachine->ChangeState(EPlayerBallStateID::Idle);
 }
