@@ -274,8 +274,14 @@ public:
 	
 	virtual bool IsFollowable() const override;
 
-
 #pragma endregion 
 
+
+#pragma region DuckEventReactions
+
+public:
+	void ReceiveDuckReaction(int PlayerIndexReceiving, int PlayerIndexLosing);
+
+#pragma endregion 
 	
 };

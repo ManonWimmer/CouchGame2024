@@ -388,4 +388,9 @@ bool APlayerBall::IsFollowable() const
 	return true;
 }
 
+void APlayerBall::ReceiveDuckReaction(int PlayerIndexReceiving, int PlayerIndexLosing)
+{
+	// fonction pour ajouter duck ou retirer
 
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Receive Duck Reaction RECEIVING : %d	/	LOSING : %d"), PlayerIndexReceiving, PlayerIndexLosing));
+}
