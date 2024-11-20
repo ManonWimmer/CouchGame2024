@@ -120,8 +120,6 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 		TotalForce = Pawn->BehaviorElementReactions->ImpactMinTotalForce;
 	}
 
-	Pawn->PlayImpactEffectsBlueprint();
-
 	float ImpactForceDivider = 1.f;
 	
 	if (Pawn->BehaviorPowerUp != nullptr)
@@ -132,7 +130,37 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 		}
 	}
 	
+	// if (Pawn->BehaviorElementReactions->ImpactedPlayerBall != nullptr)
+	// {
+	// 	if (HasBestVelocity())
+	// 	{
+	// 		Pawn->ReceiveDuckReaction(Pawn->PlayerIndex, Pawn->BehaviorElementReactions->ImpactedPlayerBall->PlayerIndex);	// Here the player is impacted -> lose duck
+	// 	}
+	// }
+	
 	Pawn->SphereCollision->AddImpulse(Dir * TotalForce / ImpactForceDivider, NAME_None, false);	// impulse
+
+	
+	Pawn->PlayImpactGamefeelEffectsBlueprint();
+}
+
+bool UPlayerBallStateImpact::HasBestVelocity()
+{
+	if (Pawn == nullptr)	return false;
+	if (Pawn->BehaviorElementReactions == nullptr)	return false;
+	if (Pawn->BehaviorElementReactions->ImpactedPlayerBall == nullptr)	return false;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Compare best VELOCITY : %f   /   %f"), Pawn->GetVelocity().Length(), Pawn->BehaviorElementReactions->ImpactedPlayerBall->GetVelocity().Length()));
+
+	
+	if (Pawn->GetVelocity().Length() > Pawn->BehaviorElementReactions->ImpactedPlayerBall->GetVelocity().Length())
+	{
+		float IndexFloat = Pawn->PlayerIndex;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Has best VELOCITY : %f"), IndexFloat));
+		return true;
+	}
+
+	return false;
 }
 
 

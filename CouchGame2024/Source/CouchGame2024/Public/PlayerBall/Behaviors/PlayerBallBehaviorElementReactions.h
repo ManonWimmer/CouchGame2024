@@ -86,7 +86,6 @@ public:
 	
 	UFUNCTION()
 	void ReceiveImpactAction(float ImpactValue, const FVector &InNormalImpact);
-
 	
 	UPROPERTY()
 	FVector NormalImpact = FVector(0, 0, 0);
