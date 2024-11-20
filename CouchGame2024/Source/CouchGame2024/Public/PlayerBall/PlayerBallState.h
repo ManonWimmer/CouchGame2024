@@ -27,6 +27,9 @@ public:
 	
 	virtual void StateEnter(EPlayerBallStateID PreviousState);
 
+	UFUNCTION(BlueprintImplementableEvent, meta=(DisplayName = "StateEnter"))
+	void ReceiveStateEnter(EPlayerBallStateID PreviousState);
+
 	virtual void StateEnter(EPlayerBallStateID PreviousState, float InFloatParameter);
 
 	virtual void StateExit(EPlayerBallStateID NextState);
@@ -34,7 +37,7 @@ public:
 	virtual void StateTick(float DeltaTime);
 
 protected:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<APlayerBall> Pawn;
 
 	UPROPERTY()

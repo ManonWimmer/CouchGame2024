@@ -7,7 +7,7 @@
 #include "PlayerBallStateIdle.generated.h"
 
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(Custom), Blueprintable, meta=(BlueprintSpawnableComponent))
 class COUCHGAME2024_API UPlayerBallStateIdle : public UPlayerBallState
 {
 	GENERATED_BODY()
