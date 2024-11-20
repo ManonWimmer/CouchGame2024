@@ -7,6 +7,7 @@
 #include "PinballElements/Data/TourniquetElementData.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
+#include "Rounds/RoundsSubsystem.h"
 
 
 // Sets default values
@@ -43,6 +44,8 @@ void ATourniquetElement::BeginPlay()
 
 	InitDataTourniquet();
 	InitAssociatedBallInTourniquetArray();
+	
+	InitResetable();
 }
 
 // Called every frame
@@ -112,7 +115,13 @@ void ATourniquetElement::AddBallToTourniquet(APlayerBall* InPlayerBall)
 
 void ATourniquetElement::InitResetable()
 {
-	
+	if (!GetWorld())	return;
+
+	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+	if (RoundsSubsystem == nullptr)	return;
+
+	RoundsSubsystem->AddResetableObject(this);
 }
 
 bool ATourniquetElement::IsResetable()
@@ -249,6 +258,9 @@ void ATourniquetElement::HandleTimeInTourniquet(float DeltaTime)
 {
 	for (int i = 0; i < AssociatedTimeToBallInTourniquet.Num(); i++)
 	{
+		if (i >= AssociatedBallInTourniquet.Num())	continue;
+		if (i >= AssociatedTimeToBallInTourniquet.Num())	continue;
+		
 		if (AssociatedTimeToBallInTourniquet[i] > TurningDuration)
 		{
 			if (AssociatedBallInTourniquet[i] == nullptr)
