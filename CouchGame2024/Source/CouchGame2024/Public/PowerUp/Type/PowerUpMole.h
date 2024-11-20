@@ -31,4 +31,10 @@ public:
 
 	UPROPERTY()
 	FMoleCollected OnMoleCollected;
+
+	UFUNCTION()
+	void SpawnMole();
+
+	UFUNCTION()
+	void DespawnMole();
 };

@@ -32,10 +32,19 @@ public:
 	void StopCountdownSpawning();
 
 	UFUNCTION()
+	void StartCountdownStaying();
+
+	UFUNCTION()
 	void SpawnMole();
+	
+	UFUNCTION()
+	void DestroyMole();
 
 	UFUNCTION()
 	void GetRandomSpawnTime();
+
+	UFUNCTION()
+	void GetRandomStayTime();
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APowerUpMole> MoleClass;
@@ -50,6 +59,15 @@ private:
 	UPROPERTY()
 	float RandomSpawnTime = 0.f;
 
+	UPROPERTY(EditAnywhere)
+	float MinMoleStayTime = 5.0f;
+
+	UPROPERTY(EditAnywhere)
+	float MaxMoleStayTime = 20.0f;
+
+	UPROPERTY()
+	float RandomStayTime = 0.f;
+
 	UPROPERTY()
 	float CurrentTime = 0.f;
 
@@ -58,6 +76,9 @@ private:
 
 	UPROPERTY()
 	bool bCanSpawn = false;
+
+	UPROPERTY()
+	bool bCanStay = false;
 
 	UPROPERTY()
 	APowerUpMole* SpawnedMole = nullptr;

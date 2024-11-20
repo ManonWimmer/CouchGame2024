@@ -18,7 +18,8 @@ APowerUpMole::APowerUpMole()
 void APowerUpMole::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	SpawnMole();
 }
 
 // Called every frame
@@ -42,7 +43,19 @@ void APowerUpMole::TriggerPowerUp(int PlayerIndex)
 
 		OnMoleCollected.Broadcast();
 	}
-	
-	Super::TriggerPowerUp(PlayerIndex);
+
+	DespawnMole();
+}
+
+void APowerUpMole::SpawnMole()
+{
+	// timeline go up
+}
+
+void APowerUpMole::DespawnMole()
+{
+	// stop collision
+	// timeline go down & only after destroy
+	this->Destroy();
 }
 

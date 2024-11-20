@@ -41,6 +41,15 @@ void AMoleSpawner::Tick(float DeltaTime)
 			SpawnMole();
 		}
 	}
+	else if (bCanStay)
+	{
+		CurrentTime = GetWorld()->GetTimeSeconds() - StartedTime;
+
+		if (CurrentTime > RandomStayTime)
+		{
+			DestroyMole();
+		}
+	}
 }
 
 void AMoleSpawner::StartCountdownSpawning() // start phase 1 mole event - mole collected
@@ -49,12 +58,20 @@ void AMoleSpawner::StartCountdownSpawning() // start phase 1 mole event - mole c
 
 	GetRandomSpawnTime();
 	bCanSpawn = true;
+	bCanStay = false;
 	StartedTime = GetWorld()->GetTimeSeconds();
 }
 
 void AMoleSpawner::StopCountdownSpawning() // end event & spawn mole
 {
 	bCanSpawn = false;
+}
+
+void AMoleSpawner::StartCountdownStaying()
+{
+	bCanStay = true;
+	StartedTime = GetWorld()->GetTimeSeconds();
+	GetRandomStayTime();
 }
 
 void AMoleSpawner::SpawnMole()
@@ -66,6 +83,17 @@ void AMoleSpawner::SpawnMole()
 	SpawnedMole->OnMoleCollected.AddDynamic(this, &AMoleSpawner::StartCountdownSpawning);
 
 	StopCountdownSpawning();
+	StartCountdownStaying();
+}
+
+void AMoleSpawner::DestroyMole()
+{
+	if (SpawnedMole)
+	{
+		SpawnedMole->DespawnMole();
+		SpawnedMole = nullptr;
+		StartCountdownSpawning();
+	}
 }
 
 void AMoleSpawner::GetRandomSpawnTime()
@@ -73,5 +101,12 @@ void AMoleSpawner::GetRandomSpawnTime()
 	RandomSpawnTime = FMath::RandRange(MinMoleSpawnTime, MaxMoleSpawnTime);
 
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,FString::Printf(TEXT("Spawn time mole : %f"), RandomSpawnTime));
+}
+
+void AMoleSpawner::GetRandomStayTime()
+{
+	RandomStayTime = FMath::RandRange(MinMoleStayTime, MaxMoleStayTime);
+
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,FString::Printf(TEXT("Stay time mole : %f"), RandomStayTime));
 }
 
