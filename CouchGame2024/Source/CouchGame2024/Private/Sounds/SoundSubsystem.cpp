@@ -58,6 +58,16 @@ void USoundSubsystem::PlayGrapplingGrabSound()
 	}
 }
 
+void USoundSubsystem::PlayPlayerRespawnSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PlayerRespawn == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PlayerRespawn);
+	}
+}
+
 void USoundSubsystem::InitSoundSubsystem()
 {
 	const USoundsSettings* SoundsSettings = GetDefault<USoundsSettings>();

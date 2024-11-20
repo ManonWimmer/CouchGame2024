@@ -40,6 +40,14 @@ public:
 	TObjectPtr<UMetaSoundSource> GrapplingGrabSound;
 
 
+#pragma endregion
+
+#pragma region Players
+
+	UPROPERTY(EditAnywhere, Category = "Player Respawn")
+	TObjectPtr<UMetaSoundSource> PlayerRespawn;
+	
+
 #pragma endregion 
 
 };
