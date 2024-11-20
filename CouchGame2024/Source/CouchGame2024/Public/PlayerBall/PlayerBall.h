@@ -6,6 +6,7 @@
 #include "Killable.h"
 #include "LockableInput.h"
 #include "PlayerBallStateID.h"
+#include "Camera/CameraFollowTarget.h"
 #include "GameFramework/Pawn.h"
 #include "Rounds/RoundsResetable.h"
 #include "PlayerBall.generated.h"
@@ -27,7 +28,7 @@ class UStaticMeshComponent;
 class UCableComponent;
 
 UCLASS()
-class COUCHGAME2024_API APlayerBall : public APawn, public IRoundsResetable, public ILockableInput, public IKillable
+class COUCHGAME2024_API APlayerBall : public APawn, public IRoundsResetable, public ILockableInput, public IKillable, public ICameraFollowTarget
 {
 	GENERATED_BODY()
 
@@ -154,6 +155,9 @@ public:
 
 	UFUNCTION()
 	void ReceivePunchAction(float InPunchValue);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayPunchGamefeelEffectsBlueprint();
 	
 	UPROPERTY()
 	float PunchRadius = 50.f;
@@ -171,10 +175,19 @@ public:
 	bool bCanPunch = true;
 
 #pragma endregion
+
+public:
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayImpactGamefeelEffectsBlueprint();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayDeathZoneGamefeelEffectsBlueprint();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayReleaseTourniquetGamefeelEffectsBlueprint();
 	
 public:
-	UFUNCTION(BlueprintImplementableEvent)
-	void PlayImpactEffectsBlueprint();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlaySetProgressStartForceEffect(float NewProgressStartForce);
@@ -250,6 +263,25 @@ public:
 	bool bIsDead = false;
 	float DeathDurationBeforeRespawn = 1.f;
 	
+#pragma endregion 
+
+#pragma region ICameraFollowTarget
+
+public:
+	virtual void InitFollowTarget() override;
+	
+	virtual FVector GetFollowPosition() const override;
+	
+	virtual bool IsFollowable() const override;
+
+#pragma endregion 
+
+
+#pragma region DuckEventReactions
+
+public:
+	void ReceiveDuckReaction(int PlayerIndexReceiving, int PlayerIndexLosing);
+
 #pragma endregion 
 	
 };
