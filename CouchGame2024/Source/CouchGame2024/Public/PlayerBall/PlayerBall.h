@@ -158,6 +158,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayPunchGamefeelEffectsBlueprint();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayIsPunchedGamefeelEffectsBlueprint();
 	
 	UPROPERTY()
 	float PunchRadius = 50.f;
@@ -186,6 +189,9 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayReleaseTourniquetGamefeelEffectsBlueprint();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayGrapplingGrabGamefeelEffectsBlueprint();
 	
 public:
 

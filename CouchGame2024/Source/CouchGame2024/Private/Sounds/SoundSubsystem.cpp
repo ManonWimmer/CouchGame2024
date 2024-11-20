@@ -52,7 +52,6 @@ void USoundSubsystem::PlayGrapplingGrabSound()
 {
 	if (SoundsData == nullptr)	return;
 	if (SoundsData->GrapplingGrabSound == nullptr)	return;
-
 	if (GetWorld())
 	{
 		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->GrapplingGrabSound);
@@ -65,9 +64,12 @@ void USoundSubsystem::InitSoundSubsystem()
 
 	if (SoundsSettings == nullptr)	return;
 
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Grappling Grab Sound test 0");
+
 	USoundsData* OutSoundsData = SoundsSettings->SoundsData.LoadSynchronous();
 	
 	if (OutSoundsData == nullptr)	return;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Grappling Grab Sound test 1");
 
 	SoundsData = OutSoundsData;
 }
