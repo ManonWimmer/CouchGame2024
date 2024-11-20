@@ -6,6 +6,7 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "SoundSubsystem.generated.h"
 
+class USoundsData;
 /**
  * 
  */
@@ -15,8 +16,36 @@ class COUCHGAME2024_API USoundSubsystem : public UWorldSubsystem
 	GENERATED_BODY()
 
 virtual void OnWorldBeginPlay(UWorld& InWorld) override;
+
+public:
+
+#pragma region Play Duck sounds
+	UFUNCTION(BlueprintCallable)
+	void PlayDuckCashOutSound();
+	
+	UFUNCTION(BlueprintCallable)
+	void PlayDuckPickSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayDuckStealSound();
+
+#pragma endregion
+
+#pragma region Play Grappling Sounds
+
+	UFUNCTION(BlueprintCallable)
+	void PlayGrapplingGrabSound();
+
+
+#pragma endregion 
+
 	
 private:
+	UFUNCTION()
 	void InitSoundSubsystem();
+
+
+	UPROPERTY()
+	TObjectPtr<USoundsData> SoundsData;
 	
 };
