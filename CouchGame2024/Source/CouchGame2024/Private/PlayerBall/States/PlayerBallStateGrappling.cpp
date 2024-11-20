@@ -441,16 +441,18 @@ void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngleNotPillar(float Delt
 {
 	if (Pawn->BehaviorMovements == nullptr || Pawn->BehaviorGrapple == nullptr) return;
 
-	FVector LastPosToCenter = LastLocation - Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
+	//FVector LastPosToCenter = LastLocation - Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
+	FVector LastPosToCenter = Pawn->GetActorLocation() - Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
 	float LastPosAngle = FMath::Atan2(LastPosToCenter.Y, LastPosToCenter.X);
 
+	FVector LastPosToCenterNorm = LastPosToCenter.GetSafeNormal();
 	FVector NormalizedLastLocation = LastLocation.GetSafeNormal();
 	FVector NormalizeVelocity = Pawn->GetVelocity().GetSafeNormal();
 	
 	// (U.X * V.Y) - (U.Y * V.X)
-	float truc = (NormalizedLastLocation.X * NormalizeVelocity.Y) - (NormalizedLastLocation.Y * NormalizeVelocity.X);
+	float truc = (LastPosToCenterNorm.X * NormalizeVelocity.Y) - (LastPosToCenterNorm.Y * NormalizeVelocity.X);
 
-	float RotationDirection = truc > 0 ? -1.0f : 1.0f;
+	float RotationDirection = truc > 0 ? 1.0f : -1.0f;
 
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan,FString::Printf(TEXT("RotationDirection %f"), RotationDirection));
 
