@@ -4,6 +4,7 @@
 #include "PlayerBall/States/PlayerBallStateRail.h"
 
 #include "Components/SphereComponent.h"
+#include "Components/SplineComponent.h"
 #include "PinballElements/Elements/RailElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
@@ -47,6 +48,15 @@ void UPlayerBallStateRail::StateEnter(EPlayerBallStateID PreviousState, float In
 	if (CurrentRailElement != nullptr)
 	{
 		SpawnProgressRailDuration = CurrentRailElement->GetRailProgressDuration();
+
+		CurrentRailSpeedMultiplier = CurrentRailElement->RailSpeedMultiplier;
+
+		if (CurrentRailElement->SplineRail != nullptr)
+		{
+			CurrentSplineDistance = CurrentRailElement->SplineRail->GetSplineLength();
+				
+			InitProgressRailDurationDistance();
+		}
 	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("PlayerState : Rail : -> %s"), *Pawn->GetVelocity().ToString()));
@@ -85,7 +95,8 @@ void UPlayerBallStateRail::StateTick(float DeltaTime)
 	}
 	else
 	{
-		HandleRailProgressLocationByVelocity(DeltaTime);
+		//HandleRailProgressLocationByVelocity(DeltaTime);
+		HandleRailProgressLocationByVelocityAndDistance(DeltaTime);
 	}
 }
 
@@ -200,6 +211,52 @@ void UPlayerBallStateRail::HandleRailProgressLocationByVelocity(float DeltaTime)
 	}
 }
 
+void UPlayerBallStateRail::HandleRailProgressLocationByVelocityAndDistance(float DeltaTime)
+{
+	if (Pawn == nullptr)	return;
+	if (CurrentRailElement == nullptr)	return;
+
+	if (CurrentTimeInRail - EndProgressOffset >= ProgressRailDurationDistance)
+	{
+		ExitRail();
+	}
+	else
+	{
+		LastPos = Pawn->GetActorLocation();
+		
+		CheckForwardCollisionBallRail(true);
+
+		CurrentPercentVelocityFromTarget = FMath::FInterpTo(CurrentPercentVelocityFromTarget, 1.f, DeltaTime, AccelerationVelocity);
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("New Percent Velocity when entering rails = : -> %f"), CurrentPercentVelocityFromTarget));
+
+		
+		CurrentTimeInRail += DeltaTime * CurrentPercentVelocityFromTarget * CurrentRailSpeedMultiplier;
+
+		CurrentPercent = CurrentTimeInRail / ProgressRailDurationDistance;
+
+		if (DirectionRail >= 0.f)
+		{
+			float InversePercent = 1.f - CurrentPercent;
+		
+			FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(InversePercent);
+
+			FVector NewPawnLocationOnRail = Pawn->GetActorLocation();
+			NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 25.f);
+		
+			Pawn->SetActorLocation(NewPawnLocationOnRail);
+		}
+		else
+		{
+			FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(CurrentPercent);
+
+			FVector NewPawnLocationOnRail = Pawn->GetActorLocation();
+			NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 25.f);
+		
+			Pawn->SetActorLocation(NewPawnLocationOnRail);
+		}
+	}
+}
+
 void UPlayerBallStateRail::ExitRail()
 {
 	if (Pawn == nullptr)	return;
@@ -248,11 +305,19 @@ void UPlayerBallStateRail::ChangeDirection()
 	CurrentTimeInRail = 1.f - CurrentTimeInRail;
 }
 
-void UPlayerBallStateRail::CheckForwardCollisionBallRail()
+void UPlayerBallStateRail::CheckForwardCollisionBallRail(bool UseDistance)
 {
 	FVector CheckPosition = Pawn->GetActorLocation();
 
-	float CurrentCheckPercent = (CurrentTimeInRail + GetWorld()->GetDeltaSeconds()) / ProgressRailDuration;
+	float CurrentCheckPercent = 0.f;
+	if (UseDistance)
+	{
+		CurrentCheckPercent = (CurrentTimeInRail + GetWorld()->GetDeltaSeconds()) / ProgressRailDurationDistance;
+	}
+	else
+	{
+		CurrentCheckPercent = (CurrentTimeInRail + GetWorld()->GetDeltaSeconds()) / ProgressRailDuration;
+	}
 
 	if (DirectionRail >= 0.f)
 	{
@@ -295,4 +360,11 @@ void UPlayerBallStateRail::CheckForwardCollisionBallRail()
 			ChangeDirection();
 		}
 	}
+}
+
+void UPlayerBallStateRail::InitProgressRailDurationDistance()
+{
+	if (CurrentRailElement == nullptr)	return;
+
+	ProgressRailDurationDistance = CurrentSplineDistance / RefSplineDistance;
 }

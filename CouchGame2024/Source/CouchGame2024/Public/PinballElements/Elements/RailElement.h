@@ -68,6 +68,8 @@ public:
 	float RailExpulseMinForce = 20000.f;
 	
 	float RailExpulseMaxForce = 30000.f;
+
+	float RailSpeedMultiplier = 3.f;
 	
 private:
 

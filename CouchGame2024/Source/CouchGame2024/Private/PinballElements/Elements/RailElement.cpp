@@ -94,6 +94,8 @@ void ARailElement::SetupData()
 
 	RailExpulseMinForce = RailData->RailExpulseMinForce;
 	RailExpulseMaxForce = RailData->RailExpulseMaxForce;
+
+	RailSpeedMultiplier = RailData->RailSpeedMultiplier;
 }
 
 void ARailElement::InitRail()

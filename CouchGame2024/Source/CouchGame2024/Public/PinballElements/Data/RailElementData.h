@@ -26,5 +26,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "Rail Expulse")
 	float RailExpulseMaxForce = 30000.f;
+
+	UPROPERTY(EditAnywhere, Category = "Rail Speed")
+	float RailSpeedMultiplier = 3.;
 	
 };
