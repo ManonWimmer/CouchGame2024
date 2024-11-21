@@ -4,6 +4,8 @@
 #include "Events/EventsChildren/EventDuck.h"
 
 #include "AsyncTreeDifferences.h"
+#include "Events/Duck/DuckSpawner.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -17,7 +19,16 @@ AEventDuck::AEventDuck()
 void AEventDuck::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	TArray<AActor*> Acteurs;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADuckSpawner::StaticClass(), Acteurs);
+
+	for (AActor* Acteur : Acteurs)
+	{
+		ADuckSpawner* DuckSpawner = Cast<ADuckSpawner>(Acteur);
+		if (DuckSpawner)
+			DuckSpawner->BindDuckStartEvent();
+	}
 }
 
 // Called every frame
@@ -29,13 +40,17 @@ void AEventDuck::Tick(float DeltaTime)
 void AEventDuck::SetupEventPhase1()
 {
 	Super::SetupEventPhase1();
+
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Red,"BROADCAST DUCK START");
+	
+	OnDuckStartedEvent.Broadcast();
 }
 
 void AEventDuck::TriggerEventPhase1()
 {
 	Super::TriggerEventPhase1();
 	
-	OnDuckStartedEvent.Broadcast();
+	
 }
 
 void AEventDuck::TriggerEventPhase2()

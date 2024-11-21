@@ -91,10 +91,18 @@ void ARailElement::SetupData()
 	if (RailData == nullptr)	return;
 	
 	SpawnProgressRailDuration = RailData->SpawnProgressRailDuration;
+
+	RailExpulseMinForce = RailData->RailExpulseMinForce;
+	RailExpulseMaxForce = RailData->RailExpulseMaxForce;
+
+	RailSpeedMultiplier = RailData->RailSpeedMultiplier;
 }
 
 void ARailElement::InitRail()
 {
+	SetupData();
+
+	
 	if (this->ActorHasTag(TEXT("RespawnRail")))
 	{
 		if (GetWorld() == nullptr)	return;
@@ -105,7 +113,5 @@ void ARailElement::InitRail()
 
 		RoundsSubsystem->SetRespawnRailElement(this);
 	}
-
-	SetupData();
 }
 

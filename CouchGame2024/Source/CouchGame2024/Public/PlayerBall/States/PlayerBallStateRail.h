@@ -37,6 +37,8 @@ private:
 	void HandleRailProgressLocationByPercent(float DeltaTime);
 
 	void HandleRailProgressLocationByVelocity(float DeltaTime);
+
+	void HandleRailProgressLocationByVelocityAndDistance(float DeltaTime);
 	
 	void ExitRail();
 
@@ -44,7 +46,7 @@ private:
 
 	void ChangeDirection();
 
-	void CheckForwardCollisionBallRail();
+	void CheckForwardCollisionBallRail(bool UseDistance = false);
 
 	bool bOnRespawnRail = false;
 	
@@ -68,6 +70,17 @@ private:
 	float CurrentPercentVelocityFromTarget = 0.f;
 
 	float AccelerationVelocity = 1.2f;
+
+
+	// Method using spline distance
+	float RefSplineDistance = 800.f;
+	float CurrentSplineDistance = 800.f;
+
+	float ProgressRailDurationDistance = 1.f;
+
+	float CurrentRailSpeedMultiplier = 3.f;
+	
+	void InitProgressRailDurationDistance();
 	
 	UPROPERTY()
 	TObjectPtr<ARailElement> CurrentRailElement;
