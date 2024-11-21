@@ -365,7 +365,9 @@ void UCameraWorldSubsystem::InitCameraShake()
 	if (PlayerController == nullptr)	return;
 	CameraShakePlayerController = PlayerController;
 
-	CameraShakePlayerController->SetViewTarget(CameraMain->GetOwner());
+	FViewTargetTransitionParams TransitionParams;
+	TransitionParams.bLockOutgoing = true;
+	CameraShakePlayerController->SetViewTarget(CameraMain->GetOwner(), TransitionParams);
 
-	//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Orange, "Init camera shake");
+	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Orange, "Init camera shake");
 }

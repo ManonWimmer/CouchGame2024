@@ -24,6 +24,11 @@ public:
 public:
 	void SetNewLocationStartPlayerBallsSpecial(int PlayerSpecial);
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerBallSpawned);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerBallSpawned OnPlayerBallSpawned;
+	
 private:
 
 	void FindPlayerBallSpawnInWorld(TArray<APlayerBallSpawn*> &ResultsActors);
