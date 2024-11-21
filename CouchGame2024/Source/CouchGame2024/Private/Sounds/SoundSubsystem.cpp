@@ -68,6 +68,26 @@ void USoundSubsystem::PlayPlayerRespawnSound()
 	}
 }
 
+void USoundSubsystem::PlayPlayerImpactsSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PlayerImpacts == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PlayerImpacts);
+	}
+}
+
+void USoundSubsystem::PlayPlayerPunchSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PlayerPunch == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PlayerPunch);
+	}
+}
+
 void USoundSubsystem::InitSoundSubsystem()
 {
 	const USoundsSettings* SoundsSettings = GetDefault<USoundsSettings>();

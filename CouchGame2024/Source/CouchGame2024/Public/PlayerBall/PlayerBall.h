@@ -198,6 +198,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayGrapplingGrabGamefeelEffectsBlueprint();
+
 	
 public:
 
