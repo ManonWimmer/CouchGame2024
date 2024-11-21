@@ -64,7 +64,7 @@ private:
 	bool bCanSpawn = false;
 
 	UPROPERTY()
-	APowerUpDuck* SpawnedDuck = nullptr;
+	TObjectPtr<APowerUpDuck> SpawnedDuck = nullptr;
 
 	UPROPERTY()
 	bool bHasBeenBind = false;
