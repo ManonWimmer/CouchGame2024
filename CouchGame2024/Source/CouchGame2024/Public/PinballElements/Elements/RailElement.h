@@ -63,11 +63,16 @@ public:
 	UFUNCTION()
 	FVector GetTangentAtSplinePercent(float Percent);
 
+	float SpawnProgressRailDuration = 1.f;
+
+	float RailExpulseMinForce = 20000.f;
+	
+	float RailExpulseMaxForce = 30000.f;
+	
 private:
 
 	void SetupData();
 	
 	void InitRail();
 
-	float SpawnProgressRailDuration = 1.f;
 };

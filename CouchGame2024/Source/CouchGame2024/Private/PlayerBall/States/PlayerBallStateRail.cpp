@@ -217,18 +217,24 @@ void UPlayerBallStateRail::ExitRail()
 void UPlayerBallStateRail::ExitImpulse()
 {
 	if (Pawn == nullptr)	return;
+	
 	if (Pawn->SphereCollision == nullptr)	return;
 
 	if (CurrentRailElement == nullptr)	return;
 	
-	//FVector Dir = CurrentRailElement->GetTangentAtSplinePercent(FMath::Clamp(CurrentPercent, 0.01f, 0.99f));
 	FVector Dir = Pawn->GetActorLocation() - LastPos;
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Rail Impulse dir : %s"), *Dir.ToString()));
 
 	Dir.Normalize();
 
+	float ImpulseForce = 30000.f;
+
+	if (CurrentRailElement != nullptr)
+	{
+		ImpulseForce = FMath::Lerp(CurrentRailElement->RailExpulseMinForce, CurrentRailElement->RailExpulseMaxForce, CurrentPercentVelocityFromTarget);
+	}
 	
-	Pawn->SphereCollision->AddImpulse(Dir * 30000.f, NAME_None, false);	// impulse
+	Pawn->SphereCollision->AddImpulse(Dir * ImpulseForce, NAME_None, false);	// impulse
 
 	//DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 1500.f, FColor::Yellow, false, 3.f);
 }

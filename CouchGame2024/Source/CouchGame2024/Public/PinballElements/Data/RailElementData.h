@@ -21,5 +21,10 @@ public:
 	float SpawnProgressRailDuration = 3.f;
 	
 
+	UPROPERTY(EditAnywhere, Category = "Rail Expulse")
+	float RailExpulseMinForce = 20000.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Rail Expulse")
+	float RailExpulseMaxForce = 30000.f;
 	
 };
