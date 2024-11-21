@@ -8,10 +8,20 @@ public class CouchGame2024 : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "DeveloperSettings", "Blutility", "EditorScriptingUtilities", "UnrealEd", "EditorSubsystem", "PhysicsCore", "MetasoundEngine" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "DeveloperSettings", "PhysicsCore", "MetasoundEngine" });
+		if (Target.bBuildEditor)
+		{
+			PublicDependencyModuleNames.AddRange(new string[] { "Blutility", "EditorScriptingUtilities", "UnrealEd", "EditorSubsystem" });
+		}
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "GeometryFramework", "LocalMultiplayer", "CableComponent", "EditorScriptingUtilities", "UnrealEd", "UMGEditor" ,"UMG" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "GeometryFramework", "LocalMultiplayer", "CableComponent","UMG" });
 
+		if (Target.bBuildEditor)
+		{
+			PrivateDependencyModuleNames.AddRange(new string[] { "EditorScriptingUtilities", "UnrealEd", "UMGEditor" });
+		}
+		
+		
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 		
