@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "UIManager.generated.h"
 
+class AHUD;
+
 UCLASS()
 class COUCHGAME2024_API AUIManager : public AActor
 {
@@ -43,6 +45,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> EventDuckWidget;
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UI")
+	void ShowDuckCounter();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UI")
+	void HideDuckCounter();
 	
 
 private:

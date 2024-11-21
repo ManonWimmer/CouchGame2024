@@ -5,6 +5,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Events/EventData.h"
+#include "GameFramework/HUD.h"
 
 
 // Sets default values
@@ -18,7 +19,7 @@ AUIManager::AUIManager()
 void AUIManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -77,7 +78,8 @@ void AUIManager::ShowWidgetForEvent(EEventName EventName)
 	switch (EventName)
 	{
 	case EEventName::Duck:
-		ShowWidget(EventDuckWidget);
+		//ShowWidget(EventDuckWidget);
+		ShowDuckCounter();
 		break;
 	
 	default:
@@ -90,11 +92,21 @@ void AUIManager::HideWidgetForEvent(EEventName EventName)
 	switch (EventName)
 	{
 	case EEventName::Duck:
-		HideWidget(EventDuckWidget);
+		//HideWidget(EventDuckWidget);
+		HideDuckCounter();
 		break;
 	
 	default:
 		break;
 	}
 }
+
+void AUIManager::HideDuckCounter_Implementation()
+{
+}
+
+void AUIManager::ShowDuckCounter_Implementation()
+{
+}
+
 

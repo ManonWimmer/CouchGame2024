@@ -107,7 +107,7 @@ void AEventsManager::SetupNewRoundEvent(int RoundIndex)
 
 	GetRandomEvent();
 	SetupEventTimes();
-	StartEvent();
+	StartEvent(RoundIndex);
 }
 
 void AEventsManager::StartGame()
@@ -160,7 +160,7 @@ void AEventsManager::TriggerEventPhase2(const UEventData* EventData)
 		                                              "COULDN'T FIND CURRENT EVENT TO TRIGGER PHASE 2");
 }
 
-void AEventsManager::StartEvent()
+void AEventsManager::StartEvent(int RoundIndex)
 {
 	// Hide or show objects depending on current tag
 	ShowObjectsWithCurrentEventTag();
@@ -169,7 +169,13 @@ void AEventsManager::StartEvent()
 	if (AEvent* CurrentEvent = GetEventClassFromEventData(CurrentEventData))
 		CurrentEvent->SetupEventPhase1();
 
-	// Show UI
+	// Show UI (pas appeler au round 1 parce que pas créé)
+	if (RoundIndex > 0)
+		ShowWidgetEvent();
+}
+
+void AEventsManager::ShowWidgetEvent()
+{
 	if (UIManager != nullptr && CurrentEventData != nullptr)
 		UIManager->ShowWidgetForEvent(CurrentEventData->EventName);
 }
