@@ -118,6 +118,10 @@ void UPlayerBallBehaviorElementReactions::OnCollisionHit(UPrimitiveComponent* Hi
 				OtherElement->TriggerElement();
 				ReceiveBumperReaction(OtherElement, Hit.ImpactNormal);
 				return;
+			case EPinballElementID::Mole:
+				ReceiveBumperReaction(OtherElement, Hit.ImpactNormal);
+				OtherElement->TriggerElementWithPlayer(GetPlayerBall());
+				return;
 			case EPinballElementID::Flipper:
 				return;
 			case EPinballElementID::None:

@@ -47,6 +47,8 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 
 	if (Pawn != nullptr)
 	{
+		Pawn->PlayGrapplingGrabGamefeelEffectsBlueprint();
+		
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
@@ -107,6 +109,18 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 			}
 			// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 		}
+
+
+		FVector LastPosToCenter = Pawn->GetActorLocation() - Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
+		float LastPosAngle = FMath::Atan2(LastPosToCenter.Y, LastPosToCenter.X);
+		FVector LastPosToCenterNorm = LastPosToCenter.GetSafeNormal();
+		FVector NormalizedLastLocation = LastLocation.GetSafeNormal();
+		FVector NormalizeVelocity = Pawn->GetVelocity().GetSafeNormal();
+		
+		// (U.X * V.Y) - (U.Y * V.X)
+		float truc = (LastPosToCenterNorm.X * NormalizeVelocity.Y) - (LastPosToCenterNorm.Y * NormalizeVelocity.X);
+		
+		RotationDirection = truc > 0 ? 1.0f : -1.0f;
 	}
 }
 
@@ -322,6 +336,7 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	{
 		Pawn->SphereCollision->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
 		Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity = 0.f;
+		OnEndGrappling(1.f);
 		return;
 	}
 
@@ -439,13 +454,18 @@ void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngleNotPillar(float Delt
 {
 	if (Pawn->BehaviorMovements == nullptr || Pawn->BehaviorGrapple == nullptr) return;
 
-	FVector LastPosToCenter = LastLocation - Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
-	float LastPosAngle = FMath::Atan2(LastPosToCenter.Y, LastPosToCenter.X);
+	//FVector LastPosToCenter = LastLocation - Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
+	//FVector LastPosToCenter = Pawn->GetActorLocation() - Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
+	//float LastPosAngle = FMath::Atan2(LastPosToCenter.Y, LastPosToCenter.X);
 
-	// (U.X * V.Y) - (U.Y * V.X)
-	float truc = (LastLocation.X * Pawn->GetVelocity().Y) - (LastLocation.Y * Pawn->GetVelocity().X);
-
-	float RotationDirection = truc > 0 ? -1.0f : 1.0f;
+	// FVector LastPosToCenterNorm = LastPosToCenter.GetSafeNormal();
+	// FVector NormalizedLastLocation = LastLocation.GetSafeNormal();
+	// FVector NormalizeVelocity = Pawn->GetVelocity().GetSafeNormal();
+	//
+	// // (U.X * V.Y) - (U.Y * V.X)
+	// float truc = (LastPosToCenterNorm.X * NormalizeVelocity.Y) - (LastPosToCenterNorm.Y * NormalizeVelocity.X);
+	
+	//float RotationDirection = truc > 0 ? 1.0f : -1.0f;
 
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan,FString::Printf(TEXT("RotationDirection %f"), RotationDirection));
 

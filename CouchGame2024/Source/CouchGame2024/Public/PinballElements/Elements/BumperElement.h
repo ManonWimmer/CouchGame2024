@@ -28,10 +28,11 @@ public:
 	
 	virtual EPinballElementID GetElementID() override;
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayBumperGamefeelEffectsBlueprint();
+
 private:
 
-	UFUNCTION()
-	void BumpEffect();
 
 #pragma region Grappling Interface
 public:

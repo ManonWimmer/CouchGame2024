@@ -13,15 +13,12 @@
 UPlayerBallBehaviorPowerUp::UPlayerBallBehaviorPowerUp()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
 }
 
 
 void UPlayerBallBehaviorPowerUp::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
 }
 
 
@@ -40,7 +37,8 @@ void UPlayerBallBehaviorPowerUp::InitBehavior()
 
 	if (GetPlayerBall() != nullptr)
 	{
-		GetPlayerBall()->SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap);
+		GetPlayerBall()->SphereCollision->OnComponentBeginOverlap.AddDynamic(
+			this, &UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap);
 	}
 }
 
@@ -48,8 +46,8 @@ void UPlayerBallBehaviorPowerUp::BindBehaviorEventAction(APlayerBallController* 
 {
 	Super::BindBehaviorEventAction(InPlayerBallController);
 
-	if (GetPlayerBallController() == nullptr)	return;
-	
+	if (GetPlayerBallController() == nullptr) return;
+
 	GetPlayerBallController()->OnUsePowerUpInput.AddDynamic(this, &UPlayerBallBehaviorPowerUp::UsePowerUpAction);
 }
 
@@ -57,8 +55,8 @@ void UPlayerBallBehaviorPowerUp::UnbindBehaviorEventAction(APlayerBallController
 {
 	Super::UnbindBehaviorEventAction(InPlayerBallController);
 
-	if (GetPlayerBallController() == nullptr)	return;
-	
+	if (GetPlayerBallController() == nullptr) return;
+
 	GetPlayerBallController()->OnUsePowerUpInput.RemoveDynamic(this, &UPlayerBallBehaviorPowerUp::UsePowerUpAction);
 }
 
@@ -66,9 +64,9 @@ void UPlayerBallBehaviorPowerUp::SetupData()
 {
 	Super::SetupData();
 
-	if (GetPlayerBall() == nullptr)	return;
-	if (GetPlayerBall()->GetPlayerPowerUpData() == nullptr)	return;
-		
+	if (GetPlayerBall() == nullptr) return;
+	if (GetPlayerBall()->GetPlayerPowerUpData() == nullptr) return;
+
 	FreezeRange = GetPlayerBall()->GetPlayerPowerUpData()->FreezeRange;
 	FreezeDuration = GetPlayerBall()->GetPlayerPowerUpData()->FreezeDuration;
 
@@ -80,7 +78,8 @@ void UPlayerBallBehaviorPowerUp::SetupData()
 }
 
 void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent,
-                                                            AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                                            AActor* OtherActor, UPrimitiveComponent* OtherComp,
+                                                            int32 OtherBodyIndex, bool bFromSweep,
                                                             const FHitResult& SweepResult)
 {
 	TObjectPtr<APowerUp> OtherPowerUp = Cast<APowerUp>(OtherActor);
@@ -88,26 +87,30 @@ void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent*
 	if (OtherPowerUp != nullptr && GetCurrentPowerUpCarried() == EPowerUpID::None)
 	{
 		AssignPowerUpCarried(OtherPowerUp->GetPowerUpID());
-		
+
 		switch (OtherPowerUp->GetPowerUpID())
 		{
 		case EPowerUpID::Dash:
 			OtherPowerUp->TriggerPowerUp();
 			break;
-				
+
 		case EPowerUpID::Collectible:
 			OtherPowerUp->TriggerPowerUp(GetPlayerBall()->PlayerIndex);
 			break;
-		
+
 		case EPowerUpID::Duck:
 			OtherPowerUp->TriggerPowerUp(GetPlayerBall()->PlayerIndex);
 			break;
-				
+
+		case EPowerUpID::Mole:
+			OtherPowerUp->TriggerPowerUp(GetPlayerBall()->PlayerIndex);
+			break;
+
 		case EPowerUpID::Freeze:
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Freeze power up");
 			OtherPowerUp->TriggerPowerUp();
 			break;
-				
+
 		case EPowerUpID::Strength:
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Strength power up");
 			OtherPowerUp->TriggerPowerUp();
@@ -117,7 +120,7 @@ void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent*
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Slippery power up");
 			OtherPowerUp->TriggerPowerUp();
 			break;
-		
+
 		default:
 			break;
 		}
@@ -134,7 +137,8 @@ EPowerUpID UPlayerBallBehaviorPowerUp::GetCurrentPowerUpCarried() const
 
 void UPlayerBallBehaviorPowerUp::AssignPowerUpCarried(EPowerUpID PowerUpID)
 {
-	if (CurrentPowerUpCarried != EPowerUpID::None || PowerUpID == EPowerUpID::Collectible || PowerUpID == EPowerUpID::Duck)	return;
+	if (CurrentPowerUpCarried != EPowerUpID::None || PowerUpID == EPowerUpID::Collectible || PowerUpID ==
+		EPowerUpID::Duck || PowerUpID == EPowerUpID::Mole) return;
 
 	CurrentPowerUpCarried = PowerUpID;
 }
@@ -156,24 +160,24 @@ void UPlayerBallBehaviorPowerUp::UsePowerUpCarried()
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "You have no power up");
 		return;
 	}
-	
+
 	switch (CurrentPowerUpCarried)
 	{
-	case EPowerUpID::Freeze:	// substate id -> 1.f
+	case EPowerUpID::Freeze: // substate id -> 1.f
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Freeze PowerUp");
 		OnUsePowerUpAction.Broadcast(1.f);
 		break;
-			
-	case EPowerUpID::Strength:	// substate id -> 2.f
+
+	case EPowerUpID::Strength: // substate id -> 2.f
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Strength PowerUp");
 		OnUsePowerUpAction.Broadcast(2.f);
 		break;
-		
-	case EPowerUpID::Slippery:	// substate id -> 3.f
-        	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Slippery PowerUp");
-        	OnUsePowerUpAction.Broadcast(3.f);
-        	break;
-			
+
+	case EPowerUpID::Slippery: // substate id -> 3.f
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Slippery PowerUp");
+		OnUsePowerUpAction.Broadcast(3.f);
+		break;
+
 	default:
 		break;
 	}
@@ -182,7 +186,7 @@ void UPlayerBallBehaviorPowerUp::UsePowerUpCarried()
 void UPlayerBallBehaviorPowerUp::ActivateStrengthPowerUp()
 {
 	bUsingStrength = true;
-	
+
 	CurrentStrengthDuration = 0.f;
 }
 
@@ -213,34 +217,36 @@ bool UPlayerBallBehaviorPowerUp::GetIsUsingStrengthPowerUp()
 
 void UPlayerBallBehaviorPowerUp::ReceiveSlipperyEffect()
 {
-	if (GetPlayerBall() == nullptr)	return;
-	if (GetPlayerBall()->GetPlayerPowerUpData() == nullptr)	return;
+	if (GetPlayerBall() == nullptr) return;
+	if (GetPlayerBall()->GetPlayerPowerUpData() == nullptr) return;
 
 	bIsSlippery = true;
 
 	CurrentSlipperyEffectDuration = 0.f;
-	
-	if (GetPlayerBall()->SphereCollision == nullptr)	return;
-	if (GetPlayerBall()->GetPlayerPowerUpData()->SlipperyPhysicsAsset == nullptr)	return;
+
+	if (GetPlayerBall()->SphereCollision == nullptr) return;
+	if (GetPlayerBall()->GetPlayerPowerUpData()->SlipperyPhysicsAsset == nullptr) return;
 
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "Set slippery Material");
-	GetPlayerBall()->SphereCollision->SetPhysMaterialOverride(GetPlayerBall()->GetPlayerPowerUpData()->SlipperyPhysicsAsset);
+	GetPlayerBall()->SphereCollision->SetPhysMaterialOverride(
+		GetPlayerBall()->GetPlayerPowerUpData()->SlipperyPhysicsAsset);
 }
 
 void UPlayerBallBehaviorPowerUp::EndSlipperyEffect()
 {
 	bIsSlippery = false;
 
-	if (GetPlayerBall()->SphereCollision == nullptr)	return;
-	if (GetPlayerBall()->GetPlayerPowerUpData()->ClassicPhysicsAsset == nullptr)	return;
+	if (GetPlayerBall()->SphereCollision == nullptr) return;
+	if (GetPlayerBall()->GetPlayerPowerUpData()->ClassicPhysicsAsset == nullptr) return;
 
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "Set classic Material");
-	GetPlayerBall()->SphereCollision->SetPhysMaterialOverride(GetPlayerBall()->GetPlayerPowerUpData()->ClassicPhysicsAsset);
+	GetPlayerBall()->SphereCollision->SetPhysMaterialOverride(
+		GetPlayerBall()->GetPlayerPowerUpData()->ClassicPhysicsAsset);
 }
 
 void UPlayerBallBehaviorPowerUp::HandleSlipperyEffectDuration(float DeltaTime)
 {
-	if (!bIsSlippery)	return;
+	if (!bIsSlippery) return;
 
 	if (CurrentSlipperyEffectDuration >= TotalSlipperyEffectDuration)
 	{
@@ -251,4 +257,3 @@ void UPlayerBallBehaviorPowerUp::HandleSlipperyEffectDuration(float DeltaTime)
 		CurrentSlipperyEffectDuration += DeltaTime;
 	}
 }
-

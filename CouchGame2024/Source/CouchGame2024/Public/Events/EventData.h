@@ -49,4 +49,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Event", meta = (EditCondition = "EventRoundTime == Phase1MinTime + Phase2MaxTime", Tooltip = "EventRoundTime = Phase1MinTime + Phase2MaxTime"))
 	float EventRoundTime = 80.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Event", meta = (EditCondition = "EventName == EEventName::Mole", Tooltip = "Que pour l'event Mole"))
+	int MoleToPoints = 200;
 };
