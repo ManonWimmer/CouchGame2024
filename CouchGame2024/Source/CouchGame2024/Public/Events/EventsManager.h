@@ -133,7 +133,10 @@ public:
 	void TriggerEventPhase2(const UEventData* EventData);
 
 	UFUNCTION()
-	void StartEvent();
+	void StartEvent(int RoundIndex);
+
+	UFUNCTION(BlueprintCallable, CallInEditor, Category = "Events")
+	void ShowWidgetEvent();
 	
 	UFUNCTION()
 	UEventData* GetEventDataFromName(EEventName EventName);
