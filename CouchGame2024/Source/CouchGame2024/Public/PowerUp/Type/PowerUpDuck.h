@@ -31,4 +31,10 @@ public:
 
 	UPROPERTY()
 	FDuckCollected OnDuckCollected;
+
+	UFUNCTION()
+	void DestroyDuck();
+
+	UFUNCTION()
+	void CollectDuck();
 };
