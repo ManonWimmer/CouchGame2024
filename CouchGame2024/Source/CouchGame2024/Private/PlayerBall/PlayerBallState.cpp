@@ -29,7 +29,7 @@ void UPlayerBallState::StateInit(UPlayerBallStateMachine* InStateMachine)
 
 void UPlayerBallState::StateEnter(EPlayerBallStateID PreviousState)
 {
-	
+	ReceiveStateEnter(PreviousState);
 }
 
 void UPlayerBallState::StateEnter(EPlayerBallStateID PreviousState, float InFloatParameter)

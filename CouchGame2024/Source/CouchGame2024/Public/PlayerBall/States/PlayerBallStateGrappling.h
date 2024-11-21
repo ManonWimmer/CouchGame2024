@@ -31,6 +31,8 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 private:
+	float RotationDirection = 0.f;
+	
 	UFUNCTION()
 	void OnEndGrappling(float InGrapplingValue);
 
