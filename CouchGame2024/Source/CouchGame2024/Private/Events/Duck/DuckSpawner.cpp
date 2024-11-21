@@ -21,10 +21,9 @@ void ADuckSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (AEventDuck* EventDuck = Cast<AEventDuck>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventDuck::StaticClass())))
-		EventDuck->OnDuckStartedEvent.AddDynamic(this, &ADuckSpawner::StartCountdownSpawning);
-	else
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "CANT FIND DUCK EVENT FROM DUCK SPAWNER");
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "BEGIN SPAWNER");
+
+	BindDuckStartEvent();
 
 }
 
@@ -44,7 +43,7 @@ void ADuckSpawner::Tick(float DeltaTime)
 	}
 }
 
-void ADuckSpawner::StartCountdownSpawning() // start phase 1 duck event - duck collected
+void ADuckSpawner::StartCountdownSpawning() // duck collected
 {
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Start duck countdown spawning");
 
@@ -58,7 +57,7 @@ void ADuckSpawner::StopCountdownSpawning() // end event & spawn duck
 	bCanSpawn = false;
 }
 
-void ADuckSpawner::SpawnDuck()
+void ADuckSpawner::SpawnDuck() // start phase 1 duck event 
 {
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Spawn Duck");
 
@@ -74,4 +73,17 @@ void ADuckSpawner::GetRandomSpawnTime()
 	RandomSpawnTime = FMath::RandRange(MinDuckSpawnTime, MaxDuckSpawnTime);
 
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,FString::Printf(TEXT("Spawn time duck : %f"), RandomSpawnTime));
+}
+
+void ADuckSpawner::BindDuckStartEvent()
+{
+	if (!bHasBeenBind)
+	{
+		bHasBeenBind = true;
+		
+		if (AEventDuck* EventDuck = Cast<AEventDuck>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventDuck::StaticClass())))
+			EventDuck->OnDuckStartedEvent.AddDynamic(this, &ADuckSpawner::SpawnDuck);
+		else
+			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "CANT FIND DUCK EVENT FROM DUCK SPAWNER");
+	}
 }

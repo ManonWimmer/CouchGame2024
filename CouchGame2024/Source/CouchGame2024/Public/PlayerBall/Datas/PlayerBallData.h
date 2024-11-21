@@ -154,6 +154,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Pillar Points")
 	float PillarPointsPerSeconds = 5.f;
+
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float ExitNotPillarDegrees = 90.f;
 	
 #pragma endregion
 
