@@ -3,6 +3,9 @@
 
 #include "Events/EventsChildren/EventZones.h"
 
+#include "Events/Mole/MoleSpawner.h"
+#include "Kismet/GameplayStatics.h"
+
 
 // Sets default values
 AEventZones::AEventZones()
@@ -15,7 +18,7 @@ AEventZones::AEventZones()
 void AEventZones::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame

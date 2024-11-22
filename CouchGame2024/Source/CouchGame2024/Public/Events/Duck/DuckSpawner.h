@@ -41,6 +41,9 @@ public:
 	UFUNCTION()
 	void BindDuckStartEvent();
 
+	UFUNCTION()
+	void StopSpawning();
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APowerUpDuck> DuckClass;
 
