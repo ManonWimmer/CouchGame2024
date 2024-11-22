@@ -72,6 +72,9 @@ void AEventDuck::EndEvent()
 {
 	Super::EndEvent();
 
+	/*
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Cyan,"Destroy ducks");
+
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActors);
 
@@ -82,6 +85,7 @@ void AEventDuck::EndEvent()
 			DuckActor->Destroy();
 		}
 	}
+	*/
 
 	OnDuckEndedEvent.Broadcast();
 }

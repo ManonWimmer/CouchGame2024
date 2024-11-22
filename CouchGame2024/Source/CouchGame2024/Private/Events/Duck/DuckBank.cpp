@@ -34,7 +34,7 @@ void ADuckBank::BeginPlay()
 
 	// Data
 	if (AEventsManager* EventsManager = Cast<AEventsManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventsManager::StaticClass())))
-		DuckToPoints = EventsManager->CurrentEventData->DuckToPoints; // Forcement dans l'event mole
+		DuckToPoints = EventsManager->CurrentEventData->DuckToPoints; 
 	else
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "MISSING EVENTS MANAGER");
 	
