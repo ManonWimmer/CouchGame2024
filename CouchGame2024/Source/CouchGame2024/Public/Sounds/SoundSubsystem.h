@@ -45,6 +45,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayPlayerRespawnSound();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayPlayerImpactsSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayPlayerPunchSound();
 
 #pragma endregion
 
