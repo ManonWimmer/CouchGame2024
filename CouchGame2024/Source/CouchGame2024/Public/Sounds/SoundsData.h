@@ -46,6 +46,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Player Respawn")
 	TObjectPtr<UMetaSoundSource> PlayerRespawn;
+
+	UPROPERTY(EditAnywhere, Category = "Player Impact")
+	TObjectPtr<UMetaSoundSource> PlayerImpacts;
+
+	UPROPERTY(EditAnywhere, Category = "Player Impact")
+	TObjectPtr<UMetaSoundSource> PlayerPunch;
 	
 
 #pragma endregion 

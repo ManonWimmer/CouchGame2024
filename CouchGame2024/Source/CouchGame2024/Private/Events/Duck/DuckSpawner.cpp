@@ -50,6 +50,7 @@ void ADuckSpawner::StartCountdownSpawning() // duck collected
 	GetRandomSpawnTime();
 	bCanSpawn = true;
 	StartedTime = GetWorld()->GetTimeSeconds();
+	SpawnedDuck = nullptr;
 }
 
 void ADuckSpawner::StopCountdownSpawning() // end event & spawn duck
@@ -63,7 +64,15 @@ void ADuckSpawner::SpawnDuck() // start phase 1 duck event
 
 	// Spawn Duck
 	SpawnedDuck = GetWorld()->SpawnActor<APowerUpDuck>(DuckClass, GetActorLocation(), GetActorRotation());
-	SpawnedDuck->OnDuckCollected.AddDynamic(this, &ADuckSpawner::StartCountdownSpawning);
+	
+
+	if (SpawnedDuck)
+	{
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "duck");
+		SpawnedDuck->OnDuckCollected.AddDynamic(this, &ADuckSpawner::StartCountdownSpawning);
+	}
+	else
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "no duck");
 
 	StopCountdownSpawning();
 }
