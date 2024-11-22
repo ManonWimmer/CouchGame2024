@@ -351,7 +351,7 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 
 	if (!Pawn->BehaviorGrapple->IsHookingPillar && FMath::Abs(StartAngle - Pawn->BehaviorGrapple->CurrentGrapplingAngle)
 		>
-		FMath::DegreesToRadians(90.f))
+		FMath::DegreesToRadians(Pawn->BehaviorGrapple->ExitNotPillarDegrees))
 	{
 		StateMachine->ChangeState(EPlayerBallStateID::Idle);
 	}

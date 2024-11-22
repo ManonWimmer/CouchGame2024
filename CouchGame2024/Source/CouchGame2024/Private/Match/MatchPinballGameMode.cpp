@@ -23,6 +23,8 @@ void AMatchPinballGameMode::BeginPlay()
 	PlayerBallSpawns = PlayerSpawnPoints;
 	SpawnPlayerBalls(PlayerSpawnPoints);
 
+	OnPlayerBallSpawned.Broadcast();
+
 	// Rounds
 	InitRoundsSubsystem();
 

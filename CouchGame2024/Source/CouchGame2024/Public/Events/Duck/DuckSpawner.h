@@ -38,6 +38,9 @@ public:
 	UFUNCTION()
 	void GetRandomSpawnTime();
 
+	UFUNCTION()
+	void BindDuckStartEvent();
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APowerUpDuck> DuckClass;
 
@@ -61,5 +64,8 @@ private:
 	bool bCanSpawn = false;
 
 	UPROPERTY()
-	APowerUpDuck* SpawnedDuck = nullptr;
+	TObjectPtr<APowerUpDuck> SpawnedDuck = nullptr;
+
+	UPROPERTY()
+	bool bHasBeenBind = false;
 };
