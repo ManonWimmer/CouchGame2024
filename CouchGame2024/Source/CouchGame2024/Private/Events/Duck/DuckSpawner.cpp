@@ -91,8 +91,18 @@ void ADuckSpawner::BindDuckStartEvent()
 		bHasBeenBind = true;
 		
 		if (AEventDuck* EventDuck = Cast<AEventDuck>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventDuck::StaticClass())))
+		{
 			EventDuck->OnDuckStartedEvent.AddDynamic(this, &ADuckSpawner::SpawnDuck);
+			EventDuck->OnDuckEndedEvent.AddDynamic(this, &ADuckSpawner::StopSpawning);
+		}
 		else
 			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "CANT FIND DUCK EVENT FROM DUCK SPAWNER");
 	}
+}
+
+void ADuckSpawner::StopSpawning()
+{
+	bCanSpawn = false;
+	if (SpawnedDuck)
+		SpawnedDuck->Destroy();
 }
