@@ -54,7 +54,7 @@ void AMoleSpawner::Tick(float DeltaTime)
 
 void AMoleSpawner::StartCountdownSpawning() // start phase 1 mole event - mole collected
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Start mole countdown spawning");
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Start mole countdown spawning");
 
 	GetRandomSpawnTime();
 	bCanSpawn = true;
@@ -100,13 +100,13 @@ void AMoleSpawner::GetRandomSpawnTime()
 {
 	RandomSpawnTime = FMath::RandRange(MinMoleSpawnTime, MaxMoleSpawnTime);
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,FString::Printf(TEXT("Spawn time mole : %f"), RandomSpawnTime));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,FString::Printf(TEXT("Spawn time mole : %f"), RandomSpawnTime));
 }
 
 void AMoleSpawner::GetRandomStayTime()
 {
 	RandomStayTime = FMath::RandRange(MinMoleStayTime, MaxMoleStayTime);
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,FString::Printf(TEXT("Stay time mole : %f"), RandomStayTime));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,FString::Printf(TEXT("Stay time mole : %f"), RandomStayTime));
 }
 
