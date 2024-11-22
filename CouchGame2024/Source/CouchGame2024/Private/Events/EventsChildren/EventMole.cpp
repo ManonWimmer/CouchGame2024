@@ -3,6 +3,7 @@
 
 #include "Events/EventsChildren/EventMole.h"
 
+#include "Events/Mole/MoleSpawner.h"
 #include "Kismet/GameplayStatics.h"
 #include "PinballElements/Elements/MoleElement.h"
 
@@ -18,7 +19,16 @@ AEventMole::AEventMole()
 void AEventMole::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	TArray<AActor*> Acteurs;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMoleSpawner::StaticClass(), Acteurs);
+
+	for (AActor* Acteur : Acteurs)
+	{
+		AMoleSpawner* MoleSpawner = Cast<AMoleSpawner>(Acteur);
+		if (MoleSpawner)
+			MoleSpawner->Bind();
+	}
 }
 
 // Called every frame
@@ -58,6 +68,11 @@ void AEventMole::EndEvent()
 {
 	Super::EndEvent();
 
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "end mole event");
+
+	/*
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Cyan,"Destroy ducks");
+
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActors);
 
@@ -68,7 +83,7 @@ void AEventMole::EndEvent()
 			MoleActor->Destroy();
 		}
 	}
-
+	*/
 
 	OnMoleEndedEvent.Broadcast();
 }

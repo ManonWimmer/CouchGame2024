@@ -47,6 +47,12 @@ public:
 	UFUNCTION()
 	void GetRandomStayTime();
 
+	UFUNCTION()
+	void StopSpawning();
+
+	UFUNCTION()
+	void Bind();
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AMoleElement> MoleClass;
 
@@ -83,4 +89,9 @@ private:
 
 	UPROPERTY()
 	AMoleElement* SpawnedMole = nullptr;
+
+	UPROPERTY()
+	bool bHasBeenBind = false;
 };
+
+

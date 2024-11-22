@@ -217,6 +217,7 @@ void AEventsManager::GetRandomEvent()
 
 	if (LastEventData != nullptr) // Round > 0
 	{
+		GetEventClassFromEventData(LastEventData)->EndEvent();
 		UEventData* ExcludedEventData = LastEventData;
 		EventDataList = Events.FilterByPredicate([ExcludedEventData](const UEventData* Item)
 		{
@@ -291,6 +292,7 @@ void AEventsManager::CreateEvents()
 
 	// Mole
 	AEvent* EventMole = GetWorld()->SpawnActor<AEventMole>();
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "create mole event");
 	UEventData* EventMoleData = GetEventDataFromName(EEventName::Mole);
 	if (EventMole && EventMoleData)
 	{
