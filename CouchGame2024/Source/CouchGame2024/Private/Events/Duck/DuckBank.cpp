@@ -31,13 +31,6 @@ ADuckBank::ADuckBank()
 void ADuckBank::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// Data
-	if (AEventsManager* EventsManager = Cast<AEventsManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventsManager::StaticClass())))
-		DuckToPoints = EventsManager->CurrentEventData->DuckToPoints; 
-	else
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "MISSING EVENTS MANAGER");
-	
 }
 
 // Called every frame
@@ -59,5 +52,15 @@ void ADuckBank::OnBankBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 			ScoreSubsystem->PlayerInDuckBank(BallInBank->PlayerIndex, DuckToPoints);
 		}
 	}
+}
+
+void ADuckBank::Bind()
+{
+	// Data
+	if (AEventsManager* EventsManager = Cast<AEventsManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventsManager::StaticClass())))
+		DuckToPoints = EventsManager->CurrentEventData->DuckToPoints; 
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "MISSING EVENTS MANAGER");
+	
 }
 
