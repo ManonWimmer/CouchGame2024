@@ -33,7 +33,11 @@ EPowerUpID APowerUpDuck::GetPowerUpID() const
 
 void APowerUpDuck::TriggerPowerUp(int PlayerIndex)
 {
+	if (bHasBeenCollected) return;
+
+	bHasBeenCollected = true;
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow, "trigger duck");
+
 
 	
 	UGlobalScoreSubsystem* ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
@@ -65,6 +69,7 @@ void APowerUpDuck::DestroyDuck()
 
 void APowerUpDuck::CollectDuck()
 {
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red, "broadcast collect");
 	OnDuckCollected.Broadcast();
 }
 
