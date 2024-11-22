@@ -35,12 +35,18 @@ void AEventsManager::BeginPlay()
 	
 	InitResetable();
 
-	CreateEvents();
+	//FTimerHandle TimerHandle;
+	//float DelayTime = 1.f;
+	//GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AEventsManager::Setup, DelayTime, false); 
 
-	BindCountdownToRoundsPhase();
-	BindCountdownToRoundsChange();
-
-	SetupNewRoundEvent(0);
+	Setup();
+	
+	// CreateEvents();
+	//
+	// BindCountdownToRoundsPhase();
+	// BindCountdownToRoundsChange();
+	//
+	// SetupNewRoundEvent(0);
 }
 
 // Called every frame
@@ -61,6 +67,16 @@ void AEventsManager::Tick(float DeltaTime)
 			CheckAndTriggerEvents();
 		}
 	}
+}
+
+void AEventsManager::Setup()
+{
+	CreateEvents();
+
+	BindCountdownToRoundsPhase();
+	BindCountdownToRoundsChange();
+
+	SetupNewRoundEvent(0);
 }
 
 #pragma region Countdown
@@ -87,6 +103,8 @@ void AEventsManager::CheckStartCountdown(ERoundsPhaseID InRoundsPhaseID)
 	switch (InRoundsPhaseID)
 	{
 	case ERoundsPhaseID::IN_ROUND:
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "START GAMEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+
 		StartGame();
 		break;
 
@@ -215,6 +233,8 @@ void AEventsManager::GetRandomEvent()
 
 	TArray<UEventData*> EventDataList;
 
+
+	/*
 	if (LastEventData != nullptr) // Round > 0
 	{
 		GetEventClassFromEventData(LastEventData)->EndEvent();
@@ -228,7 +248,9 @@ void AEventsManager::GetRandomEvent()
 	{
 		EventDataList = Events;
 	}
+	*/
 
+	EventDataList = Events;
 	// Check list
 	if (EventDataList.Num() <= 0)
 	{

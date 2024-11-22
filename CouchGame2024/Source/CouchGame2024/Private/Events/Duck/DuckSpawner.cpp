@@ -88,10 +88,10 @@ void ADuckSpawner::BindDuckStartEvent()
 {
 	if (!bHasBeenBind)
 	{
-		bHasBeenBind = true;
 		
 		if (AEventDuck* EventDuck = Cast<AEventDuck>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventDuck::StaticClass())))
 		{
+			bHasBeenBind = true;
 			EventDuck->OnDuckStartedEvent.AddDynamic(this, &ADuckSpawner::SpawnDuck);
 			EventDuck->OnDuckEndedEvent.AddDynamic(this, &ADuckSpawner::StopSpawning);
 		}

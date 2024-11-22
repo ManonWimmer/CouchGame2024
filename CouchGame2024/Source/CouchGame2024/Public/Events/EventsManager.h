@@ -82,6 +82,9 @@ public:
 
 
 	UFUNCTION()
+	void Setup();
+
+	UFUNCTION()
 	void BindCountdownToRoundsPhase();
 	
 	UFUNCTION()
