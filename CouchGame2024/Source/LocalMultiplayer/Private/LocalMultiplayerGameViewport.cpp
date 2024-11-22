@@ -96,6 +96,13 @@ bool ULocalMultiplayerGameViewport::InputAxis(FViewport* InViewport, FInputDevic
 
 			PlayerIndex = MultiplayerSubsystem->AssignNewPlayerToGamepadProfileID(InputDevice.GetId());
 			MultiplayerSubsystem->AssignGamepadInputMapping(PlayerIndex, ELocalMultiplayerInputMappingType::InGame);
+
+			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, FString::Printf((TEXT("Player index connnected : %d")), PlayerIndex));
+
+		}else
+		{
+			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, FString::Printf((TEXT("Deja mis index connnected : %d")), PlayerIndex));
+
 		}
 		APlayerController* Controller = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), PlayerIndex);
 
@@ -104,6 +111,10 @@ bool ULocalMultiplayerGameViewport::InputAxis(FViewport* InViewport, FInputDevic
 			FInputKeyParams KeyParams(Key, Delta, DeltaTime, NumSamples, bGamepad, InputDevice);
 			return Controller->InputKey(KeyParams);
 		}
+	}else
+	{
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, FString::Printf((TEXT("not gamepad : %d")), 0));
+
 	}
 	
 	return Super::InputAxis(InViewport, InputDevice, Key, Delta, DeltaTime, NumSamples, bGamepad);

@@ -5,6 +5,7 @@
 
 #include "Events/Duck/DuckSpawner.h"
 #include "Kismet/GameplayStatics.h"
+#include "PowerUp/Type/PowerUpDuck.h"
 
 
 // Sets default values
@@ -70,6 +71,17 @@ void AEventDuck::TickPhase2()
 void AEventDuck::EndEvent()
 {
 	Super::EndEvent();
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		if (APowerUpDuck* DuckActor = Cast<APowerUpDuck>(Actor))
+		{
+			DuckActor->Destroy();
+		}
+	}
 
 	OnDuckEndedEvent.Broadcast();
 }
