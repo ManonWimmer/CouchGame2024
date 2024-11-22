@@ -17,7 +17,7 @@ APowerUpDuck::APowerUpDuck()
 void APowerUpDuck::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -33,15 +33,38 @@ EPowerUpID APowerUpDuck::GetPowerUpID() const
 
 void APowerUpDuck::TriggerPowerUp(int PlayerIndex)
 {
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow, "trigger duck");
+
+	
 	UGlobalScoreSubsystem* ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
 	if (ScoreSubsystem != nullptr)
 	{
 		ScoreSubsystem->AddDuck(PlayerIndex, 1);
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow, FString::Printf(TEXT("Add Duck to player ID: %i"), PlayerIndex));
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow, FString::Printf(TEXT("Add Duck to player ID: %i"), PlayerIndex));
 
-		OnDuckCollected.Broadcast();
+		// Pour eviter le broadcast avant spawn complet
+		FTimerHandle TimerHandle;
+		float DelayTime = 0.05f;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &APowerUpDuck::CollectDuck, DelayTime, false);
 	}
-	
-	Super::TriggerPowerUp(PlayerIndex); // Destroy object
+	else
+	{
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red, "no score");
+	}
+
+	FTimerHandle TimerHandle;
+	float DelayTime = 0.1f;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &APowerUpDuck::DestroyDuck, DelayTime, false);
+}
+
+void APowerUpDuck::DestroyDuck()
+{
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red, "destroy");
+	this->Destroy();
+}
+
+void APowerUpDuck::CollectDuck()
+{
+	OnDuckCollected.Broadcast();
 }
 

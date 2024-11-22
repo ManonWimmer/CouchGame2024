@@ -146,6 +146,9 @@ public:
 	UPROPERTY()
 	float PillarPointsPerSeconds = 5.f;
 
+	UPROPERTY()
+	float ExitNotPillarDegrees = 90.f;
+
 #pragma endregion
 
 #pragma region Grappled
