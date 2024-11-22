@@ -2,10 +2,10 @@
 
 
 #include "PowerUp/Type/PowerUpDuck.h"
-
 #include "Score/GlobalScoreSubsystem.h"
 
 
+class AEventsManager;
 // Sets default values
 APowerUpDuck::APowerUpDuck()
 {
@@ -17,7 +17,6 @@ APowerUpDuck::APowerUpDuck()
 void APowerUpDuck::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 // Called every frame
