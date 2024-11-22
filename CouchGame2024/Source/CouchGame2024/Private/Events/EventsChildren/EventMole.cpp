@@ -20,15 +20,7 @@ void AEventMole::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TArray<AActor*> Acteurs;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMoleSpawner::StaticClass(), Acteurs);
-
-	for (AActor* Acteur : Acteurs)
-	{
-		AMoleSpawner* MoleSpawner = Cast<AMoleSpawner>(Acteur);
-		if (MoleSpawner)
-			MoleSpawner->Bind();
-	}
+	
 }
 
 // Called every frame
@@ -40,6 +32,18 @@ void AEventMole::Tick(float DeltaTime)
 void AEventMole::SetupEventPhase1()
 {
 	Super::SetupEventPhase1();
+
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Cyan, "LAAAAAA");
+
+	TArray<AActor*> Acteurs;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMoleSpawner::StaticClass(), Acteurs);
+
+	for (AActor* Acteur : Acteurs)
+	{
+		AMoleSpawner* MoleSpawner = Cast<AMoleSpawner>(Acteur);
+		if (MoleSpawner)
+			MoleSpawner->Bind();
+	}
 }
 
 void AEventMole::TriggerEventPhase1()
