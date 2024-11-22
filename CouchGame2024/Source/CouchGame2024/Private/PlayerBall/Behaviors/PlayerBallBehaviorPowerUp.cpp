@@ -99,6 +99,7 @@ void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent*
 			break;
 
 		case EPowerUpID::Duck:
+			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red, "overlap duck");
 			OtherPowerUp->TriggerPowerUp(GetPlayerBall()->PlayerIndex);
 			break;
 
