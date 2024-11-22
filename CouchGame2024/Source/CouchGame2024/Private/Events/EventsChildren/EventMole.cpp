@@ -3,6 +3,9 @@
 
 #include "Events/EventsChildren/EventMole.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "PinballElements/Elements/MoleElement.h"
+
 
 // Sets default values
 AEventMole::AEventMole()
@@ -54,6 +57,18 @@ void AEventMole::TickPhase2()
 void AEventMole::EndEvent()
 {
 	Super::EndEvent();
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		if (AMoleElement* MoleActor = Cast<AMoleElement>(Actor))
+		{
+			MoleActor->Destroy();
+		}
+	}
+
 
 	OnMoleEndedEvent.Broadcast();
 }
