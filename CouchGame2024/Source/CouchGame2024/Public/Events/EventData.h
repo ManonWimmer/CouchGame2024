@@ -52,4 +52,7 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "Event", meta = (EditCondition = "EventName == EEventName::Mole", Tooltip = "Que pour l'event Mole"))
 	int MoleToPoints = 200;
+
+	UPROPERTY(EditAnywhere, Category = "Event", meta = (EditCondition = "EventName == EEventName::Duck", Tooltip = "Que pour l'event Duck"))
+	int DuckToPoints = 200;
 };
