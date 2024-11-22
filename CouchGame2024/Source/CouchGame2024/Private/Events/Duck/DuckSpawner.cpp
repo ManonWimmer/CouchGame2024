@@ -64,7 +64,7 @@ void ADuckSpawner::SpawnDuck() // start phase 1 duck event
 
 	// Spawn Duck
 	SpawnedDuck = GetWorld()->SpawnActor<APowerUpDuck>(DuckClass, GetActorLocation(), GetActorRotation());
-	
+	bCanSpawn = false;
 
 	if (SpawnedDuck)
 	{

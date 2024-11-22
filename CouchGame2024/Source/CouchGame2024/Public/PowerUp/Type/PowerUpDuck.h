@@ -37,4 +37,7 @@ public:
 
 	UFUNCTION()
 	void CollectDuck();
+
+	UPROPERTY()
+	bool bHasBeenCollected = false;
 };
