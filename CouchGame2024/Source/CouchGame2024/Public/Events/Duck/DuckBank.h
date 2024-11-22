@@ -36,5 +36,5 @@ public:
 								 const FHitResult& SweepResult);
 
 	UPROPERTY(EditAnywhere)
-	int DuckToPointsMultiplier = 200;
+	int DuckToPoints = 200;
 };
