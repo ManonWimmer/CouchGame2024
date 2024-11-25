@@ -102,15 +102,7 @@ void AUIManager::HideWidgetForEvent(EEventName EventName)
 }
 
 
-void AUIManager::HideWinner_Implementation()
-{
-}
-
 void AUIManager::ShowWinner_Implementation()
-{
-}
-
-void AUIManager::HideNextRound_Implementation()
 {
 }
 
