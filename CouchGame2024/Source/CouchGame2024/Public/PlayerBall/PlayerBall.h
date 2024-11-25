@@ -199,6 +199,19 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayGrapplingGrabGamefeelEffectsBlueprint();
 
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayFreezeCastGamefeelEffectsBlueprint();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayPlayerFreezedGamefeelEffectsBlueprint();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayPlayerUnfreezedGamefeelEffectsBlueprint();
+
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayStrengthCastGamefeelEffectsBlueprint();
 	
 public:
 
@@ -257,6 +270,9 @@ private:
 
 public:
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnKill"))
+	void ReceiveOnKill();
+	
 	virtual void Kill() override;
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathReaction, float, DeathValue);

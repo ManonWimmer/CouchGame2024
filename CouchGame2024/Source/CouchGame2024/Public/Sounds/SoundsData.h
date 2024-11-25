@@ -63,13 +63,27 @@ public:
 #pragma region Power Up
 
 	UPROPERTY(EditAnywhere, Category = "Power Up Freeze")
-	TObjectPtr<UMetaSoundSource> PowerUpFreeze;
-
-	UPROPERTY(EditAnywhere, Category = "Power Up Strength")
-	TObjectPtr<UMetaSoundSource> PowerUpStrength;
+	TObjectPtr<UMetaSoundSource> PowerUpFreezeCast;
 
 	UPROPERTY(EditAnywhere, Category = "Power Up Freeze")
-	TObjectPtr<UMetaSoundSource> PowerUpSlippery;
+	TObjectPtr<UMetaSoundSource> PowerUpFreezePlayerTouched;
+
+	UPROPERTY(EditAnywhere, Category = "Power Up Freeze")
+	TObjectPtr<UMetaSoundSource> PowerUpFreezeEffectFinished;
+
+	
+	UPROPERTY(EditAnywhere, Category = "Power Up Strength")
+	TObjectPtr<UMetaSoundSource> PowerUpStrengthCast;
+
+	
+	UPROPERTY(EditAnywhere, Category = "Power Up Slippery")
+	TObjectPtr<UMetaSoundSource> PowerUpSlipperyCast;
+
+	UPROPERTY(EditAnywhere, Category = "Power Up Slippery")
+	TObjectPtr<UMetaSoundSource> PowerUpSlipperyDisapear;
+
+	UPROPERTY(EditAnywhere, Category = "Power Up Slippery")
+	TObjectPtr<UMetaSoundSource> PowerUpSlipperyEffect;
 	
 #pragma endregion 
 

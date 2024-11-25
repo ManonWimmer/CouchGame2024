@@ -29,6 +29,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayDuckStealSound();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayGoldenDuckPickSound();
+
 #pragma endregion
 
 #pragma region Play Grappling Sounds
@@ -51,8 +54,27 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayPlayerPunchSound();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayPlayerDeathSound();
+	
 #pragma endregion
 
+#pragma region Power Ups Sounds
+
+	UFUNCTION(BlueprintCallable)
+	void PlayFreezeCastSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayPlayerFreezedSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayPlayerUnfreezeSound();
+
+
+	UFUNCTION(BlueprintCallable)
+	void PlayStrengthCastSound();
+
+#pragma endregion
 	
 private:
 	UFUNCTION()

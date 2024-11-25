@@ -70,5 +70,6 @@ void APowerUpDuck::CollectDuck()
 {
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red, "broadcast collect");
 	OnDuckCollected.Broadcast();
+	ReceiveCollectDuck();
 }
 

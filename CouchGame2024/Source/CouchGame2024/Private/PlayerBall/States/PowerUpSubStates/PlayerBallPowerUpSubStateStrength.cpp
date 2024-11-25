@@ -54,4 +54,6 @@ void UPlayerBallPowerUpSubStateStrength::UseStrengthPowerUp()
 	if (Pawn->BehaviorPowerUp == nullptr)	return;
 
 	Pawn->BehaviorPowerUp->ActivateStrengthPowerUp();
+
+	Pawn->PlayStrengthCastGamefeelEffectsBlueprint();
 }

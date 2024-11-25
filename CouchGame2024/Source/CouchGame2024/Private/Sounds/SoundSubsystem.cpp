@@ -48,6 +48,16 @@ void USoundSubsystem::PlayDuckStealSound()
 	}
 }
 
+void USoundSubsystem::PlayGoldenDuckPickSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->GoldenDuckSound == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->GoldenDuckSound);
+	}
+}
+
 void USoundSubsystem::PlayGrapplingGrabSound()
 {
 	if (SoundsData == nullptr)	return;
@@ -85,6 +95,56 @@ void USoundSubsystem::PlayPlayerPunchSound()
 	if (GetWorld())
 	{
 		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PlayerPunch);
+	}
+}
+
+void USoundSubsystem::PlayPlayerDeathSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PlayerDeath == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PlayerDeath);
+	}
+}
+
+void USoundSubsystem::PlayFreezeCastSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PowerUpFreezeCast == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PowerUpFreezeCast);
+	}
+}
+
+void USoundSubsystem::PlayPlayerFreezedSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PowerUpFreezePlayerTouched == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PowerUpFreezePlayerTouched);
+	}
+}
+
+void USoundSubsystem::PlayPlayerUnfreezeSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PowerUpFreezeEffectFinished == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PowerUpFreezeEffectFinished);
+	}
+}
+
+void USoundSubsystem::PlayStrengthCastSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PowerUpStrengthCast == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PowerUpStrengthCast);
 	}
 }
 
