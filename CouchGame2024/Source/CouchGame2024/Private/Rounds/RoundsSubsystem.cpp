@@ -206,6 +206,8 @@ void URoundsSubsystem::ChangeRoundPhase(ERoundsPhaseID RoundsPhaseID)
 			break;
 		case POST_ROUND:
 			EndRoundChecks();
+
+			LockAllPlayer();
 			break;
 		default:
 			break;

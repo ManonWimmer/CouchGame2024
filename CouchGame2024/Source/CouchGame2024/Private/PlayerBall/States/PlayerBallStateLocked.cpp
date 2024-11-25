@@ -46,6 +46,12 @@ void UPlayerBallStateLocked::StateEnter(EPlayerBallStateID PreviousState, float 
 	
 	if (Pawn != nullptr)
 	{
+		if (Pawn->SphereCollision != nullptr)
+		{
+			Pawn->SphereCollision->SetSimulatePhysics(false);
+		}
+		
+		
 		if (Pawn->BehaviorGrapple != nullptr)
 		{
 			Pawn->BehaviorGrapple->CanGrappling = false;
@@ -75,6 +81,11 @@ void UPlayerBallStateLocked::StateExit(EPlayerBallStateID NextState)
 	
 	if (Pawn != nullptr)
 	{
+		if (Pawn->SphereCollision != nullptr)
+		{
+			Pawn->SphereCollision->SetSimulatePhysics(true);
+		}
+		
 		if (bIsLockedSpecial)
 		{
 			if (Pawn->StartForceEffectWidget != nullptr)
