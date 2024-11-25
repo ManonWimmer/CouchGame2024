@@ -20,39 +20,39 @@ enum class EEventName: uint8
 	Push
 };
 
-UCLASS()
+UCLASS(BlueprintType)
 class COUCHGAME2024_API UEventData : public UDataAsset
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Event")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event")
 	EEventName EventName = EEventName::Undefined;
 
-	UPROPERTY(EditAnywhere, Category = "Event")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event")
 	FString EventDescription = "Event Description";
 
-	UPROPERTY(EditAnywhere, Category = "Event")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event")
 	FName EventTag = "EventTag";
 	
-	UPROPERTY(EditAnywhere, Category = "Event")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event")
 	float Phase1MinTime = 30.f;
 	
-	UPROPERTY(EditAnywhere, Category = "Event", meta = (EditCondition = "Phase1MaxTime > Phase1MinTime", Tooltip = "Phase1MaxTime > Phase1MinTime"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event", meta = (EditCondition = "Phase1MaxTime > Phase1MinTime", Tooltip = "Phase1MaxTime > Phase1MinTime"))
 	float Phase1MaxTime = 50.f;
 
-	UPROPERTY(EditAnywhere, Category = "Event")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event")
 	float Phase2MinTime = 30.f;
 
-	UPROPERTY(EditAnywhere, Category = "Event", meta = (EditCondition = "Phase2MaxTime > Phase2MinTime", Tooltip = "Phase2MaxTime > Phase2MinTime"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event", meta = (EditCondition = "Phase2MaxTime > Phase2MinTime", Tooltip = "Phase2MaxTime > Phase2MinTime"))
 	float Phase2MaxTime = 50.f;
 
-	UPROPERTY(EditAnywhere, Category = "Event", meta = (EditCondition = "EventRoundTime == Phase1MinTime + Phase2MaxTime", Tooltip = "EventRoundTime = Phase1MinTime + Phase2MaxTime"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event", meta = (EditCondition = "EventRoundTime == Phase1MinTime + Phase2MaxTime", Tooltip = "EventRoundTime = Phase1MinTime + Phase2MaxTime"))
 	float EventRoundTime = 80.f;
 	
-	UPROPERTY(EditAnywhere, Category = "Event", meta = (EditCondition = "EventName == EEventName::Mole", Tooltip = "Que pour l'event Mole"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event", meta = (EditCondition = "EventName == EEventName::Mole", Tooltip = "Que pour l'event Mole"))
 	int MoleToPoints = 200;
 
-	UPROPERTY(EditAnywhere, Category = "Event", meta = (EditCondition = "EventName == EEventName::Duck", Tooltip = "Que pour l'event Duck"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event", meta = (EditCondition = "EventName == EEventName::Duck", Tooltip = "Que pour l'event Duck"))
 	int DuckToPoints = 200;
 };
