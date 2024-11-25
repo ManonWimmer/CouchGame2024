@@ -39,7 +39,7 @@ void AEventDuck::SetupEventPhase1()
     	{
     		ADuckSpawner* DuckSpawner = Cast<ADuckSpawner>(Acteur);
     		if (DuckSpawner)
-    			DuckSpawner->BindDuckStartEvent();
+    			DuckSpawner->BindDuckStartAndEndEvent();
     	}
 	
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Red,"BROADCAST DUCK START");

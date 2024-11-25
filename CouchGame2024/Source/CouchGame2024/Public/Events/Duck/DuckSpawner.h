@@ -39,7 +39,7 @@ public:
 	void GetRandomSpawnTime();
 
 	UFUNCTION()
-	void BindDuckStartEvent();
+	void BindDuckStartAndEndEvent();
 
 	UFUNCTION()
 	void StopSpawning();

@@ -76,36 +76,47 @@ void AEventsManager::Setup()
 	BindCountdownToRoundsPhase();
 	BindCountdownToRoundsChange();
 
+	GetRandomEvent();
 	SetupNewRoundEvent(0);
 }
 
 #pragma region Countdown
 void AEventsManager::BindCountdownToRoundsPhase()
 {
-	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+	RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
 
 	if (RoundsSubsystem == nullptr) return;
 
-	RoundsSubsystem->OnChangeRoundPhases.AddDynamic(this, &AEventsManager::CheckStartCountdown);
+	RoundsSubsystem->OnChangeRoundPhases.AddDynamic(this, &AEventsManager::CheckNewPhase);
 }
 
 void AEventsManager::BindCountdownToRoundsChange()
 {
-	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+	RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
 
 	if (RoundsSubsystem == nullptr) return;
 
 	RoundsSubsystem->OnChangeRound.AddDynamic(this, &AEventsManager::SetupNewRoundEvent);
 }
 
-void AEventsManager::CheckStartCountdown(ERoundsPhaseID InRoundsPhaseID)
+void AEventsManager::CheckNewPhase(ERoundsPhaseID InRoundsPhaseID)
 {
 	switch (InRoundsPhaseID)
 	{
 	case ERoundsPhaseID::IN_ROUND:
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "START GAMEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-
 		StartGame();
+		break;
+	case ERoundsPhaseID::POST_ROUND:
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "POST_ROUND");
+		if (RoundsSubsystem->bPlayerHasWonGame)
+		{
+			UIManager->ShowWinner();
+		}
+		else
+		{
+			GetRandomEvent();
+			UIManager->ShowNextRound(CurrentEventData);
+		}
 		break;
 
 	default:
@@ -123,7 +134,7 @@ void AEventsManager::SetupNewRoundEvent(int RoundIndex)
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "setup new round event");
 
-	GetRandomEvent();
+	
 	SetupEventTimes();
 	StartEvent(RoundIndex);
 }
@@ -145,7 +156,7 @@ void AEventsManager::EndGame()
 	if (UIManager != nullptr && CurrentEventData != nullptr)
 		UIManager->HideWidgetForEvent(CurrentEventData->EventName);
 
-	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+	RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
 
 	if (RoundsSubsystem == nullptr) return;
 	
@@ -416,7 +427,7 @@ void AEventsManager::InitResetable()
 {
 	if (!GetWorld()) return;
 
-	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+	RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
 
 	if (RoundsSubsystem == nullptr) return;
 
