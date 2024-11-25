@@ -59,13 +59,7 @@ public:
 	void ShowNextRound(UEventData* NextRound);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "UI")
-	void HideNextRound();
-
-	UFUNCTION(BlueprintNativeEvent, Category = "UI")
 	void ShowWinner();
-
-	UFUNCTION(BlueprintNativeEvent, Category = "UI")
-	void HideWinner();
 	
 
 private:
