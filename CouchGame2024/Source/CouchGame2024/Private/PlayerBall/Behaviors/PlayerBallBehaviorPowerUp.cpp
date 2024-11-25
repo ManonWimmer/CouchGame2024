@@ -84,7 +84,7 @@ void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent*
 {
 	TObjectPtr<APowerUp> OtherPowerUp = Cast<APowerUp>(OtherActor);
 
-	if (OtherPowerUp != nullptr && GetCurrentPowerUpCarried() == EPowerUpID::None)
+	if (OtherPowerUp != nullptr && (GetCurrentPowerUpCarried() == EPowerUpID::None || OtherPowerUp->GetPowerUpID() == EPowerUpID::Duck || OtherPowerUp->GetPowerUpID() == EPowerUpID::Collectible))
 	{
 		AssignPowerUpCarried(OtherPowerUp->GetPowerUpID());
 

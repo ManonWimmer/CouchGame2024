@@ -75,6 +75,14 @@ public:
 	void PlayStrengthCastSound();
 
 #pragma endregion
+
+
+#pragma region Bumper Sounds
+
+	UFUNCTION(BlueprintCallable)
+	void PlayBumperImpactSound();
+
+#pragma endregion 
 	
 private:
 	UFUNCTION()

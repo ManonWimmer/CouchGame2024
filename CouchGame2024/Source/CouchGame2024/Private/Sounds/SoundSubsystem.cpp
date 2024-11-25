@@ -148,6 +148,16 @@ void USoundSubsystem::PlayStrengthCastSound()
 	}
 }
 
+void USoundSubsystem::PlayBumperImpactSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->BumperImpact == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->BumperImpact);
+	}
+}
+
 void USoundSubsystem::InitSoundSubsystem()
 {
 	const USoundsSettings* SoundsSettings = GetDefault<USoundsSettings>();
