@@ -6,6 +6,8 @@
 #include "Events/Event.h"
 #include "EventZones.generated.h"
 
+class APillarZone;
+
 UCLASS()
 class COUCHGAME2024_API AEventZones : public AEvent
 {
@@ -54,6 +56,9 @@ public:
 	virtual void TickPhase2() override;
 	
 	virtual void EndEvent() override;
+
+	UPROPERTY()
+	TArray<TObjectPtr<APillarZone>> PillarZones;
 
 	
 #pragma endregion

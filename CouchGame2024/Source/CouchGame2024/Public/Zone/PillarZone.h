@@ -17,6 +17,13 @@ enum class EPillarZoneState : uint8
 	Moving
 };
 
+UENUM(BlueprintType)
+enum class EPillarZonePhase : uint8
+{
+	Phase1,
+	Phase2
+};
+
 UCLASS()
 class COUCHGAME2024_API APillarZone : public AActor
 {
@@ -73,8 +80,11 @@ public:
 	UPROPERTY()
 	float TimeWaited = 0.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "A_Pillar")
 	TObjectPtr<APillarElement> SpawnPillar = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "A_Pillar")
+	EPillarZonePhase PillarZonePhase = EPillarZonePhase::Phase1;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	float MinTimeWaitingOnPillar = 5.f;
@@ -108,4 +118,19 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Light")
 	TObjectPtr<USpotLightComponent> SpotLightComponent;
+
+	UFUNCTION()
+	void ShowZone() const;
+
+	UFUNCTION()
+	void HideZone() const;
+
+	UFUNCTION()
+	void SetStartValues();
+
+	UFUNCTION()
+	void EnableOverlappingPillars() const;
+
+	UFUNCTION()
+	void DisableOverlappingPillars() const;
 };
