@@ -22,4 +22,39 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	
+#pragma region Event
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FZonesStartedEvent);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FZonesPhase1StartedEvent);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FZonesPhase2StartedEvent);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FZonesEndedEvent);
+
+	UPROPERTY(BlueprintAssignable)
+	FZonesStartedEvent OnZonesStartedEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FZonesPhase1StartedEvent OnZonesPhase1StartedEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FZonesPhase2StartedEvent OnZonesPhase2StartedEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FZonesEndedEvent OnZonesEndedEvent;
+	
+	virtual void SetupEventPhase1() override;
+
+	virtual void TriggerEventPhase1() override;
+
+	virtual void TriggerEventPhase2() override;
+	
+	virtual void TickPhase1() override;
+
+	virtual void TickPhase2() override;
+	
+	virtual void EndEvent() override;
+
+	
+#pragma endregion
 };
