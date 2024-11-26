@@ -51,16 +51,6 @@ void APillarZone::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (SpawnPillar)
-	{
-		TargetPillar = SpawnPillar;
-		SetActorLocation(SpawnPillar->GetActorLocation());
-	}
-	else
-	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "MISSING SPAWN PILLAR IN PILLAR ZONE");
-	}
-
 	TArray<AActor*> OverlappingActors;
 	SphereComponent->GetOverlappingActors(OverlappingActors);
 
@@ -159,9 +149,7 @@ void APillarZone::GetRandomPillar()
 	}
 
 	// Get random from filtered list
-	APillarElement* RandomPillar = FilteredList[FMath::RandRange(0, FilteredList.Num() - 1)];
-
-	if (RandomPillar)
+	if (APillarElement* RandomPillar = FilteredList[FMath::RandRange(0, FilteredList.Num() - 1)])
 	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
 			FString::Printf(TEXT("New Random Pillar: %s"), *RandomPillar->GetName()));
@@ -252,7 +240,7 @@ void APillarZone::Bind()
 		if (AEventZones* EventZones = Cast<AEventZones>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventZones::StaticClass())))
 		{
 			bHasBeenBind = true;
-			//EventZones->OnZonesStartedEvent.AddDynamic(this, &APillarZone::APillarZone::OnStartPhase1);
+			EventZones->OnZonesStartedEvent.AddDynamic(this, &APillarZone::SetStartValues);
 			EventZones->OnZonesPhase1StartedEvent.AddDynamic(this, &APillarZone::OnStartPhase1);
 			EventZones->OnZonesPhase2StartedEvent.AddDynamic(this, &APillarZone::OnEndPhase1AndStartPhase2);
 			EventZones->OnZonesEndedEvent.AddDynamic(this, &APillarZone::OnEndPhase2);
@@ -276,4 +264,22 @@ void APillarZone::HideZone() const
 	if (SphereComponent) SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-//todo: add reset to set location spawn pillar
+void APillarZone::SetStartValues()
+{
+	bIsInPhase1 = false;
+	bIsInPhase2 = false;
+
+	HideZone();
+
+	if (SpawnPillar)
+	{
+		TargetPillar = SpawnPillar;
+		FVector TargetLocation = FVector(TargetPillar->GetActorLocation().X, TargetPillar->GetActorLocation().Y, GetActorLocation().Z);
+		SetActorLocation(TargetLocation);
+	}
+	else
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "MISSING SPAWN PILLAR IN PILLAR ZONE");
+	}
+	
+}

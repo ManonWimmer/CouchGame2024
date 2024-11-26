@@ -114,4 +114,7 @@ public:
 
 	UFUNCTION()
 	void HideZone() const;
+
+	UFUNCTION()
+	void SetStartValues();
 };
