@@ -48,7 +48,7 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 	if (Pawn != nullptr)
 	{
 		Pawn->PlayGrapplingGrabGamefeelEffectsBlueprint();
-		
+
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
@@ -112,15 +112,18 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 
 
 		FVector LastPosToCenter = Pawn->GetActorLocation() - Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
-		float LastPosAngle = FMath::Atan2(LastPosToCenter.Y, LastPosToCenter.X);
 		FVector LastPosToCenterNorm = LastPosToCenter.GetSafeNormal();
-		FVector NormalizedLastLocation = LastLocation.GetSafeNormal();
 		FVector NormalizeVelocity = Pawn->GetVelocity().GetSafeNormal();
-		
+
 		// (U.X * V.Y) - (U.Y * V.X)
-		float truc = (LastPosToCenterNorm.X * NormalizeVelocity.Y) - (LastPosToCenterNorm.Y * NormalizeVelocity.X);
-		
-		RotationDirection = truc > 0 ? 1.0f : -1.0f;
+		float Scalar = (LastPosToCenterNorm.X * NormalizeVelocity.Y) - (LastPosToCenterNorm.Y * NormalizeVelocity.X);
+
+		RotationDirection = Scalar > 0 ? 1.0f : -1.0f;
+
+		/*
+		if (Pawn->BehaviorGrapple->IsHookingPillar && (Pawn->GetVelocity().X < 0.5f || Pawn->GetVelocity().Y < 0.5f))
+			RotationDirection *= -1;
+		*/
 	}
 }
 
@@ -179,7 +182,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			              false, 5.f);
 
 			float ReleaseForce = 0.f;
-			
+
 			// Add impulse in relase direction
 			if (Pawn->BehaviorGrapple->IsHookingPillar)
 			{
@@ -189,7 +192,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			{
 				ReleaseForce = Pawn->BehaviorGrapple->GrapplingReleaseForceNotPillar;
 			}
-			
+
 			Pawn->SphereCollision->AddImpulse(
 				Pawn->BehaviorGrapple->ReleaseDirection.GetSafeNormal(0.0001f) * FMath::Abs(
 					Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity) *
@@ -229,7 +232,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 					Pillar->PlayerStateMachineOnPillar = nullptr;
 				}
 			}
-			
+
 			// Reset hook point
 			if (Pawn->BehaviorGrapple->HookInterface != nullptr)
 			{
@@ -440,11 +443,19 @@ void UPlayerBallStateGrappling::SetGrapplingVelocityAndAnglePillar(float DeltaTi
 	if (Pawn->BehaviorGrapple == nullptr) return;
 
 	// Get angular velocity with last velocity & input
+
+	/*
 	TempGrapplingAngularVelocity = Pawn->BehaviorGrapple->GrapplingDamping * Pawn->BehaviorGrapple->
 		CurrentGrapplingAngularVelocity + (Pawn->BehaviorMovements->MoveXValue * -1 *
 			Pawn->BehaviorGrapple->GrapplingPillarForce) +
 		Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * Pawn->GetVelocity().X;
-	// A modif pour prendre velocity y
+	*/
+
+	TempGrapplingAngularVelocity = (Pawn->BehaviorGrapple->GrapplingDamping * Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity
+	+ Pawn->BehaviorMovements->MoveXValue * Pawn->BehaviorGrapple->GrapplingPillarForce
+	+ Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * Pawn->GetVelocity().Size() * RotationDirection) ;
+
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan,FString::Printf(TEXT("%f, %f"), RotationDirection, TempGrapplingAngularVelocity));
 
 	// Get new angle from new velocity
 	TempGrapplingAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle + TempGrapplingAngularVelocity * DeltaTime;
@@ -454,28 +465,8 @@ void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngleNotPillar(float Delt
 {
 	if (Pawn->BehaviorMovements == nullptr || Pawn->BehaviorGrapple == nullptr) return;
 
-	//FVector LastPosToCenter = LastLocation - Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
-	//FVector LastPosToCenter = Pawn->GetActorLocation() - Pawn->BehaviorGrapple->HookInterface->GetHookPosition();
-	//float LastPosAngle = FMath::Atan2(LastPosToCenter.Y, LastPosToCenter.X);
-
-	// FVector LastPosToCenterNorm = LastPosToCenter.GetSafeNormal();
-	// FVector NormalizedLastLocation = LastLocation.GetSafeNormal();
-	// FVector NormalizeVelocity = Pawn->GetVelocity().GetSafeNormal();
-	//
-	// // (U.X * V.Y) - (U.Y * V.X)
-	// float truc = (LastPosToCenterNorm.X * NormalizeVelocity.Y) - (LastPosToCenterNorm.Y * NormalizeVelocity.X);
-	
-	//float RotationDirection = truc > 0 ? 1.0f : -1.0f;
-
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan,FString::Printf(TEXT("RotationDirection %f"), RotationDirection));
-
-
 	TempGrapplingAngularVelocity = Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * RotationDirection
 		* Pawn->BehaviorGrapple->GrapplingNotPillarForce * 1000.f;
-
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Magenta,FString::Printf(TEXT("New Velocity %f"), TempGrapplingAngularVelocity));
-
-	//TempGrapplingAngularVelocity = FMath::Clamp(TempGrapplingAngularVelocity, -10.0f, 10.0f); // valeurs temp
 
 	TempGrapplingAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle + TempGrapplingAngularVelocity * DeltaTime;
 }

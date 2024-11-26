@@ -3,6 +3,7 @@
 
 #include "Events/EventsChildren/EventDuck.h"
 
+#include "Events/Duck/DuckBank.h"
 #include "Events/Duck/DuckSpawner.h"
 #include "Kismet/GameplayStatics.h"
 #include "PowerUp/Type/PowerUpDuck.h"
@@ -19,16 +20,6 @@ AEventDuck::AEventDuck()
 void AEventDuck::BeginPlay()
 {
 	Super::BeginPlay();
-
-	TArray<AActor*> Acteurs;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADuckSpawner::StaticClass(), Acteurs);
-
-	for (AActor* Acteur : Acteurs)
-	{
-		ADuckSpawner* DuckSpawner = Cast<ADuckSpawner>(Acteur);
-		if (DuckSpawner)
-			DuckSpawner->BindDuckStartEvent();
-	}
 }
 
 // Called every frame
@@ -41,7 +32,28 @@ void AEventDuck::SetupEventPhase1()
 {
 	Super::SetupEventPhase1();
 
+	TArray<AActor*> Acteurs;
+    	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADuckSpawner::StaticClass(), Acteurs);
+    
+    	for (AActor* Acteur : Acteurs)
+    	{
+    		ADuckSpawner* DuckSpawner = Cast<ADuckSpawner>(Acteur);
+    		if (DuckSpawner)
+    			DuckSpawner->BindDuckStartAndEndEvent();
+    	}
+	
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Red,"BROADCAST DUCK START");
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADuckBank::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		if (ADuckBank* DuckBank = Cast<ADuckBank>(Actor))
+		{
+			DuckBank->Bind();
+		}
+	}
 	
 	OnDuckStartedEvent.Broadcast();
 }

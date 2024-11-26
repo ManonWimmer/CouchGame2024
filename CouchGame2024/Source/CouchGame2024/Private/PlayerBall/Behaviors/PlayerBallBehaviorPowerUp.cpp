@@ -84,7 +84,7 @@ void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent*
 {
 	TObjectPtr<APowerUp> OtherPowerUp = Cast<APowerUp>(OtherActor);
 
-	if (OtherPowerUp != nullptr && GetCurrentPowerUpCarried() == EPowerUpID::None)
+	if (OtherPowerUp != nullptr && (GetCurrentPowerUpCarried() == EPowerUpID::None || OtherPowerUp->GetPowerUpID() == EPowerUpID::Duck || OtherPowerUp->GetPowerUpID() == EPowerUpID::Collectible))
 	{
 		AssignPowerUpCarried(OtherPowerUp->GetPowerUpID());
 
@@ -231,6 +231,8 @@ void UPlayerBallBehaviorPowerUp::ReceiveSlipperyEffect()
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "Set slippery Material");
 	GetPlayerBall()->SphereCollision->SetPhysMaterialOverride(
 		GetPlayerBall()->GetPlayerPowerUpData()->SlipperyPhysicsAsset);
+
+	GetPlayerBall()->PlaySlipperyEffectGamefeelEffectsBlueprint();
 }
 
 void UPlayerBallBehaviorPowerUp::EndSlipperyEffect()
@@ -243,6 +245,8 @@ void UPlayerBallBehaviorPowerUp::EndSlipperyEffect()
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "Set classic Material");
 	GetPlayerBall()->SphereCollision->SetPhysMaterialOverride(
 		GetPlayerBall()->GetPlayerPowerUpData()->ClassicPhysicsAsset);
+
+	GetPlayerBall()->PlaySlipperySlipperyDisapearGamefeelEffectsBlueprint();
 }
 
 void UPlayerBallBehaviorPowerUp::HandleSlipperyEffectDuration(float DeltaTime)

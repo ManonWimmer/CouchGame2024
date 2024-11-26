@@ -119,10 +119,10 @@ void AMoleSpawner::StopSpawning()
 void AMoleSpawner::Bind()
 {
 	if (bHasBeenBind) return;
-	bHasBeenBind = true;
 	
 	if (AEventMole* EventMole = Cast<AEventMole>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventMole::StaticClass())))
 	{
+		bHasBeenBind = true;
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Magenta, "BIND MOLE");
 		EventMole->OnMoleStartedEvent.AddDynamic(this, &AMoleSpawner::StartCountdownSpawning);
 		EventMole->OnMoleEndedEvent.AddDynamic(this, &AMoleSpawner::StopSpawning);

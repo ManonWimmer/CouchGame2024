@@ -120,7 +120,14 @@ void UPlayerBallStateStun::StateExit(EPlayerBallStateID NextState)
 		{
 			Pawn->BehaviorGrapple->OnGrappledActionStarted.RemoveDynamic(this, &UPlayerBallStateStun::OnGrappled);
 		}
+		
+		if (bIsFreezeVariant == true)
+		{
+			Pawn->PlayPlayerUnfreezedGamefeelEffectsBlueprint();
+		}
 	}
+
+	bIsFreezeVariant = false;
 }
 
 void UPlayerBallStateStun::StateTick(float DeltaTime)
@@ -136,6 +143,10 @@ void UPlayerBallStateStun::FreezeStunVariant()
 	if (Pawn == nullptr)	return;
 
 	Pawn->ResetMovement();
+
+	bIsFreezeVariant = true;
+
+	Pawn->PlayPlayerFreezedGamefeelEffectsBlueprint();
 }
 
 void UPlayerBallStateStun::DecreaseCooldownStun(float DeltaTime)	// cooldown before exit stun -> Idle

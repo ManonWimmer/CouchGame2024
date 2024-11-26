@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "PillarZone.generated.h"
 
+class USpotLightComponent;
 class APillarElement;
 class USphereComponent;
 
@@ -14,6 +15,13 @@ enum class EPillarZoneState : uint8
 {
 	Waiting,
 	Moving
+};
+
+UENUM(BlueprintType)
+enum class EPillarZonePhase : uint8
+{
+	Phase1,
+	Phase2
 };
 
 UCLASS()
@@ -35,12 +43,12 @@ public:
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
-						UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, 
-						bool bFromSweep, const FHitResult& SweepResult);
+	                           UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, 
+	                           bool bFromSweep, const FHitResult& SweepResult);
 	
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
-					  UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
+	                         UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
 
 	UFUNCTION()
 	void GetLevelPillars(); // to get every round, not just at begin play
@@ -72,8 +80,11 @@ public:
 	UPROPERTY()
 	float TimeWaited = 0.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "A_Pillar")
 	TObjectPtr<APillarElement> SpawnPillar = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "A_Pillar")
+	EPillarZonePhase PillarZonePhase = EPillarZonePhase::Phase1;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	float MinTimeWaitingOnPillar = 5.f;
@@ -83,4 +94,43 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	float MoveSpeed = 500.f;
+
+	UFUNCTION()
+	void OnStartPhase1();
+
+	UFUNCTION()
+	void OnEndPhase1AndStartPhase2();
+
+	UFUNCTION()
+	void OnEndPhase2();
+
+	UPROPERTY()
+	bool bIsInPhase1 = false;
+
+	UPROPERTY()
+	bool bIsInPhase2 = false;
+
+	UFUNCTION()
+	void Bind();
+
+	UPROPERTY()
+	bool bHasBeenBind = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Light")
+	TObjectPtr<USpotLightComponent> SpotLightComponent;
+
+	UFUNCTION()
+	void ShowZone() const;
+
+	UFUNCTION()
+	void HideZone() const;
+
+	UFUNCTION()
+	void SetStartValues();
+
+	UFUNCTION()
+	void EnableOverlappingPillars() const;
+
+	UFUNCTION()
+	void DisableOverlappingPillars() const;
 };

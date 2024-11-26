@@ -56,7 +56,7 @@ void APowerUpDuck::TriggerPowerUp(int PlayerIndex)
 	}
 
 	FTimerHandle TimerHandle;
-	float DelayTime = 0.1f;
+	float DelayTime = 0.4f;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &APowerUpDuck::DestroyDuck, DelayTime, false);
 }
 
@@ -70,5 +70,6 @@ void APowerUpDuck::CollectDuck()
 {
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red, "broadcast collect");
 	OnDuckCollected.Broadcast();
+	ReceiveCollectDuck();
 }
 

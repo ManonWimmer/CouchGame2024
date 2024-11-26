@@ -50,6 +50,11 @@ void UPlayerBallPowerUpSubStateFreeze::StateTick(float DeltaTime)
 
 void UPlayerBallPowerUpSubStateFreeze::UseFreezePowerUp()
 {
+	if (Pawn != nullptr)
+	{
+		Pawn->PlayFreezeCastGamefeelEffectsBlueprint();
+	}
+	
 	TArray<APlayerBall*> PlayersInFreeze = GetPlayersInFreezeRange();
 
 	if (PlayersInFreeze.Num() <= 0)	return;
@@ -63,6 +68,7 @@ void UPlayerBallPowerUpSubStateFreeze::UseFreezePowerUp()
 	
 		InFreeze->BehaviorElementReactions->ReceiveStunnedAction(3.f);	//id 3.f -> Freeze stun
 	}
+
 }
 
 TArray<APlayerBall*> UPlayerBallPowerUpSubStateFreeze::GetPlayersInFreezeRange() const

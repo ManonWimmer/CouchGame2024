@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Events/EventData.h"
 #include "GameFramework/Actor.h"
 #include "UIManager.generated.h"
 
+
 class AHUD;
+class UEventData;
 
 UCLASS()
 class COUCHGAME2024_API AUIManager : public AActor
@@ -51,6 +54,12 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, Category = "UI")
 	void HideDuckCounter();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UI")
+	void ShowNextRound(UEventData* NextRound);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UI")
+	void ShowWinner();
 	
 
 private:

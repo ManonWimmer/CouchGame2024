@@ -23,7 +23,7 @@ void ADuckSpawner::BeginPlay()
 
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "BEGIN SPAWNER");
 
-	BindDuckStartEvent();
+	BindDuckStartAndEndEvent();
 
 }
 
@@ -84,14 +84,13 @@ void ADuckSpawner::GetRandomSpawnTime()
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,FString::Printf(TEXT("Spawn time duck : %f"), RandomSpawnTime));
 }
 
-void ADuckSpawner::BindDuckStartEvent()
+void ADuckSpawner::BindDuckStartAndEndEvent()
 {
 	if (!bHasBeenBind)
 	{
-		bHasBeenBind = true;
-		
 		if (AEventDuck* EventDuck = Cast<AEventDuck>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventDuck::StaticClass())))
 		{
+			bHasBeenBind = true;
 			EventDuck->OnDuckStartedEvent.AddDynamic(this, &ADuckSpawner::SpawnDuck);
 			EventDuck->OnDuckEndedEvent.AddDynamic(this, &ADuckSpawner::StopSpawning);
 		}
