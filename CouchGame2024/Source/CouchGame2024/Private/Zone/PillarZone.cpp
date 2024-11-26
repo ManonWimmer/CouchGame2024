@@ -4,6 +4,7 @@
 #include "Zone/PillarZone.h"
 
 #include "Components/SphereComponent.h"
+#include "Components/SpotLightComponent.h"
 #include "Events/EventsChildren/EventZones.h"
 #include "GrapplingHook/Hookable.h"
 #include "Kismet/GameplayStatics.h"
@@ -13,20 +14,37 @@
 // Sets default values
 APillarZone::APillarZone()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame. You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Create and set up a RootComponent
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+
+	// Create and initialize the SphereComponent
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
-	SphereComponent->SetupAttachment(RootComponent); 
+	SphereComponent->SetupAttachment(RootComponent);
 	SphereComponent->InitSphereRadius(200.f);
-	
-	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics); 
-	SphereComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic); 
+
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	SphereComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	SphereComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
-	
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &APillarZone::OnOverlapBegin); 
+
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &APillarZone::OnOverlapBegin);
 	SphereComponent->OnComponentEndOverlap.AddDynamic(this, &APillarZone::OnOverlapEnd);
+
+	// Create and initialize the SpotLightComponent
+	SpotLightComponent = CreateDefaultSubobject<USpotLightComponent>(TEXT("SpotLight"));
+	SpotLightComponent->SetupAttachment(RootComponent);
+	SpotLightComponent->SetIntensity(5000.f); 
+	SpotLightComponent->SetLightColor(FLinearColor::White);
+	SpotLightComponent->SetAttenuationRadius(500.f);
+	SpotLightComponent->SetOuterConeAngle(30.f);
+	SpotLightComponent->SetInnerConeAngle(15.f);
+
+	// Orient the spotlight to point downward
+	SpotLightComponent->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f)); // Pitch -90 degrees to point down
 }
+
 
 // Called when the game starts or when spawned
 void APillarZone::BeginPlay()

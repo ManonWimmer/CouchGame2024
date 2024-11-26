@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "PillarZone.generated.h"
 
+class USpotLightComponent;
 class APillarElement;
 class USphereComponent;
 
@@ -104,4 +105,7 @@ public:
 
 	UPROPERTY()
 	bool bHasBeenBind = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Light")
+	TObjectPtr<USpotLightComponent> SpotLightComponent;
 };
