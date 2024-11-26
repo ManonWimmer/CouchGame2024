@@ -39,7 +39,10 @@ void AEventZones::SetupEventPhase1()
 	for (AActor* Actor : Actors)
 	{
 		if (APillarZone* PillarZone = Cast<APillarZone>(Actor))
+		{
 			PillarZone->Bind();
+			PillarZone->HideZone();
+		}
 	}
 	
 	OnZonesStartedEvent.Broadcast();
