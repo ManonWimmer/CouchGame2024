@@ -33,14 +33,14 @@ EPowerUpID APowerUpDuck::GetPowerUpID() const
 
 void APowerUpDuck::TriggerPowerUp(int PlayerIndex)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow, "trigger duck");
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow, "trigger duck");
 
 	
 	UGlobalScoreSubsystem* ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
 	if (ScoreSubsystem != nullptr)
 	{
 		ScoreSubsystem->AddDuck(PlayerIndex, 1);
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow, FString::Printf(TEXT("Add Duck to player ID: %i"), PlayerIndex));
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow, FString::Printf(TEXT("Add Duck to player ID: %i"), PlayerIndex));
 
 		// Pour eviter le broadcast avant spawn complet
 		FTimerHandle TimerHandle;
@@ -49,7 +49,7 @@ void APowerUpDuck::TriggerPowerUp(int PlayerIndex)
 	}
 	else
 	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red, "no score");
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red, "no score");
 	}
 
 	FTimerHandle TimerHandle;
@@ -59,7 +59,7 @@ void APowerUpDuck::TriggerPowerUp(int PlayerIndex)
 
 void APowerUpDuck::DestroyDuck()
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red, "destroy");
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red, "destroy");
 	this->Destroy();
 }
 
