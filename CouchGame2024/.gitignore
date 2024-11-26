@@ -66,6 +66,13 @@ Binaries/Win64/*
 !Binaries/Win64/UnrealEditor-CouchGame2024.dll
 !Binaries/Win64/UnrealEditor-LocalMultiplayer.dll
 
+# Plugins
+Plugins/FCTween/Binaries/*
+!Plugins/FCTween/Binaries/Win64
+Plugins/FCTween/Binaries/Win64/*
+!Plugins/FCTween/Binaries/Win64/UnrealEditor.modules
+!Plugins/FCTween/Binaries/Win64/UnrealEditor-FCTween.dll
+
 # Whitelist PakBlacklist-<BuildConfiguration>.txt files
 !Build/*/
 Build/*/**
