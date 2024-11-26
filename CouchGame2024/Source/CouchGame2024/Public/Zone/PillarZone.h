@@ -127,4 +127,7 @@ public:
 
 	UFUNCTION()
 	void SetStartValues();
+
+	UFUNCTION()
+	void EnableOverlappingPillars() const;
 };

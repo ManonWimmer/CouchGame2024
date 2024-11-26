@@ -50,17 +50,6 @@ APillarZone::APillarZone()
 void APillarZone::BeginPlay()
 {
 	Super::BeginPlay();
-
-	TArray<AActor*> OverlappingActors;
-	SphereComponent->GetOverlappingActors(OverlappingActors);
-
-	for (AActor* Actor : OverlappingActors)
-	{
-		if (APillarElement* Pillar = Cast<APillarElement>(Actor))
-		{
-			Pillar->EnablePillar();
-		}
-	}
 	
 	GetLevelPillars();
 	
@@ -211,14 +200,28 @@ void APillarZone::Wait(float DeltaTime)
 
 void APillarZone::OnStartPhase1()
 {
+	if (PillarZonePhase == EPillarZonePhase::Phase2)
+	{
+		bIsInPhase1 = false;
+		bIsInPhase2 = false;
+		return;
+	}
+	
 	bIsInPhase1 = true;
 	bIsInPhase2 = false;
-
+	
 	ShowZone();
 }
 
 void APillarZone::OnEndPhase1AndStartPhase2()
 {
+	if (PillarZonePhase == EPillarZonePhase::Phase1)
+	{
+		bIsInPhase1 = false;
+		bIsInPhase2 = false;
+		return;
+	}
+	
 	bIsInPhase1 = false;
 	bIsInPhase2 = true;
 
@@ -256,6 +259,8 @@ void APillarZone::ShowZone() const
 {
 	if (SpotLightComponent) SpotLightComponent->SetVisibility(true);
 	if (SphereComponent) SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+	EnableOverlappingPillars();
 }
 
 void APillarZone::HideZone() const
@@ -271,7 +276,7 @@ void APillarZone::SetStartValues()
 
 	HideZone();
 
-	if (SpawnPillar)
+	if (SpawnPillar && PillarZonePhase == EPillarZonePhase::Phase1)
 	{
 		TargetPillar = SpawnPillar;
 		FVector TargetLocation = FVector(TargetPillar->GetActorLocation().X, TargetPillar->GetActorLocation().Y, GetActorLocation().Z);
@@ -282,4 +287,18 @@ void APillarZone::SetStartValues()
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "MISSING SPAWN PILLAR IN PILLAR ZONE");
 	}
 	
+}
+
+void APillarZone::EnableOverlappingPillars() const
+{
+	TArray<AActor*> OverlappingActors;
+	SphereComponent->GetOverlappingActors(OverlappingActors);
+
+	for (AActor* Actor : OverlappingActors)
+	{
+		if (APillarElement* Pillar = Cast<APillarElement>(Actor))
+		{
+			Pillar->EnablePillar();
+		}
+	}
 }
