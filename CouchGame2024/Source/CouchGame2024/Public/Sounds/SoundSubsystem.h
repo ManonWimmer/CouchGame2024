@@ -74,6 +74,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayStrengthCastSound();
 
+
+	UFUNCTION(BlueprintCallable)
+	void PlaySlipperyCastSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlaySlipperySlipperyDisapearSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlaySlipperyEffectSound();
+
 #pragma endregion
 
 

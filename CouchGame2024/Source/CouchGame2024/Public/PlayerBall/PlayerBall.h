@@ -212,6 +212,17 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayStrengthCastGamefeelEffectsBlueprint();
+
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlaySlipperyCastGamefeelEffectsBlueprint();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlaySlipperySlipperyDisapearGamefeelEffectsBlueprint();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlaySlipperyEffectGamefeelEffectsBlueprint();
+
 	
 public:
 

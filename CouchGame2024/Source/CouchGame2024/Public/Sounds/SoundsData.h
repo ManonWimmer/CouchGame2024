@@ -85,12 +85,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Power Up Slippery")
 	TObjectPtr<UMetaSoundSource> PowerUpSlipperyEffect;
 
-
-	
-	UPROPERTY(EditAnywhere, Category = "Element Bumper")
-	TObjectPtr<UMetaSoundSource> BumperImpact;
 	
 	
 #pragma endregion 
+
+	UPROPERTY(EditAnywhere, Category = "Element Bumper")
+	TObjectPtr<UMetaSoundSource> BumperImpact;
 
 };
