@@ -88,7 +88,6 @@ void ADuckSpawner::BindDuckStartAndEndEvent()
 {
 	if (!bHasBeenBind)
 	{
-		
 		if (AEventDuck* EventDuck = Cast<AEventDuck>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventDuck::StaticClass())))
 		{
 			bHasBeenBind = true;

@@ -5,6 +5,7 @@
 
 #include "Events/Mole/MoleSpawner.h"
 #include "Kismet/GameplayStatics.h"
+#include "Zone/PillarZone.h"
 
 
 // Sets default values
@@ -25,5 +26,53 @@ void AEventZones::BeginPlay()
 void AEventZones::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+
+void AEventZones::SetupEventPhase1()
+{
+	Super::SetupEventPhase1();
+
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APillarZone::StaticClass(), Actors);
+    
+	for (AActor* Actor : Actors)
+	{
+		if (APillarZone* PillarZone = Cast<APillarZone>(Actor))
+			PillarZone->Bind();
+	}
+	
+	OnZonesStartedEvent.Broadcast();
+}
+
+void AEventZones::TriggerEventPhase1()
+{
+	Super::TriggerEventPhase1();
+	
+	OnZonesPhase1StartedEvent.Broadcast();
+}
+
+void AEventZones::TriggerEventPhase2()
+{
+	Super::TriggerEventPhase2();
+
+	OnZonesPhase2StartedEvent.Broadcast();
+}
+
+void AEventZones::TickPhase1()
+{
+	Super::TickPhase1();
+}
+
+void AEventZones::TickPhase2()
+{
+	Super::TickPhase2();
+}
+
+void AEventZones::EndEvent()
+{
+	Super::EndEvent();
+
+	OnZonesEndedEvent.Broadcast();
 }
 

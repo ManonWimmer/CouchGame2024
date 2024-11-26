@@ -4,6 +4,7 @@
 #include "Zone/PillarZone.h"
 
 #include "Components/SphereComponent.h"
+#include "Events/EventsChildren/EventZones.h"
 #include "GrapplingHook/Hookable.h"
 #include "Kismet/GameplayStatics.h"
 #include "PinballElements/Elements/PillarElement.h"
@@ -16,13 +17,14 @@ APillarZone::APillarZone()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
-	SphereComponent->SetupAttachment(RootComponent); // Attache-le au RootComponent ou à un autre composant
+	SphereComponent->SetupAttachment(RootComponent); 
 	SphereComponent->InitSphereRadius(200.f);
-	// Ajuste le rayon de la sphère en fonction de la taille de la zone de collision
-	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics); // Active les collisions
-	SphereComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic); // Ou un autre type si nécessaire
-	SphereComponent->SetCollisionResponseToAllChannels(ECR_Overlap); // Permet l'overlap avec tous les autres acteurs
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &APillarZone::OnOverlapBegin); // Déclenche OnOverlapBegin
+	
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics); 
+	SphereComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic); 
+	SphereComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
+	
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &APillarZone::OnOverlapBegin); 
 	SphereComponent->OnComponentEndOverlap.AddDynamic(this, &APillarZone::OnOverlapEnd);
 }
 
@@ -51,8 +53,10 @@ void APillarZone::BeginPlay()
 			Pillar->EnablePillar();
 		}
 	}
-
+	
 	GetLevelPillars();
+	
+	Bind();
 }
 
 // Called every frame
@@ -60,13 +64,20 @@ void APillarZone::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	switch (CurrentZoneState) {
-	case EPillarZoneState::Waiting:
-		Wait(DeltaTime);
-		break;
-	case EPillarZoneState::Moving:
-		MoveToPillar(DeltaTime);
-		break;
+	if (bIsInPhase1)
+	{
+		switch (CurrentZoneState) {
+		case EPillarZoneState::Waiting:
+			Wait(DeltaTime);
+			break;
+		case EPillarZoneState::Moving:
+			MoveToPillar(DeltaTime);
+			break;
+		}
+	}
+	else if (bIsInPhase2)
+	{
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Cyan,"PillarZone::TickPhase2");
 	}
 }
 
@@ -147,6 +158,8 @@ void APillarZone::GetRandomPillar()
 
 void APillarZone::MoveToPillar(float DeltaTime)
 {
+	if (!bIsInPhase1) return;
+	
 	FVector TargetLocation = TargetPillar->GetActorLocation();
 	FVector CurrentLocation = GetActorLocation();  
 	FVector Direction = TargetLocation - CurrentLocation;  
@@ -168,6 +181,8 @@ void APillarZone::MoveToPillar(float DeltaTime)
 
 void APillarZone::Wait(float DeltaTime)
 {
+	if (!bIsInPhase1) return;
+	
 	if (CurrentWaitTime == 0.f)
 	{
 		CurrentWaitTime = FMath::FRandRange(MinTimeWaitingOnPillar, MaxTimeWaitingOnPillar);
@@ -184,6 +199,45 @@ void APillarZone::Wait(float DeltaTime)
 			CurrentZoneState = EPillarZoneState::Moving;
 			TimeWaited = 0.f;
 			CurrentWaitTime = 0.f;
+		}
+	}
+}
+
+void APillarZone::OnStartPhase1()
+{
+	bIsInPhase1 = true;
+	bIsInPhase2 = false;
+}
+
+void APillarZone::OnEndPhase1AndStartPhase2()
+{
+	bIsInPhase1 = false;
+	bIsInPhase2 = true;
+
+	// disparaitre
+}
+
+void APillarZone::OnEndPhase2()
+{
+	bIsInPhase1 = false;
+	bIsInPhase2 = false;
+}
+
+void APillarZone::Bind()
+{
+	if (!bHasBeenBind)
+	{
+		if (AEventZones* EventZones = Cast<AEventZones>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventZones::StaticClass())))
+		{
+			bHasBeenBind = true;
+			//EventZones->OnZonesStartedEvent.AddDynamic(this, &APillarZone::APillarZone::OnStartPhase1);
+			EventZones->OnZonesPhase1StartedEvent.AddDynamic(this, &APillarZone::OnStartPhase1);
+			EventZones->OnZonesPhase2StartedEvent.AddDynamic(this, &APillarZone::OnEndPhase1AndStartPhase2);
+			EventZones->OnZonesEndedEvent.AddDynamic(this, &APillarZone::OnEndPhase2);
+		}
+		else
+		{
+			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "CANT FIND ZONES EVENT FROM DUCK SPAWNER");
 		}
 	}
 }

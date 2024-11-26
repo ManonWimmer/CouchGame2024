@@ -35,12 +35,12 @@ public:
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
-						UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, 
-						bool bFromSweep, const FHitResult& SweepResult);
+	                           UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, 
+	                           bool bFromSweep, const FHitResult& SweepResult);
 	
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
-					  UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
+	                         UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex);
 
 	UFUNCTION()
 	void GetLevelPillars(); // to get every round, not just at begin play
@@ -83,4 +83,25 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	float MoveSpeed = 500.f;
+
+	UFUNCTION()
+	void OnStartPhase1();
+
+	UFUNCTION()
+	void OnEndPhase1AndStartPhase2();
+
+	UFUNCTION()
+	void OnEndPhase2();
+
+	UPROPERTY()
+	bool bIsInPhase1 = false;
+
+	UPROPERTY()
+	bool bIsInPhase2 = false;
+
+	UFUNCTION()
+	void Bind();
+
+	UPROPERTY()
+	bool bHasBeenBind = false;
 };
