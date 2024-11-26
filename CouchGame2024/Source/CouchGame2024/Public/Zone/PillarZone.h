@@ -130,4 +130,7 @@ public:
 
 	UFUNCTION()
 	void EnableOverlappingPillars() const;
+
+	UFUNCTION()
+	void DisableOverlappingPillars() const;
 };

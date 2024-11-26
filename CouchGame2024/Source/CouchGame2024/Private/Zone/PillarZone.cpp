@@ -267,6 +267,8 @@ void APillarZone::HideZone() const
 {
 	if (SpotLightComponent) SpotLightComponent->SetVisibility(false);
 	if (SphereComponent) SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	DisableOverlappingPillars();
 }
 
 void APillarZone::SetStartValues()
@@ -299,6 +301,20 @@ void APillarZone::EnableOverlappingPillars() const
 		if (APillarElement* Pillar = Cast<APillarElement>(Actor))
 		{
 			Pillar->EnablePillar();
+		}
+	}
+}
+
+void APillarZone::DisableOverlappingPillars() const
+{
+	TArray<AActor*> OverlappingActors;
+	SphereComponent->GetOverlappingActors(OverlappingActors);
+
+	for (AActor* Actor : OverlappingActors)
+	{
+		if (APillarElement* Pillar = Cast<APillarElement>(Actor))
+		{
+			Pillar->DisablePillar();
 		}
 	}
 }
