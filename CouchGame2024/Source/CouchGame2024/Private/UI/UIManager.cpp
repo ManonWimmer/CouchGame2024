@@ -101,6 +101,15 @@ void AUIManager::HideWidgetForEvent(EEventName EventName)
 	}
 }
 
+
+void AUIManager::ShowWinner_Implementation()
+{
+}
+
+void AUIManager::ShowNextRound_Implementation(UEventData* NextRound)
+{
+}
+
 void AUIManager::HideDuckCounter_Implementation()
 {
 }

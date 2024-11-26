@@ -28,6 +28,7 @@ int UGlobalScoreSubsystem::GetScore(int PlayerIndex) const
 
 void UGlobalScoreSubsystem::AddScore(int PlayerIndex, int Value)
 {
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("add score : %i"), Value));
 	switch (PlayerIndex)
 	{
 		case 0:
@@ -96,23 +97,33 @@ void UGlobalScoreSubsystem::AddDuck(int PlayerIndex, int Value)
 
 void UGlobalScoreSubsystem::PlayerInDuckBank(int PlayerIndex, int DuckToPointsMultiplier)
 {
+	if (bPlayerInBank) return;
+	bPlayerInBank = true;
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Cyan, "PlayerInDuckBank");
+
+	int tempCounter = 0;
+	
 	switch (PlayerIndex)
 	{
 	case 0:
-		AddScore(0, Player0DuckCounter * DuckToPointsMultiplier);
+		tempCounter = Player0DuckCounter;
 		Player0DuckCounter = 0;
+		AddScore(0, tempCounter * DuckToPointsMultiplier);
 		break;
 	case 1:
-		AddScore(1, Player1DuckCounter * DuckToPointsMultiplier);
+		tempCounter = Player1DuckCounter;
 		Player1DuckCounter = 0;
+		AddScore(1, tempCounter * DuckToPointsMultiplier);
 		break;
 	case 2:
-		AddScore(2, Player2DuckCounter * DuckToPointsMultiplier);
+		tempCounter = Player2DuckCounter;
 		Player2DuckCounter = 0;
+		AddScore(2, tempCounter * DuckToPointsMultiplier);
 		break;
 	case 3:
-		AddScore(3, Player3DuckCounter * DuckToPointsMultiplier);
+		tempCounter = Player3DuckCounter;
 		Player3DuckCounter = 0;
+		AddScore(3, tempCounter * DuckToPointsMultiplier);
 		break;
 	default:
 		break;
@@ -120,6 +131,8 @@ void UGlobalScoreSubsystem::PlayerInDuckBank(int PlayerIndex, int DuckToPointsMu
 
 	ScoreChangedEvent.Broadcast(PlayerIndex, GetScore(PlayerIndex));
 	DuckCounterChangedEvent.Broadcast(PlayerIndex, GetDuckCounter(PlayerIndex));
+
+	bPlayerInBank = false;
 }
 
 void UGlobalScoreSubsystem::StealDuck(int PlayerIndexAdd, int PlayerIndexLose)

@@ -35,6 +35,8 @@ private:
 	UPROPERTY()
 	float CurrentStunRemaining = 0.f;
 
+	bool bIsFreezeVariant = false;
+	
 	UFUNCTION()
 	void FreezeStunVariant();
 	

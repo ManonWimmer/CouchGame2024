@@ -38,5 +38,8 @@ public:
 	
 	virtual void TriggerPowerUp();
 	virtual void TriggerPowerUp(int Value);
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "TriggerPowerUp"))
+	void ReceiveTriggerPowerUp();
 	
 };

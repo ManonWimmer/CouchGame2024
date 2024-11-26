@@ -35,11 +35,13 @@ EPowerUpID APowerUp::GetPowerUpID() const
 
 void APowerUp::TriggerPowerUp()
 {
+	ReceiveTriggerPowerUp();
 	this->Destroy();
 }
 
 void APowerUp::TriggerPowerUp(int Value)
 {
+	ReceiveTriggerPowerUp();
 	this->Destroy();
 }
 

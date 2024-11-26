@@ -37,4 +37,10 @@ public:
 
 	UFUNCTION()
 	void CollectDuck();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "CollectDuck"))
+	void ReceiveCollectDuck();
+	
+	UPROPERTY()
+	bool bHasBeenCollected = false;
 };

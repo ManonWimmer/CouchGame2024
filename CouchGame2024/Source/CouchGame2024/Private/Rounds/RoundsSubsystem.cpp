@@ -194,7 +194,7 @@ ERoundsPhaseID URoundsSubsystem::GetCurrentRoundPhaseID()
 void URoundsSubsystem::ChangeRoundPhase(ERoundsPhaseID RoundsPhaseID)
 {
 	CurrentRoundPhaseID = RoundsPhaseID;
-	OnChangeRoundPhases.Broadcast(CurrentRoundPhaseID);
+	//OnChangeRoundPhases.Broadcast(CurrentRoundPhaseID);
 
 	switch (CurrentRoundPhaseID)
 	{
@@ -206,10 +206,14 @@ void URoundsSubsystem::ChangeRoundPhase(ERoundsPhaseID RoundsPhaseID)
 			break;
 		case POST_ROUND:
 			EndRoundChecks();
+
+			LockAllPlayer();
 			break;
 		default:
 			break;
 	}
+
+	OnChangeRoundPhases.Broadcast(CurrentRoundPhaseID);
 	
 	if (GEngine)
 	{

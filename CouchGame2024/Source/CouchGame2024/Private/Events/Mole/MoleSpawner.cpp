@@ -20,11 +20,7 @@ void AMoleSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (AEventMole* EventMole = Cast<AEventMole>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventMole::StaticClass())))
-		EventMole->OnMoleStartedEvent.AddDynamic(this, &AMoleSpawner::StartCountdownSpawning);
-	else
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "CANT FIND MOLE EVENT FROM DUCK SPAWNER");
-
+	Bind();
 }
 
 // Called every frame
@@ -54,7 +50,7 @@ void AMoleSpawner::Tick(float DeltaTime)
 
 void AMoleSpawner::StartCountdownSpawning() // start phase 1 mole event - mole collected
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Start mole countdown spawning");
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Start mole countdown spawning");
 
 	GetRandomSpawnTime();
 	bCanSpawn = true;
@@ -100,13 +96,39 @@ void AMoleSpawner::GetRandomSpawnTime()
 {
 	RandomSpawnTime = FMath::RandRange(MinMoleSpawnTime, MaxMoleSpawnTime);
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,FString::Printf(TEXT("Spawn time mole : %f"), RandomSpawnTime));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,FString::Printf(TEXT("Spawn time mole : %f"), RandomSpawnTime));
 }
 
 void AMoleSpawner::GetRandomStayTime()
 {
 	RandomStayTime = FMath::RandRange(MinMoleStayTime, MaxMoleStayTime);
 
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,FString::Printf(TEXT("Stay time mole : %f"), RandomStayTime));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,FString::Printf(TEXT("Stay time mole : %f"), RandomStayTime));
+}
+
+void AMoleSpawner::StopSpawning()
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "stop spawning mole");
+	
+	bCanSpawn = false;
+	bCanStay = false;
+	if (SpawnedMole)
+		SpawnedMole->Destroy();
+}
+
+void AMoleSpawner::Bind()
+{
+	if (bHasBeenBind) return;
+	
+	if (AEventMole* EventMole = Cast<AEventMole>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventMole::StaticClass())))
+	{
+		bHasBeenBind = true;
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Magenta, "BIND MOLE");
+		EventMole->OnMoleStartedEvent.AddDynamic(this, &AMoleSpawner::StartCountdownSpawning);
+		EventMole->OnMoleEndedEvent.AddDynamic(this, &AMoleSpawner::StopSpawning);
+	}
+	//else
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "CANT FIND MOLE EVENT FROM MOLE SPAWNER");
+
 }
 

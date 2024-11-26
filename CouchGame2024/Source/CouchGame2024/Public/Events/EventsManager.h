@@ -9,6 +9,7 @@
 #include "Rounds/RoundsResetable.h"
 #include "EventsManager.generated.h"
 
+class URoundsSubsystem;
 class UDuckData;
 class AUIManager;
 enum class EEventName : uint8;
@@ -82,6 +83,9 @@ public:
 
 
 	UFUNCTION()
+	void Setup();
+
+	UFUNCTION()
 	void BindCountdownToRoundsPhase();
 	
 	UFUNCTION()
@@ -91,7 +95,7 @@ public:
 	void SetupNewRoundEvent(int RoundIndex);
 	
 	UFUNCTION()
-	void CheckStartCountdown(ERoundsPhaseID InRoundsPhaseID);
+	void CheckNewPhase(ERoundsPhaseID InRoundsPhaseID);
 	
 	UFUNCTION(BlueprintCallable, CallInEditor, Category = "Events")
 	void StartGame();
@@ -186,6 +190,9 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<AUIManager> UIManager = nullptr;
+
+	UPROPERTY()
+	TObjectPtr<URoundsSubsystem> RoundsSubsystem = nullptr;
 
 #pragma region Resetable
 

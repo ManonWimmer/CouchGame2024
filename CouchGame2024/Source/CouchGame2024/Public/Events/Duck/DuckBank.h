@@ -35,6 +35,12 @@ public:
 	void OnBankBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 								 const FHitResult& SweepResult);
 
+	UFUNCTION()
+	void Bind();
+
+	UPROPERTY()
+	bool bHasBeenBind = false;
+	
 	UPROPERTY(EditAnywhere)
-	int DuckToPointsMultiplier = 200;
+	int DuckToPoints = 200;
 };

@@ -3,6 +3,10 @@
 
 #include "Events/EventsChildren/EventMole.h"
 
+#include "Events/Mole/MoleSpawner.h"
+#include "Kismet/GameplayStatics.h"
+#include "PinballElements/Elements/MoleElement.h"
+
 
 // Sets default values
 AEventMole::AEventMole()
@@ -15,6 +19,7 @@ AEventMole::AEventMole()
 void AEventMole::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 }
 
@@ -27,6 +32,18 @@ void AEventMole::Tick(float DeltaTime)
 void AEventMole::SetupEventPhase1()
 {
 	Super::SetupEventPhase1();
+
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Cyan, "LAAAAAA");
+
+	TArray<AActor*> Acteurs;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMoleSpawner::StaticClass(), Acteurs);
+
+	for (AActor* Acteur : Acteurs)
+	{
+		AMoleSpawner* MoleSpawner = Cast<AMoleSpawner>(Acteur);
+		if (MoleSpawner)
+			MoleSpawner->Bind();
+	}
 }
 
 void AEventMole::TriggerEventPhase1()
@@ -54,6 +71,23 @@ void AEventMole::TickPhase2()
 void AEventMole::EndEvent()
 {
 	Super::EndEvent();
+
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "end mole event");
+
+	/*
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Cyan,"Destroy ducks");
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		if (AMoleElement* MoleActor = Cast<AMoleElement>(Actor))
+		{
+			MoleActor->Destroy();
+		}
+	}
+	*/
 
 	OnMoleEndedEvent.Broadcast();
 }

@@ -31,6 +31,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Sounds Duck")
 	TObjectPtr<UMetaSoundSource> DuckStealSound;
 
+	UPROPERTY(EditAnywhere, Category = "Sounds Duck")
+	TObjectPtr<UMetaSoundSource> GoldenDuckSound;
 
 #pragma endregion
 
@@ -52,8 +54,42 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Player Impact")
 	TObjectPtr<UMetaSoundSource> PlayerPunch;
-	
 
+	UPROPERTY(EditAnywhere, Category = "Player Death")
+	TObjectPtr<UMetaSoundSource> PlayerDeath;
+	
+#pragma endregion
+
+#pragma region Power Up
+
+	UPROPERTY(EditAnywhere, Category = "Power Up Freeze")
+	TObjectPtr<UMetaSoundSource> PowerUpFreezeCast;
+
+	UPROPERTY(EditAnywhere, Category = "Power Up Freeze")
+	TObjectPtr<UMetaSoundSource> PowerUpFreezePlayerTouched;
+
+	UPROPERTY(EditAnywhere, Category = "Power Up Freeze")
+	TObjectPtr<UMetaSoundSource> PowerUpFreezeEffectFinished;
+
+	
+	UPROPERTY(EditAnywhere, Category = "Power Up Strength")
+	TObjectPtr<UMetaSoundSource> PowerUpStrengthCast;
+
+	
+	UPROPERTY(EditAnywhere, Category = "Power Up Slippery")
+	TObjectPtr<UMetaSoundSource> PowerUpSlipperyCast;
+
+	UPROPERTY(EditAnywhere, Category = "Power Up Slippery")
+	TObjectPtr<UMetaSoundSource> PowerUpSlipperyDisapear;
+
+	UPROPERTY(EditAnywhere, Category = "Power Up Slippery")
+	TObjectPtr<UMetaSoundSource> PowerUpSlipperyEffect;
+
+	
+	
 #pragma endregion 
+
+	UPROPERTY(EditAnywhere, Category = "Element Bumper")
+	TObjectPtr<UMetaSoundSource> BumperImpact;
 
 };

@@ -9,6 +9,9 @@ public class CouchGame2024 : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "DeveloperSettings", "PhysicsCore", "MetasoundEngine" });
+		
+		PublicDependencyModuleNames.AddRange(new[] {"FCTween"});
+		
 		if (Target.bBuildEditor)
 		{
 			PublicDependencyModuleNames.AddRange(new string[] { "Blutility", "EditorScriptingUtilities", "UnrealEd", "EditorSubsystem" });

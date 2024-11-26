@@ -4,10 +4,14 @@
 #include "Events/Duck/DuckBank.h"
 
 #include "Components/SphereComponent.h"
+#include "Events/EventData.h"
+#include "Events/EventsManager.h"
+#include "Kismet/GameplayStatics.h"
 #include "PlayerBall/PlayerBall.h"
 #include "Score/GlobalScoreSubsystem.h"
 
 
+class AEventsManager;
 // Sets default values
 ADuckBank::ADuckBank()
 {
@@ -27,7 +31,6 @@ ADuckBank::ADuckBank()
 void ADuckBank::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -46,8 +49,18 @@ void ADuckBank::OnBankBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		UGlobalScoreSubsystem* ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
 		if (ScoreSubsystem != nullptr)
 		{
-			ScoreSubsystem->PlayerInDuckBank(BallInBank->PlayerIndex, DuckToPointsMultiplier);
+			ScoreSubsystem->PlayerInDuckBank(BallInBank->PlayerIndex, DuckToPoints);
 		}
 	}
+}
+
+void ADuckBank::Bind()
+{
+	// Data
+	if (AEventsManager* EventsManager = Cast<AEventsManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventsManager::StaticClass())))
+		DuckToPoints = EventsManager->CurrentEventData->DuckToPoints; 
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "MISSING EVENTS MANAGER");
+	
 }
 

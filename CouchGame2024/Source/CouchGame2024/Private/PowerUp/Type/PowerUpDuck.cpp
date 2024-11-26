@@ -2,10 +2,10 @@
 
 
 #include "PowerUp/Type/PowerUpDuck.h"
-
 #include "Score/GlobalScoreSubsystem.h"
 
 
+class AEventsManager;
 // Sets default values
 APowerUpDuck::APowerUpDuck()
 {
@@ -17,7 +17,6 @@ APowerUpDuck::APowerUpDuck()
 void APowerUpDuck::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 // Called every frame
@@ -33,7 +32,11 @@ EPowerUpID APowerUpDuck::GetPowerUpID() const
 
 void APowerUpDuck::TriggerPowerUp(int PlayerIndex)
 {
+	if (bHasBeenCollected) return;
+
+	bHasBeenCollected = true;
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow, "trigger duck");
+
 
 	
 	UGlobalScoreSubsystem* ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
@@ -53,7 +56,7 @@ void APowerUpDuck::TriggerPowerUp(int PlayerIndex)
 	}
 
 	FTimerHandle TimerHandle;
-	float DelayTime = 0.1f;
+	float DelayTime = 0.4f;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &APowerUpDuck::DestroyDuck, DelayTime, false);
 }
 
@@ -65,6 +68,8 @@ void APowerUpDuck::DestroyDuck()
 
 void APowerUpDuck::CollectDuck()
 {
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red, "broadcast collect");
 	OnDuckCollected.Broadcast();
+	ReceiveCollectDuck();
 }
 

@@ -72,4 +72,7 @@ protected:
 	
 	UPROPERTY(BlueprintAssignable)
 	FDuckCounterChangedEvent DuckCounterChangedEvent;
+
+	UPROPERTY()
+	bool bPlayerInBank = false;
 };
