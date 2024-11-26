@@ -72,7 +72,7 @@ void APillarZone::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bIsInPhase1)
+	if (bIsInPhase1 && PillarZonePhase == EPillarZonePhase::Phase1)
 	{
 		switch (CurrentZoneState) {
 		case EPillarZoneState::Waiting:
@@ -83,7 +83,7 @@ void APillarZone::Tick(float DeltaTime)
 			break;
 		}
 	}
-	else if (bIsInPhase2)
+	else if (bIsInPhase2 && PillarZonePhase == EPillarZonePhase::Phase2)
 	{
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Cyan,"PillarZone::TickPhase2");
 	}
@@ -222,7 +222,7 @@ void APillarZone::OnEndPhase1AndStartPhase2()
 	bIsInPhase1 = false;
 	bIsInPhase2 = true;
 
-	// disparaitre
+	ShowZone();
 }
 
 void APillarZone::OnEndPhase2()
