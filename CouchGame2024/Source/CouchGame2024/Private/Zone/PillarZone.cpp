@@ -178,7 +178,7 @@ void APillarZone::MoveToPillar(float DeltaTime)
 {
 	if (!bIsInPhase1) return;
 	
-	FVector TargetLocation = TargetPillar->GetActorLocation();
+	FVector TargetLocation = FVector(TargetPillar->GetActorLocation().X, TargetPillar->GetActorLocation().Y, GetActorLocation().Z);
 	FVector CurrentLocation = GetActorLocation();  
 	FVector Direction = TargetLocation - CurrentLocation;  
 	float DistanceToMove = MoveSpeed * DeltaTime;  
@@ -225,6 +225,8 @@ void APillarZone::OnStartPhase1()
 {
 	bIsInPhase1 = true;
 	bIsInPhase2 = false;
+
+	ShowZone();
 }
 
 void APillarZone::OnEndPhase1AndStartPhase2()
@@ -239,6 +241,8 @@ void APillarZone::OnEndPhase2()
 {
 	bIsInPhase1 = false;
 	bIsInPhase2 = false;
+
+	HideZone();
 }
 
 void APillarZone::Bind()
@@ -259,3 +263,17 @@ void APillarZone::Bind()
 		}
 	}
 }
+
+void APillarZone::ShowZone() const
+{
+	if (SpotLightComponent) SpotLightComponent->SetVisibility(true);
+	if (SphereComponent) SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+}
+
+void APillarZone::HideZone() const
+{
+	if (SpotLightComponent) SpotLightComponent->SetVisibility(false);
+	if (SphereComponent) SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+//todo: add reset to set location spawn pillar

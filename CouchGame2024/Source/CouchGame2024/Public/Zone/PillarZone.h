@@ -108,4 +108,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Light")
 	TObjectPtr<USpotLightComponent> SpotLightComponent;
+
+	UFUNCTION()
+	void ShowZone() const;
+
+	UFUNCTION()
+	void HideZone() const;
 };
