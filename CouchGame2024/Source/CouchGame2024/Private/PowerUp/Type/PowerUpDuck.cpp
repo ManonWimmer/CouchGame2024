@@ -56,7 +56,7 @@ void APowerUpDuck::TriggerPowerUp(int PlayerIndex)
 	}
 
 	FTimerHandle TimerHandle;
-	float DelayTime = 0.1f;
+	float DelayTime = 0.4f;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &APowerUpDuck::DestroyDuck, DelayTime, false);
 }
 
