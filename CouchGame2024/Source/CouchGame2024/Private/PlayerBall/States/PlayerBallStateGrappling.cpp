@@ -99,7 +99,7 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 
 				if (Pawn->BehaviorGrapple->HookInterface->IsPillar())
 				{
-					APillarElement* Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
+					Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
 					if (Pillar)
 					{
 						if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "set state machine");
@@ -225,7 +225,6 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 			if (Pawn->BehaviorGrapple->HookInterface->IsPillar())
 			{
-				APillarElement* Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
 				if (Pillar)
 				{
 					if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "reset state machine");

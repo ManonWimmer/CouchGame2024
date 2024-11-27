@@ -7,6 +7,7 @@
 #include "PlayerBallStateGrappling.generated.h"
 
 
+class APillarElement;
 class UGlobalScoreSubsystem;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -74,4 +75,7 @@ private:
 
 	UPROPERTY()
 	UGlobalScoreSubsystem* ScoreSubsystem;
+
+	UPROPERTY()
+	TObjectPtr<APillarElement> Pillar = nullptr;
 };

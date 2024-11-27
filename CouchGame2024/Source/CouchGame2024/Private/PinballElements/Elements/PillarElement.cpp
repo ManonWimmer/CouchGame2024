@@ -15,6 +15,7 @@ APillarElement::APillarElement()
 	
 	DisableMaterial = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Project/Assets/Art/03_Mat/Pillar/M_PillarDisable.M_PillarDisable"));
 	EnableMaterial = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Project/Assets/Art/03_Mat/Pillar/M_PillarEnable.M_PillarEnable"));
+	TrickedMaterial = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Project/Assets/Art/03_Mat/Pillar/M_PillarTricked.M_PillarTricked"));
 }
 
 // Called when the game starts or when spawned
@@ -86,16 +87,20 @@ void APillarElement::DisablePillar()
 	}
 }
 
-void APillarElement::EnablePillar()
+void APillarElement::EnablePillar(const bool Tricked)
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "Enabled");
 	bIsHookable = true;
+	bIsTricked = Tricked;
 	
 	if (Mesh)
 	{
 		if (EnableMaterial)
 		{
-			Mesh->SetMaterial(0, EnableMaterial);
+			if (!bIsTricked)
+				Mesh->SetMaterial(0, EnableMaterial);
+			else
+				Mesh->SetMaterial(0, TrickedMaterial);
 		}
 		else
 		{

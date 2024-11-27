@@ -257,8 +257,10 @@ void APillarZone::Bind()
 	}
 }
 
-void APillarZone::ShowZone() const
+void APillarZone::ShowZone(bool Tricked)
 {
+	bIsTricked = Tricked;
+	
 	if (SpotLightComponent) SpotLightComponent->SetVisibility(true);
 	if (SphereComponent) SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
@@ -302,7 +304,7 @@ void APillarZone::EnableOverlappingPillars() const
 	{
 		if (APillarElement* Pillar = Cast<APillarElement>(Actor))
 		{
-			Pillar->EnablePillar();
+			Pillar->EnablePillar(bIsTricked);
 		}
 	}
 }

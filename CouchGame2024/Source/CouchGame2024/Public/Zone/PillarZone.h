@@ -120,7 +120,7 @@ public:
 	TObjectPtr<USpotLightComponent> SpotLightComponent;
 
 	UFUNCTION()
-	void ShowZone() const;
+	void ShowZone(bool Tricked = false);
 
 	UFUNCTION()
 	void HideZone() const;
@@ -133,4 +133,7 @@ public:
 
 	UFUNCTION()
 	void DisableOverlappingPillars() const;
+
+	UPROPERTY()
+	bool bIsTricked = false;
 };

@@ -43,10 +43,13 @@ public:
 	void DisablePillar();
 
 	UFUNCTION()
-	void EnablePillar();
+	void EnablePillar(bool Tricked = false);
 
 	UPROPERTY()
 	bool bIsHookable = true;
+
+	UPROPERTY()
+	bool bIsTricked = false;
 
 	UPROPERTY()
 	TObjectPtr<UStaticMeshComponent> Mesh;
@@ -56,6 +59,9 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<UMaterialInterface> EnableMaterial;
+
+	UPROPERTY()
+	TObjectPtr<UMaterialInterface> TrickedMaterial;
 
 	UPROPERTY()
 	TObjectPtr<UPlayerBallStateMachine> PlayerStateMachineOnPillar = nullptr;

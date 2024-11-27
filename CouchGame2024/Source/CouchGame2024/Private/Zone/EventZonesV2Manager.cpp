@@ -154,7 +154,7 @@ void AEventZonesV2Manager::ShowRandomPillars()
 		Zone->SetActorLocation(TargetLocation);
 		
 		// enable zone
-		Zone->ShowZone();
+		Zone->ShowZone(true);
 	}
 }
 
