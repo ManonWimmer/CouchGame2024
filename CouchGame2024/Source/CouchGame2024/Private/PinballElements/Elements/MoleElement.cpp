@@ -83,7 +83,7 @@ void AMoleElement::SpawnMole() const
 	}
 }
 
-void AMoleElement::DespawnMole() const
+void AMoleElement::DespawnMole()
 {
 	//SphereTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
@@ -91,6 +91,8 @@ void AMoleElement::DespawnMole() const
 	{
 		SpawnTimeline->ReverseFromEnd();
 	}
+
+	ReceiveOnDespawnMole();
 }
 
 void AMoleElement::HandleTimelineProgress(float Value)
