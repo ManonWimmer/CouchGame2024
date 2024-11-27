@@ -32,7 +32,7 @@ void ADuckSpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bCanSpawn)
+	if (bCanSpawn && bInGame)
 	{
 		CurrentTime = GetWorld()->GetTimeSeconds() - StartedTime;
 
@@ -91,7 +91,7 @@ void ADuckSpawner::BindDuckStartAndEndEvent()
 		if (AEventDuck* EventDuck = Cast<AEventDuck>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventDuck::StaticClass())))
 		{
 			bHasBeenBind = true;
-			EventDuck->OnDuckStartedEvent.AddDynamic(this, &ADuckSpawner::SpawnDuck);
+			EventDuck->OnDuckStartedEvent.AddDynamic(this, &ADuckSpawner::StartSpawning);
 			EventDuck->OnDuckEndedEvent.AddDynamic(this, &ADuckSpawner::StopSpawning);
 		}
 		else
@@ -99,9 +99,26 @@ void ADuckSpawner::BindDuckStartAndEndEvent()
 	}
 }
 
+void ADuckSpawner::StartSpawning()
+{
+	bCanSpawn = true;
+	bInGame = true;
+
+	SpawnDuck();
+}
+
 void ADuckSpawner::StopSpawning()
 {
 	bCanSpawn = false;
+	bInGame = false;
+	
 	if (SpawnedDuck)
+	{
 		SpawnedDuck->Destroy();
+		SpawnedDuck = nullptr;
+	}
+	else
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1,15,FColor::Cyan, "no spawned duck");
+	}
 }

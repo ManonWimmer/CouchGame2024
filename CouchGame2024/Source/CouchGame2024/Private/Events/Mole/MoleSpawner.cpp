@@ -28,7 +28,7 @@ void AMoleSpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bCanSpawn)
+	if (bCanSpawn && bInGame)
 	{
 		CurrentTime = GetWorld()->GetTimeSeconds() - StartedTime;
 
@@ -37,7 +37,7 @@ void AMoleSpawner::Tick(float DeltaTime)
 			SpawnMole();
 		}
 	}
-	else if (bCanStay)
+	else if (bCanStay && bInGame)
 	{
 		CurrentTime = GetWorld()->GetTimeSeconds() - StartedTime;
 
@@ -106,14 +106,26 @@ void AMoleSpawner::GetRandomStayTime()
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,FString::Printf(TEXT("Stay time mole : %f"), RandomStayTime));
 }
 
+void AMoleSpawner::StartSpawning()
+{
+	bInGame = true;
+
+	StartCountdownSpawning();
+}
+
 void AMoleSpawner::StopSpawning()
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "stop spawning mole");
 	
 	bCanSpawn = false;
 	bCanStay = false;
+	bInGame = false;
+	
 	if (SpawnedMole)
+	{
 		SpawnedMole->Destroy();
+		SpawnedMole = nullptr;
+	}
 }
 
 void AMoleSpawner::Bind()
@@ -124,7 +136,7 @@ void AMoleSpawner::Bind()
 	{
 		bHasBeenBind = true;
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Magenta, "BIND MOLE");
-		EventMole->OnMoleStartedEvent.AddDynamic(this, &AMoleSpawner::StartCountdownSpawning);
+		EventMole->OnMoleStartedEvent.AddDynamic(this, &AMoleSpawner::StartSpawning);
 		EventMole->OnMoleEndedEvent.AddDynamic(this, &AMoleSpawner::StopSpawning);
 	}
 	//else
