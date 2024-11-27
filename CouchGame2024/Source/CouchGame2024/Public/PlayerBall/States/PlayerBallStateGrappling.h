@@ -74,6 +74,9 @@ private:
 	float CurrentTimeOnPillar = 0.f;
 
 	UPROPERTY()
+	float ExitTimePillarTricked = 0.f;
+
+	UPROPERTY()
 	UGlobalScoreSubsystem* ScoreSubsystem;
 
 	UPROPERTY()

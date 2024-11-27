@@ -99,6 +99,8 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 
 				if (Pawn->BehaviorGrapple->HookInterface->IsPillar())
 				{
+					ExitTimePillarTricked = Pawn->BehaviorGrapple->ExitTimePillarTricked;
+					
 					Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
 					if (Pillar)
 					{
@@ -356,6 +358,15 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 		FMath::DegreesToRadians(Pawn->BehaviorGrapple->ExitNotPillarDegrees))
 	{
 		StateMachine->ChangeState(EPlayerBallStateID::Idle);
+	}
+
+	if (Pawn->BehaviorGrapple->IsHookingPillar)
+	{
+		if (CurrentTimeOnPillar > ExitTimePillarTricked && Pillar)
+		{
+			Pillar->DisableTrickedZone();
+			StateMachine->ChangeState(EPlayerBallStateID::Idle);
+		}
 	}
 	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 

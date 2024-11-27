@@ -7,6 +7,7 @@
 #include "PinballElements/PinballElement.h"
 #include "PillarElement.generated.h"
 
+class APillarZone;
 class UPlayerBallStateMachine;
 
 UCLASS()
@@ -43,8 +44,11 @@ public:
 	void DisablePillar();
 
 	UFUNCTION()
-	void EnablePillar(bool Tricked = false);
+	void EnablePillar(bool Tricked, const APillarZone* Zone);
 
+	UFUNCTION()
+	void DisableTrickedZone() const;
+	
 	UPROPERTY()
 	bool bIsHookable = true;
 
@@ -65,4 +69,7 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<UPlayerBallStateMachine> PlayerStateMachineOnPillar = nullptr;
+
+	UPROPERTY()
+	const APillarZone* PillarZone = nullptr;
 };

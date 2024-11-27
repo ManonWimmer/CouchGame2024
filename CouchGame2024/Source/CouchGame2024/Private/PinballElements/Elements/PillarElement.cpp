@@ -5,6 +5,7 @@
 
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
+#include "Zone/PillarZone.h"
 
 
 // Sets default values
@@ -63,6 +64,8 @@ void APillarElement::DisablePillar()
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "Disabled");
 	bIsHookable = false;
+
+	PillarZone = nullptr;
 	
 	if (Mesh)
 	{
@@ -87,11 +90,13 @@ void APillarElement::DisablePillar()
 	}
 }
 
-void APillarElement::EnablePillar(const bool Tricked)
+void APillarElement::EnablePillar(bool Tricked, const APillarZone* Zone)
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "Enabled");
 	bIsHookable = true;
 	bIsTricked = Tricked;
+
+	PillarZone = Zone;
 	
 	if (Mesh)
 	{
@@ -111,5 +116,12 @@ void APillarElement::EnablePillar(const bool Tricked)
 	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "pas mesh");
 	}
+}
+
+void APillarElement::DisableTrickedZone() const
+{
+	if (PillarZone == nullptr) return;
+
+	PillarZone->HideZone();
 }
 

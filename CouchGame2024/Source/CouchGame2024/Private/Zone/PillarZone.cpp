@@ -84,7 +84,7 @@ void APillarZone::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActo
 {
 	if (APillarElement* OverlappedPillar = Cast<APillarElement>(OtherActor))
 	{
-		OverlappedPillar->EnablePillar();
+		OverlappedPillar->EnablePillar(bIsTricked, this);
 	}
 }
 
@@ -304,9 +304,11 @@ void APillarZone::EnableOverlappingPillars() const
 	{
 		if (APillarElement* Pillar = Cast<APillarElement>(Actor))
 		{
-			Pillar->EnablePillar(bIsTricked);
+			Pillar->EnablePillar(bIsTricked, this);
 		}
 	}
+
+	
 }
 
 void APillarZone::DisableOverlappingPillars() const
