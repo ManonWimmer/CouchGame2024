@@ -140,6 +140,19 @@ void AEventZonesV2Manager::GetRandomPillars()
 			*SelectedPillar->GetName(),
 			*Zone->GetActorLocation().ToString());
 	}
+
+	// Get random tricked zone & pillar
+	// Temp array from TMap
+	TArray<TObjectPtr<APillarZone>> KeysArray;
+	SelectedZonesAndPillars.GenerateKeyArray(KeysArray);
+
+	if (KeysArray.Num() > 0)
+	{
+		int32 RandomIndex = FMath::RandRange(0, KeysArray.Num() - 1);
+		TObjectPtr<APillarZone> RandomZone = KeysArray[RandomIndex];
+
+		TrickedZoneAndPillar = TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>>(RandomZone, SelectedZonesAndPillars[RandomZone]);
+	}
 }
 
 void AEventZonesV2Manager::ShowRandomPillars()
@@ -149,12 +162,19 @@ void AEventZonesV2Manager::ShowRandomPillars()
 		const TObjectPtr<APillarZone> Zone = ZoneAndPillar.Key;
 		const TObjectPtr<APillarElement> Pillar = ZoneAndPillar.Value;
 
-		// set location of zone to pillar location
+		// Set location of zone to pillar location
 		FVector TargetLocation = FVector(Pillar->GetActorLocation().X, Pillar->GetActorLocation().Y, Zone->GetActorLocation().Z);
 		Zone->SetActorLocation(TargetLocation);
-		
-		// enable zone
-		Zone->ShowZone(true);
+
+		// Enable zone
+		if (Zone == TrickedZoneAndPillar.Key)
+		{
+			Zone->ShowZone(true);
+		}
+		else
+		{
+			Zone->ShowZone(false);
+		}
 	}
 }
 
@@ -167,6 +187,7 @@ void AEventZonesV2Manager::ResetRandomPillars()
 	}
 
 	SelectedZonesAndPillars.Reset();
+	TrickedZoneAndPillar = TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>>(nullptr, nullptr);
 }
 
 void AEventZonesV2Manager::StartPhase2()
