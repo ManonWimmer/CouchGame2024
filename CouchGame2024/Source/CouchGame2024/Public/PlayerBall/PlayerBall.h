@@ -223,6 +223,12 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlaySlipperyEffectGamefeelEffectsBlueprint();
 
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayRailEnterGamefeelEffectsBlueprint();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayRailExitGamefeelEffectsBlueprint();
 	
 public:
 

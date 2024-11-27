@@ -86,12 +86,25 @@ public:
 
 #pragma endregion
 
-
+#pragma region Element reactions Sounds
+	
 #pragma region Bumper Sounds
 
 	UFUNCTION(BlueprintCallable)
 	void PlayBumperImpactSound();
 
+#pragma endregion 
+
+#pragma region Rail Sounds
+
+	UFUNCTION(BlueprintCallable)
+	void PlayRailEnterSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayRailExitSound();
+
+#pragma endregion 
+	
 #pragma endregion 
 	
 private:
