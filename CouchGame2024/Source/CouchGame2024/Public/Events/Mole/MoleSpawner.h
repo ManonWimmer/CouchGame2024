@@ -48,6 +48,9 @@ public:
 	void GetRandomStayTime();
 
 	UFUNCTION()
+	void StartSpawning();
+	
+	UFUNCTION()
 	void StopSpawning();
 
 	UFUNCTION()
@@ -92,6 +95,9 @@ private:
 
 	UPROPERTY()
 	bool bHasBeenBind = false;
+
+	UPROPERTY()
+	bool bInGame = false;
 };
 
 

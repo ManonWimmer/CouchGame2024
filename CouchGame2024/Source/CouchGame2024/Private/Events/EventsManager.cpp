@@ -154,6 +154,9 @@ void AEventsManager::EndGame()
 		                                 TEXT("END GAME"));
 	IsGameStarted = false;
 
+	if (AEvent* CurrentEvent = GetEventClassFromEventData(CurrentEventData))
+		CurrentEvent->EndEvent();
+
 	if (UIManager != nullptr && CurrentEventData != nullptr)
 		UIManager->HideWidgetForEvent(CurrentEventData->EventName);
 
