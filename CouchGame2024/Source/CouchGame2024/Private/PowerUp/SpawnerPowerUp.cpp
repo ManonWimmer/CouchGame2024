@@ -3,6 +3,12 @@
 
 #include "PowerUp/SpawnerPowerUp.h"
 
+#include "PowerUp/PowerUpDataType.h"
+#include "PowerUp/SpawnerPowerUpData.h"
+#include "PowerUp/Type/PowerUpFreeze.h"
+#include "PowerUp/Type/PowerUpSlippery.h"
+#include "PowerUp/Type/PowerUpStrength.h"
+
 
 // Sets default values
 ASpawnerPowerUp::ASpawnerPowerUp()
@@ -15,36 +21,89 @@ ASpawnerPowerUp::ASpawnerPowerUp()
 void ASpawnerPowerUp::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetupData();
 	
+	StartRespawnCooldown();
 }
 
 // Called every frame
 void ASpawnerPowerUp::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	HandleRespawnCooldown(DeltaTime);
+}
+
+void ASpawnerPowerUp::SetupData()
+{
+	if (SpawnerPowerUpData == nullptr)	return;
+
+	BasicRespawnCooldown = SpawnerPowerUpData->BasicRespawnCooldown;
+	
+	MinRespawnCooldownToAdd = SpawnerPowerUpData->MinRespawnCooldownToAdd;
+	MaxRespawnCooldownToAdd = SpawnerPowerUpData->MaxRespawnCooldownToAdd;
+}
+
+void ASpawnerPowerUp::ReceiveSpawnerPowerUpCollected()
+{
+	UnbindStartSpawnToPickPowerUp(SpawnedPowerUp);
+	StartRespawnCooldown();
+}
+
+void ASpawnerPowerUp::BindStartSpawnToPickPowerUp(APowerUp* InPowerUp)
+{
+	if (InPowerUp == nullptr)	return;
+
+	InPowerUp->OnPowerUpCollected.AddDynamic(this, &ASpawnerPowerUp::ReceiveSpawnerPowerUpCollected);
+}
+
+void ASpawnerPowerUp::UnbindStartSpawnToPickPowerUp(APowerUp* InPowerUp)
+{
+	if (InPowerUp == nullptr)	return;
+
+	InPowerUp->OnPowerUpCollected.RemoveDynamic(this, &ASpawnerPowerUp::ReceiveSpawnerPowerUpCollected);
 }
 
 void ASpawnerPowerUp::SpawnSpecificPowerUp(EPowerUpID InPowerUpID)	// Spawn this specific power up at spawner location
 {
 	if (InPowerUpID == EPowerUpID::None)	return;
 
+	if (GetWorld() == nullptr)	return;
 
+	if (PowerUpDataType == nullptr)	return;
+	
 	switch (InPowerUpID)
 	{
 	case EPowerUpID::Freeze:
-
+		if (PowerUpDataType->PowerUpTypeFreeze != nullptr)
+		{
+			SpawnedPowerUp = GetWorld()->SpawnActor<APowerUp>(PowerUpDataType->PowerUpTypeFreeze, this->GetTransform());
+		}
 		break;
 
 	case EPowerUpID::Strength:
-
+		if (PowerUpDataType->PowerUpTypeStrength != nullptr)
+		{
+			SpawnedPowerUp = GetWorld()->SpawnActor<APowerUp>(PowerUpDataType->PowerUpTypeStrength, this->GetTransform());
+		}
 		break;
 
 	case EPowerUpID::Slippery:
-			
+		if (PowerUpDataType->PowerUpTypeSlippery != nullptr)
+		{
+			SpawnedPowerUp = GetWorld()->SpawnActor<APowerUp>(PowerUpDataType->PowerUpTypeSlippery, this->GetTransform());
+		}
 		break;
 
 	default:
 		break;
+	}
+
+	if (SpawnedPowerUp != nullptr)
+	{
+		StopRespawnCooldown();
+		BindStartSpawnToPickPowerUp(SpawnedPowerUp);
 	}
 }
 
@@ -80,5 +139,54 @@ EPowerUpID ASpawnerPowerUp::ChooseRandomPowerUp()	// Select a random power up
 	}
 	
 	return OutPowerUpID;
+}
+
+void ASpawnerPowerUp::HandleRespawnCooldown(float DeltaTime)
+{
+	if (!bIsInCooldown)	return;
+	
+	if (CurrentRespawnCooldown >= BasicRespawnCooldown + RespawnCooldownToAdd)
+	{
+		if (CheckCanSpawnPowerUp())
+		{
+			SpawnRandomPowerUp();
+		}
+	}
+	else
+	{
+		CurrentRespawnCooldown += DeltaTime;
+	}
+}
+
+void ASpawnerPowerUp::StartRespawnCooldown()
+{
+	SpawnedPowerUp = nullptr;
+	CurrentRespawnCooldown = 0.f;
+
+	SetNewRespawnCooldownToAdd();
+	
+	bIsInCooldown = true;
+}
+
+void ASpawnerPowerUp::StopRespawnCooldown()
+{
+	bIsInCooldown = false;
+}
+
+bool ASpawnerPowerUp::CheckCanSpawnPowerUp()
+{
+	if (SpawnedPowerUp != nullptr)
+		return false;
+
+	if (CurrentRespawnCooldown < BasicRespawnCooldown + RespawnCooldownToAdd)
+		return false;
+	
+	return true;
+}
+
+void ASpawnerPowerUp::SetNewRespawnCooldownToAdd()
+{
+	float Percent = FMath::RandRange(0.f, 1.f);
+	RespawnCooldownToAdd = FMath::Lerp(MinRespawnCooldownToAdd, MaxRespawnCooldownToAdd, Percent);
 }
 

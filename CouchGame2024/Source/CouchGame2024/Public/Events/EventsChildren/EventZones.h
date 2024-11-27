@@ -6,6 +6,7 @@
 #include "Events/Event.h"
 #include "EventZones.generated.h"
 
+class AEventZonesV2Manager;
 class APillarZone;
 
 UCLASS()
@@ -59,6 +60,9 @@ public:
 
 	UPROPERTY()
 	TArray<TObjectPtr<APillarZone>> PillarZones;
+
+	UPROPERTY()
+	TObjectPtr<AEventZonesV2Manager> Phase2Manager;
 
 	
 #pragma endregion

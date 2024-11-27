@@ -81,16 +81,13 @@ public:
 	float TimeWaited = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "A_Pillar")
-	TObjectPtr<APillarElement> SpawnPillar = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "A_Pillar")
 	EPillarZonePhase PillarZonePhase = EPillarZonePhase::Phase1;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
-	float MinTimeWaitingOnPillar = 5.f;
+	float MinTimeWaitingOnPillarV1 = 5.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
-	float MaxTimeWaitingOnPillar = 15.f;
+	float MaxTimeWaitingOnPillarV1 = 15.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	float MoveSpeed = 500.f;
@@ -120,7 +117,7 @@ public:
 	TObjectPtr<USpotLightComponent> SpotLightComponent;
 
 	UFUNCTION()
-	void ShowZone() const;
+	void ShowZone(bool Tricked = false);
 
 	UFUNCTION()
 	void HideZone() const;
@@ -133,4 +130,7 @@ public:
 
 	UFUNCTION()
 	void DisableOverlappingPillars() const;
+
+	UPROPERTY()
+	bool bIsTricked = false;
 };

@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Rounds/RoundsSubsystem.h"
 #include "UI/UIManager.h"
+#include "Zone/EventZonesV2Manager.h"
 
 
 // Sets default values
@@ -152,6 +153,9 @@ void AEventsManager::EndGame()
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green,
 		                                 TEXT("END GAME"));
 	IsGameStarted = false;
+
+	if (AEvent* CurrentEvent = GetEventClassFromEventData(CurrentEventData))
+		CurrentEvent->EndEvent();
 
 	if (UIManager != nullptr && CurrentEventData != nullptr)
 		UIManager->HideWidgetForEvent(CurrentEventData->EventName);

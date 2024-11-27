@@ -99,9 +99,13 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 
 				if (Pawn->BehaviorGrapple->HookInterface->IsPillar())
 				{
-					APillarElement* Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
+					ExitTimePillarTricked = Pawn->BehaviorGrapple->ExitTimePillarTricked;
+					
+					Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
 					if (Pillar)
 					{
+						Pillar->NbrPlayersGrappling += 1;
+						if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("+= 1 nbr Player grappling : %d"), Pillar->NbrPlayersGrappling));
 						if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "set state machine");
 						Pillar->PlayerStateMachineOnPillar = StateMachine;
 					}
@@ -146,6 +150,20 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 
 			Pawn->BehaviorGrapple->IsGrappling = false;
 			Pawn->BehaviorGrapple->LastAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle;
+
+			/* ça fait crash
+			if (Pawn->BehaviorGrapple->HookInterface->IsPillar())
+			{
+				if (Pillar)
+				{
+					if (Pillar->bIsTricked)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Pillar tricked exit - disable zone"));
+						Pillar->DisableTrickedZone();
+					}
+				}
+			}
+			*/
 
 			// Get new temp angle & velocity
 			SetGrapplingVelocityAndAnglePillar(Pawn->GetWorld()->DeltaTimeSeconds);
@@ -225,9 +243,10 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 			if (Pawn->BehaviorGrapple->HookInterface->IsPillar())
 			{
-				APillarElement* Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
 				if (Pillar)
 				{
+					Pillar->NbrPlayersGrappling -= 1;
+					if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("-= 1 nbr Player grappling : %d"), Pillar->NbrPlayersGrappling));
 					if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "reset state machine");
 					Pillar->PlayerStateMachineOnPillar = nullptr;
 				}
@@ -249,6 +268,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 
 			Pawn->BehaviorGrapple->StartGrapplingCooldown();
 			CurrentTimeOnPillar = 0.f;
+			Pillar = nullptr;
 		}
 	}
 
@@ -331,7 +351,8 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 		}
 
 		// Gain points on pillar
-		GainPillarPoints();
+		if (Pillar && !Pillar->bIsTricked)
+			GainPillarPoints(DeltaTime);
 	}
 
 	// Stop movement if wall detected & return
@@ -357,6 +378,19 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 		FMath::DegreesToRadians(Pawn->BehaviorGrapple->ExitNotPillarDegrees))
 	{
 		StateMachine->ChangeState(EPlayerBallStateID::Idle);
+	}
+
+	if (Pawn->BehaviorGrapple->IsHookingPillar)
+	{
+		if (CurrentTimeOnPillar > ExitTimePillarTricked && Pillar)
+		{
+			if (Pillar->bIsTricked)
+			{
+				Pillar->DisableTrickedZone();
+				UE_LOG(LogTemp, Warning, TEXT("tricked time change state"));
+				StateMachine->ChangeState(EPlayerBallStateID::Idle);
+			}
+		}
 	}
 	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 
@@ -518,13 +552,16 @@ bool UPlayerBallStateGrappling::DetectWalls()
 	return bHasDetected;
 }
 
-void UPlayerBallStateGrappling::GainPillarPoints()
+void UPlayerBallStateGrappling::GainPillarPoints(float DeltaTime)
 {
+	if (Pillar == nullptr) return;
+	
 	if (ScoreSubsystem)
 	{
-		ScoreSubsystem->AddScore(Pawn->PlayerIndex,
-		                         CurrentTimeOnPillar * Pawn->BehaviorGrapple->PillarPointsMultiplier * Pawn->
-		                         BehaviorGrapple->PillarPointsPerSeconds);
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, "Gain pillar points");
+		
+		ScoreSubsystem->AddScore(Pawn->PlayerIndex, (CurrentTimeOnPillar * Pawn->BehaviorGrapple->PillarPointsMultiplier * Pawn->
+		                         BehaviorGrapple->PillarPointsPerSeconds * DeltaTime) / Pillar->NbrPlayersGrappling);
 	}
 	else
 	{
