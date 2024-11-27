@@ -219,13 +219,15 @@ void APillarZone::OnEndPhase1AndStartPhase2()
 	{
 		bIsInPhase1 = false;
 		bIsInPhase2 = false;
+
+		HideZone();
 		return;
 	}
 	
 	bIsInPhase1 = false;
 	bIsInPhase2 = true;
 
-	ShowZone();
+	//ShowZone(); // géré dans v2 manager
 }
 
 void APillarZone::OnEndPhase2()

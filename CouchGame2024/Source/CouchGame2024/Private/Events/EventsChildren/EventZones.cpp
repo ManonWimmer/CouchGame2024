@@ -4,6 +4,7 @@
 #include "Events/EventsChildren/EventZones.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Zone/EventZonesV2Manager.h"
 #include "Zone/PillarZone.h"
 #include "Zone/PillarZone.h"
 
@@ -33,6 +34,20 @@ void AEventZones::BeginPlay()
 			PillarZones.Add(PillarZone);
 		}
 	}
+
+	// Get Phase 2 Manager
+	TArray<AActor*> Actors2;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEventZonesV2Manager::StaticClass(), Actors2);
+    
+	if (Actors2.Num() > 0)
+	{
+		Phase2Manager = Cast<AEventZonesV2Manager>(Actors2[0]);
+	}
+	else
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1,15,FColor::Red,"EventZonesV2Manager could not be found");
+		UE_LOG(LogTemp, Warning, TEXT("No actor of class AEventZonesV2Manager found"));
+	}
 }
 
 // Called every frame
@@ -51,6 +66,8 @@ void AEventZones::SetupEventPhase1()
 		PillarZone->Bind();
 		PillarZone->HideZone();
 	}
+
+	Phase2Manager->Bind();
 	
 	OnZonesStartedEvent.Broadcast();
 }
