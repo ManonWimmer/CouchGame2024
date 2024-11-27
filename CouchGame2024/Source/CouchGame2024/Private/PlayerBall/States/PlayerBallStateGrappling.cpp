@@ -104,6 +104,8 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 					Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
 					if (Pillar)
 					{
+						Pillar->NbrPlayersGrappling += 1;
+						if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("+= 1 nbr Player grappling : %d"), Pillar->NbrPlayersGrappling));
 						if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "set state machine");
 						Pillar->PlayerStateMachineOnPillar = StateMachine;
 					}
@@ -243,6 +245,8 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			{
 				if (Pillar)
 				{
+					Pillar->NbrPlayersGrappling -= 1;
+					if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("-= 1 nbr Player grappling : %d"), Pillar->NbrPlayersGrappling));
 					if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "reset state machine");
 					Pillar->PlayerStateMachineOnPillar = nullptr;
 				}
@@ -550,13 +554,14 @@ bool UPlayerBallStateGrappling::DetectWalls()
 
 void UPlayerBallStateGrappling::GainPillarPoints(float DeltaTime)
 {
+	if (Pillar == nullptr) return;
+	
 	if (ScoreSubsystem)
 	{
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, "Gain pillar points");
 		
-		ScoreSubsystem->AddScore(Pawn->PlayerIndex,
-		                         CurrentTimeOnPillar * Pawn->BehaviorGrapple->PillarPointsMultiplier * Pawn->
-		                         BehaviorGrapple->PillarPointsPerSeconds * DeltaTime);
+		ScoreSubsystem->AddScore(Pawn->PlayerIndex, (CurrentTimeOnPillar * Pawn->BehaviorGrapple->PillarPointsMultiplier * Pawn->
+		                         BehaviorGrapple->PillarPointsPerSeconds * DeltaTime) / Pillar->NbrPlayersGrappling);
 	}
 	else
 	{
