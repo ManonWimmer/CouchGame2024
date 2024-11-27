@@ -7,6 +7,7 @@
 #include "PinballElements/PinballElement.h"
 #include "PillarElement.generated.h"
 
+class APillarZone;
 class UPlayerBallStateMachine;
 
 UCLASS()
@@ -43,10 +44,16 @@ public:
 	void DisablePillar();
 
 	UFUNCTION()
-	void EnablePillar();
+	void EnablePillar(bool Tricked, const APillarZone* Zone);
 
+	UFUNCTION()
+	void DisableTrickedZone();
+	
 	UPROPERTY()
 	bool bIsHookable = true;
+
+	UPROPERTY()
+	bool bIsTricked = false;
 
 	UPROPERTY()
 	TObjectPtr<UStaticMeshComponent> Mesh;
@@ -58,5 +65,14 @@ public:
 	TObjectPtr<UMaterialInterface> EnableMaterial;
 
 	UPROPERTY()
+	TObjectPtr<UMaterialInterface> TrickedMaterial;
+
+	UPROPERTY()
 	TObjectPtr<UPlayerBallStateMachine> PlayerStateMachineOnPillar = nullptr;
+
+	UPROPERTY()
+	const APillarZone* PillarZone = nullptr;
+
+	UPROPERTY()
+	bool bZoneDisabled = false;
 };

@@ -3,6 +3,11 @@
 
 #include "PowerUp/SpawnerPowerUp.h"
 
+#include "PowerUp/PowerUpDataType.h"
+#include "PowerUp/Type/PowerUpFreeze.h"
+#include "PowerUp/Type/PowerUpSlippery.h"
+#include "PowerUp/Type/PowerUpStrength.h"
+
 
 // Sets default values
 ASpawnerPowerUp::ASpawnerPowerUp()
@@ -28,19 +33,34 @@ void ASpawnerPowerUp::SpawnSpecificPowerUp(EPowerUpID InPowerUpID)	// Spawn this
 {
 	if (InPowerUpID == EPowerUpID::None)	return;
 
+	if (SpawnedPowerUp == nullptr)	return;
+	if (GetWorld() == nullptr)	return;
 
+	if (PowerUpDataType == nullptr)	return;
+
+	
+	
 	switch (InPowerUpID)
 	{
 	case EPowerUpID::Freeze:
-
+		if (PowerUpDataType->PowerUpTypeFreeze != nullptr)
+		{
+			SpawnedPowerUp = GetWorld()->SpawnActor<APowerUp>(PowerUpDataType->PowerUpTypeFreeze, this->GetTransform());
+		}
 		break;
 
 	case EPowerUpID::Strength:
-
+		if (PowerUpDataType->PowerUpTypeStrength != nullptr)
+		{
+			SpawnedPowerUp = GetWorld()->SpawnActor<APowerUp>(PowerUpDataType->PowerUpTypeStrength, this->GetTransform());
+		}
 		break;
 
 	case EPowerUpID::Slippery:
-			
+		if (PowerUpDataType->PowerUpTypeSlippery != nullptr)
+		{
+			SpawnedPowerUp = GetWorld()->SpawnActor<APowerUp>(PowerUpDataType->PowerUpTypeSlippery, this->GetTransform());
+		}
 		break;
 
 	default:

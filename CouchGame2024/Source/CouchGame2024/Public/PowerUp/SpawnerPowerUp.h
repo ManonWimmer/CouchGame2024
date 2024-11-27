@@ -7,6 +7,9 @@
 #include "GameFramework/Actor.h"
 #include "SpawnerPowerUp.generated.h"
 
+class UPowerUpDataType;
+class APowerUp;
+
 UCLASS()
 class COUCHGAME2024_API ASpawnerPowerUp : public AActor
 {
@@ -31,5 +34,11 @@ private:
 	void SpawnRandomPowerUp();
 
 	EPowerUpID ChooseRandomPowerUp();
+
+	UPROPERTY()
+	TObjectPtr<APowerUp> SpawnedPowerUp;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPowerUpDataType> PowerUpDataType;
 	
 };
