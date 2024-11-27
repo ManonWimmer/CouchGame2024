@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Rounds/RoundsSubsystem.h"
 #include "UI/UIManager.h"
+#include "Zone/EventZonesV2Manager.h"
 
 
 // Sets default values

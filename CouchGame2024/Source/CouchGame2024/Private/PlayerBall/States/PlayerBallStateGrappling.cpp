@@ -99,7 +99,9 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 
 				if (Pawn->BehaviorGrapple->HookInterface->IsPillar())
 				{
-					APillarElement* Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
+					ExitTimePillarTricked = Pawn->BehaviorGrapple->ExitTimePillarTricked;
+					
+					Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
 					if (Pillar)
 					{
 						if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "set state machine");
@@ -146,6 +148,20 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 
 			Pawn->BehaviorGrapple->IsGrappling = false;
 			Pawn->BehaviorGrapple->LastAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle;
+
+			/* ça fait crash
+			if (Pawn->BehaviorGrapple->HookInterface->IsPillar())
+			{
+				if (Pillar)
+				{
+					if (Pillar->bIsTricked)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Pillar tricked exit - disable zone"));
+						Pillar->DisableTrickedZone();
+					}
+				}
+			}
+			*/
 
 			// Get new temp angle & velocity
 			SetGrapplingVelocityAndAnglePillar(Pawn->GetWorld()->DeltaTimeSeconds);
@@ -225,7 +241,6 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 			if (Pawn->BehaviorGrapple->HookInterface->IsPillar())
 			{
-				APillarElement* Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
 				if (Pillar)
 				{
 					if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "reset state machine");
@@ -249,6 +264,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 
 			Pawn->BehaviorGrapple->StartGrapplingCooldown();
 			CurrentTimeOnPillar = 0.f;
+			Pillar = nullptr;
 		}
 	}
 
@@ -357,6 +373,19 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 		FMath::DegreesToRadians(Pawn->BehaviorGrapple->ExitNotPillarDegrees))
 	{
 		StateMachine->ChangeState(EPlayerBallStateID::Idle);
+	}
+
+	if (Pawn->BehaviorGrapple->IsHookingPillar)
+	{
+		if (CurrentTimeOnPillar > ExitTimePillarTricked && Pillar)
+		{
+			if (Pillar->bIsTricked)
+			{
+				Pillar->DisableTrickedZone();
+				UE_LOG(LogTemp, Warning, TEXT("tricked time change state"));
+				StateMachine->ChangeState(EPlayerBallStateID::Idle);
+			}
+		}
 	}
 	// ----- NEW VERSION - GRAPPLING BETWEEN PLAYER AND HOOK POINT ----- //
 

@@ -7,6 +7,7 @@
 #include "PlayerBallStateGrappling.generated.h"
 
 
+class APillarElement;
 class UGlobalScoreSubsystem;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -73,5 +74,11 @@ private:
 	float CurrentTimeOnPillar = 0.f;
 
 	UPROPERTY()
+	float ExitTimePillarTricked = 0.f;
+
+	UPROPERTY()
 	UGlobalScoreSubsystem* ScoreSubsystem;
+
+	UPROPERTY()
+	TObjectPtr<APillarElement> Pillar = nullptr;
 };

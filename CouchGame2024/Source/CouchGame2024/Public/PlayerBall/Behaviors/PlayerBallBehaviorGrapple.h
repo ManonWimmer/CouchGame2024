@@ -148,6 +148,9 @@ public:
 
 	UPROPERTY()
 	float ExitNotPillarDegrees = 90.f;
+	
+	UPROPERTY()
+	float ExitTimePillarTricked = 1.f;
 
 #pragma endregion
 

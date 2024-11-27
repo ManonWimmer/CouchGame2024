@@ -84,7 +84,7 @@ void APillarZone::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActo
 {
 	if (APillarElement* OverlappedPillar = Cast<APillarElement>(OtherActor))
 	{
-		OverlappedPillar->EnablePillar();
+		OverlappedPillar->EnablePillar(bIsTricked, this);
 	}
 }
 
@@ -219,13 +219,15 @@ void APillarZone::OnEndPhase1AndStartPhase2()
 	{
 		bIsInPhase1 = false;
 		bIsInPhase2 = false;
+
+		HideZone();
 		return;
 	}
 	
 	bIsInPhase1 = false;
 	bIsInPhase2 = true;
 
-	ShowZone();
+	//ShowZone(); // géré dans v2 manager
 }
 
 void APillarZone::OnEndPhase2()
@@ -255,8 +257,10 @@ void APillarZone::Bind()
 	}
 }
 
-void APillarZone::ShowZone() const
+void APillarZone::ShowZone(bool Tricked)
 {
+	bIsTricked = Tricked;
+	
 	if (SpotLightComponent) SpotLightComponent->SetVisibility(true);
 	if (SphereComponent) SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
@@ -300,9 +304,11 @@ void APillarZone::EnableOverlappingPillars() const
 	{
 		if (APillarElement* Pillar = Cast<APillarElement>(Actor))
 		{
-			Pillar->EnablePillar();
+			Pillar->EnablePillar(bIsTricked, this);
 		}
 	}
+
+	
 }
 
 void APillarZone::DisableOverlappingPillars() const
