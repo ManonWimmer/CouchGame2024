@@ -20,25 +20,45 @@ ASpawnerPowerUp::ASpawnerPowerUp()
 void ASpawnerPowerUp::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	StartRespawnCooldown();
 }
 
 // Called every frame
 void ASpawnerPowerUp::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	HandleRespawnCooldown(DeltaTime);
+}
+
+void ASpawnerPowerUp::ReceiveSpawnerPowerUpCollected()
+{
+	UnbindStartSpawnToPickPowerUp(SpawnedPowerUp);
+	StartRespawnCooldown();
+}
+
+void ASpawnerPowerUp::BindStartSpawnToPickPowerUp(APowerUp* InPowerUp)
+{
+	if (InPowerUp == nullptr)	return;
+
+	InPowerUp->OnPowerUpCollected.AddDynamic(this, &ASpawnerPowerUp::ReceiveSpawnerPowerUpCollected);
+}
+
+void ASpawnerPowerUp::UnbindStartSpawnToPickPowerUp(APowerUp* InPowerUp)
+{
+	if (InPowerUp == nullptr)	return;
+
+	InPowerUp->OnPowerUpCollected.RemoveDynamic(this, &ASpawnerPowerUp::ReceiveSpawnerPowerUpCollected);
 }
 
 void ASpawnerPowerUp::SpawnSpecificPowerUp(EPowerUpID InPowerUpID)	// Spawn this specific power up at spawner location
 {
 	if (InPowerUpID == EPowerUpID::None)	return;
 
-	if (SpawnedPowerUp == nullptr)	return;
 	if (GetWorld() == nullptr)	return;
 
 	if (PowerUpDataType == nullptr)	return;
-
-	
 	
 	switch (InPowerUpID)
 	{
@@ -65,6 +85,12 @@ void ASpawnerPowerUp::SpawnSpecificPowerUp(EPowerUpID InPowerUpID)	// Spawn this
 
 	default:
 		break;
+	}
+
+	if (SpawnedPowerUp != nullptr)
+	{
+		StopRespawnCooldown();
+		BindStartSpawnToPickPowerUp(SpawnedPowerUp);
 	}
 }
 
@@ -100,5 +126,54 @@ EPowerUpID ASpawnerPowerUp::ChooseRandomPowerUp()	// Select a random power up
 	}
 	
 	return OutPowerUpID;
+}
+
+void ASpawnerPowerUp::HandleRespawnCooldown(float DeltaTime)
+{
+	if (!bIsInCooldown)	return;
+	
+	if (CurrentRespawnCooldown >= BasicRespawnCooldown + RespawnCooldownToAdd)
+	{
+		if (CheckCanSpawnPowerUp())
+		{
+			SpawnRandomPowerUp();
+		}
+	}
+	else
+	{
+		CurrentRespawnCooldown += DeltaTime;
+	}
+}
+
+void ASpawnerPowerUp::StartRespawnCooldown()
+{
+	SpawnedPowerUp = nullptr;
+	CurrentRespawnCooldown = 0.f;
+
+	SetNewRespawnCooldownToAdd();
+	
+	bIsInCooldown = true;
+}
+
+void ASpawnerPowerUp::StopRespawnCooldown()
+{
+	bIsInCooldown = false;
+}
+
+bool ASpawnerPowerUp::CheckCanSpawnPowerUp()
+{
+	if (SpawnedPowerUp != nullptr)
+		return false;
+
+	if (CurrentRespawnCooldown < BasicRespawnCooldown + RespawnCooldownToAdd)
+		return false;
+	
+	return true;
+}
+
+void ASpawnerPowerUp::SetNewRespawnCooldownToAdd()
+{
+	float Percent = FMath::RandRange(0.f, 1.f);
+	RespawnCooldownToAdd = FMath::Lerp(MinRespawnCooldownToAdd, MaxRespawnCooldownToAdd, Percent);
 }
 
