@@ -95,6 +95,7 @@ void APillarElement::EnablePillar(bool Tricked, const APillarZone* Zone)
 	if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "Enabled");
 	bIsHookable = true;
 	bIsTricked = Tricked;
+	bZoneDisabled = false;
 
 	PillarZone = Zone;
 	
@@ -118,10 +119,15 @@ void APillarElement::EnablePillar(bool Tricked, const APillarZone* Zone)
 	}
 }
 
-void APillarElement::DisableTrickedZone() const
+void APillarElement::DisableTrickedZone()
 {
 	if (PillarZone == nullptr) return;
+	if (bZoneDisabled) return;
 
+	UE_LOG(LogTemp, Warning, TEXT("DISABLE TRICKED ZONE"));
+	
 	PillarZone->HideZone();
+	bZoneDisabled = true;
+	bIsTricked = false; 
 }
 

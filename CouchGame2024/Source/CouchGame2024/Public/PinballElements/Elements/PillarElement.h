@@ -47,7 +47,7 @@ public:
 	void EnablePillar(bool Tricked, const APillarZone* Zone);
 
 	UFUNCTION()
-	void DisableTrickedZone() const;
+	void DisableTrickedZone();
 	
 	UPROPERTY()
 	bool bIsHookable = true;
@@ -72,4 +72,7 @@ public:
 
 	UPROPERTY()
 	const APillarZone* PillarZone = nullptr;
+
+	UPROPERTY()
+	bool bZoneDisabled = false;
 };
