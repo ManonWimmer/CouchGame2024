@@ -53,6 +53,7 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
 			Pawn->BehaviorElementReactions->OnImpactAction.AddDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
+			Pawn->BehaviorElementReactions->OnTourniquetReaction.AddDynamic(this, &UPlayerBallStateGrappling::OnTourniquet);
 		}
 
 		if (Pawn->BehaviorGrapple != nullptr)
@@ -141,6 +142,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnStunned);
 			Pawn->BehaviorElementReactions->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
+			Pawn->BehaviorElementReactions->OnTourniquetReaction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnTourniquet);
 		}
 
 		if (Pawn->BehaviorGrapple != nullptr)
@@ -431,6 +433,13 @@ void UPlayerBallStateGrappling::OnImpacted(float ImpactedValue) // impact ball -
 	//UE_LOG(LogTemp, Warning, TEXT("Stop by impact in grappling") );
 
 	StateMachine->ChangeState(EPlayerBallStateID::Impact);
+}
+
+void UPlayerBallStateGrappling::OnTourniquet(float TourniquetValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Tourniquet);
 }
 
 void UPlayerBallStateGrappling::SetCable() // Same for Pillar & Not Pillar

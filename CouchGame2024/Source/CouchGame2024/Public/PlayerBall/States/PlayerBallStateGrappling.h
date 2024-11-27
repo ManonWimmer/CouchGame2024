@@ -44,6 +44,9 @@ private:
 	void OnImpacted(float ImpactedValue);
 
 	UFUNCTION()
+	void OnTourniquet(float TourniquetValue);
+	
+	UFUNCTION()
 	void SetCable();
 
 	UFUNCTION()
