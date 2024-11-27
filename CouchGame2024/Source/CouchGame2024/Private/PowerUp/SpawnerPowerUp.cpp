@@ -4,6 +4,7 @@
 #include "PowerUp/SpawnerPowerUp.h"
 
 #include "PowerUp/PowerUpDataType.h"
+#include "PowerUp/SpawnerPowerUpData.h"
 #include "PowerUp/Type/PowerUpFreeze.h"
 #include "PowerUp/Type/PowerUpSlippery.h"
 #include "PowerUp/Type/PowerUpStrength.h"
@@ -21,6 +22,8 @@ void ASpawnerPowerUp::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetupData();
+	
 	StartRespawnCooldown();
 }
 
@@ -30,6 +33,16 @@ void ASpawnerPowerUp::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	HandleRespawnCooldown(DeltaTime);
+}
+
+void ASpawnerPowerUp::SetupData()
+{
+	if (SpawnerPowerUpData == nullptr)	return;
+
+	BasicRespawnCooldown = SpawnerPowerUpData->BasicRespawnCooldown;
+	
+	MinRespawnCooldownToAdd = SpawnerPowerUpData->MinRespawnCooldownToAdd;
+	MaxRespawnCooldownToAdd = SpawnerPowerUpData->MaxRespawnCooldownToAdd;
 }
 
 void ASpawnerPowerUp::ReceiveSpawnerPowerUpCollected()

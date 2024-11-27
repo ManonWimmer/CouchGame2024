@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "SpawnerPowerUp.generated.h"
 
+class USpawnerPowerUpData;
 class UPowerUpDataType;
 class APowerUp;
 
@@ -29,6 +30,9 @@ public:
 
 
 private:
+
+	void SetupData();
+	
 	UFUNCTION()
 	void ReceiveSpawnerPowerUpCollected();
 	
@@ -61,7 +65,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UPowerUpDataType> PowerUpDataType;
-	
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USpawnerPowerUpData> SpawnerPowerUpData;
 
 	float CurrentRespawnCooldown = 0.f;
 
