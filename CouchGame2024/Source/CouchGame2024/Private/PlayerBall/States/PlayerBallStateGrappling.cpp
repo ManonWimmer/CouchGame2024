@@ -347,7 +347,8 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 		}
 
 		// Gain points on pillar
-		GainPillarPoints();
+		if (Pillar && !Pillar->bIsTricked)
+			GainPillarPoints(DeltaTime);
 	}
 
 	// Stop movement if wall detected & return
@@ -547,13 +548,15 @@ bool UPlayerBallStateGrappling::DetectWalls()
 	return bHasDetected;
 }
 
-void UPlayerBallStateGrappling::GainPillarPoints()
+void UPlayerBallStateGrappling::GainPillarPoints(float DeltaTime)
 {
 	if (ScoreSubsystem)
 	{
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, "Gain pillar points");
+		
 		ScoreSubsystem->AddScore(Pawn->PlayerIndex,
 		                         CurrentTimeOnPillar * Pawn->BehaviorGrapple->PillarPointsMultiplier * Pawn->
-		                         BehaviorGrapple->PillarPointsPerSeconds);
+		                         BehaviorGrapple->PillarPointsPerSeconds * DeltaTime);
 	}
 	else
 	{
