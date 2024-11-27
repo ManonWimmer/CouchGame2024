@@ -68,7 +68,7 @@ private:
 	float StartAngle = 0.f;
 
 	UFUNCTION()
-	void GainPillarPoints();
+	void GainPillarPoints(float DeltaTime);
 
 	UPROPERTY()
 	float CurrentTimeOnPillar = 0.f;
