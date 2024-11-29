@@ -6,6 +6,7 @@
 #include "Events/Event.h"
 #include "EventPush.generated.h"
 
+class APlayerBall;
 class UEventData;
 class UGlobalScoreSubsystem;
 
@@ -81,6 +82,24 @@ public:
 
 	UFUNCTION()
 	void SetEventData(const UEventData* Data);
+
+	UFUNCTION()
+	void ChangePlayersMaterialsToPushV2();
+
+	UFUNCTION()
+	void ResetPlayersMaterialsToInitial();
+
+	UFUNCTION()
+	void GetAllPlayers();
+
+	UPROPERTY()
+	TArray<TObjectPtr<APlayerBall>> Players;
+	
+	UPROPERTY()
+	TArray<TObjectPtr<UMaterialInterface>> PlayersInitialMaterials;
+	
+	UPROPERTY()
+	TObjectPtr<UMaterialInterface> PushV2Material;
 	
 #pragma endregion
 
