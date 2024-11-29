@@ -277,6 +277,11 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 		}
 	}
 
+	if (Pawn != nullptr)
+	{
+		Pawn->PlayGrapplingEndGamefeelEffectsBlueprint();
+	}
+	
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "End Grappling");
 }
 
