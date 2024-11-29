@@ -12,6 +12,7 @@
 #include "PlayerBall.generated.h"
 
 
+class AEventPush;
 class UPlayerPowerUpData;
 class UWidgetComponent;
 class UPlayerBallBehaviorPowerUp;
@@ -335,9 +336,12 @@ public:
 #pragma region PushEventReactions
 
 public:
-	void ReceiveImpactPushReaction(int PlayerIndexImpacting, int PlayerIndexImpacted);
+	void ReceiveImpactPushReaction(int PlayerIndexImpacting, int PlayerIndexImpacting2);
 
-	void ReceivePunchPushReaction(int PlayerIndexPushing, int PlayerIndexPushed);
+	void ReceivePunchPushReaction(int PlayerIndexPunching, int PlayerIndexPunched);
+
+	UPROPERTY()
+	TObjectPtr<AEventPush> EventPush = nullptr;
 
 #pragma endregion 
 	
