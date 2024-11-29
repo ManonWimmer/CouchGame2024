@@ -158,6 +158,8 @@ void AEventPush::OnPunch(int PlayerIndexPushing, int PlayerIndexPushed)
 
 void AEventPush::CheckAddScoreOnDeath(int PlayerIndexDeath)
 {
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("check death zone player : %i"), PlayerIndexDeath));
+	
 	ScoreSubsystem->AddScore(PlayerIndexDeath, -1);
 	
 	// Impact

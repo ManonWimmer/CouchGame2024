@@ -4,6 +4,7 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 
 #include "Components/SphereComponent.h"
+#include "Events/EventsChildren/EventPush.h"
 #include "PinballElements/PinballElement.h"
 #include "PinballElements/Elements/RailElement.h"
 #include "PlayerBall/PlayerBall.h"
@@ -147,7 +148,7 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 		switch (OtherElement->GetElementID())
 		{
 			case EPinballElementID::DeathZone:
-				// todo: check add score on death OtherElement - event push in player
+				if (GetPlayerBall()->EventPush != nullptr) GetPlayerBall()->EventPush->CheckAddScoreOnDeath(GetPlayerBall()->PlayerIndex);
 				ReceiveDeathReaction();
 				OtherElement->TriggerElement();
 				break;
