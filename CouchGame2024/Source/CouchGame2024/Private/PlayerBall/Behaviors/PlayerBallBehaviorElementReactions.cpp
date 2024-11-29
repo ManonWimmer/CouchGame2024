@@ -4,6 +4,7 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 
 #include "Components/SphereComponent.h"
+#include "Events/EventsChildren/EventPush.h"
 #include "PinballElements/PinballElement.h"
 #include "PinballElements/Elements/RailElement.h"
 #include "PlayerBall/PlayerBall.h"
@@ -119,8 +120,8 @@ void UPlayerBallBehaviorElementReactions::OnCollisionHit(UPrimitiveComponent* Hi
 				ReceiveBumperReaction(OtherElement, Hit.ImpactNormal);
 				return;
 			case EPinballElementID::Mole:
-				ReceiveBumperReaction(OtherElement, Hit.ImpactNormal);
 				OtherElement->TriggerElementWithPlayer(GetPlayerBall());
+				ReceiveBumperReaction(OtherElement, Hit.ImpactNormal);
 				return;
 			case EPinballElementID::Flipper:
 				return;
@@ -147,6 +148,7 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 		switch (OtherElement->GetElementID())
 		{
 			case EPinballElementID::DeathZone:
+				if (GetPlayerBall()->EventPush != nullptr) GetPlayerBall()->EventPush->CheckAddScoreOnDeath(GetPlayerBall()->PlayerIndex);
 				ReceiveDeathReaction();
 				OtherElement->TriggerElement();
 				break;

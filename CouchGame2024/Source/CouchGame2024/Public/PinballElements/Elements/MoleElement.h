@@ -37,8 +37,11 @@ public:
 	void SpawnMole() const;
 
 	UFUNCTION()
-	void DespawnMole() const;
+	void DespawnMole();
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnDespawnMole"))
+	void ReceiveOnDespawnMole();
+	
 	UPROPERTY()
 	int MoleToPoints = 200;
 

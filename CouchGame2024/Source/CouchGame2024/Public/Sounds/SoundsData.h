@@ -89,7 +89,18 @@ public:
 	
 #pragma endregion 
 
+#pragma region Element Reactions
+	
 	UPROPERTY(EditAnywhere, Category = "Element Bumper")
 	TObjectPtr<UMetaSoundSource> BumperImpact;
 
+
+	UPROPERTY(EditAnywhere, Category = "Element Rail")
+	TObjectPtr<UMetaSoundSource> RailEnter;
+
+	UPROPERTY(EditAnywhere, Category = "Element Rail")
+	TObjectPtr<UMetaSoundSource> RailExit;
+	
+#pragma endregion 
+	
 };

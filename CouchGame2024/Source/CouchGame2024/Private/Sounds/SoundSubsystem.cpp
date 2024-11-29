@@ -188,6 +188,26 @@ void USoundSubsystem::PlayBumperImpactSound()
 	}
 }
 
+void USoundSubsystem::PlayRailEnterSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->RailEnter == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->RailEnter);
+	}
+}
+
+void USoundSubsystem::PlayRailExitSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->RailExit == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->RailExit);
+	}
+}
+
 void USoundSubsystem::InitSoundSubsystem()
 {
 	const USoundsSettings* SoundsSettings = GetDefault<USoundsSettings>();

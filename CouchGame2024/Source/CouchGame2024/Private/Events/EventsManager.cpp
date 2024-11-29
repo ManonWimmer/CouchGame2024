@@ -10,6 +10,7 @@
 #include "Events/EventsChildren/EventPush.h"
 #include "Events/EventsChildren/EventZones.h"
 #include "Kismet/GameplayStatics.h"
+#include "PlayerBall/PlayerBall.h"
 #include "Rounds/RoundsSubsystem.h"
 #include "UI/UIManager.h"
 #include "Zone/EventZonesV2Manager.h"
@@ -308,8 +309,8 @@ void AEventsManager::SetupEventTimes()
 void AEventsManager::CreateEvents()
 {
 	// Duck
-	AEventDuck* EventDuck = GetWorld()->SpawnActor<AEventDuck>();
-	UEventData* EventDuckData = GetEventDataFromName(EEventName::Duck);
+	const TObjectPtr<AEventDuck> EventDuck = GetWorld()->SpawnActor<AEventDuck>();
+	const TObjectPtr<UEventData> EventDuckData = GetEventDataFromName(EEventName::Duck);
 	if (EventDuck && EventDuckData)
 	{
 		RegisterEvent(EventDuckData, EventDuck);
@@ -318,8 +319,8 @@ void AEventsManager::CreateEvents()
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO DUCK EVENT AND/OR DATA");
 
 	// Zones
-	AEvent* EventZones = GetWorld()->SpawnActor<AEventZones>();
-	UEventData* EventZonesData = GetEventDataFromName(EEventName::Zones);
+	const TObjectPtr<AEvent> EventZones = GetWorld()->SpawnActor<AEventZones>();
+	const TObjectPtr<UEventData> EventZonesData = GetEventDataFromName(EEventName::Zones);
 	if (EventZones && EventZonesData)
 	{
 		RegisterEvent(EventZonesData, EventZones);
@@ -328,9 +329,9 @@ void AEventsManager::CreateEvents()
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO ZONES EVENT AND/OR DATA");
 
 	// Mole
-	AEvent* EventMole = GetWorld()->SpawnActor<AEventMole>();
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "create mole event");
-	UEventData* EventMoleData = GetEventDataFromName(EEventName::Mole);
+	const TObjectPtr<AEvent> EventMole = GetWorld()->SpawnActor<AEventMole>();
+	const TObjectPtr<UEventData> EventMoleData = GetEventDataFromName(EEventName::Mole);
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "create mole event");
 	if (EventMole && EventMoleData)
 	{
 		RegisterEvent(EventMoleData, EventMole);
@@ -339,11 +340,22 @@ void AEventsManager::CreateEvents()
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO MOLE EVENT AND/OR DATA");
 
 	// Push
-	AEvent* EventPush = GetWorld()->SpawnActor<AEventPush>();
-	UEventData* EventPushData = GetEventDataFromName(EEventName::Push);
+	const TObjectPtr<AEvent> EventPush = GetWorld()->SpawnActor<AEventPush>();
+	const TObjectPtr<UEventData> EventPushData = GetEventDataFromName(EEventName::Push);
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, "CREATE EVENT PUSH");
 	if (EventPush && EventPushData)
 	{
 		RegisterEvent(EventPushData, EventPush);
+
+		TArray<TObjectPtr<AActor>> Actors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerBall::StaticClass(), Actors);
+
+		for (TObjectPtr<AActor> Actor : Actors)
+		{
+			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, "SET EVENT PUSH IN PLAYER BALL FROM EVENTS MANAGER");
+			const TObjectPtr<APlayerBall> PlayerBall = Cast<APlayerBall>(Actor);
+			PlayerBall->EventPush = Cast<AEventPush>(EventPush);
+		}
 	}
 	else
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO PUSH EVENT AND/OR DATA");
