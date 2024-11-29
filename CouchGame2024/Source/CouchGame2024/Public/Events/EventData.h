@@ -55,4 +55,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event", meta = (EditCondition = "EventName == EEventName::Duck", Tooltip = "Que pour l'event Duck"))
 	int DuckToPoints = 200;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event", meta = (EditCondition = "EventName == EEventName::Push", Tooltip = "Que pour l'event Push"))
+	float TimePushedLimit = 3.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event", meta = (EditCondition = "EventName == EEventName::Push", Tooltip = "Que pour l'event Push"))
+	int LoseScoreOnDeathZone = -1;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Event", meta = (EditCondition = "EventName == EEventName::Push", Tooltip = "Que pour l'event Push"))
+	int GainScoreOnPush = 5;
 };
