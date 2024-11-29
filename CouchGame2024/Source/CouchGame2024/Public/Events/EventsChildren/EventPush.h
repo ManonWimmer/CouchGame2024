@@ -6,6 +6,8 @@
 #include "Events/Event.h"
 #include "EventPush.generated.h"
 
+class UGlobalScoreSubsystem;
+
 UCLASS()
 class COUCHGAME2024_API AEventPush : public AEvent
 {
@@ -72,6 +74,12 @@ public:
 
 	UPROPERTY()
 	float TimePushedLimit = 3.0f;
+
+	UPROPERTY()
+	TObjectPtr<UGlobalScoreSubsystem> ScoreSubsystem = nullptr;
+
+	UPROPERTY()
+	int GainScoreOnPush = 5;
 	
 #pragma endregion
 

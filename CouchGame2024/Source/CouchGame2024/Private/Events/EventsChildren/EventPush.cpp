@@ -3,6 +3,8 @@
 
 #include "Events/EventsChildren/EventPush.h"
 
+#include "Score/GlobalScoreSubsystem.h"
+
 
 // Sets default values
 AEventPush::AEventPush()
@@ -15,7 +17,8 @@ AEventPush::AEventPush()
 void AEventPush::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
 }
 
 // Called every frame
@@ -155,7 +158,7 @@ void AEventPush::OnPunch(int PlayerIndexPushing, int PlayerIndexPushed)
 
 void AEventPush::CheckAddScoreOnDeath(int PlayerIndexDeath)
 {
-	// todo: add score -1 player
+	ScoreSubsystem->AddScore(PlayerIndexDeath, -1);
 	
 	// Impact
 	for (const TTuple<int, int> Element : LastPlayerIndexImpactingPlayerIndex)
@@ -165,7 +168,7 @@ void AEventPush::CheckAddScoreOnDeath(int PlayerIndexDeath)
 		
 		if (PlayerIndexImpacting != -1 && TimeSinceLastPlayerIndexImpacted[PlayerIndexImpacted] > 0)
 		{
-			// todo: add score to impacting
+			ScoreSubsystem->AddScore(PlayerIndexImpacting, GainScoreOnPush);
 		}
 	}
 
@@ -177,7 +180,7 @@ void AEventPush::CheckAddScoreOnDeath(int PlayerIndexDeath)
 		
 		if (PlayerIndexPunching != -1 && TimeSinceLastPlayerIndexPunched[PlayerIndexPunched] > 0)
 		{
-			// todo: add score punched
+			ScoreSubsystem->AddScore(PlayerIndexPunching, GainScoreOnPush);
 		}
 	}
 }
