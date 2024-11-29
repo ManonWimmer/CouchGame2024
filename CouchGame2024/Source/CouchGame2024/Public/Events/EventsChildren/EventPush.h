@@ -45,6 +45,33 @@ public:
 	virtual void TickPhase2() override;
 	
 	virtual void EndEvent() override;
+
+	UFUNCTION()
+	void OnImpact(int PlayerIndexImpacting, int PlayerIndexImpacting2);
+
+	UFUNCTION()
+	void CheckAddTimeLastPushed(float DeltaTime);
+
+	UPROPERTY()
+	TMap<int, int> LastPlayerIndexImpactingPlayerIndex; // Player - Last Impacting (-1 if none or time > max)
+
+	UPROPERTY()
+	TMap<int, float> TimeSinceLastPlayerIndexImpacted; // Player Impacted - Time
+	
+	UFUNCTION()
+	void OnPunch(int PlayerIndexPushing, int PlayerIndexPushed);
+
+	UPROPERTY()
+	TMap<int, int> LastPlayerIndexPunchingPlayerIndex; // Player Pushed - Last Pushing (-1 if none or time > max)
+
+	UPROPERTY()
+	TMap<int, float> TimeSinceLastPlayerIndexPunched; // Player Pushed - Time
+
+	UFUNCTION()
+	void CheckAddScoreOnDeath(int PlayerIndexDeath);
+
+	UPROPERTY()
+	float TimePushedLimit = 3.0f;
 	
 #pragma endregion
 
