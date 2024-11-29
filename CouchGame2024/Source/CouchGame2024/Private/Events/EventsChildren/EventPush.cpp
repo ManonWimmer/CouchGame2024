@@ -127,6 +127,7 @@ void AEventPush::OnImpact(int PlayerIndexImpacting, int PlayerIndexImpacting2)
 	if (PlayerIndexImpacting == PlayerIndexImpacting2) return;
 
 	UE_LOG(LogTemp, Warning, TEXT("On Impact, %i, %i"), PlayerIndexImpacting, PlayerIndexImpacting2);
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("On Impact : %i, %i"), PlayerIndexImpacting, PlayerIndexImpacting2));
 	
 	LastPlayerIndexPushedPlayerIndex[PlayerIndexImpacting] = PlayerIndexImpacting2;
 	TimeSinceLastPlayerIndexPushed[PlayerIndexImpacting] = 0;
@@ -141,6 +142,7 @@ void AEventPush::OnPunch(int PlayerIndexPushing, int PlayerIndexPushed)
 	if (PlayerIndexPushing == PlayerIndexPushed) return;
 
 	UE_LOG(LogTemp, Warning, TEXT("On Punch, %i, %i"), PlayerIndexPushing, PlayerIndexPushed);
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("On Punch : %i, %i"), PlayerIndexPushing, PlayerIndexPushed));
 	
 	LastPlayerIndexPushedPlayerIndex[PlayerIndexPushed] = PlayerIndexPushing;
 	TimeSinceLastPlayerIndexPushed[PlayerIndexPushed] = 0;
