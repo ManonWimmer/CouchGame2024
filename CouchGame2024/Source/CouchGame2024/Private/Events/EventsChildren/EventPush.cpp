@@ -24,3 +24,42 @@ void AEventPush::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void AEventPush::SetupEventPhase1()
+{
+	Super::SetupEventPhase1();
+}
+
+void AEventPush::TriggerEventPhase1()
+{
+	Super::TriggerEventPhase1();
+
+	OnPushStartedEvent.Broadcast();
+}
+
+void AEventPush::TriggerEventPhase2()
+{
+	Super::TriggerEventPhase2();
+
+	// todo: Set Material to the same one
+}
+
+void AEventPush::TickPhase1()
+{
+	Super::TickPhase1();
+}
+
+void AEventPush::TickPhase2()
+{
+	Super::TickPhase2();
+}
+
+void AEventPush::EndEvent()
+{
+	Super::EndEvent();
+
+	// todo: Reset Material as before
+	
+	OnPushEndedEvent.Broadcast();
+}
+
+
