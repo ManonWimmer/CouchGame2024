@@ -67,7 +67,7 @@ void AEventZones::SetupEventPhase1()
 		PillarZone->HideZone();
 	}
 
-	Phase2Manager->Bind();
+	if (Phase2Manager) Phase2Manager->Bind();
 	
 	OnZonesStartedEvent.Broadcast();
 }

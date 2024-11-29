@@ -96,15 +96,6 @@ void AEventPush::EndEvent()
 	OnPushEndedEvent.Broadcast();
 }
 
-void AEventPush::OnImpact(int PlayerIndexImpacting, int PlayerIndexImpacting2)
-{
-	LastPlayerIndexImpactingPlayerIndex[PlayerIndexImpacting] = PlayerIndexImpacting2;
-	TimeSinceLastPlayerIndexImpacted[PlayerIndexImpacting] = 0;
-	
-	LastPlayerIndexImpactingPlayerIndex[PlayerIndexImpacting2] = PlayerIndexImpacting;
-	TimeSinceLastPlayerIndexImpacted[PlayerIndexImpacting2] = 0;
-}
-
 void AEventPush::CheckAddTimeLastPushed(float DeltaTime)
 {
 	// Impact
@@ -150,14 +141,29 @@ void AEventPush::CheckAddTimeLastPushed(float DeltaTime)
 	}
 }
 
+void AEventPush::OnImpact(int PlayerIndexImpacting, int PlayerIndexImpacting2)
+{
+	if (!bInTickPhase1 && !bInTickPhase2) return;
+	
+	LastPlayerIndexImpactingPlayerIndex[PlayerIndexImpacting] = PlayerIndexImpacting2;
+	TimeSinceLastPlayerIndexImpacted[PlayerIndexImpacting] = 0;
+	
+	LastPlayerIndexImpactingPlayerIndex[PlayerIndexImpacting2] = PlayerIndexImpacting;
+	TimeSinceLastPlayerIndexImpacted[PlayerIndexImpacting2] = 0;
+}
+
 void AEventPush::OnPunch(int PlayerIndexPushing, int PlayerIndexPushed)
 {
+	if (!bInTickPhase1 && !bInTickPhase2) return;
+	
 	LastPlayerIndexPunchingPlayerIndex[PlayerIndexPushed] = PlayerIndexPushing;
 	TimeSinceLastPlayerIndexPunched[PlayerIndexPushed] = 0;
 }
 
 void AEventPush::CheckAddScoreOnDeath(int PlayerIndexDeath)
 {
+	if (!bInTickPhase1 && !bInTickPhase2) return;
+	
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("check death zone player : %i"), PlayerIndexDeath));
 	
 	ScoreSubsystem->AddScore(PlayerIndexDeath, -1);
