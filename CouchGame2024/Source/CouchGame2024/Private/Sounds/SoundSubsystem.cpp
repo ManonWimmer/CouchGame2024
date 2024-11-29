@@ -58,6 +58,36 @@ void USoundSubsystem::PlayGoldenDuckPickSound()
 	}
 }
 
+void USoundSubsystem::PlayMoleImpactSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->MoleImpactSound == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->MoleImpactSound);
+	}
+}
+
+void USoundSubsystem::PlayMoleInSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->MoleInSound == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->MoleInSound);
+	}
+}
+
+void USoundSubsystem::PlayMoleOutSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->MoleOutSound == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->MoleOutSound);
+	}
+}
+
 void USoundSubsystem::PlayGrapplingGrabSound()
 {
 	if (SoundsData == nullptr)	return;

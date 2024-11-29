@@ -34,11 +34,17 @@ public:
 	FMoleCollected OnMoleCollected;
 
 	UFUNCTION()
-	void SpawnMole() const;
+	void SpawnMole();
 
 	UFUNCTION()
 	void DespawnMole();
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnImpactedByPlayer"))
+	void ReceiveImpactedByPlayer();
+	
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnSpawnMole"))
+	void ReceiveOnSpawnMole();
+	
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnDespawnMole"))
 	void ReceiveOnDespawnMole();
 	

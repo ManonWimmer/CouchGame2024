@@ -19,6 +19,7 @@ class COUCHGAME2024_API USoundsData : public UDataAsset
 
 
 public:
+#pragma region Events Sounds
 
 #pragma region DuckSounds
 	
@@ -36,6 +37,22 @@ public:
 
 #pragma endregion
 
+#pragma region MoleSounds
+
+	UPROPERTY(EditAnywhere, Category = "Sounds Mole")
+	TObjectPtr<UMetaSoundSource> MoleImpactSound;
+	
+	UPROPERTY(EditAnywhere, Category = "Sounds Mole")
+	TObjectPtr<UMetaSoundSource> MoleInSound;
+
+	UPROPERTY(EditAnywhere, Category = "Sounds Mole")
+	TObjectPtr<UMetaSoundSource> MoleOutSound;
+
+#pragma endregion 
+	
+#pragma endregion
+
+	
 #pragma region GrapplingSounds
 
 	UPROPERTY(EditAnywhere, Category = "Sounds Grappling")
