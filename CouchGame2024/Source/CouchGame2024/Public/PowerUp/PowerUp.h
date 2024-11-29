@@ -10,6 +10,8 @@
 
 class USphereComponent;
 
+class UJuicinessAnimData;
+
 UCLASS()
 class COUCHGAME2024_API APowerUp : public AActor, public IRoundsResetable
 {
@@ -61,5 +63,10 @@ public:
 	virtual void ResetObject() override;
 
 #pragma endregion
+
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UJuicinessAnimData> PowerUpAnimData;
 	
 };

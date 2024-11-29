@@ -7,6 +7,8 @@
 #include "PinballElements/PinballElement.h"
 #include "MoleElement.generated.h"
 
+class UJuicinessAnimData;
+
 UCLASS()
 class COUCHGAME2024_API AMoleElement : public APinballElement
 {
@@ -77,7 +79,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	float Height = 300.f;
+
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UJuicinessAnimData> MoleAnimData;
 private:
 
 	UFUNCTION()
@@ -85,4 +90,5 @@ private:
 
 	UPROPERTY()
 	bool bHasBeenHitByPlayer = false;
+
 };

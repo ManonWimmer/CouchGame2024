@@ -28,4 +28,5 @@ public:
 	virtual EPowerUpID GetPowerUpID() const override;
 
 	virtual void TriggerPowerUp(int PlayerIndex) override;
+	
 };
