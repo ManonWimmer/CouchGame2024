@@ -55,22 +55,19 @@ public:
 	void CheckAddTimeLastPushed(float DeltaTime);
 
 	UPROPERTY()
-	TMap<int, int> LastPlayerIndexImpactingPlayerIndex; // Player - Last Impacting (-1 if none or time > max)
+	TMap<int, int> LastPlayerIndexPushedPlayerIndex; // Player Pushed - Last Pushing (-1 if none or time > max)
 
 	UPROPERTY()
-	TMap<int, float> TimeSinceLastPlayerIndexImpacted; // Player Impacted - Time
+	TMap<int, float> TimeSinceLastPlayerIndexPushed; // Player Pushed - Time
 	
 	UFUNCTION()
 	void OnPunch(int PlayerIndexPushing, int PlayerIndexPushed);
 
-	UPROPERTY()
-	TMap<int, int> LastPlayerIndexPunchingPlayerIndex; // Player Pushed - Last Pushing (-1 if none or time > max)
-
-	UPROPERTY()
-	TMap<int, float> TimeSinceLastPlayerIndexPunched; // Player Pushed - Time
-
 	UFUNCTION()
 	void CheckAddScoreOnDeath(int PlayerIndexDeath);
+
+	UFUNCTION()
+	int GetPlayerPushedIndexFromPlayerPushingIndex(int PlayerPushingIndex);
 
 	UPROPERTY()
 	float TimePushedLimit = 3.0f;
