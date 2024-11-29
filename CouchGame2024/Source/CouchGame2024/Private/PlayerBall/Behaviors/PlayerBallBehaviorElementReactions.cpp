@@ -147,6 +147,7 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 		switch (OtherElement->GetElementID())
 		{
 			case EPinballElementID::DeathZone:
+				// player lose score
 				ReceiveDeathReaction();
 				OtherElement->TriggerElement();
 				break;
