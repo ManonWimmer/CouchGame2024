@@ -18,6 +18,8 @@ void AEventPush::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UE_LOG(LogTemp, Warning, TEXT("Begin play push"));
+
 	ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
 }
 
@@ -34,38 +36,43 @@ void AEventPush::Tick(float DeltaTime)
 
 void AEventPush::SetupEventPhase1()
 {
+	UE_LOG(LogTemp, Warning, TEXT("SetupEventPhase1 push"));
 	Super::SetupEventPhase1();
 
 	#pragma region Reset / Set TMaps
-	LastPlayerIndexImpactingPlayerIndex.Reset();
-	LastPlayerIndexImpactingPlayerIndex[0] = -1;
-	LastPlayerIndexImpactingPlayerIndex[1] = -1;
-	LastPlayerIndexImpactingPlayerIndex[2] = -1;
-	LastPlayerIndexImpactingPlayerIndex[3] = -1;
+	if (LastPlayerIndexImpactingPlayerIndex.Num() > 0) LastPlayerIndexImpactingPlayerIndex.Empty();
+	LastPlayerIndexImpactingPlayerIndex.Add(0,-1);
+	LastPlayerIndexImpactingPlayerIndex.Add(1,-1);
+	LastPlayerIndexImpactingPlayerIndex.Add(2,-1);
+	LastPlayerIndexImpactingPlayerIndex.Add(3,-1);
 
-	TimeSinceLastPlayerIndexImpacted.Reset();
-	LastPlayerIndexImpactingPlayerIndex[0] = 0;
-	LastPlayerIndexImpactingPlayerIndex[1] = 0;
-	LastPlayerIndexImpactingPlayerIndex[2] = 0;
-	LastPlayerIndexImpactingPlayerIndex[3] = 0;
+	if (TimeSinceLastPlayerIndexImpacted.Num() > 0) TimeSinceLastPlayerIndexImpacted.Empty();
+	TimeSinceLastPlayerIndexImpacted.Empty();
+	TimeSinceLastPlayerIndexImpacted.Add(0,0);
+	TimeSinceLastPlayerIndexImpacted.Add(1,0);
+	TimeSinceLastPlayerIndexImpacted.Add(2,0);
+	TimeSinceLastPlayerIndexImpacted.Add(3,0);
 
-	LastPlayerIndexPunchingPlayerIndex.Reset();
-	LastPlayerIndexPunchingPlayerIndex[0] = -1;
-	LastPlayerIndexPunchingPlayerIndex[1] = -1;
-	LastPlayerIndexPunchingPlayerIndex[2] = -1;
-	LastPlayerIndexPunchingPlayerIndex[3] = -1;
+	if (LastPlayerIndexPunchingPlayerIndex.Num() > 0) LastPlayerIndexPunchingPlayerIndex.Empty();
+	LastPlayerIndexPunchingPlayerIndex.Add(0,-1);
+	LastPlayerIndexPunchingPlayerIndex.Add(1,-1);
+	LastPlayerIndexPunchingPlayerIndex.Add(2,-1);
+	LastPlayerIndexPunchingPlayerIndex.Add(3,-1);
 
-	TimeSinceLastPlayerIndexPunched.Reset();
-	TimeSinceLastPlayerIndexPunched[0] = 0;
-	TimeSinceLastPlayerIndexPunched[1] = 0;
-	TimeSinceLastPlayerIndexPunched[2] = 0;
-	TimeSinceLastPlayerIndexPunched[3] = 0;
+	if (TimeSinceLastPlayerIndexPunched.Num() > 0) TimeSinceLastPlayerIndexPunched.Empty();
+	TimeSinceLastPlayerIndexPunched.Add(0,0);
+	TimeSinceLastPlayerIndexPunched.Add(1,0);
+	TimeSinceLastPlayerIndexPunched.Add(2,0);
+	TimeSinceLastPlayerIndexPunched.Add(3,0);
 	#pragma endregion
+
+	UE_LOG(LogTemp, Warning, TEXT("End setup push"));
 }
 
 void AEventPush::TriggerEventPhase1()
 {
 	Super::TriggerEventPhase1();
+	UE_LOG(LogTemp, Warning, TEXT("TriggerEventPhase1 push"));
 
 	OnPushStartedEvent.Broadcast();
 }
@@ -98,14 +105,22 @@ void AEventPush::EndEvent()
 
 void AEventPush::CheckAddTimeLastPushed(float DeltaTime)
 {
+	UE_LOG(LogTemp, Warning, TEXT("CheckAddTimeLastPushed push"));
+
+	UE_LOG(LogTemp, Warning, TEXT("SetupEventPhase1 push - LastPlayerIndexImpactingPlayerIndex: %s"), *FString::JoinBy(LastPlayerIndexImpactingPlayerIndex, TEXT(","), [](const TTuple<int, int>& Pair) { return FString::Printf(TEXT("(%d,%d)"), Pair.Key, Pair.Value); }));
+
+	
 	// Impact
 	for (const TTuple<int, int> Element : LastPlayerIndexImpactingPlayerIndex)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Foreach LastPlayerIndexImpactingPlayerIndex"));
 		const int PlayerIndexImpacted = Element.Key;
 		const int PlayerIndexImpacting = Element.Value;
+		UE_LOG(LogTemp, Warning, TEXT("Impacted : %i, Impacting : %i"), PlayerIndexImpacted, PlayerIndexImpacting);
 
 		if (PlayerIndexImpacting != -1)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("PlayerImpacting != -1"));
 			// Add time
 			TimeSinceLastPlayerIndexImpacted[PlayerIndexImpacted] += DeltaTime;
 
@@ -122,11 +137,14 @@ void AEventPush::CheckAddTimeLastPushed(float DeltaTime)
 	// Punch
 	for (const TTuple<int, int> Element : LastPlayerIndexPunchingPlayerIndex)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Foreach LastPlayerIndexPunchingPlayerIndex"));
 		const int PlayerIndexPunched = Element.Key;
 		const int PlayerIndexPunching = Element.Value;
+		UE_LOG(LogTemp, Warning, TEXT("Punched : %i, Punching : %i"), PlayerIndexPunched, PlayerIndexPunching);
 
 		if (PlayerIndexPunching != -1)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("PlayerPunching != -1"));
 			// Add time
 			TimeSinceLastPlayerIndexImpacted[PlayerIndexPunched] += DeltaTime;
 
@@ -144,6 +162,9 @@ void AEventPush::CheckAddTimeLastPushed(float DeltaTime)
 void AEventPush::OnImpact(int PlayerIndexImpacting, int PlayerIndexImpacting2)
 {
 	if (!bInTickPhase1 && !bInTickPhase2) return;
+	if (PlayerIndexImpacting == PlayerIndexImpacting2) return;
+
+	UE_LOG(LogTemp, Warning, TEXT("On Impact, %i, %i"), PlayerIndexImpacting, PlayerIndexImpacting2);
 	
 	LastPlayerIndexImpactingPlayerIndex[PlayerIndexImpacting] = PlayerIndexImpacting2;
 	TimeSinceLastPlayerIndexImpacted[PlayerIndexImpacting] = 0;
@@ -155,6 +176,9 @@ void AEventPush::OnImpact(int PlayerIndexImpacting, int PlayerIndexImpacting2)
 void AEventPush::OnPunch(int PlayerIndexPushing, int PlayerIndexPushed)
 {
 	if (!bInTickPhase1 && !bInTickPhase2) return;
+	if (PlayerIndexPushing == PlayerIndexPushed) return;
+
+	UE_LOG(LogTemp, Warning, TEXT("On Punch, %i, %i"), PlayerIndexPushing, PlayerIndexPushed);
 	
 	LastPlayerIndexPunchingPlayerIndex[PlayerIndexPushed] = PlayerIndexPushing;
 	TimeSinceLastPlayerIndexPunched[PlayerIndexPushed] = 0;
@@ -163,6 +187,8 @@ void AEventPush::OnPunch(int PlayerIndexPushing, int PlayerIndexPushed)
 void AEventPush::CheckAddScoreOnDeath(int PlayerIndexDeath)
 {
 	if (!bInTickPhase1 && !bInTickPhase2) return;
+
+	UE_LOG(LogTemp, Warning, TEXT("Check add score on death"));
 	
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("check death zone player : %i"), PlayerIndexDeath));
 	
