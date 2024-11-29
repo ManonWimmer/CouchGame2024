@@ -356,6 +356,8 @@ void AEventsManager::CreateEvents()
 			const TObjectPtr<APlayerBall> PlayerBall = Cast<APlayerBall>(Actor);
 			PlayerBall->EventPush = Cast<AEventPush>(EventPush);
 		}
+
+		Cast<AEventPush>(EventPush)->SetEventData(EventPushData);
 	}
 	else
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO PUSH EVENT AND/OR DATA");

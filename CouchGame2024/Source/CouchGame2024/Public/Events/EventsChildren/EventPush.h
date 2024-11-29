@@ -6,6 +6,7 @@
 #include "Events/Event.h"
 #include "EventPush.generated.h"
 
+class UEventData;
 class UGlobalScoreSubsystem;
 
 UCLASS()
@@ -66,17 +67,20 @@ public:
 	UFUNCTION()
 	void CheckAddScoreOnDeath(int PlayerIndexDeath);
 
-	UFUNCTION()
-	int GetPlayerPushedIndexFromPlayerPushingIndex(int PlayerPushingIndex);
-
-	UPROPERTY()
-	float TimePushedLimit = 3.0f;
-
 	UPROPERTY()
 	TObjectPtr<UGlobalScoreSubsystem> ScoreSubsystem = nullptr;
-
+	
+	UPROPERTY()
+	float TimePushedLimit = 3.0f;
+	
+	UPROPERTY()
+	int LoseScoreOnDeathZone = -1;
+	
 	UPROPERTY()
 	int GainScoreOnPush = 5;
+
+	UFUNCTION()
+	void SetEventData(const UEventData* Data);
 	
 #pragma endregion
 

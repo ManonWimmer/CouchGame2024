@@ -3,6 +3,7 @@
 
 #include "Events/EventsChildren/EventPush.h"
 
+#include "Events/EventData.h"
 #include "Score/GlobalScoreSubsystem.h"
 
 
@@ -155,7 +156,7 @@ void AEventPush::CheckAddScoreOnDeath(int PlayerIndexDeath)
 	UE_LOG(LogTemp, Warning, TEXT("Check add score on death"));
 	
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("Remove 1 score : %i"), PlayerIndexDeath));
-	ScoreSubsystem->AddScore(PlayerIndexDeath, -1);
+	ScoreSubsystem->AddScore(PlayerIndexDeath, LoseScoreOnDeathZone);
 
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("Time last push : %f"), TimeSinceLastPlayerIndexPushed[PlayerIndexDeath]));
 	if (TimeSinceLastPlayerIndexPushed[PlayerIndexDeath] > 0)
@@ -165,17 +166,13 @@ void AEventPush::CheckAddScoreOnDeath(int PlayerIndexDeath)
 	}
 }
 
-int AEventPush::GetPlayerPushedIndexFromPlayerPushingIndex(int PlayerPushingIndex)
+void AEventPush::SetEventData(const UEventData* Data)
 {
-	for (TTuple<int, int> Element : LastPlayerIndexPushedPlayerIndex)
-	{
-		int PlayerPushed = Element.Key;
-		int PlayerPushing = Element.Value;
-
-		if (PlayerPushing == PlayerPushingIndex) return PlayerPushing;
-	}
-
-	return -1;
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, "Set Push Data");
+	
+	TimePushedLimit = Data->TimePushedLimit;
+	LoseScoreOnDeathZone = Data->LoseScoreOnDeathZone;
+	GainScoreOnPush = Data->GainScoreOnPush;
 }
 
 
