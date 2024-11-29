@@ -33,15 +33,19 @@ void UGlobalScoreSubsystem::AddScore(int PlayerIndex, int Value)
 	{
 		case 0:
 			Player0Score += Value;
+			Player0Score = FMath::Clamp(Player0Score, 0, INT32_MAX);
 			break;
 		case 1:
 			Player1Score += Value;
+			Player1Score = FMath::Clamp(Player1Score, 0, INT32_MAX);
 			break;
 		case 2:
 			Player2Score += Value;
+			Player2Score = FMath::Clamp(Player2Score, 0, INT32_MAX);	
 			break;
 		case 3:
 			Player3Score += Value;
+			Player3Score = FMath::Clamp(Player3Score, 0, INT32_MAX);
 			break;
 		default:
 			break;

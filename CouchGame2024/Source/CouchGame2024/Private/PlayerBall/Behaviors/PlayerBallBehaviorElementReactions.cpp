@@ -147,6 +147,7 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 		switch (OtherElement->GetElementID())
 		{
 			case EPinballElementID::DeathZone:
+				// todo: check add score on death OtherElement - event push
 				ReceiveDeathReaction();
 				OtherElement->TriggerElement();
 				break;
