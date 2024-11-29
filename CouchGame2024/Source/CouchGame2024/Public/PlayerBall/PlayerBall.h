@@ -328,6 +328,15 @@ public:
 public:
 	void ReceiveDuckReaction(int PlayerIndexReceiving, int PlayerIndexLosing);
 
+#pragma endregion
+
+#pragma region PushEventReactions
+
+public:
+	void ReceiveImpactPushReaction(int PlayerIndexImpacting, int PlayerIndexImpacted);
+
+	void ReceivePunchPushReaction(int PlayerIndexPushing, int PlayerIndexPushed);
+
 #pragma endregion 
 	
 };

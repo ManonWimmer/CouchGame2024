@@ -401,3 +401,13 @@ void APlayerBall::ReceiveDuckReaction(int PlayerIndexReceiving, int PlayerIndexL
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Receive Duck Reaction RECEIVING : %d	/	LOSING : %d"), PlayerIndexReceiving, PlayerIndexLosing));
 }
+
+void APlayerBall::ReceiveImpactPushReaction(int PlayerIndexImpacting, int PlayerIndexImpacted)
+{
+	// Appeler fonction Impact Push Event
+}
+
+void APlayerBall::ReceivePunchPushReaction(int PlayerIndexPushing, int PlayerIndexPushed)
+{
+	// Appeler fonction Punch Push Event
+}
