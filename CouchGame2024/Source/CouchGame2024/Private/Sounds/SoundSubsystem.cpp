@@ -15,6 +15,17 @@ void USoundSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	InitSoundSubsystem();
 }
 
+void USoundSubsystem::PlayInGameMusicSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->InGameMusic == nullptr)	return;
+
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->InGameMusic, SoundsData->InGameMusicAdjuster);
+	}
+}
+
 void USoundSubsystem::PlayDuckCashOutSound()
 {
 	if (SoundsData == nullptr)	return;

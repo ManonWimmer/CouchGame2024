@@ -19,6 +19,17 @@ class COUCHGAME2024_API USoundsData : public UDataAsset
 
 
 public:
+	
+#pragma region Music Sounds
+
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	TObjectPtr<UMetaSoundSource> InGameMusic;
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	float InGameMusicAdjuster = 1.f;
+	
+#pragma endregion 
+
+	
 #pragma region Events Sounds
 
 #pragma region DuckSounds
