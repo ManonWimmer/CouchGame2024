@@ -26,6 +26,28 @@ void USoundSubsystem::PlayInGameMusicSound()
 	}
 }
 
+void USoundSubsystem::PlayRoundStartSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->RoundStartSound == nullptr)	return;
+
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->RoundStartSound, SoundsData->RoundStartSoundAdjuster);
+	}
+}
+
+void USoundSubsystem::PlayCrowdEffectSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->CrowdEffectSound == nullptr)	return;
+
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->CrowdEffectSound, SoundsData->CrowdEffectSoundAdjuster);
+	}
+}
+
 void USoundSubsystem::PlayDuckCashOutSound()
 {
 	if (SoundsData == nullptr)	return;

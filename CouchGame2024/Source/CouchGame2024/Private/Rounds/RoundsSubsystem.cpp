@@ -7,12 +7,11 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Match/MatchPinballGameMode.h"
 #include "PlayerBall/LockableInput.h"
-#include "PlayerBall/PlayerBall.h"
-#include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "Rounds/RoundsResetable.h"
 #include "Rounds/RoundsSettings.h"
 #include "Rounds/Datas/RoundsData.h"
 #include "Score/GlobalScoreSubsystem.h"
+#include "Sounds/SoundSubsystem.h"
 
 
 void URoundsSubsystem::Tick(float DeltaTime)
@@ -53,6 +52,8 @@ void URoundsSubsystem::InitRoundSubsystem()
 
 	InitRoundsPhase();	// Init rounds phases data
 
+	InitSoundRoundEffects();	// Get sounds subsystem to call sounds from here
+	
 	InitGamemodeAndBindStartGame();	// Set Gamemode and bind start 1st round to beginGame
 
 	InitGlobalScoreAndReset();	// Set GlobalScore and reset it
@@ -72,6 +73,11 @@ void URoundsSubsystem::StartRound()	// Reset AllScores -> Lock players -> set to
 		MatchPinballGameMode->SetNewLocationStartPlayerBallsSpecial(PlayerIndexLastRoundWin);
 	}
 	ChangeRoundPhase(ERoundsPhaseID::PRE_ROUND);
+
+	if (SoundSubsystem != nullptr)
+	{
+		SoundSubsystem->PlayRoundStartSound();
+	}
 }
 
 void URoundsSubsystem::EndRoundChecks()	// Check best player & increments rounds Win
@@ -79,6 +85,11 @@ void URoundsSubsystem::EndRoundChecks()	// Check best player & increments rounds
 	PlayerIndexLastRoundWin = GlobalScoreSubsystem->GetIndexPlayerBestScore();
 
 	IncreaseRoundsWonByPlayerIndex(PlayerIndexLastRoundWin, 1);
+
+	if (SoundSubsystem != nullptr)
+	{
+		SoundSubsystem->PlayCrowdEffectSound();
+	}
 }
 
 void URoundsSubsystem::InitTimers()	// (Re)set timers by data
@@ -153,6 +164,13 @@ void URoundsSubsystem::InitGlobalScoreAndReset()	// Set GlobalScore and reset it
 
 		GlobalScoreSubsystem->ResetAllScores();
 	}
+}
+
+void URoundsSubsystem::InitSoundRoundEffects()
+{
+	if (GetWorld() == nullptr)	return;
+	if (GetWorld()->GetGameInstance() == nullptr)	return;
+	SoundSubsystem = GetWorld()->GetSubsystem<USoundSubsystem>();
 }
 
 void URoundsSubsystem::InitRoundsPhase()	// Init rounds phases data

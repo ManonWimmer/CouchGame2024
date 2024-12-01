@@ -29,6 +29,23 @@ public:
 	
 #pragma endregion 
 
+#pragma region Rounds Sounds
+
+	UPROPERTY(EditAnywhere, Category = "Sounds Round")
+	TObjectPtr<UMetaSoundSource> RoundStartSound;
+	UPROPERTY(EditAnywhere, Category = "Sounds Round")
+	float RoundStartSoundAdjuster = 1.f;
+
+#pragma endregion 
+
+#pragma region Rounds Sounds
+
+	UPROPERTY(EditAnywhere, Category = "Sounds Crowd")
+	TObjectPtr<UMetaSoundSource> CrowdEffectSound;
+	UPROPERTY(EditAnywhere, Category = "Sounds Crowd")
+	float CrowdEffectSoundAdjuster = 1.f;
+
+#pragma endregion 
 	
 #pragma region Events Sounds
 
