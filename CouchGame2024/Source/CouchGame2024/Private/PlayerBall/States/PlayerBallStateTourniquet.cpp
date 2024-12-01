@@ -4,6 +4,7 @@
 #include "PlayerBall/States/PlayerBallStateTourniquet.h"
 
 #include "Components/SphereComponent.h"
+#include "PinballElements/Elements/TourniquetElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
@@ -28,6 +29,8 @@ void UPlayerBallStateTourniquet::StateEnter(EPlayerBallStateID PreviousState)
 		{
 			Pawn->BehaviorElementReactions->OnEndTourniquetReaction.AddDynamic(this, &UPlayerBallStateTourniquet::ExitTourniquet);
 		}
+
+		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateTourniquet::OnForceExitTourniquet);
 	}
 
 	
@@ -43,7 +46,11 @@ void UPlayerBallStateTourniquet::StateExit(EPlayerBallStateID NextState)
     	if (Pawn->BehaviorElementReactions != nullptr)
     	{
     		Pawn->BehaviorElementReactions->OnEndTourniquetReaction.RemoveDynamic(this, &UPlayerBallStateTourniquet::ExitTourniquet);
+    		
+    		Pawn->BehaviorElementReactions->TourniquetElement = nullptr;
     	}
+
+		Pawn->OnPunchAction.RemoveDynamic(this, &UPlayerBallStateTourniquet::OnForceExitTourniquet);
     }
 }
 
@@ -77,4 +84,14 @@ void UPlayerBallStateTourniquet::ExitTourniquet(float ExitValues)
 	Pawn->PlayReleaseTourniquetGamefeelEffectsBlueprint();
 	
 	StateMachine->ChangeState(EPlayerBallStateID::Idle);
+}
+
+void UPlayerBallStateTourniquet::OnForceExitTourniquet(float InValue)
+{
+	if (Pawn == nullptr)	return;
+
+	if (Pawn->BehaviorElementReactions == nullptr)	return;
+	if (Pawn->BehaviorElementReactions->TourniquetElement == nullptr)	return;
+
+	Pawn->BehaviorElementReactions->TourniquetElement->ForceExpulsePlayerFromTourniquetWithoutIndex(Pawn);
 }
