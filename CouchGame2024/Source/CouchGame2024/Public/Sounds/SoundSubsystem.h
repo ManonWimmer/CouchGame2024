@@ -18,6 +18,28 @@ class COUCHGAME2024_API USoundSubsystem : public UWorldSubsystem
 virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 
 public:
+
+#pragma region Play Music
+
+	UFUNCTION(BlueprintCallable)
+	void PlayInGameMusicSound();
+
+#pragma endregion
+
+#pragma region Play Round Sounds
+
+	UFUNCTION(BlueprintCallable)
+	void PlayRoundStartSound();
+
+#pragma endregion 
+
+#pragma region Play Crowd Sounds
+
+	UFUNCTION(BlueprintCallable)
+	void PlayCrowdEffectSound();
+
+#pragma endregion 
+	
 #pragma region Play Events Sounds
 	
 #pragma region Play Duck sounds
