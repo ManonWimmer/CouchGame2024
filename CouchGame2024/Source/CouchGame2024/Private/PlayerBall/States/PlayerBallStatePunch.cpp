@@ -77,8 +77,13 @@ void UPlayerBallStatePunch::PunchPlayerBall()
 		Pawn->PlayPunchFailedGamefeelEffectsBlueprint();
 	}
 	
-	//APlayerBall* PlayerBall = GetNearestPlayerBallInPunchRadius();
+	APlayerBall* NearestPlayerBall = GetNearestPlayerBallInPunchRadius();
 
+	if (NearestPlayerBall != nullptr)
+	{
+		Pawn->PlayPunchMeshEffect(NearestPlayerBall);
+	}
+	
 	for (auto PlayerBall : OutPlayerBalls)
 	{
 		if (PlayerBall == nullptr)
