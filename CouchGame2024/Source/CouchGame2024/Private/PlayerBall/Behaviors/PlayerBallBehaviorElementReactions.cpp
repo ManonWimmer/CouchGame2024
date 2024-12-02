@@ -7,6 +7,7 @@
 #include "Events/EventsChildren/EventPush.h"
 #include "PinballElements/PinballElement.h"
 #include "PinballElements/Elements/RailElement.h"
+#include "PinballElements/Elements/TourniquetElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
 
@@ -169,6 +170,7 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 				OtherElement->TriggerElement();
 				break;
 			case EPinballElementID::Tourniquet:
+				TourniquetElement = Cast<ATourniquetElement>(OtherActor);
 				OtherElement->TriggerElementWithPlayer(GetPlayerBall());
 				break;
 			default:

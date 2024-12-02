@@ -75,8 +75,11 @@ public:
 	
 	virtual void ResetObject() override;
 	
+public:
+	UFUNCTION()
+	void ForceExpulsePlayerFromTourniquetWithoutIndex(APlayerBall* InPlayerBall);
+	
 private:
-
 	UFUNCTION()
 	void ExpulsePlayerFromTourniquet(APlayerBall* InPlayerBall, int Index);
 
@@ -98,6 +101,9 @@ private:
 	UFUNCTION()
 	USceneComponent* GetTourniquetAnchorFromIndex(int InIndex);
 
+	UFUNCTION()
+	int GetPlayerIndexFromTourniquet(APlayerBall* InPlayerBall);
+	
 	void InitAssociatedBallInTourniquetArray();
 
 	void InitDataTourniquet();

@@ -140,7 +140,20 @@ void ATourniquetElement::ResetObject()
 	InitAssociatedBallInTourniquetArray();
 }
 
-void ATourniquetElement::ExpulsePlayerFromTourniquet(APlayerBall* InPlayerBall, int Index)
+void ATourniquetElement::ForceExpulsePlayerFromTourniquetWithoutIndex(APlayerBall* InPlayerBall)	// expulse method called from player manually exit tourniquet
+{
+	if (InPlayerBall == nullptr)	return;
+	
+	int IndexPlayer = GetPlayerIndexFromTourniquet(InPlayerBall);
+
+	if (IndexPlayer <= -1)	return;
+
+	if (AssociatedTimeToBallInTourniquet.Num() <= IndexPlayer)	return;
+	
+	AssociatedTimeToBallInTourniquet[IndexPlayer] = TurningDuration * 2.f;
+}
+
+void ATourniquetElement::ExpulsePlayerFromTourniquet(APlayerBall* InPlayerBall, int Index)	// expulse method called from tourniquet manually expulsing player
 {
 	if (InPlayerBall == nullptr)	return;
 	if (InPlayerBall->SphereCollision == nullptr)	return;
@@ -194,6 +207,20 @@ USceneComponent* ATourniquetElement::GetTourniquetAnchorFromIndex(int InIndex)
 	}
 
 	return nullptr;
+}
+
+int ATourniquetElement::GetPlayerIndexFromTourniquet(APlayerBall* InPlayerBall)
+{
+	if (InPlayerBall == nullptr)	return -1;
+
+	for (int i = 0; i < AssociatedBallInTourniquet.Num(); ++i)
+	{
+		if (AssociatedBallInTourniquet[i] == nullptr)	continue;
+
+		if (AssociatedBallInTourniquet[i] == InPlayerBall)	return i;
+	}
+
+	return -1;
 }
 
 void ATourniquetElement::InitAssociatedBallInTourniquetArray()

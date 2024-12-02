@@ -6,6 +6,8 @@
 #include "PowerUp/PowerUp.h"
 #include "PowerUpDuck.generated.h"
 
+class UJuicinessAnimData;
+
 UCLASS()
 class COUCHGAME2024_API APowerUpDuck : public APowerUp
 {
@@ -43,4 +45,7 @@ public:
 	
 	UPROPERTY()
 	bool bHasBeenCollected = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UJuicinessAnimData> DuckAnimData;
 };

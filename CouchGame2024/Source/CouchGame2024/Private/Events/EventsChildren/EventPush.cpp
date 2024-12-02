@@ -3,6 +3,9 @@
 
 #include "Events/EventsChildren/EventPush.h"
 
+#include "Events/EventData.h"
+#include "Kismet/GameplayStatics.h"
+#include "PlayerBall/PlayerBall.h"
 #include "Score/GlobalScoreSubsystem.h"
 
 
@@ -11,6 +14,8 @@ AEventPush::AEventPush()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	PushV2Material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Project/Assets/Art/03_Mat/Ball/MAT_Ball_Metal.MAT_Ball_Metal"));
 }
 
 // Called when the game starts or when spawned
@@ -40,30 +45,18 @@ void AEventPush::SetupEventPhase1()
 	Super::SetupEventPhase1();
 
 	#pragma region Reset / Set TMaps
-	if (LastPlayerIndexImpactingPlayerIndex.Num() > 0) LastPlayerIndexImpactingPlayerIndex.Empty();
-	LastPlayerIndexImpactingPlayerIndex.Add(0,-1);
-	LastPlayerIndexImpactingPlayerIndex.Add(1,-1);
-	LastPlayerIndexImpactingPlayerIndex.Add(2,-1);
-	LastPlayerIndexImpactingPlayerIndex.Add(3,-1);
+	if (LastPlayerIndexPushedPlayerIndex.Num() > 0) LastPlayerIndexPushedPlayerIndex.Empty();
+	LastPlayerIndexPushedPlayerIndex.Add(0,-1);
+	LastPlayerIndexPushedPlayerIndex.Add(1,-1);
+	LastPlayerIndexPushedPlayerIndex.Add(2,-1);
+	LastPlayerIndexPushedPlayerIndex.Add(3,-1);
 
-	if (TimeSinceLastPlayerIndexImpacted.Num() > 0) TimeSinceLastPlayerIndexImpacted.Empty();
-	TimeSinceLastPlayerIndexImpacted.Empty();
-	TimeSinceLastPlayerIndexImpacted.Add(0,0);
-	TimeSinceLastPlayerIndexImpacted.Add(1,0);
-	TimeSinceLastPlayerIndexImpacted.Add(2,0);
-	TimeSinceLastPlayerIndexImpacted.Add(3,0);
-
-	if (LastPlayerIndexPunchingPlayerIndex.Num() > 0) LastPlayerIndexPunchingPlayerIndex.Empty();
-	LastPlayerIndexPunchingPlayerIndex.Add(0,-1);
-	LastPlayerIndexPunchingPlayerIndex.Add(1,-1);
-	LastPlayerIndexPunchingPlayerIndex.Add(2,-1);
-	LastPlayerIndexPunchingPlayerIndex.Add(3,-1);
-
-	if (TimeSinceLastPlayerIndexPunched.Num() > 0) TimeSinceLastPlayerIndexPunched.Empty();
-	TimeSinceLastPlayerIndexPunched.Add(0,0);
-	TimeSinceLastPlayerIndexPunched.Add(1,0);
-	TimeSinceLastPlayerIndexPunched.Add(2,0);
-	TimeSinceLastPlayerIndexPunched.Add(3,0);
+	if (TimeSinceLastPlayerIndexPushed.Num() > 0) TimeSinceLastPlayerIndexPushed.Empty();
+	TimeSinceLastPlayerIndexPushed.Empty();
+	TimeSinceLastPlayerIndexPushed.Add(0,0);
+	TimeSinceLastPlayerIndexPushed.Add(1,0);
+	TimeSinceLastPlayerIndexPushed.Add(2,0);
+	TimeSinceLastPlayerIndexPushed.Add(3,0);
 	#pragma endregion
 
 	UE_LOG(LogTemp, Warning, TEXT("End setup push"));
@@ -81,7 +74,7 @@ void AEventPush::TriggerEventPhase2()
 {
 	Super::TriggerEventPhase2();
 
-	// todo: Set Material to the same one
+	ChangePlayersMaterialsToPushV2();
 }
 
 void AEventPush::TickPhase1()
@@ -97,21 +90,27 @@ void AEventPush::TickPhase2()
 void AEventPush::EndEvent()
 {
 	Super::EndEvent();
-
-	// todo: Reset Material as before
 	
 	OnPushEndedEvent.Broadcast();
+
+	// Mini timer pour pas qu'on voit la transi aux materials avant l'UI
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(
+		TimerHandle,            
+		this,                   
+		&AEventPush::ResetPlayersMaterialsToInitial, 
+		0.25f,                   
+		false                   
+	);
 }
 
 void AEventPush::CheckAddTimeLastPushed(float DeltaTime)
 {
 	UE_LOG(LogTemp, Warning, TEXT("CheckAddTimeLastPushed push"));
 
-	UE_LOG(LogTemp, Warning, TEXT("SetupEventPhase1 push - LastPlayerIndexImpactingPlayerIndex: %s"), *FString::JoinBy(LastPlayerIndexImpactingPlayerIndex, TEXT(","), [](const TTuple<int, int>& Pair) { return FString::Printf(TEXT("(%d,%d)"), Pair.Key, Pair.Value); }));
-
+	UE_LOG(LogTemp, Warning, TEXT("SetupEventPhase1 push - LastPlayerIndexImpactingPlayerIndex: %s"), *FString::JoinBy(LastPlayerIndexPushedPlayerIndex, TEXT(","), [](const TTuple<int, int>& Pair) { return FString::Printf(TEXT("(%d,%d)"), Pair.Key, Pair.Value); }));
 	
-	// Impact
-	for (const TTuple<int, int> Element : LastPlayerIndexImpactingPlayerIndex)
+	for (const TTuple<int, int> Element : LastPlayerIndexPushedPlayerIndex)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Foreach LastPlayerIndexImpactingPlayerIndex"));
 		const int PlayerIndexImpacted = Element.Key;
@@ -122,38 +121,14 @@ void AEventPush::CheckAddTimeLastPushed(float DeltaTime)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("PlayerImpacting != -1"));
 			// Add time
-			TimeSinceLastPlayerIndexImpacted[PlayerIndexImpacted] += DeltaTime;
+			TimeSinceLastPlayerIndexPushed[PlayerIndexImpacted] += DeltaTime;
 
 			// Time Limit
-			if (TimeSinceLastPlayerIndexImpacted[PlayerIndexImpacted] > TimePushedLimit)
+			if (TimeSinceLastPlayerIndexPushed[PlayerIndexImpacted] > TimePushedLimit)
 			{
-				LastPlayerIndexImpactingPlayerIndex[PlayerIndexImpacted] = -1;
-				LastPlayerIndexImpactingPlayerIndex[PlayerIndexImpacting] = -1;
-				TimeSinceLastPlayerIndexImpacted[PlayerIndexImpacted] = 0;
-			}
-		}
-	}
-
-	// Punch
-	for (const TTuple<int, int> Element : LastPlayerIndexPunchingPlayerIndex)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Foreach LastPlayerIndexPunchingPlayerIndex"));
-		const int PlayerIndexPunched = Element.Key;
-		const int PlayerIndexPunching = Element.Value;
-		UE_LOG(LogTemp, Warning, TEXT("Punched : %i, Punching : %i"), PlayerIndexPunched, PlayerIndexPunching);
-
-		if (PlayerIndexPunching != -1)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("PlayerPunching != -1"));
-			// Add time
-			TimeSinceLastPlayerIndexImpacted[PlayerIndexPunched] += DeltaTime;
-
-			// Time Limit
-			if (TimeSinceLastPlayerIndexPunched[PlayerIndexPunched] > TimePushedLimit)
-			{
-				LastPlayerIndexPunchingPlayerIndex[PlayerIndexPunched] = -1;
-				LastPlayerIndexPunchingPlayerIndex[PlayerIndexPunching] = -1;
-				TimeSinceLastPlayerIndexPunched[PlayerIndexPunched] = 0;
+				LastPlayerIndexPushedPlayerIndex[PlayerIndexImpacted] = -1;
+				LastPlayerIndexPushedPlayerIndex[PlayerIndexImpacting] = -1;
+				TimeSinceLastPlayerIndexPushed[PlayerIndexImpacted] = 0;
 			}
 		}
 	}
@@ -165,12 +140,13 @@ void AEventPush::OnImpact(int PlayerIndexImpacting, int PlayerIndexImpacting2)
 	if (PlayerIndexImpacting == PlayerIndexImpacting2) return;
 
 	UE_LOG(LogTemp, Warning, TEXT("On Impact, %i, %i"), PlayerIndexImpacting, PlayerIndexImpacting2);
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("On Impact : %i, %i"), PlayerIndexImpacting, PlayerIndexImpacting2));
 	
-	LastPlayerIndexImpactingPlayerIndex[PlayerIndexImpacting] = PlayerIndexImpacting2;
-	TimeSinceLastPlayerIndexImpacted[PlayerIndexImpacting] = 0;
+	LastPlayerIndexPushedPlayerIndex[PlayerIndexImpacting] = PlayerIndexImpacting2;
+	TimeSinceLastPlayerIndexPushed[PlayerIndexImpacting] = 0;
 	
-	LastPlayerIndexImpactingPlayerIndex[PlayerIndexImpacting2] = PlayerIndexImpacting;
-	TimeSinceLastPlayerIndexImpacted[PlayerIndexImpacting2] = 0;
+	LastPlayerIndexPushedPlayerIndex[PlayerIndexImpacting2] = PlayerIndexImpacting;
+	TimeSinceLastPlayerIndexPushed[PlayerIndexImpacting2] = 0;
 }
 
 void AEventPush::OnPunch(int PlayerIndexPushing, int PlayerIndexPushed)
@@ -179,9 +155,10 @@ void AEventPush::OnPunch(int PlayerIndexPushing, int PlayerIndexPushed)
 	if (PlayerIndexPushing == PlayerIndexPushed) return;
 
 	UE_LOG(LogTemp, Warning, TEXT("On Punch, %i, %i"), PlayerIndexPushing, PlayerIndexPushed);
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("On Punch : %i, %i"), PlayerIndexPushing, PlayerIndexPushed));
 	
-	LastPlayerIndexPunchingPlayerIndex[PlayerIndexPushed] = PlayerIndexPushing;
-	TimeSinceLastPlayerIndexPunched[PlayerIndexPushed] = 0;
+	LastPlayerIndexPushedPlayerIndex[PlayerIndexPushed] = PlayerIndexPushing;
+	TimeSinceLastPlayerIndexPushed[PlayerIndexPushed] = 0;
 }
 
 void AEventPush::CheckAddScoreOnDeath(int PlayerIndexDeath)
@@ -190,32 +167,58 @@ void AEventPush::CheckAddScoreOnDeath(int PlayerIndexDeath)
 
 	UE_LOG(LogTemp, Warning, TEXT("Check add score on death"));
 	
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("check death zone player : %i"), PlayerIndexDeath));
-	
-	ScoreSubsystem->AddScore(PlayerIndexDeath, -1);
-	
-	// Impact
-	for (const TTuple<int, int> Element : LastPlayerIndexImpactingPlayerIndex)
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("Remove 1 score : %i"), PlayerIndexDeath));
+	ScoreSubsystem->AddScore(PlayerIndexDeath, LoseScoreOnDeathZone);
+
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("Time last push : %f"), TimeSinceLastPlayerIndexPushed[PlayerIndexDeath]));
+	if (TimeSinceLastPlayerIndexPushed[PlayerIndexDeath] > 0)
 	{
-		const int PlayerIndexImpacted = Element.Key;
-		const int PlayerIndexImpacting = Element.Value;
-		
-		if (PlayerIndexImpacting != -1 && TimeSinceLastPlayerIndexImpacted[PlayerIndexImpacted] > 0)
-		{
-			ScoreSubsystem->AddScore(PlayerIndexImpacting, GainScoreOnPush);
-		}
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("Index last pushing : %i"), LastPlayerIndexPushedPlayerIndex[PlayerIndexDeath]));
+		ScoreSubsystem->AddScore(LastPlayerIndexPushedPlayerIndex[PlayerIndexDeath], GainScoreOnPush);
+	}
+}
+
+void AEventPush::SetEventData(const UEventData* Data)
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, "Set Push Data");
+	
+	TimePushedLimit = Data->TimePushedLimit;
+	LoseScoreOnDeathZone = Data->LoseScoreOnDeathZone;
+	GainScoreOnPush = Data->GainScoreOnPush;
+}
+
+void AEventPush::ChangePlayersMaterialsToPushV2()
+{
+	if (Players.Num() == 0) GetAllPlayers();
+
+	for (const TObjectPtr<APlayerBall> Player : Players)
+	{
+		PlayersInitialMaterials.Add(Player->SphereMesh->GetMaterial(0));
+		Player->SphereMesh->SetMaterial(0, PushV2Material);
+	}
+}
+
+void AEventPush::ResetPlayersMaterialsToInitial()
+{
+	for (int i = 0; i < Players.Num(); i++)
+	{
+		Players[0]->SphereMesh->SetMaterial(0, PlayersInitialMaterials[i]);
 	}
 
-	// Punch
-	for (const TTuple<int, int> Element : LastPlayerIndexPunchingPlayerIndex)
+	PlayersInitialMaterials.Reset();
+}
+
+void AEventPush::GetAllPlayers()
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, "Get all players from event push");
+
+	TArray<TObjectPtr<AActor>> Actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerBall::StaticClass(), Actors);
+
+	for (TObjectPtr<AActor> Actor : Actors)
 	{
-		const int PlayerIndexPunched = Element.Key;
-		const int PlayerIndexPunching = Element.Value;
-		
-		if (PlayerIndexPunching != -1 && TimeSinceLastPlayerIndexPunched[PlayerIndexPunched] > 0)
-		{
-			ScoreSubsystem->AddScore(PlayerIndexPunching, GainScoreOnPush);
-		}
+		const TObjectPtr<APlayerBall> PlayerBall = Cast<APlayerBall>(Actor);
+		Players.Add(PlayerBall);
 	}
 }
 

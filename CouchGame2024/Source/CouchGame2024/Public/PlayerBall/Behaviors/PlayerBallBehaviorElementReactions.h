@@ -7,6 +7,7 @@
 #include "PlayerBallBehaviorElementReactions.generated.h"
 
 
+class ATourniquetElement;
 class ARailElement;
 class APinballElement;
 
@@ -200,6 +201,10 @@ public:
 
 	void ReceiveEndTourniquetReaction();
 
+	UPROPERTY()
+	TObjectPtr<ATourniquetElement> TourniquetElement;
+	
+	
 #pragma endregion 
 	
 #pragma endregion
