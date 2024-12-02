@@ -35,6 +35,9 @@ private:
 	APlayerBall* GetNearestPlayerBallInPunchRadius();
 
 	UFUNCTION()
+	TArray<APlayerBall*> GetAllPlayerBallInPunchRadius();
+
+	UFUNCTION()
 	void StartPunchCooldown();
 
 	UFUNCTION()

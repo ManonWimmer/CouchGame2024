@@ -19,6 +19,52 @@ virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 
 public:
 
+#pragma region Play Music
+
+	UFUNCTION(BlueprintCallable)
+	void PlayInGameMusicSound();
+
+#pragma endregion
+
+#pragma region Play Round Sounds
+
+	UFUNCTION(BlueprintCallable)
+	void PlayRoundStartSound();
+
+	#pragma region Play Crowd Sounds
+
+		UFUNCTION(BlueprintCallable)
+		void PlayCrowdEffectSound();
+
+	#pragma endregion 
+#pragma endregion
+
+#pragma region Play UI Sounds
+
+	UFUNCTION(BlueprintCallable)
+	void PlayUIButtonPressSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayUICheckSound();
+
+
+	UFUNCTION(BlueprintCallable)
+	void PlayUIStartGameSound();
+	
+	UFUNCTION(BlueprintCallable)
+	void PlayUITransitionInSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayUITransitionOutSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayUITransitionSound();
+	
+#pragma endregion 
+
+	
+#pragma region Play Events Sounds
+	
 #pragma region Play Duck sounds
 	UFUNCTION(BlueprintCallable)
 	void PlayDuckCashOutSound();
@@ -34,6 +80,21 @@ public:
 
 #pragma endregion
 
+#pragma region Play Mole Sounds
+
+	UFUNCTION(BlueprintCallable)
+	void PlayMoleImpactSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayMoleInSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayMoleOutSound();
+
+#pragma endregion 
+	
+#pragma endregion 
+	
 #pragma region Play Grappling Sounds
 
 	UFUNCTION(BlueprintCallable)

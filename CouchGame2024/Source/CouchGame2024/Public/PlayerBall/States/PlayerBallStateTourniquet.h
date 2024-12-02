@@ -36,5 +36,9 @@ private:
 	
 	UFUNCTION()
 	void ExitTourniquet(float ExitValues);
+
+
+	UFUNCTION()
+	void OnForceExitTourniquet(float InValue);
 	
 };
