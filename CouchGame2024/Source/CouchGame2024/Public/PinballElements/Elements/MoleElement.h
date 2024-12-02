@@ -7,6 +7,8 @@
 #include "PinballElements/PinballElement.h"
 #include "MoleElement.generated.h"
 
+class UJuicinessAnimData;
+
 UCLASS()
 class COUCHGAME2024_API AMoleElement : public APinballElement
 {
@@ -34,11 +36,20 @@ public:
 	FMoleCollected OnMoleCollected;
 
 	UFUNCTION()
-	void SpawnMole() const;
+	void SpawnMole();
 
 	UFUNCTION()
-	void DespawnMole() const;
+	void DespawnMole();
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnImpactedByPlayer"))
+	void ReceiveImpactedByPlayer();
+	
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnSpawnMole"))
+	void ReceiveOnSpawnMole();
+	
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnDespawnMole"))
+	void ReceiveOnDespawnMole();
+	
 	UPROPERTY()
 	int MoleToPoints = 200;
 
@@ -68,7 +79,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	float Height = 300.f;
+
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UJuicinessAnimData> MoleAnimData;
 private:
 
 	UFUNCTION()
@@ -76,4 +90,5 @@ private:
 
 	UPROPERTY()
 	bool bHasBeenHitByPlayer = false;
+
 };

@@ -5,12 +5,15 @@
 #include "CoreMinimal.h"
 #include "PowerUpID.h"
 #include "GameFramework/Actor.h"
+#include "Rounds/RoundsResetable.h"
 #include "PowerUp.generated.h"
 
 class USphereComponent;
 
+class UJuicinessAnimData;
+
 UCLASS()
-class COUCHGAME2024_API APowerUp : public AActor
+class COUCHGAME2024_API APowerUp : public AActor, public IRoundsResetable
 {
 	GENERATED_BODY()
 
@@ -41,5 +44,29 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "TriggerPowerUp"))
 	void ReceiveTriggerPowerUp();
+
+
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPowerUpCollected);
+
+	FOnPowerUpCollected OnPowerUpCollected;
+
+
+#pragma region Resetable
+
+public:
+	virtual void InitResetable() override;
+
+	virtual bool IsResetable() override;
+
+	virtual void ResetObject() override;
+
+#pragma endregion
+
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UJuicinessAnimData> PowerUpAnimData;
 	
 };

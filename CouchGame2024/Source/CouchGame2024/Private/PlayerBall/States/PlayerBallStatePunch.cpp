@@ -92,6 +92,7 @@ void UPlayerBallStatePunch::PunchPlayerBall()
 	PlayerBall->PlayIsPunchedGamefeelEffectsBlueprint();
 	
 	Pawn->ReceiveDuckReaction(Pawn->PlayerIndex, PlayerBall->PlayerIndex);	// Here the player has punched -> win duck
+	Pawn->ReceivePunchPushReaction(Pawn->PlayerIndex, PlayerBall->PlayerIndex);	// Here the player has punched -> Is the one pushing
 	
 	Pawn->PlayPunchGamefeelEffectsBlueprint();
 }

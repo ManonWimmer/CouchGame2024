@@ -42,6 +42,9 @@ public:
 	void BindDuckStartAndEndEvent();
 
 	UFUNCTION()
+	void StartSpawning();
+	
+	UFUNCTION()
 	void StopSpawning();
 
 	UPROPERTY(EditAnywhere)
@@ -71,4 +74,7 @@ private:
 
 	UPROPERTY()
 	bool bHasBeenBind = false;
+
+	UPROPERTY()
+	bool bInGame = false;
 };

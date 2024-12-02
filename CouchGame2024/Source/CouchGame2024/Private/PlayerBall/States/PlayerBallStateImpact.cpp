@@ -129,14 +129,10 @@ void UPlayerBallStateImpact::ImpactedBall(float ImpactValue)	// bounce ball in o
 			ImpactForceDivider = Pawn->BehaviorPowerUp->StrengthImpactForceDivider;
 		}
 	}
-	
-	// if (Pawn->BehaviorElementReactions->ImpactedPlayerBall != nullptr)
-	// {
-	// 	if (HasBestVelocity())
-	// 	{
-	// 		Pawn->ReceiveDuckReaction(Pawn->PlayerIndex, Pawn->BehaviorElementReactions->ImpactedPlayerBall->PlayerIndex);	// Here the player is impacted -> lose duck
-	// 	}
-	// }
+
+
+	Pawn->ReceiveImpactPushReaction(Pawn->PlayerIndex, Pawn->BehaviorElementReactions->ImpactedPlayerBall->PlayerIndex);	// Here the player has impacted another ball -> Is the one impacting
+
 	
 	Pawn->SphereCollision->AddImpulse(Dir * TotalForce / ImpactForceDivider, NAME_None, false);	// impulse
 

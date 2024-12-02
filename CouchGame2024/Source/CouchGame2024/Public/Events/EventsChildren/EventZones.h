@@ -62,7 +62,7 @@ public:
 	TArray<TObjectPtr<APillarZone>> PillarZones;
 
 	UPROPERTY()
-	TObjectPtr<AEventZonesV2Manager> Phase2Manager;
+	TObjectPtr<AEventZonesV2Manager> Phase2Manager = nullptr;
 
 	
 #pragma endregion

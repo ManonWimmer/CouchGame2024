@@ -4,8 +4,10 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 
 #include "Components/SphereComponent.h"
+#include "Events/EventsChildren/EventPush.h"
 #include "PinballElements/PinballElement.h"
 #include "PinballElements/Elements/RailElement.h"
+#include "PinballElements/Elements/TourniquetElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
 
@@ -119,8 +121,8 @@ void UPlayerBallBehaviorElementReactions::OnCollisionHit(UPrimitiveComponent* Hi
 				ReceiveBumperReaction(OtherElement, Hit.ImpactNormal);
 				return;
 			case EPinballElementID::Mole:
-				ReceiveBumperReaction(OtherElement, Hit.ImpactNormal);
 				OtherElement->TriggerElementWithPlayer(GetPlayerBall());
+				ReceiveBumperReaction(OtherElement, Hit.ImpactNormal);
 				return;
 			case EPinballElementID::Flipper:
 				return;
@@ -147,6 +149,7 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 		switch (OtherElement->GetElementID())
 		{
 			case EPinballElementID::DeathZone:
+				if (GetPlayerBall()->EventPush != nullptr) GetPlayerBall()->EventPush->CheckAddScoreOnDeath(GetPlayerBall()->PlayerIndex);
 				ReceiveDeathReaction();
 				OtherElement->TriggerElement();
 				break;
@@ -167,6 +170,7 @@ void UPlayerBallBehaviorElementReactions::OnCollisionBeginOverlap(UPrimitiveComp
 				OtherElement->TriggerElement();
 				break;
 			case EPinballElementID::Tourniquet:
+				TourniquetElement = Cast<ATourniquetElement>(OtherActor);
 				OtherElement->TriggerElementWithPlayer(GetPlayerBall());
 				break;
 			default:

@@ -44,6 +44,12 @@ private:
 	void OnImpacted(float ImpactedValue);
 
 	UFUNCTION()
+	void OnBumped(float BumpedValue);
+	
+	UFUNCTION()
+	void OnTourniquet(float TourniquetValue);
+	
+	UFUNCTION()
 	void SetCable();
 
 	UFUNCTION()
@@ -68,7 +74,7 @@ private:
 	float StartAngle = 0.f;
 
 	UFUNCTION()
-	void GainPillarPoints();
+	void GainPillarPoints(float DeltaTime);
 
 	UPROPERTY()
 	float CurrentTimeOnPillar = 0.f;
