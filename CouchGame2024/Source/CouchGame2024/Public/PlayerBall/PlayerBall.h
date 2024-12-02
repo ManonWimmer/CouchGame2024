@@ -161,6 +161,9 @@ public:
 	void PlayPunchGamefeelEffectsBlueprint();
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void PlayPunchFailedGamefeelEffectsBlueprint();
+	
+	UFUNCTION(BlueprintImplementableEvent)
 	void PlayIsPunchedGamefeelEffectsBlueprint();
 
 	UFUNCTION(BlueprintImplementableEvent)

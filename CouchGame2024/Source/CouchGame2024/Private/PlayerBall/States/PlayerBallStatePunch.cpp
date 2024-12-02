@@ -72,7 +72,10 @@ void UPlayerBallStatePunch::PunchPlayerBall()
 
 	TArray<APlayerBall*> OutPlayerBalls = GetAllPlayerBallInPunchRadius();
 
-	if (OutPlayerBalls.Num() <= 0)	return;
+	if (OutPlayerBalls.Num() <= 0)
+	{
+		Pawn->PlayPunchFailedGamefeelEffectsBlueprint();
+	}
 	
 	//APlayerBall* PlayerBall = GetNearestPlayerBallInPunchRadius();
 
