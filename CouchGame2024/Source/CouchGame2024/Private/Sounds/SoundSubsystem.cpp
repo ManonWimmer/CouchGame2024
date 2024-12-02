@@ -48,6 +48,72 @@ void USoundSubsystem::PlayCrowdEffectSound()
 	}
 }
 
+void USoundSubsystem::PlayUIButtonPressSound()
+{
+	if (SoundsData == nullptr)	return;
+    if (SoundsData->ButtonPressSound == nullptr)	return;
+    
+    if (GetWorld())
+    {
+    	UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->ButtonPressSound, SoundsData->ButtonPressSoundAdjuster);
+    }
+}
+
+void USoundSubsystem::PlayUICheckSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->CheckSound == nullptr)	return;
+    
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->CheckSound, SoundsData->CheckSoundAdjuster);
+	}
+}
+
+void USoundSubsystem::PlayUIStartGameSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->StartGameSound == nullptr)	return;
+    
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->StartGameSound, SoundsData->StartGameSoundAdjuster);
+	}
+}
+
+void USoundSubsystem::PlayUITransitionInSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->TransitionUIInSound == nullptr)	return;
+    
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->TransitionUIInSound, SoundsData->TransitionUIInSoundAdjuster);
+	}
+}
+
+void USoundSubsystem::PlayUITransitionOutSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->TransitionUIOutSound == nullptr)	return;
+    
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->TransitionUIOutSound, SoundsData->TransitionUIOutSoundAdjuster);
+	}
+}
+
+void USoundSubsystem::PlayUITransitionSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->TransitionUISound == nullptr)	return;
+    
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->TransitionUISound, SoundsData->TransitionUISoundAdjuster);
+	}
+}
+
 void USoundSubsystem::PlayDuckCashOutSound()
 {
 	if (SoundsData == nullptr)	return;

@@ -31,14 +31,37 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayRoundStartSound();
 
-#pragma endregion 
+	#pragma region Play Crowd Sounds
 
-#pragma region Play Crowd Sounds
+		UFUNCTION(BlueprintCallable)
+		void PlayCrowdEffectSound();
+
+	#pragma endregion 
+#pragma endregion
+
+#pragma region Play UI Sounds
 
 	UFUNCTION(BlueprintCallable)
-	void PlayCrowdEffectSound();
+	void PlayUIButtonPressSound();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayUICheckSound();
+
+
+	UFUNCTION(BlueprintCallable)
+	void PlayUIStartGameSound();
+	
+	UFUNCTION(BlueprintCallable)
+	void PlayUITransitionInSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayUITransitionOutSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayUITransitionSound();
+	
 #pragma endregion 
+
 	
 #pragma region Play Events Sounds
 	
