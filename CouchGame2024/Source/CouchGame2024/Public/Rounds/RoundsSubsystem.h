@@ -8,6 +8,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "RoundsSubsystem.generated.h"
 
+class USoundSubsystem;
 class ARailElement;
 class APlayerBall;
 class UGlobalScoreSubsystem;
@@ -47,12 +48,17 @@ public:
 
 	void InitGlobalScoreAndReset();
 
+	void InitSoundRoundEffects();
+
 private:
 	UPROPERTY()
 	TObjectPtr<AMatchPinballGameMode> MatchPinballGameMode;
 
 	UPROPERTY()
 	TObjectPtr<UGlobalScoreSubsystem> GlobalScoreSubsystem;
+
+	UPROPERTY()
+	TObjectPtr<USoundSubsystem> SoundSubsystem;
 	
 #pragma region RoundsChange
 public:

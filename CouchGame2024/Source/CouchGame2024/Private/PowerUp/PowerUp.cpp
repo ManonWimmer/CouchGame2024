@@ -4,6 +4,7 @@
 #include "PowerUp/PowerUp.h"
 
 #include "Components/SphereComponent.h"
+#include "Rounds/RoundsSubsystem.h"
 
 
 APowerUp::APowerUp()
@@ -36,12 +37,35 @@ EPowerUpID APowerUp::GetPowerUpID() const
 void APowerUp::TriggerPowerUp()
 {
 	ReceiveTriggerPowerUp();
+	OnPowerUpCollected.Broadcast();
 	this->Destroy();
 }
 
 void APowerUp::TriggerPowerUp(int Value)
 {
 	ReceiveTriggerPowerUp();
+	OnPowerUpCollected.Broadcast();
 	this->Destroy();
+}
+
+void APowerUp::InitResetable()
+{
+	if (!GetWorld())	return;
+
+	URoundsSubsystem* RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+
+	if (RoundsSubsystem == nullptr)	return;
+
+	RoundsSubsystem->AddResetableObject(this);
+}
+
+bool APowerUp::IsResetable()
+{
+	return true;
+}
+
+void APowerUp::ResetObject()
+{
+	TriggerPowerUp();
 }
 

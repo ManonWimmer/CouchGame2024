@@ -11,6 +11,8 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Events/EventsChildren/EventPush.h"
+#include "Kismet/GameplayStatics.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
@@ -76,6 +78,19 @@ void APlayerBall::BeginPlay()
 	InitFollowTarget();
 
 	StartForceEffectWidget->SetHiddenInGame(true);
+
+	// Push event
+	if (EventPush == nullptr)
+	{
+		TArray<TObjectPtr<AActor>> Actors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEventPush::StaticClass(), Actors);
+
+		if (Actors.Num() > 0)
+		{
+			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, "SET EVENT PUSH IN PLAYER BALL");
+			EventPush = Cast<AEventPush>(Actors[0]);
+		}
+	}
 }
 
 // Called every frame
@@ -400,4 +415,14 @@ void APlayerBall::ReceiveDuckReaction(int PlayerIndexReceiving, int PlayerIndexL
 	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Receive Duck Reaction RECEIVING : %d	/	LOSING : %d"), PlayerIndexReceiving, PlayerIndexLosing));
+}
+
+void APlayerBall::ReceiveImpactPushReaction(int PlayerIndexImpacting, int PlayerIndexImpacting2)
+{
+	if (EventPush != nullptr) EventPush->OnImpact(PlayerIndexImpacting, PlayerIndexImpacting2);
+}
+
+void APlayerBall::ReceivePunchPushReaction(int PlayerIndexPunching, int PlayerIndexPunched)
+{
+	if (EventPush != nullptr) EventPush->OnPunch(PlayerIndexPunching, PlayerIndexPunched);
 }

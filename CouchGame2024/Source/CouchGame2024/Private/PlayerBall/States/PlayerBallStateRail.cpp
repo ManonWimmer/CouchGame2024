@@ -121,6 +121,8 @@ void UPlayerBallStateRail::EnterRail()
 
 	Pawn->SphereCollision->SetSimulatePhysics(false);
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+
+	Pawn->PlayRailEnterGamefeelEffectsBlueprint();
 }
 
 void UPlayerBallStateRail::HandleRailProgressLocationByPercent(float DeltaTime)	// Method ignoring entering velocity -> for respawn
@@ -269,6 +271,8 @@ void UPlayerBallStateRail::ExitRail()
 	ExitImpulse();
 	
 	StateMachine->ChangeState(EPlayerBallStateID::Idle);
+
+	Pawn->PlayRailExitGamefeelEffectsBlueprint();
 }
 
 void UPlayerBallStateRail::ExitImpulse()

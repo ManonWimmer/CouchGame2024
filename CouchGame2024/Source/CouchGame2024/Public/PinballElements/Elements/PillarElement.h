@@ -75,4 +75,15 @@ public:
 
 	UPROPERTY()
 	bool bZoneDisabled = false;
+
+	UPROPERTY()
+	int NbrPlayersGrappling = 0;
+
+	/*
+	UFUNCTION()
+	void AddPlayerGrappling();
+
+	UFUNCTION()
+	void RemovePlayerGrappling();
+	*/
 };

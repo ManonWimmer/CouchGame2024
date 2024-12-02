@@ -6,6 +6,7 @@
 #include "Events/EventData.h"
 #include "Events/EventsManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sounds/SoundSubsystem.h"
 
 #pragma region Score
 
@@ -33,15 +34,19 @@ void UGlobalScoreSubsystem::AddScore(int PlayerIndex, int Value)
 	{
 		case 0:
 			Player0Score += Value;
+			Player0Score = FMath::Clamp(Player0Score, 0, INT32_MAX);
 			break;
 		case 1:
 			Player1Score += Value;
+			Player1Score = FMath::Clamp(Player1Score, 0, INT32_MAX);
 			break;
 		case 2:
 			Player2Score += Value;
+			Player2Score = FMath::Clamp(Player2Score, 0, INT32_MAX);	
 			break;
 		case 3:
 			Player3Score += Value;
+			Player3Score = FMath::Clamp(Player3Score, 0, INT32_MAX);
 			break;
 		default:
 			break;
@@ -129,6 +134,19 @@ void UGlobalScoreSubsystem::PlayerInDuckBank(int PlayerIndex, int DuckToPointsMu
 		break;
 	}
 
+	if (tempCounter > 0)
+	{
+		if (GetWorld() != nullptr)
+		{
+			USoundSubsystem* Soundsubsystem = GetWorld()->GetSubsystem<USoundSubsystem>();
+
+			if (Soundsubsystem != nullptr)
+			{
+				Soundsubsystem->PlayDuckCashOutSound();
+			}
+		}
+	}
+	
 	ScoreChangedEvent.Broadcast(PlayerIndex, GetScore(PlayerIndex));
 	DuckCounterChangedEvent.Broadcast(PlayerIndex, GetDuckCounter(PlayerIndex));
 
@@ -164,6 +182,16 @@ void UGlobalScoreSubsystem::StealDuck(int PlayerIndexAdd, int PlayerIndexLose)
 
 	AddDuck(PlayerIndexAdd, 1);
 	AddDuck(PlayerIndexLose, -1);
+
+	if (GetWorld() != nullptr)
+	{
+		USoundSubsystem* Soundsubsystem = GetWorld()->GetSubsystem<USoundSubsystem>();
+
+		if (Soundsubsystem != nullptr)
+		{
+			Soundsubsystem->PlayDuckStealSound();
+		}
+	}
 }
 
 

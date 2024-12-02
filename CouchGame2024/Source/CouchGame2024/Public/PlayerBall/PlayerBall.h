@@ -12,6 +12,7 @@
 #include "PlayerBall.generated.h"
 
 
+class AEventPush;
 class UPlayerPowerUpData;
 class UWidgetComponent;
 class UPlayerBallBehaviorPowerUp;
@@ -160,6 +161,9 @@ public:
 	void PlayPunchGamefeelEffectsBlueprint();
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void PlayPunchFailedGamefeelEffectsBlueprint();
+	
+	UFUNCTION(BlueprintImplementableEvent)
 	void PlayIsPunchedGamefeelEffectsBlueprint();
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -199,6 +203,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayGrapplingGrabGamefeelEffectsBlueprint();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayGrapplingEndGamefeelEffectsBlueprint();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayFreezeCastGamefeelEffectsBlueprint();
@@ -223,6 +229,12 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlaySlipperyEffectGamefeelEffectsBlueprint();
 
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayRailEnterGamefeelEffectsBlueprint();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayRailExitGamefeelEffectsBlueprint();
 	
 public:
 
@@ -321,6 +333,18 @@ public:
 
 public:
 	void ReceiveDuckReaction(int PlayerIndexReceiving, int PlayerIndexLosing);
+
+#pragma endregion
+
+#pragma region PushEventReactions
+
+public:
+	void ReceiveImpactPushReaction(int PlayerIndexImpacting, int PlayerIndexImpacting2);
+
+	void ReceivePunchPushReaction(int PlayerIndexPunching, int PlayerIndexPunched);
+
+	UPROPERTY()
+	TObjectPtr<AEventPush> EventPush = nullptr;
 
 #pragma endregion 
 	

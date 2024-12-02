@@ -60,6 +60,7 @@ void AEventZones::Tick(float DeltaTime)
 void AEventZones::SetupEventPhase1()
 {
 	Super::SetupEventPhase1();
+	UE_LOG(LogTemp, Warning, TEXT("SetupEventPhase1 zones"));
 	
 	for (TObjectPtr<APillarZone> PillarZone : PillarZones)
 	{
@@ -67,7 +68,8 @@ void AEventZones::SetupEventPhase1()
 		PillarZone->HideZone();
 	}
 
-	Phase2Manager->Bind();
+	if (Phase2Manager != nullptr) Phase2Manager->Bind();
+	UE_LOG(LogTemp, Warning, TEXT("Bind phase 2"));
 	
 	OnZonesStartedEvent.Broadcast();
 }
@@ -75,6 +77,7 @@ void AEventZones::SetupEventPhase1()
 void AEventZones::TriggerEventPhase1()
 {
 	Super::TriggerEventPhase1();
+	UE_LOG(LogTemp, Warning, TEXT("TriggerPhase1 zones"));
 
 	for (TObjectPtr<APillarZone> PillarZone : PillarZones)
 	{

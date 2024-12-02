@@ -49,6 +49,8 @@ void AMoleElement::Tick(float DeltaTime)
 
 void AMoleElement::TriggerElementWithPlayer(APlayerBall* InPlayerBall)
 {
+	ReceiveImpactedByPlayer();
+	
 	if (bHasBeenHitByPlayer) return;
 	bHasBeenHitByPlayer = true;
 	
@@ -73,17 +75,19 @@ EPinballElementID AMoleElement::GetElementID()
 	return EPinballElementID::Mole;
 }
 
-void AMoleElement::SpawnMole() const
+void AMoleElement::SpawnMole()
 {
 	if (SpawnAnimationCurve)
 	{
+		ReceiveOnSpawnMole();
+		
 		SpawnTimeline->AddInterpFloat(SpawnAnimationCurve, InterpFunction, FName("Alpha"));
 		SpawnTimeline->SetTimelineFinishedFunc(TimelineFinished);
 		SpawnTimeline->PlayFromStart();
 	}
 }
 
-void AMoleElement::DespawnMole() const
+void AMoleElement::DespawnMole()
 {
 	//SphereTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
@@ -91,6 +95,8 @@ void AMoleElement::DespawnMole() const
 	{
 		SpawnTimeline->ReverseFromEnd();
 	}
+
+	ReceiveOnDespawnMole();
 }
 
 void AMoleElement::HandleTimelineProgress(float Value)

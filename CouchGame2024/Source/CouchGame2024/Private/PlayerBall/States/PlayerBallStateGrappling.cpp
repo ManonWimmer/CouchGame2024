@@ -53,6 +53,9 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
 			Pawn->BehaviorElementReactions->OnImpactAction.AddDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
+			Pawn->BehaviorElementReactions->OnTourniquetReaction.AddDynamic(this, &UPlayerBallStateGrappling::OnTourniquet);
+
+			Pawn->BehaviorElementReactions->OnBumperReaction.AddDynamic(this, &UPlayerBallStateGrappling::OnBumped);
 		}
 
 		if (Pawn->BehaviorGrapple != nullptr)
@@ -104,6 +107,8 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 					Pillar = Cast<APillarElement>(Pawn->BehaviorGrapple->HookObject);
 					if (Pillar)
 					{
+						Pillar->NbrPlayersGrappling += 1;
+						if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("+= 1 nbr Player grappling : %d"), Pillar->NbrPlayersGrappling));
 						if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "set state machine");
 						Pillar->PlayerStateMachineOnPillar = StateMachine;
 					}
@@ -139,6 +144,8 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnStunned);
 			Pawn->BehaviorElementReactions->OnImpactAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnImpacted);
+			Pawn->BehaviorElementReactions->OnTourniquetReaction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnTourniquet);
+			Pawn->BehaviorElementReactions->OnBumperReaction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnBumped);
 		}
 
 		if (Pawn->BehaviorGrapple != nullptr)
@@ -243,6 +250,8 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			{
 				if (Pillar)
 				{
+					Pillar->NbrPlayersGrappling -= 1;
+					if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("-= 1 nbr Player grappling : %d"), Pillar->NbrPlayersGrappling));
 					if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "reset state machine");
 					Pillar->PlayerStateMachineOnPillar = nullptr;
 				}
@@ -268,6 +277,11 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 		}
 	}
 
+	if (Pawn != nullptr)
+	{
+		Pawn->PlayGrapplingEndGamefeelEffectsBlueprint();
+	}
+	
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, "End Grappling");
 }
 
@@ -347,7 +361,8 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 		}
 
 		// Gain points on pillar
-		GainPillarPoints();
+		if (Pillar && !Pillar->bIsTricked)
+			GainPillarPoints(DeltaTime);
 	}
 
 	// Stop movement if wall detected & return
@@ -426,6 +441,20 @@ void UPlayerBallStateGrappling::OnImpacted(float ImpactedValue) // impact ball -
 	//UE_LOG(LogTemp, Warning, TEXT("Stop by impact in grappling") );
 
 	StateMachine->ChangeState(EPlayerBallStateID::Impact);
+}
+
+void UPlayerBallStateGrappling::OnBumped(float BumpedValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Bumped);
+}
+
+void UPlayerBallStateGrappling::OnTourniquet(float TourniquetValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Tourniquet);
 }
 
 void UPlayerBallStateGrappling::SetCable() // Same for Pillar & Not Pillar
@@ -547,13 +576,16 @@ bool UPlayerBallStateGrappling::DetectWalls()
 	return bHasDetected;
 }
 
-void UPlayerBallStateGrappling::GainPillarPoints()
+void UPlayerBallStateGrappling::GainPillarPoints(float DeltaTime)
 {
+	if (Pillar == nullptr) return;
+	
 	if (ScoreSubsystem)
 	{
-		ScoreSubsystem->AddScore(Pawn->PlayerIndex,
-		                         CurrentTimeOnPillar * Pawn->BehaviorGrapple->PillarPointsMultiplier * Pawn->
-		                         BehaviorGrapple->PillarPointsPerSeconds);
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, "Gain pillar points");
+		
+		ScoreSubsystem->AddScore(Pawn->PlayerIndex, (CurrentTimeOnPillar * Pawn->BehaviorGrapple->PillarPointsMultiplier * Pawn->
+		                         BehaviorGrapple->PillarPointsPerSeconds * DeltaTime) / Pillar->NbrPlayersGrappling);
 	}
 	else
 	{
