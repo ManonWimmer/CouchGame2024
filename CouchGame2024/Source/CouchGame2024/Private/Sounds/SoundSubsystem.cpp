@@ -187,6 +187,46 @@ void USoundSubsystem::PlayMoleOutSound()
 	}
 }
 
+void USoundSubsystem::PlayPillarInSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PillarInSound == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PillarInSound, SoundsData->PillarInSoundAdjuster);
+	}
+}
+
+void USoundSubsystem::PlayPillarOutSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PillarOutSound == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PillarOutSound, SoundsData->PillarOutSoundAdjuster);
+	}
+}
+
+void USoundSubsystem::PlayPillarGainSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PillarGainSound == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PillarGainSound, SoundsData->PillarGainSoundAdjuster);
+	}
+}
+
+void USoundSubsystem::PlayPillarBaitSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PillarBaitSound == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PillarBaitSound, SoundsData->PillarBaitSoundAdjuster);
+	}
+}
+
 void USoundSubsystem::PlayGrapplingGrabSound()
 {
 	if (SoundsData == nullptr)	return;
