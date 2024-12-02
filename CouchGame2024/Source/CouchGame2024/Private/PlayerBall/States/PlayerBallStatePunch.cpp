@@ -69,30 +69,37 @@ void UPlayerBallStatePunch::StateTick(float DeltaTime)
 void UPlayerBallStatePunch::PunchPlayerBall()
 {
 	if (Pawn == nullptr)	return;
+
+	TArray<APlayerBall*> OutPlayerBalls = GetAllPlayerBallInPunchRadius();
+
+	if (OutPlayerBalls.Num() <= 0)	return;
 	
-	APlayerBall* PlayerBall = GetNearestPlayerBallInPunchRadius();
-	if (PlayerBall == nullptr)
-		return;
+	//APlayerBall* PlayerBall = GetNearestPlayerBallInPunchRadius();
 
-	FVector Start = Pawn->GetActorLocation();
-	FVector End = PlayerBall->GetActorLocation();
-
-	FVector Dir = End - Start;
-
-	Dir.Normalize();
-
-	if (PlayerBall->BehaviorElementReactions != nullptr && Pawn->BehaviorElementReactions != nullptr)
+	for (auto PlayerBall : OutPlayerBalls)
 	{
-		PlayerBall->BehaviorElementReactions->ReceiveStunnedAction(Pawn->BehaviorElementReactions->PunchStunCooldown);
+		if (PlayerBall == nullptr)
+			return;
 
+		FVector Start = Pawn->GetActorLocation();
+		FVector End = PlayerBall->GetActorLocation();
+
+		FVector Dir = End - Start;
+
+		Dir.Normalize();
+
+		if (PlayerBall->BehaviorElementReactions != nullptr && Pawn->BehaviorElementReactions != nullptr)
+		{
+			PlayerBall->BehaviorElementReactions->ReceiveStunnedAction(Pawn->BehaviorElementReactions->PunchStunCooldown);
+		}
 		
-	}
-	PlayerBall->SphereCollision->AddImpulse(Dir * Pawn->PunchForceMultiplier, NAME_None, false);
+		PlayerBall->SphereCollision->AddImpulse(Dir * Pawn->PunchForceMultiplier, NAME_None, false);
 
-	PlayerBall->PlayIsPunchedGamefeelEffectsBlueprint();
-	
-	Pawn->ReceiveDuckReaction(Pawn->PlayerIndex, PlayerBall->PlayerIndex);	// Here the player has punched -> win duck
-	Pawn->ReceivePunchPushReaction(Pawn->PlayerIndex, PlayerBall->PlayerIndex);	// Here the player has punched -> Is the one pushing
+		PlayerBall->PlayIsPunchedGamefeelEffectsBlueprint();
+		
+		Pawn->ReceiveDuckReaction(Pawn->PlayerIndex, PlayerBall->PlayerIndex);	// Here the player has punched -> win duck
+		Pawn->ReceivePunchPushReaction(Pawn->PlayerIndex, PlayerBall->PlayerIndex);	// Here the player has punched -> Is the one pushing
+	}
 	
 	Pawn->PlayPunchGamefeelEffectsBlueprint();
 }
@@ -138,6 +145,50 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 		}
 	}
 	return nullptr;
+}
+
+TArray<APlayerBall*> UPlayerBallStatePunch::GetAllPlayerBallInPunchRadius()
+{
+	TArray<APlayerBall*> OutPlayerBallInPunchRadius;
+	if (Pawn == nullptr)
+		return OutPlayerBallInPunchRadius;
+	
+	FVector Start = Pawn->GetActorLocation();
+	
+	// Array of hit results
+	TArray<FOverlapResult> OverlapResults;
+
+	// Set parameters
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(Pawn);
+	
+	FCollisionObjectQueryParams ObjectQueryParams(ECollisionChannel::ECC_Pawn);	// Look only for pawn
+
+	// Detect Collision With sphere overlap
+	bool bHasDetected = Pawn->GetWorld()->OverlapMultiByObjectType(
+		OverlapResults,
+		Start,
+		FQuat::Identity,
+		ObjectQueryParams,
+		FCollisionShape::MakeSphere(Pawn->PunchRadius),
+		CollisionParams
+	);
+	
+	if (Pawn->GetWorld())
+		DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->PunchRadius, 12, FColor::Blue, false, 3.f);
+
+	if (bHasDetected)	// has detected a pawn
+	{
+		for (FOverlapResult& Result : OverlapResults)
+		{
+			APlayerBall* DetectedBall = Cast<APlayerBall>(Result.GetActor());	// Check if Player Ball
+			if (DetectedBall)
+			{
+				OutPlayerBallInPunchRadius.Add(DetectedBall);
+			}
+		}
+	}
+	return OutPlayerBallInPunchRadius;
 }
 
 void UPlayerBallStatePunch::StartPunchCooldown()	// Setup playerBall parameters to handle PunchCooldown
