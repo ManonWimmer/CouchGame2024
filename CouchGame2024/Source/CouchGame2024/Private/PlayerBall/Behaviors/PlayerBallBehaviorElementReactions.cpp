@@ -9,6 +9,7 @@
 #include "PinballElements/Elements/RailElement.h"
 #include "PinballElements/Elements/TourniquetElement.h"
 #include "PlayerBall/PlayerBall.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 #include "PlayerBall/Datas/PlayerBallData.h"
 
 
@@ -338,5 +339,26 @@ void UPlayerBallBehaviorElementReactions::ReceiveTourniquetReaction()
 void UPlayerBallBehaviorElementReactions::ReceiveEndTourniquetReaction()
 {
 	OnEndTourniquetReaction.Broadcast(1.f);
+}
+
+FVector UPlayerBallBehaviorElementReactions::GetCurrentForceExitTourniquetDir()
+{
+	if (GetPlayerBall() == nullptr) FVector(1.f, 1.f,0.f);
+
+	if (GetPlayerBall()->BehaviorMovements == nullptr) return FVector(1.f, 1.f,0.f);
+
+	FVector Dir = FVector::ZeroVector;
+
+	Dir.X = GetPlayerBall()->BehaviorMovements->MoveYValue;
+	Dir.Y = GetPlayerBall()->BehaviorMovements->MoveXValue;
+
+	if (Dir.Length() <= 0.f)
+	{
+		Dir = FVector(1.f, 1.f,0.f);
+	}
+
+	Dir.Normalize();
+	
+	return Dir;
 }
 
