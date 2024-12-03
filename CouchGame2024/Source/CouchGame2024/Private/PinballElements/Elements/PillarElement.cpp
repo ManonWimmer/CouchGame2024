@@ -88,6 +88,11 @@ void APillarElement::DisablePillar()
 		PlayerStateMachineOnPillar->ChangeState(EPlayerBallStateID::Idle);
 		PlayerStateMachineOnPillar = nullptr;
 	}
+
+	if (!bIsTricked)
+	{
+		ReceiveOnDisablePillar();
+	}
 }
 
 void APillarElement::EnablePillar(bool Tricked, const APillarZone* Zone)
@@ -117,6 +122,8 @@ void APillarElement::EnablePillar(bool Tricked, const APillarZone* Zone)
 	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "pas mesh");
 	}
+
+	ReceiveOnEnablePillar();
 }
 
 void APillarElement::DisableTrickedZone()
@@ -128,6 +135,8 @@ void APillarElement::DisableTrickedZone()
 	
 	PillarZone->HideZone();
 	bZoneDisabled = true;
-	bIsTricked = false; 
+	bIsTricked = false;
+
+	ReceiveOnDisableTrickedZone();
 }
 

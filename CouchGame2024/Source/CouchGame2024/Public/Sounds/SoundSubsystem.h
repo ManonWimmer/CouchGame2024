@@ -92,6 +92,22 @@ public:
 	void PlayMoleOutSound();
 
 #pragma endregion 
+
+#pragma region Play Pillar Sounds
+
+	UFUNCTION(BlueprintCallable)
+	void PlayPillarInSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayPillarOutSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayPillarGainSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayPillarBaitSound();
+
+#pragma endregion 
 	
 #pragma endregion 
 	

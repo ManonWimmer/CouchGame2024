@@ -43,11 +43,26 @@ public:
 	UFUNCTION()
 	void DisablePillar();
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnDisablePillar"))
+	void ReceiveOnDisablePillar();
+	
 	UFUNCTION()
 	void EnablePillar(bool Tricked, const APillarZone* Zone);
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnEnablePillar"))
+	void ReceiveOnEnablePillar();
+
 	UFUNCTION()
 	void DisableTrickedZone();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnDisableTrickedZone"))
+	void ReceiveOnDisableTrickedZone();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnStartGainPoint"))
+	void ReceiveOnStartGainPoint();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnEndGainPoint"))
+	void ReceiveOnEndGainPoint();
 	
 	UPROPERTY()
 	bool bIsHookable = true;

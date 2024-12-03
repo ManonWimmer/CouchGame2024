@@ -128,6 +128,30 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Sounds Mole")
 	float MoleOutSoundAdjuster = 1.f;
 #pragma endregion 
+
+#pragma region Pillar Sounds
+
+	UPROPERTY(EditAnywhere, Category = "Sounds Pillar")
+	TObjectPtr<UMetaSoundSource> PillarInSound;
+	UPROPERTY(EditAnywhere, Category = "Sounds Pillar")
+	float PillarInSoundAdjuster = 1.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Sounds Pillar")
+	TObjectPtr<UMetaSoundSource> PillarOutSound;
+	UPROPERTY(EditAnywhere, Category = "Sounds Pillar")
+	float PillarOutSoundAdjuster = 1.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Sounds Pillar")
+	TObjectPtr<UMetaSoundSource> PillarGainSound;
+	UPROPERTY(EditAnywhere, Category = "Sounds Pillar")
+	float PillarGainSoundAdjuster = 1.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Sounds Pillar")
+	TObjectPtr<UMetaSoundSource> PillarBaitSound;
+	UPROPERTY(EditAnywhere, Category = "Sounds Pillar")
+	float PillarBaitSoundAdjuster = 1.f;
+	
+#pragma endregion 
 	
 #pragma endregion
 
