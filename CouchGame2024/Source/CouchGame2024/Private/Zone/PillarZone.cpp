@@ -287,7 +287,7 @@ void APillarZone::SetStartValues()
 	SetActorLocation(TargetLocation);
 }
 
-void APillarZone::EnableOverlappingPillars() const
+void APillarZone::EnableOverlappingPillars()
 {
 	TArray<AActor*> OverlappingActors;
 	SphereComponent->GetOverlappingActors(OverlappingActors);
