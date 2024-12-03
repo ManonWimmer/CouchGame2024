@@ -161,8 +161,14 @@ public:
 	void PlayPunchGamefeelEffectsBlueprint();
 
 	UFUNCTION(BlueprintImplementableEvent)
+	void PlayPunchFailedGamefeelEffectsBlueprint();
+	
+	UFUNCTION(BlueprintImplementableEvent)
 	void PlayIsPunchedGamefeelEffectsBlueprint();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayPunchMeshEffect(APlayerBall* InTargetBall);
+	
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayBumpedGamefeelEffectsBlueprint();
 

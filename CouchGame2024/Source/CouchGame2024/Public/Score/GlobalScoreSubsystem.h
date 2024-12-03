@@ -6,6 +6,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "GlobalScoreSubsystem.generated.h"
 
+class USoundSubsystem;
 /**
  * 
  */
@@ -75,4 +76,5 @@ protected:
 
 	UPROPERTY()
 	bool bPlayerInBank = false;
+
 };
