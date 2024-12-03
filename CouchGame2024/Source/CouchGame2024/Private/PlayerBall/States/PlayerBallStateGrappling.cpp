@@ -113,6 +113,7 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 						Pillar->PlayerStateMachineOnPillar = StateMachine;
 
 						Pillar->ReceiveOnStartGainPoint();
+						Pillar->OnStartedGrabbed();
 					}
 				}
 			}
@@ -258,6 +259,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 					Pillar->PlayerStateMachineOnPillar = nullptr;
 
 					Pillar->ReceiveOnEndGainPoint();
+					Pillar->OnStoppedGrabbed();
 				}
 			}
 
