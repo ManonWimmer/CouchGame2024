@@ -73,7 +73,7 @@ void UPlayerBallStateDeath::DeathBall()
 	Pawn->SphereCollision->SetSimulatePhysics(false);
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 	
-	Pawn->SetActorHiddenInGame(true);
+	//Pawn->SetActorHiddenInGame(true);
 
 	Pawn->PlayDeathZoneGamefeelEffectsBlueprint();
 }
@@ -88,6 +88,8 @@ void UPlayerBallStateDeath::EndDeathBall()
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
 	
 	Pawn->SetActorHiddenInGame(false);
+
+	Pawn->SetActorScale3D(FVector(1, 1, 1));
 }
 
 void UPlayerBallStateDeath::OnRespawn(float RespawnValue)

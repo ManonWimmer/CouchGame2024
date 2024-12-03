@@ -49,6 +49,8 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 	{
 		Pawn->PlayGrapplingGrabGamefeelEffectsBlueprint();
 
+		Pawn->OnDeathReaction.AddDynamic(this, &UPlayerBallStateGrappling::OnDeath);
+		
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
@@ -143,6 +145,8 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
 	{
+		Pawn->OnDeathReaction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnDeath);
+		
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnStunned);
@@ -461,6 +465,13 @@ void UPlayerBallStateGrappling::OnTourniquet(float TourniquetValue)
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Tourniquet);
+}
+
+void UPlayerBallStateGrappling::OnDeath(float DeathValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Death);
 }
 
 void UPlayerBallStateGrappling::SetCable() // Same for Pillar & Not Pillar

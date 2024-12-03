@@ -373,7 +373,7 @@ void APlayerBall::Kill()
 	if (bIsDead)	return;
 	
 	OnDeathReaction.Broadcast(1.f);
-	ReceiveOnKill();
+	ReceiveOnKill(DeathDurationBeforeRespawn / 2.f);
 }
 
 void APlayerBall::TestCallRespawn()
