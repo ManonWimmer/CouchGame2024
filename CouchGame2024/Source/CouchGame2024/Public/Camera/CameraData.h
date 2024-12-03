@@ -22,6 +22,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	float CameraOffsetUp = 0.f;
+
+	UPROPERTY(editAnywhere, Category = "Camera")
+	float CameraPercentTreshold = 0.6;;
+	
 	
 	UPROPERTY(EditAnywhere, Category="Shakes")
 	TSubclassOf<UCameraShakeBase> CameraShakePunch;
