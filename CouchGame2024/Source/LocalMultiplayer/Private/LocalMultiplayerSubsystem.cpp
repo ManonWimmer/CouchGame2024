@@ -21,7 +21,37 @@ void ULocalMultiplayerSubsystem::CreateAndInitPlayers(ELocalMultiplayerInputMapp
 		APlayerController* PlayerController = UGameplayStatics::CreatePlayer(GetWorld(), i, true);
 	}
 
-	// Faire pour deuxieme partie
+	// Bind already existing Pair index profile / player index
+	
+	// Check already existing Pair index profile player and assign keyboard IMC
+	for (const auto& Pair : PlayerIndexFromKeyboardProfileIndex)
+	{
+		int KeyboardProfileIndex = Pair.Key;
+		int PlayerIndex = Pair.Value;
+
+		AssignKeyboardMapping(PlayerIndex, KeyboardProfileIndex, MappingType);
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, 
+				FString::Printf(TEXT("Assigned Keyboard IMC to PlayerIndex %d (KeyboardProfileIndex %d)"), PlayerIndex, KeyboardProfileIndex));
+		}
+	}
+
+	// Check already existing Pair index profile player and assign gamepads IMC
+	for (const auto& Pair : PlayerIndexFromGamepadProfileIndex)
+	{
+		int GamepadDeviceID = Pair.Key;
+		int PlayerIndex = Pair.Value;
+
+		AssignGamepadInputMapping(PlayerIndex, MappingType);
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, 
+				FString::Printf(TEXT("Assigned Gamepad IMC to PlayerIndex %d (DeviceID %d)"), PlayerIndex, GamepadDeviceID));
+		}
+	}
 }
 
 // Retrouve l’index d’un PlayerController à partir de l’index d’un profil clavier (retourne -1 s’il n’existe pas encore de mapping).
