@@ -55,7 +55,7 @@ void UCameraWorldSubsystem::SetupData()
 	if (CameraData == nullptr)	return;
 	
 	CameraSmoothSpeed = CameraData->CameraSmoothSpeed;
-
+	CameraOffsetUp = CameraData->CameraOffsetUp;
 }
 
 AActor* UCameraWorldSubsystem::GetCameraMainActor()	const
@@ -93,7 +93,7 @@ void UCameraWorldSubsystem::TickUpdateCameraPosition(float DeltaTime)
 
 	FVector CurrentCameraPosition = CameraMain->GetOwner()->GetActorLocation();
 
-	FVector TargetCameraPosition = FVector(NewCameraPosition.X, NewCameraPosition.Y, NewCameraPosition.Z);
+	FVector TargetCameraPosition = FVector(NewCameraPosition.X + CameraOffsetUp, NewCameraPosition.Y, NewCameraPosition.Z);
 
 	FVector SmoothTargetCameraPosition = FMath::VInterpTo(CurrentCameraPosition, TargetCameraPosition, DeltaTime, 2.5f);
 	

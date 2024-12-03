@@ -127,7 +127,9 @@ protected:
 #pragma region Smooth
 private:
 	float CameraSmoothSpeed = 2.f;
-
+	
+	float CameraOffsetUp = 0.f;
+	
 #pragma endregion
 
 #pragma region Camera Shakes
