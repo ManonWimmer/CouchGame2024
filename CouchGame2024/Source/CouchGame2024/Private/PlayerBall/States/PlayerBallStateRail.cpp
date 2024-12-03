@@ -306,7 +306,8 @@ void UPlayerBallStateRail::ChangeDirection()
 	
 	DirectionRail *= -1;
 
-	CurrentTimeInRail = 1.f - CurrentTimeInRail;
+	//CurrentTimeInRail = 1.f - CurrentTimeInRail;
+	CurrentTimeInRail = ProgressRailDurationDistance - CurrentTimeInRail;
 }
 
 void UPlayerBallStateRail::CheckForwardCollisionBallRail(bool UseDistance)
@@ -349,12 +350,12 @@ void UPlayerBallStateRail::CheckForwardCollisionBallRail(bool UseDistance)
 		Start,
 		FQuat::Identity,
 		ObjectQueryParams,
-		FCollisionShape::MakeSphere(Pawn->SphereCollision->GetScaledSphereRadius()/2.f),
+		FCollisionShape::MakeSphere(Pawn->SphereCollision->GetScaledSphereRadius()/1.f),
 		CollisionParams
 	);
 
 	//if (Pawn->GetWorld())
-	//	DrawDebugSphere(Pawn->GetWorld(), CheckPosition, Pawn->SphereCollision->GetScaledSphereRadius()/2.f, 12, FColor::Yellow, false, 1.f);
+	//	DrawDebugSphere(Pawn->GetWorld(), CheckPosition, Pawn->SphereCollision->GetScaledSphereRadius()/1.f, 12, FColor::Yellow, false, 1.f);
 
 	
 	if (bHasDetected)
