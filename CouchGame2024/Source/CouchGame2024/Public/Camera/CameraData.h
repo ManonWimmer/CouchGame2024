@@ -20,6 +20,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	float CameraSmoothSpeed = 2.f;
 
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	float CameraOffsetUp = 0.f;
+	
 	UPROPERTY(EditAnywhere, Category="Shakes")
 	TSubclassOf<UCameraShakeBase> CameraShakePunch;
 
