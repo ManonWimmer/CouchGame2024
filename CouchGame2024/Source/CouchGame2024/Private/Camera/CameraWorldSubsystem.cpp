@@ -56,6 +56,7 @@ void UCameraWorldSubsystem::SetupData()
 	
 	CameraSmoothSpeed = CameraData->CameraSmoothSpeed;
 	CameraOffsetUp = CameraData->CameraOffsetUp;
+	CameraPercentTreshold = CameraData->CameraPercentTreshold;
 }
 
 AActor* UCameraWorldSubsystem::GetCameraMainActor()	const
@@ -91,6 +92,14 @@ void UCameraWorldSubsystem::TickUpdateCameraPosition(float DeltaTime)
 	NewCameraPosition.X = AverageLocation.X;
 	NewCameraPosition.Y = AverageLocation.Y;
 
+	float Percent = CalculateGreatestDistanceBetweenTargets() / (FMath::Abs(CameraZoomDistanceBetweenTargetsMax - CameraZoomDistanceBetweenTargetsMin));
+
+	if (Percent >= CameraPercentTreshold)
+	{
+		NewCameraPosition.X = CameraStartPosX;
+		NewCameraPosition.Y = CameraStartPosY;
+	}
+	
 	FVector CurrentCameraPosition = CameraMain->GetOwner()->GetActorLocation();
 
 	FVector TargetCameraPosition = FVector(NewCameraPosition.X + CameraOffsetUp, NewCameraPosition.Y, NewCameraPosition.Z);
@@ -190,6 +199,11 @@ void UCameraWorldSubsystem::TickUpdateCameraZoom(float DeltaTime)
 
 	FVector CameraPos = CameraMain->GetOwner()->GetActorLocation();
 
+	if (Percent >= CameraPercentTreshold)
+	{
+		Percent = 1.f;
+	}
+	
 	//float ZPos = FMath::Lerp(CameraZoomZMin, CameraZoomZMax, InversePercent);
 	float ZPos = FMath::Lerp(CameraZoomZMin, CameraZoomZMax, Percent);
 
@@ -318,6 +332,9 @@ void UCameraWorldSubsystem::InitCameraZoomParameters()
 	if (CameraDistanceMax != nullptr)
 	{
 		CameraZoomZMax = CameraDistanceMax->GetOwner()->GetActorLocation().Z;
+
+		CameraStartPosX = CameraDistanceMax->GetOwner()->GetActorLocation().X;
+		CameraStartPosY = CameraDistanceMax->GetOwner()->GetActorLocation().Y;
 	}
 }
 
