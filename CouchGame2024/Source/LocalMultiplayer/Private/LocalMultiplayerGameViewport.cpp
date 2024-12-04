@@ -20,7 +20,7 @@ void ULocalMultiplayerGameViewport::PostInitProperties()
 // Détection des inputs + attribution des players index en fonction de la touche du clavier / bouton de la manette fourni en paramètre.
 bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("TEST0")));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(TEXT("TEST0")));
 	ULocalMultiplayerSubsystem* MultiplayerSubsystem = GetGameInstance()->GetSubsystem<ULocalMultiplayerSubsystem>();
 
 	const ULocalMultiplayerSettings* Settings = GetDefault<ULocalMultiplayerSettings>();
@@ -82,6 +82,10 @@ bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs
 bool ULocalMultiplayerGameViewport::InputAxis(FViewport* InViewport, FInputDeviceId InputDevice, FKey Key, float Delta,
 	float DeltaTime, int32 NumSamples, bool bGamepad)
 {
+	//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, 
+	//			FString::Printf(TEXT("Device ID: %d, Key: %s"), InputDevice.GetId(), *Key.ToString()));
+
+	
 	if(bGamepad)
 	{
 		ULocalMultiplayerSubsystem* MultiplayerSubsystem = GetGameInstance()->GetSubsystem<ULocalMultiplayerSubsystem>();
@@ -89,10 +93,7 @@ bool ULocalMultiplayerGameViewport::InputAxis(FViewport* InViewport, FInputDevic
 		const ULocalMultiplayerSettings* Settings = GetDefault<ULocalMultiplayerSettings>();
 		
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("Axis pressed"));
-
-		//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, 
-		//		FString::Printf(TEXT("Device ID: %d, Key: %s"), InputDevice.GetId(), *Key.ToString()));
-
+		
 		int PlayerIndex = MultiplayerSubsystem->GetAssignedPlayerIndexFromGamepadProfileID(InputDevice.GetId());
 
 		if (PlayerIndex == -1)

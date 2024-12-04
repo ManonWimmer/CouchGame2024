@@ -39,6 +39,8 @@ private:
 
 	
 	TSubclassOf<APlayerBall> GetPlayerBallClassFromInputType(EAutoReceiveInput::Type InputType) const;
+	
+	int GetPlayerIndexFromInputType(EAutoReceiveInput::Type InputType) const;
 
 	void CreateAndInitPlayers() const;
 
