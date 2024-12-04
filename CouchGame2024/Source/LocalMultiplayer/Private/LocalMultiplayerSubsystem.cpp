@@ -90,7 +90,7 @@ void ULocalMultiplayerSubsystem::AssignKeyboardMapping(int PlayerIndex, int Keyb
 
 	if (Controller->GetLocalPlayer())
 	{
-		Controller->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(IMC, PlayerIndex + 1, ContextOptions);
+		Controller->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(IMC, 1, ContextOptions);
 	}
 }
 
@@ -123,7 +123,7 @@ void ULocalMultiplayerSubsystem::AssignGamepadInputMapping(int PlayerIndex,
 
 	if (Controller->GetLocalPlayer())
 	{
-		Controller->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(IMC, PlayerIndex + 1, ContextOptions);
+		Controller->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(IMC, 1, ContextOptions);
 	}
 }
 
