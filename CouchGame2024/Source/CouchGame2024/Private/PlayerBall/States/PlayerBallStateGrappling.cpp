@@ -49,6 +49,8 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 	{
 		Pawn->PlayGrapplingGrabGamefeelEffectsBlueprint();
 
+		Pawn->OnDeathReaction.AddDynamic(this, &UPlayerBallStateGrappling::OnDeath);
+		
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.AddDynamic(this, &UPlayerBallStateGrappling::OnStunned);
@@ -143,6 +145,8 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 
 	if (Pawn != nullptr)
 	{
+		Pawn->OnDeathReaction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnDeath);
+		
 		if (Pawn->BehaviorElementReactions != nullptr)
 		{
 			Pawn->BehaviorElementReactions->OnStunnedAction.RemoveDynamic(this, &UPlayerBallStateGrappling::OnStunned);
@@ -174,7 +178,8 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			*/
 
 			// Get new temp angle & velocity
-			SetGrapplingVelocityAndAnglePillar(Pawn->GetWorld()->DeltaTimeSeconds);
+			//SetGrapplingVelocityAndAnglePillar(Pawn->GetWorld()->DeltaTimeSeconds);
+			SetGrapplingVelocityAndAngleNotPillar(Pawn->GetWorld()->DeltaTimeSeconds);
 
 			// Get angle rotate left or right depending on last & current angle
 			if (Pawn->BehaviorGrapple->CurrentGrapplingAngle > Pawn->BehaviorGrapple->LastAngle)
@@ -309,7 +314,8 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	if (Pawn->BehaviorGrapple->IsHookingPillar)
 	{
 		CurrentTimeOnPillar += DeltaTime;
-		SetGrapplingVelocityAndAnglePillar(DeltaTime);
+		//SetGrapplingVelocityAndAnglePillar(DeltaTime);
+		SetGrapplingVelocityAndAngleNotPillar(DeltaTime);
 	}
 	else
 	{
@@ -463,6 +469,13 @@ void UPlayerBallStateGrappling::OnTourniquet(float TourniquetValue)
 	StateMachine->ChangeState(EPlayerBallStateID::Tourniquet);
 }
 
+void UPlayerBallStateGrappling::OnDeath(float DeathValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Death);
+}
+
 void UPlayerBallStateGrappling::SetCable() // Same for Pillar & Not Pillar
 {
 	// Set cable on player
@@ -517,7 +530,7 @@ void UPlayerBallStateGrappling::SetGrapplingVelocityAndAnglePillar(float DeltaTi
 
 	TempGrapplingAngularVelocity = (Pawn->BehaviorGrapple->GrapplingDamping * Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity
 	+ Pawn->BehaviorMovements->MoveXValue * Pawn->BehaviorGrapple->GrapplingPillarForce
-	+ Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * Pawn->GetVelocity().Size() * RotationDirection) ;
+	+ Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMovingPillar * Pawn->GetVelocity().Size() * RotationDirection) ;
 
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan,FString::Printf(TEXT("%f, %f"), RotationDirection, TempGrapplingAngularVelocity));
 
@@ -529,8 +542,8 @@ void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngleNotPillar(float Delt
 {
 	if (Pawn->BehaviorMovements == nullptr || Pawn->BehaviorGrapple == nullptr) return;
 
-	TempGrapplingAngularVelocity = Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * RotationDirection
-		* Pawn->BehaviorGrapple->GrapplingNotPillarForce * 1000.f;
+	TempGrapplingAngularVelocity = Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMovingNotPillar * RotationDirection
+		* Pawn->BehaviorGrapple->GrapplingNotPillarForce;
 
 	TempGrapplingAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle + TempGrapplingAngularVelocity * DeltaTime;
 }

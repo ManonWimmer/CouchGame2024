@@ -47,6 +47,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayUICheckSound();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayUIHoverSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayUIBackSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayUIConfirmSound();
+
 
 	UFUNCTION(BlueprintCallable)
 	void PlayUIStartGameSound();

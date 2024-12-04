@@ -109,7 +109,10 @@ public:
 	float MoreOrLessCablePerFrame = 10.f;
 
 	UPROPERTY()
-	float StartGrapplingForceFactorWhenAlreadyMoving = 0.001f;
+	float StartGrapplingForceFactorWhenAlreadyMovingPillar = 0.001f;
+	
+	UPROPERTY()
+	float StartGrapplingForceFactorWhenAlreadyMovingNotPillar = 0.001f;
 
 	UPROPERTY()
 	float GrapplingNotPillarForce = 5.f;

@@ -72,19 +72,35 @@ void URoundsSubsystem::StartRound()	// Reset AllScores -> Lock players -> set to
 	{
 		MatchPinballGameMode->SetNewLocationStartPlayerBallsSpecial(PlayerIndexLastRoundWin);
 	}
-	ChangeRoundPhase(ERoundsPhaseID::PRE_ROUND);
 
-	if (SoundSubsystem != nullptr)
+	if (bIsFirstCheckRound)
 	{
-		SoundSubsystem->PlayRoundStartSound();
+		ChangeRoundPhase(ERoundsPhaseID::POST_ROUND);
 	}
+	else
+	{
+		ChangeRoundPhase(ERoundsPhaseID::PRE_ROUND);
+
+		if (SoundSubsystem != nullptr)
+		{
+			SoundSubsystem->PlayRoundStartSound();
+		}
+	}
+
 }
 
 void URoundsSubsystem::EndRoundChecks()	// Check best player & increments rounds Win
 {
-	PlayerIndexLastRoundWin = GlobalScoreSubsystem->GetIndexPlayerBestScore();
+	if (!bIsFirstCheckRound)
+	{
+		PlayerIndexLastRoundWin = GlobalScoreSubsystem->GetIndexPlayerBestScore();
 
-	IncreaseRoundsWonByPlayerIndex(PlayerIndexLastRoundWin, 1);
+		IncreaseRoundsWonByPlayerIndex(PlayerIndexLastRoundWin, 1);
+	}
+	else
+	{
+		bIsFirstCheckRound = false;
+	}
 
 	if (SoundSubsystem != nullptr)
 	{
