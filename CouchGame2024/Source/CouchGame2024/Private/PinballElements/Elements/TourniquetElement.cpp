@@ -149,6 +149,8 @@ void ATourniquetElement::ForceExpulsePlayerFromTourniquetWithoutIndex(APlayerBal
 	if (IndexPlayer <= -1)	return;
 
 	if (AssociatedTimeToBallInTourniquet.Num() <= IndexPlayer)	return;
+
+	InPlayerBall->BehaviorElementReactions->bUseForceExitTourniquet = true;
 	
 	AssociatedTimeToBallInTourniquet[IndexPlayer] = TurningDuration * 2.f;
 }
@@ -166,7 +168,17 @@ void ATourniquetElement::ExpulsePlayerFromTourniquet(APlayerBall* InPlayerBall, 
 
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, "Expulse from tourniquet");
 
-	InPlayerBall->SphereCollision->AddImpulse(OutAnchor->GetRightVector() * GetForceExpulseBall());
+	if (InPlayerBall->BehaviorElementReactions->bUseForceExitTourniquet)
+	{
+		FVector Dir = InPlayerBall->BehaviorElementReactions->GetCurrentForceExitTourniquetDir();
+		InPlayerBall->SphereCollision->AddImpulse(Dir * GetForceExpulseBall());
+	}
+	else
+	{
+		InPlayerBall->SphereCollision->AddImpulse(OutAnchor->GetRightVector() * GetForceExpulseBall());
+	}
+
+	InPlayerBall->BehaviorElementReactions->bUseForceExitTourniquet = false;
 }
 
 void ATourniquetElement::IncreaseSpeedTourniquetByVelocity(float InVelocity)

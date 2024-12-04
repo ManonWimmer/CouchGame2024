@@ -169,13 +169,13 @@ TSubclassOf<APlayerBall> AMatchPinballGameMode::GetPlayerBallClassFromInputType(
 	switch (InputType)
 	{
 		case EAutoReceiveInput::Type::Player0:
-			return MatchSettings->PlayerBallClassP0;
+			return MatchSettings->PlayerBallClassP0.LoadSynchronous();
 		case EAutoReceiveInput::Type::Player1:
-			return MatchSettings->PlayerBallClassP1;
+			return MatchSettings->PlayerBallClassP1.LoadSynchronous();
 		case EAutoReceiveInput::Type::Player2:
-			return MatchSettings->PlayerBallClassP2;
+			return MatchSettings->PlayerBallClassP2.LoadSynchronous();
 		case EAutoReceiveInput::Type::Player3:
-			return MatchSettings->PlayerBallClassP3;
+			return MatchSettings->PlayerBallClassP3.LoadSynchronous();
 
 		default:
 			return nullptr;

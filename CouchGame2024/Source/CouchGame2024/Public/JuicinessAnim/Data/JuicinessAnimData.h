@@ -55,7 +55,11 @@ public:
 	UPROPERTY(EditAnywhere, Category= "Mole Anim", BlueprintReadOnly)
 	float ShakeMoleDuration = 5.f;
 
+	UPROPERTY(EditAnywhere, Category= "Mole Anim", BlueprintReadOnly)
+	float YoyoMoleDuration = 1.5f;
 
+	UPROPERTY(EditAnywhere, Category= "Mole Anim", BlueprintReadOnly)
+	float YoyoMoleAmplitude = 5.f;
 
 	UPROPERTY(EditAnywhere, Category= "Power Up Scale Appear Anim", BlueprintReadOnly)
 	float PowerUpScaleAppearDuration = 1.25f;

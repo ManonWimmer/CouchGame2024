@@ -47,7 +47,7 @@ public:
 	void ReceiveOnDisablePillar();
 	
 	UFUNCTION()
-	void EnablePillar(bool Tricked, const APillarZone* Zone);
+	void EnablePillar(bool Tricked, APillarZone* Zone);
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnEnablePillar"))
 	void ReceiveOnEnablePillar();
@@ -58,6 +58,12 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnDisableTrickedZone"))
 	void ReceiveOnDisableTrickedZone();
 
+	UFUNCTION()
+	void OnStartedGrabbed();
+
+	UFUNCTION()
+	void OnStoppedGrabbed();
+	
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnStartGainPoint"))
 	void ReceiveOnStartGainPoint();
 
@@ -86,7 +92,7 @@ public:
 	TObjectPtr<UPlayerBallStateMachine> PlayerStateMachineOnPillar = nullptr;
 
 	UPROPERTY()
-	const APillarZone* PillarZone = nullptr;
+	APillarZone* PillarZone = nullptr;
 
 	UPROPERTY()
 	bool bZoneDisabled = false;

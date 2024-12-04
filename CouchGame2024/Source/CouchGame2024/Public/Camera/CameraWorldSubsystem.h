@@ -72,6 +72,10 @@ protected:
 
 	float CalculateGreatestDistanceBetweenTargets();
 
+	float CameraStartPosX = 0.f;
+	
+	float CameraStartPosY = 0.f;
+
 #pragma endregion
 
 #pragma region Misc
@@ -129,6 +133,8 @@ private:
 	float CameraSmoothSpeed = 2.f;
 	
 	float CameraOffsetUp = 0.f;
+
+	float CameraPercentTreshold = 0.6f;
 	
 #pragma endregion
 

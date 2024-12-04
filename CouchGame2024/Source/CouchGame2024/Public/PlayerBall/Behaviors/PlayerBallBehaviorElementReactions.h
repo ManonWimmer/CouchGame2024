@@ -203,7 +203,11 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<ATourniquetElement> TourniquetElement;
-	
+
+	UFUNCTION()
+	FVector GetCurrentForceExitTourniquetDir();
+
+	bool bUseForceExitTourniquet = false;
 	
 #pragma endregion 
 	
