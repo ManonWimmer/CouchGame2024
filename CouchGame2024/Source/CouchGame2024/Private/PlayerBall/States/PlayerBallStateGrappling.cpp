@@ -178,7 +178,8 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			*/
 
 			// Get new temp angle & velocity
-			SetGrapplingVelocityAndAnglePillar(Pawn->GetWorld()->DeltaTimeSeconds);
+			//SetGrapplingVelocityAndAnglePillar(Pawn->GetWorld()->DeltaTimeSeconds);
+			SetGrapplingVelocityAndAngleNotPillar(Pawn->GetWorld()->DeltaTimeSeconds);
 
 			// Get angle rotate left or right depending on last & current angle
 			if (Pawn->BehaviorGrapple->CurrentGrapplingAngle > Pawn->BehaviorGrapple->LastAngle)
@@ -313,7 +314,8 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	if (Pawn->BehaviorGrapple->IsHookingPillar)
 	{
 		CurrentTimeOnPillar += DeltaTime;
-		SetGrapplingVelocityAndAnglePillar(DeltaTime);
+		//SetGrapplingVelocityAndAnglePillar(DeltaTime);
+		SetGrapplingVelocityAndAngleNotPillar(DeltaTime);
 	}
 	else
 	{
@@ -528,7 +530,7 @@ void UPlayerBallStateGrappling::SetGrapplingVelocityAndAnglePillar(float DeltaTi
 
 	TempGrapplingAngularVelocity = (Pawn->BehaviorGrapple->GrapplingDamping * Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity
 	+ Pawn->BehaviorMovements->MoveXValue * Pawn->BehaviorGrapple->GrapplingPillarForce
-	+ Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * Pawn->GetVelocity().Size() * RotationDirection) ;
+	+ Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMovingPillar * Pawn->GetVelocity().Size() * RotationDirection) ;
 
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan,FString::Printf(TEXT("%f, %f"), RotationDirection, TempGrapplingAngularVelocity));
 
@@ -540,8 +542,8 @@ void UPlayerBallStateGrappling::SetGrapplingVelocityAndAngleNotPillar(float Delt
 {
 	if (Pawn->BehaviorMovements == nullptr || Pawn->BehaviorGrapple == nullptr) return;
 
-	TempGrapplingAngularVelocity = Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMoving * RotationDirection
-		* Pawn->BehaviorGrapple->GrapplingNotPillarForce * 1000.f;
+	TempGrapplingAngularVelocity = Pawn->BehaviorGrapple->StartGrapplingForceFactorWhenAlreadyMovingNotPillar * RotationDirection
+		* Pawn->BehaviorGrapple->GrapplingNotPillarForce;
 
 	TempGrapplingAngle = Pawn->BehaviorGrapple->CurrentGrapplingAngle + TempGrapplingAngularVelocity * DeltaTime;
 }

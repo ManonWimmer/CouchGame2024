@@ -66,8 +66,8 @@ void UPlayerBallBehaviorGrapple::SetupData()
 	MinCableDistance = GetPlayerBall()->GetPlayerBallData()->MinCableDistance;
 	MaxCableDistance = GetPlayerBall()->GetPlayerBallData()->MaxCableDistance;
 	MoreOrLessCablePerFrame = GetPlayerBall()->GetPlayerBallData()->MoreOrLessCablePerFrame;
-	StartGrapplingForceFactorWhenAlreadyMoving = GetPlayerBall()->GetPlayerBallData()->
-	                                                              StartGrapplingForceFactorWhenAlreadyMoving;
+	StartGrapplingForceFactorWhenAlreadyMovingPillar = GetPlayerBall()->GetPlayerBallData()->StartGrapplingForceFactorWhenAlreadyMovingPillar;
+	StartGrapplingForceFactorWhenAlreadyMovingNotPillar = GetPlayerBall()->GetPlayerBallData()->StartGrapplingForceFactorWhenAlreadyMovingNotPillar;
 	GrapplingNotPillarForce = GetPlayerBall()->GetPlayerBallData()->GrapplingNotPillarForce;
 
 	PillarPointsMultiplier = GetPlayerBall()->GetPlayerBallData()->PillarPointsMultiplier;

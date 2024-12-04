@@ -32,6 +32,8 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
 
+	bAfterLockedIdle = false;
+	CurrentAfterLockTimer = 0.f;
 	
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("PlayerState : Idle"));
 	
@@ -70,6 +72,16 @@ void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState)
 		
 		Pawn->OnPunchAction.AddDynamic(this, &UPlayerBallStateIdle::OnPunch);
 
+	}
+}
+
+void UPlayerBallStateIdle::StateEnter(EPlayerBallStateID PreviousState, float InFloatParameter)
+{
+	Super::StateEnter(PreviousState, InFloatParameter);
+
+	if (InFloatParameter == 1.f)	// ID 1 -> after lock idle
+	{
+		bAfterLockedIdle = true;
 	}
 }
 
@@ -113,13 +125,32 @@ void UPlayerBallStateIdle::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
 
+	HandleAfterLockIdle(DeltaTime);
+	
 	OnMoveCheck();
 
 	CheckFalling();
 }
 
+void UPlayerBallStateIdle::HandleAfterLockIdle(float DeltaTime)
+{
+	if (!bAfterLockedIdle)	return;
+	
+	if (CurrentAfterLockTimer >= AfterLockTimer)
+	{
+		bAfterLockedIdle = false;
+	}
+	else
+	{
+		CurrentAfterLockTimer += DeltaTime;
+	}
+	
+}
+
 void UPlayerBallStateIdle::OnMoveCheck()	// Check if ball start moving
 {
+	if (bAfterLockedIdle)	return;
+	
 	if (Pawn == nullptr)	return;
 
 	if (Pawn->BehaviorMovements == nullptr)	return;
@@ -153,6 +184,8 @@ void UPlayerBallStateIdle::OnStunned(float StunnedValue)	// -> stunned
 
 void UPlayerBallStateIdle::OnPunch(float PunchValue)	// -> punch
 {
+	if (bAfterLockedIdle)	return;
+
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Punch);
@@ -174,6 +207,8 @@ void UPlayerBallStateIdle::OnBumped(float BumpedValue)
 
 void UPlayerBallStateIdle::OnGrappling(float InGrapplingValue)
 {
+	if (bAfterLockedIdle)	return;
+
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Grappling);
@@ -188,6 +223,8 @@ void UPlayerBallStateIdle::OnGrappled(float InGrappledValue)
 
 void UPlayerBallStateIdle::OnSnapped(float InSnapValue)
 {
+	if (bAfterLockedIdle)	return;
+
 	if (StateMachine == nullptr || InSnapValue == 0.f)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::Snapping);
@@ -209,6 +246,8 @@ void UPlayerBallStateIdle::OnRail(float RailDirectionValue)
 
 void UPlayerBallStateIdle::OnUsePowerUp(float InPowerUpId)
 {
+	if (bAfterLockedIdle)	return;
+
 	if (StateMachine == nullptr)	return;
 
 	StateMachine->ChangeState(EPlayerBallStateID::PowerUpHub, InPowerUpId);

@@ -24,11 +24,21 @@ public:
 
 	virtual void StateEnter(EPlayerBallStateID PreviousState) override;
 
+	virtual void StateEnter(EPlayerBallStateID PreviousState, float InFloatParameter) override;
+
 	virtual void StateExit(EPlayerBallStateID NextState) override;
 
 	virtual void StateTick(float DeltaTime) override;
 
 private:
+	bool bAfterLockedIdle = false;
+
+	float AfterLockTimer = 0.5f;
+
+	float CurrentAfterLockTimer = 0.0f;
+	UFUNCTION()
+	void HandleAfterLockIdle(float DeltaTime);
+	
 	UFUNCTION()
 	void OnMoveCheck();
 
