@@ -57,6 +57,21 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Sounds UI")
 	float CheckSoundAdjuster = 1.f;
 
+	UPROPERTY(EditAnywhere, Category = "Sounds UI")
+	TObjectPtr<UMetaSoundSource> HoverSound;
+	UPROPERTY(EditAnywhere, Category = "Sounds UI")
+	float HoverSoundAdjuster = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Sounds UI")
+	TObjectPtr<UMetaSoundSource> BackSound;
+	UPROPERTY(EditAnywhere, Category = "Sounds UI")
+	float BackSoundAdjuster = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Sounds UI")
+	TObjectPtr<UMetaSoundSource> ConfirmSound;
+	UPROPERTY(EditAnywhere, Category = "Sounds UI")
+	float ConfirmSoundAdjuster = 1.f;
+
 #pragma endregion
 
 #pragma region UI Curtain
