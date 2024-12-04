@@ -141,7 +141,10 @@ public:
 	float MoreOrLessCablePerFrame = 10.f;
 
 	UPROPERTY(EditAnywhere, Category = "Grappling")
-	float StartGrapplingForceFactorWhenAlreadyMoving = 0.001f;
+	float StartGrapplingForceFactorWhenAlreadyMovingPillar = 0.001f;
+
+	UPROPERTY(EditAnywhere, Category = "Grappling")
+	float StartGrapplingForceFactorWhenAlreadyMovingNotPillar = 0.001f;
 
 	UPROPERTY(EditAnywhere, Category = "Grappling")
 	float GrapplingNotPillarForce = 5.f;
