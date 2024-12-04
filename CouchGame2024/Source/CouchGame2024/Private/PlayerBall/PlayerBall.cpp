@@ -341,11 +341,21 @@ void APlayerBall::LockInput()
 void APlayerBall::UnlockInput()
 {
 	if (StateMachine == nullptr)	return;
+
+	bool IsSpecial = bIsLockedButSpecial;
 	
 	bIsLocked = false;
 	bIsLockedButSpecial = false;
 
-	StateMachine->ChangeState(EPlayerBallStateID::Idle);
+	if (IsSpecial)
+	{
+		StateMachine->ChangeState(EPlayerBallStateID::Idle);
+	}
+	else
+	{
+		StateMachine->ChangeState(EPlayerBallStateID::Idle, 1.f);
+
+	}
 }
 
 void APlayerBall::LockButOnlySpecialInput()
