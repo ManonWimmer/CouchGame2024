@@ -38,6 +38,8 @@ public:
 	UFUNCTION()
 	void EndRoundChecks();
 
+	bool bIsFirstCheckRound = true;
+	
 	void InitTimers();
 
 	void InitRounds();

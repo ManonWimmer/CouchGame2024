@@ -58,10 +58,17 @@ public:
 
 	UFUNCTION()
 	void MoveToPillar(float DeltaTime);
-
+	
 	UFUNCTION()
 	void Wait(float DeltaTime);
 
+	
+	UFUNCTION(BlueprintImplementableEvent, meta = (displayname = "OnAssociatedPillarGrabbed"))
+	void OnReceiveAssociatedPillarGrabbed();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (displayname = "OnAssociatedPillarUnGrabbed"))
+	void OnReceiveAssociatedPillarUnGrabbed();
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Collision")
 	TObjectPtr<USphereComponent> SphereComponent;
 
@@ -126,7 +133,7 @@ public:
 	void SetStartValues();
 
 	UFUNCTION()
-	void EnableOverlappingPillars() const;
+	void EnableOverlappingPillars();
 
 	UFUNCTION()
 	void DisableOverlappingPillars() const;

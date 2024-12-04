@@ -65,6 +65,11 @@ void APillarElement::DisablePillar()
 	if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "Disabled");
 	bIsHookable = false;
 
+	if (PillarZone != nullptr)
+	{
+		PillarZone->OnReceiveAssociatedPillarUnGrabbed();
+	}
+	
 	PillarZone = nullptr;
 	
 	if (Mesh)
@@ -95,7 +100,7 @@ void APillarElement::DisablePillar()
 	}
 }
 
-void APillarElement::EnablePillar(bool Tricked, const APillarZone* Zone)
+void APillarElement::EnablePillar(bool Tricked, APillarZone* Zone)
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "Enabled");
 	bIsHookable = true;
@@ -138,5 +143,19 @@ void APillarElement::DisableTrickedZone()
 	bIsTricked = false;
 
 	ReceiveOnDisableTrickedZone();
+}
+
+void APillarElement::OnStartedGrabbed()
+{
+	if (PillarZone == nullptr) return;
+
+	PillarZone->OnReceiveAssociatedPillarGrabbed();
+}
+
+void APillarElement::OnStoppedGrabbed()
+{
+	if (PillarZone == nullptr) return;
+
+	PillarZone->OnReceiveAssociatedPillarUnGrabbed();
 }
 

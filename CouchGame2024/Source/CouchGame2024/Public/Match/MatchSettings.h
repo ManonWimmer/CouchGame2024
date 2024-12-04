@@ -17,14 +17,14 @@ class COUCHGAME2024_API UMatchSettings : public UDeveloperSettings
 
 public:
 	UPROPERTY(Config, EditAnywhere, Category="PlayersBall")
-	TSubclassOf<APlayerBall> PlayerBallClassP0;
+	TSoftClassPtr<APlayerBall> PlayerBallClassP0;
 
 	UPROPERTY(Config, EditAnywhere, Category="PlayersBall")
-	TSubclassOf<APlayerBall> PlayerBallClassP1;
+	TSoftClassPtr<APlayerBall> PlayerBallClassP1;
 
 	UPROPERTY(Config, EditAnywhere, Category="PlayersBall")
-	TSubclassOf<APlayerBall> PlayerBallClassP2;
+	TSoftClassPtr<APlayerBall> PlayerBallClassP2;
 
 	UPROPERTY(Config, EditAnywhere, Category="PlayersBall")
-	TSubclassOf<APlayerBall> PlayerBallClassP3;
+	TSoftClassPtr<APlayerBall> PlayerBallClassP3;
 };

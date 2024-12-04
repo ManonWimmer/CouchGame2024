@@ -295,9 +295,9 @@ private:
 #pragma region IKillable
 
 public:
-
+	
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnKill"))
-	void ReceiveOnKill();
+	void ReceiveOnKill(float AnimDuration);
 	
 	virtual void Kill() override;
 	
