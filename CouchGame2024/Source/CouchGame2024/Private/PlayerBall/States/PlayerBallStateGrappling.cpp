@@ -178,7 +178,8 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 			*/
 
 			// Get new temp angle & velocity
-			SetGrapplingVelocityAndAnglePillar(Pawn->GetWorld()->DeltaTimeSeconds);
+			//SetGrapplingVelocityAndAnglePillar(Pawn->GetWorld()->DeltaTimeSeconds);
+			SetGrapplingVelocityAndAngleNotPillar(Pawn->GetWorld()->DeltaTimeSeconds);
 
 			// Get angle rotate left or right depending on last & current angle
 			if (Pawn->BehaviorGrapple->CurrentGrapplingAngle > Pawn->BehaviorGrapple->LastAngle)
@@ -313,7 +314,8 @@ void UPlayerBallStateGrappling::StateTick(float DeltaTime)
 	if (Pawn->BehaviorGrapple->IsHookingPillar)
 	{
 		CurrentTimeOnPillar += DeltaTime;
-		SetGrapplingVelocityAndAnglePillar(DeltaTime);
+		//SetGrapplingVelocityAndAnglePillar(DeltaTime);
+		SetGrapplingVelocityAndAngleNotPillar(DeltaTime);
 	}
 	else
 	{
