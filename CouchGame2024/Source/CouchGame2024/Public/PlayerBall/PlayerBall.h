@@ -246,6 +246,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> StartForceEffectWidget;
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnAppearStartForceEffectWidget"))
+	void ReceiveOnAppearStartForceEffectWidget();
 	
 #pragma endregion
 
