@@ -72,6 +72,7 @@ void AMoleSpawner::StartCountdownStaying()
 
 void AMoleSpawner::SpawnMole()
 {
+	if (SpawnedMole) return;
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Spawn Duck");
 
 	// Spawn Mole
