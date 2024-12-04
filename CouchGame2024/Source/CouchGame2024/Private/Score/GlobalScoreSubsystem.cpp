@@ -29,7 +29,7 @@ int UGlobalScoreSubsystem::GetScore(int PlayerIndex) const
 
 void UGlobalScoreSubsystem::AddScore(int PlayerIndex, int Value)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("add score to player %i : %i"), PlayerIndex, Value));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5,FColor::Yellow, FString::Printf(TEXT("add score to player %i : %i"), PlayerIndex, Value));
 	switch (PlayerIndex)
 	{
 		case 0:
