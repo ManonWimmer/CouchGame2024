@@ -25,7 +25,7 @@ bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs
 
 	const ULocalMultiplayerSettings* Settings = GetDefault<ULocalMultiplayerSettings>();
 	
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("Key pressed"));
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("Key pressed"));
 	
 	if (!EventArgs.IsGamepad())
 	{
@@ -90,8 +90,8 @@ bool ULocalMultiplayerGameViewport::InputAxis(FViewport* InViewport, FInputDevic
 		
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("Axis pressed"));
 
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, 
-				FString::Printf(TEXT("Device ID: %d, Key: %s"), InputDevice.GetId(), *Key.ToString()));
+		//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, 
+		//		FString::Printf(TEXT("Device ID: %d, Key: %s"), InputDevice.GetId(), *Key.ToString()));
 
 		int PlayerIndex = MultiplayerSubsystem->GetAssignedPlayerIndexFromGamepadProfileID(InputDevice.GetId());
 
@@ -105,7 +105,7 @@ bool ULocalMultiplayerGameViewport::InputAxis(FViewport* InViewport, FInputDevic
 
 		}else
 		{
-			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, FString::Printf((TEXT("Deja mis index connnected : %d")), PlayerIndex));
+			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, FString::Printf((TEXT("Deja mis index connnected : %d")), PlayerIndex));
 
 		}
 		APlayerController* Controller = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), PlayerIndex);
@@ -117,7 +117,7 @@ bool ULocalMultiplayerGameViewport::InputAxis(FViewport* InViewport, FInputDevic
 		}
 	}else
 	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, FString::Printf((TEXT("not gamepad : %d")), 0));
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, FString::Printf((TEXT("not gamepad : %d")), 0));
 
 	}
 	
