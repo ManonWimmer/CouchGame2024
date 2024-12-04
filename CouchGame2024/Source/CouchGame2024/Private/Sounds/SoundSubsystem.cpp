@@ -70,6 +70,39 @@ void USoundSubsystem::PlayUICheckSound()
 	}
 }
 
+void USoundSubsystem::PlayUIHoverSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->HoverSound == nullptr)	return;
+    
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->HoverSound, SoundsData->HoverSoundAdjuster);
+	}
+}
+
+void USoundSubsystem::PlayUIBackSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->BackSound == nullptr)	return;
+    
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->BackSound, SoundsData->BackSoundAdjuster);
+	}
+}
+
+void USoundSubsystem::PlayUIConfirmSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->ConfirmSound == nullptr)	return;
+    
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->ConfirmSound, SoundsData->ConfirmSoundAdjuster);
+	}
+}
+
 void USoundSubsystem::PlayUIStartGameSound()
 {
 	if (SoundsData == nullptr)	return;
