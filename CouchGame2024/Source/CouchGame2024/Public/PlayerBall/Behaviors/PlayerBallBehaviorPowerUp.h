@@ -8,6 +8,8 @@
 #include "PlayerBallBehaviorPowerUp.generated.h"
 
 
+class AUIManager;
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class COUCHGAME2024_API UPlayerBallBehaviorPowerUp : public UPlayerBallBehaviorComponent
 {
@@ -31,6 +33,8 @@ public:
 	virtual void UnbindBehaviorEventAction(APlayerBallController* InPlayerBallController) override;
 
 	virtual void SetupData() override;
+
+	TObjectPtr<AUIManager> UIManager = nullptr;
 
 
 	

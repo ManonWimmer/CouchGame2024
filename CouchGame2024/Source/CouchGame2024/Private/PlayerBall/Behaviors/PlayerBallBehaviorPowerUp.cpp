@@ -4,10 +4,12 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallController.h"
 #include "PlayerBall/Datas/PlayerPowerUpData.h"
 #include "PowerUp/PowerUp.h"
+#include "UI/UIManager.h"
 
 
 UPlayerBallBehaviorPowerUp::UPlayerBallBehaviorPowerUp()
@@ -19,6 +21,15 @@ UPlayerBallBehaviorPowerUp::UPlayerBallBehaviorPowerUp()
 void UPlayerBallBehaviorPowerUp::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Get UI Manager (not in main menu)
+	TArray<TObjectPtr<AActor>> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AUIManager::StaticClass(), FoundActors);
+
+	if (FoundActors.Num() > 0)
+	{
+		UIManager = Cast<AUIManager>(FoundActors[0]);
+	}
 }
 
 
@@ -110,16 +121,28 @@ void UPlayerBallBehaviorPowerUp::OnPlayerSphereBeginOverlap(UPrimitiveComponent*
 		case EPowerUpID::Freeze:
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Freeze power up");
 			OtherPowerUp->TriggerPowerUp();
+			
+			if (UIManager)
+				UIManager->ShowPowerUpIcon(GetPlayerBall()->PlayerIndex, EPowerUpID::Freeze);
+			
 			break;
 
 		case EPowerUpID::Strength:
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Strength power up");
 			OtherPowerUp->TriggerPowerUp();
+
+			if (UIManager)
+				UIManager->ShowPowerUpIcon(GetPlayerBall()->PlayerIndex, EPowerUpID::Strength);
+			
 			break;
 
 		case EPowerUpID::Slippery:
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, "Collect Slippery power up");
 			OtherPowerUp->TriggerPowerUp();
+
+			if (UIManager)
+				UIManager->ShowPowerUpIcon(GetPlayerBall()->PlayerIndex, EPowerUpID::Slippery);
+			
 			break;
 
 		default:
@@ -166,17 +189,29 @@ void UPlayerBallBehaviorPowerUp::UsePowerUpCarried()
 	{
 	case EPowerUpID::Freeze: // substate id -> 1.f
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Freeze PowerUp");
+
+		if (UIManager)
+			UIManager->HidePowerUpIcon(GetPlayerBall()->PlayerIndex);
+		
 		OnUsePowerUpAction.Broadcast(1.f);
 		break;
 
 	case EPowerUpID::Strength: // substate id -> 2.f
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Strength PowerUp");
 		OnUsePowerUpAction.Broadcast(2.f);
+
+		if (UIManager)
+			UIManager->HidePowerUpIcon(GetPlayerBall()->PlayerIndex);
+		
 		break;
 
 	case EPowerUpID::Slippery: // substate id -> 3.f
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, "Use Slippery PowerUp");
 		OnUsePowerUpAction.Broadcast(3.f);
+
+		if (UIManager)
+			UIManager->HidePowerUpIcon(GetPlayerBall()->PlayerIndex);
+		
 		break;
 
 	default:
