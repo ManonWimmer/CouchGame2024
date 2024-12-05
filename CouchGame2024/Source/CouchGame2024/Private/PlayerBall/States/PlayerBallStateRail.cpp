@@ -133,6 +133,7 @@ void UPlayerBallStateRail::HandleRailProgressLocationByPercent(float DeltaTime)	
 	if (CurrentTimeInRail - EndProgressOffset >= SpawnProgressRailDuration)
 	{
 		ExitRail();
+		return;
 	}
 	else
 	{
@@ -175,6 +176,7 @@ void UPlayerBallStateRail::HandleRailProgressLocationByVelocity(float DeltaTime)
 	if (CurrentTimeInRail - EndProgressOffset >= ProgressRailDuration)
 	{
 		ExitRail();
+		return;
 	}
 	else
 	{
@@ -221,6 +223,7 @@ void UPlayerBallStateRail::HandleRailProgressLocationByVelocityAndDistance(float
 	if (CurrentTimeInRail - EndProgressOffset >= ProgressRailDurationDistance)
 	{
 		ExitRail();
+		return;
 	}
 	else
 	{
@@ -267,22 +270,22 @@ void UPlayerBallStateRail::ExitRail()
 	if (Pawn->SphereCollision == nullptr)	return;
 	if (StateMachine == nullptr)	return;
 
-	CurrentPercent = CurrentTimeInRail / ProgressRailDurationDistance;
-
-	
-	if (DirectionRail >= 0.f && !bOnRespawnRail)
+	/*
+	if (DirectionRail >= 0.f)
 	{
 		float InversePercent = 1.f - CurrentPercent;
 		
-		FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(InversePercent);
+		FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(1.f);
 		Pawn->SetActorLocation(LocationAlongSpline);
 	}
 	else
 	{
-		FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(CurrentPercent);
+		FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(0.f);
 
 		Pawn->SetActorLocation(LocationAlongSpline);
 	}
+	*/
+	
 	
 	Pawn->SphereCollision->SetSimulatePhysics(true);
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
