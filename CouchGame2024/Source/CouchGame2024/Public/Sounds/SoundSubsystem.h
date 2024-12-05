@@ -24,6 +24,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayInGameMusicSound();
 
+	UFUNCTION(BlueprintCallable)
+	void Play321MusicSound();
+
 #pragma endregion
 
 #pragma region Play Round Sounds
