@@ -197,6 +197,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayImpactGamefeelEffectsBlueprint();
 
+	UFUNCTION(BlueprintPure)
+	bool GetIsImpactingNormal();
+	
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayDeathZoneGamefeelEffectsBlueprint();
 	
@@ -222,7 +225,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayStrengthCastGamefeelEffectsBlueprint();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayStrengthDisapearGamefeelEffectsBlueprint();
 
+	
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlaySlipperyCastGamefeelEffectsBlueprint();
 
