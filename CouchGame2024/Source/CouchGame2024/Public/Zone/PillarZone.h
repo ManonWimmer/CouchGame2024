@@ -126,9 +126,14 @@ public:
 	UFUNCTION()
 	void ShowZone(bool Tricked = false);
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (displayname = "OnShowZone"))
+	void ReceiveOnShowZone();
+
+	
 	UFUNCTION()
 	void HideZone() const;
-
+	
+	
 	UFUNCTION()
 	void SetStartValues();
 
