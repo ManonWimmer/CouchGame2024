@@ -26,6 +26,17 @@ void USoundSubsystem::PlayInGameMusicSound()
 	}
 }
 
+void USoundSubsystem::Play321MusicSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->InGame321Music == nullptr)	return;
+
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->InGame321Music, SoundsData->InGame321MusicAdjuster);
+	}
+}
+
 void USoundSubsystem::PlayRoundStartSound()
 {
 	if (SoundsData == nullptr)	return;

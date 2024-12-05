@@ -67,9 +67,11 @@ void UPlayerBallStateLocked::StateEnter(EPlayerBallStateID PreviousState, float 
 			if (Pawn->StartForceEffectWidget != nullptr)
 			{
 				Pawn->StartForceEffectWidget->SetHiddenInGame(false);
-
+				
 				Pawn->PlaySetProgressStartForceEffect(0.f);
 			}
+
+			Pawn->ReceiveOnAppearStartForceEffectWidget();
 		}
 
 	}
