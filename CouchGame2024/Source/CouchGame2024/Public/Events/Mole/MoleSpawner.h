@@ -63,6 +63,10 @@ public:
 	UFUNCTION()
 	void StopSpawning();
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnMoleForcedDestroy"))
+	void ReceiveOnMoleForcedDestroy();
+	
+	
 	UFUNCTION()
 	void Bind();
 
