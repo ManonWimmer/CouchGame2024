@@ -52,6 +52,7 @@ void AMatchPinballGameMode::FindPlayerBallSpawnInWorld(TArray<APlayerBallSpawn*>
 void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> SpawnPoints)
 {
 	//int PlayerIndex = 0;
+	//
 	for (APlayerBallSpawn* SpawnPoint : SpawnPoints)
 	{
 		EAutoReceiveInput::Type InputType = SpawnPoint->AutoReceiveInput.GetValue();
@@ -73,6 +74,13 @@ void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> Spa
 		PlayersBallInsideArena.Add(NewCharacter);
 		//PlayerIndex++;
 	}
+
+	Algo::Sort(PlayersBallInsideArena, [](const APlayerBall* A, const APlayerBall* B)
+	{
+		if (!A || !B)	return false;
+
+		 return A->PlayerIndex < B->PlayerIndex;
+	});
 }
 
 void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APlayerBallSpawn*> SpawnPoints, int PlayerSpecial)
