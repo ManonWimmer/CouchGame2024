@@ -50,9 +50,6 @@ private:
 	void OnTourniquet(float TourniquetValue);
 
 	UFUNCTION()
-	void OnDeath(float DeathValue);
-	
-	UFUNCTION()
 	void SetCable();
 
 	UFUNCTION()
