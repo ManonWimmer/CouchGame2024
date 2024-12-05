@@ -270,21 +270,22 @@ void UPlayerBallStateRail::ExitRail()
 	if (Pawn->SphereCollision == nullptr)	return;
 	if (StateMachine == nullptr)	return;
 
-	/*
-	if (DirectionRail >= 0.f)
+	if (!bOnRespawnRail)
 	{
-		float InversePercent = 1.f - CurrentPercent;
-		
-		FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(1.f);
-		Pawn->SetActorLocation(LocationAlongSpline);
-	}
-	else
-	{
-		FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(0.f);
+		if (DirectionRail >= 0.f)
+		{
+			float InversePercent = 1.f - CurrentPercent;
+			
+			FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(InversePercent);
+			Pawn->SetActorLocation(LocationAlongSpline);
+		}
+		else
+		{
+			FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(CurrentPercent);
 
-		Pawn->SetActorLocation(LocationAlongSpline);
+			Pawn->SetActorLocation(LocationAlongSpline);
+		}
 	}
-	*/
 	
 	
 	Pawn->SphereCollision->SetSimulatePhysics(true);

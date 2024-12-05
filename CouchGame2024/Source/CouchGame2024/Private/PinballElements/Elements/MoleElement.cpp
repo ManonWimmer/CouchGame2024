@@ -96,6 +96,8 @@ void AMoleElement::DespawnMole()
 		SpawnTimeline->ReverseFromEnd();
 	}
 
+	OnMoleDespawn.Broadcast();
+	
 	ReceiveOnDespawnMole();
 }
 

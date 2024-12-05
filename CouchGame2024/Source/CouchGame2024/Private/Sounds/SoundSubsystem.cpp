@@ -381,6 +381,16 @@ void USoundSubsystem::PlayStrengthImpactSound()
 	}
 }
 
+void USoundSubsystem::PlayStrengthEffectSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PowerUpStrengthEffect == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PowerUpStrengthEffect, SoundsData->PowerUpStrengthEffectAdjuster, 1.f, 0.f, nullptr, nullptr, false);
+	}
+}
+
 void USoundSubsystem::PlaySlipperyCastSound()
 {
 	if (SoundsData == nullptr)	return;

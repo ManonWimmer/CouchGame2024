@@ -41,6 +41,11 @@ public:
 	UFUNCTION()
 	void DespawnMole();
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMoleDespawn);
+
+	FMoleDespawn OnMoleDespawn;
+	
+	
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnImpactedByPlayer"))
 	void ReceiveImpactedByPlayer();
 	
