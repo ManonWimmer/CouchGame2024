@@ -48,6 +48,8 @@ private:
 
 	void CheckForwardCollisionBallRail(bool UseDistance = false);
 
+	bool CheckGoingTowardLocation(FVector OtherLocation, FVector TargetDirection);
+	
 	bool bOnRespawnRail = false;
 	
 	float DirectionRail = 0.f;
