@@ -242,6 +242,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Power Up Strength")
 	float PowerUpStrengthImpactAdjuster = 1.f;
 
+	UPROPERTY(EditAnywhere, Category = "Power Up Strength")
+	TObjectPtr<UMetaSoundSource> PowerUpStrengthEffect;
+	UPROPERTY(EditAnywhere, Category = "Power Up Strength")
+	float PowerUpStrengthEffectAdjuster = 1.f;
 	
 	UPROPERTY(EditAnywhere, Category = "Power Up Slippery")
 	TObjectPtr<UMetaSoundSource> PowerUpSlipperyCast;

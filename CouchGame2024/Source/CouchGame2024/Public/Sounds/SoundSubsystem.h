@@ -170,6 +170,10 @@ public:
 	void PlayStrengthImpactSound();
 
 	UFUNCTION(BlueprintCallable)
+	void PlayStrengthEffectSound();
+	
+	
+	UFUNCTION(BlueprintCallable)
 	void PlaySlipperyCastSound();
 
 	UFUNCTION(BlueprintCallable)
