@@ -240,6 +240,15 @@ void APlayerBall::HandlePunchCooldown(float DeltaTime)
 	}
 }
 
+bool APlayerBall::GetIsImpactingNormal()
+{
+	if (BehaviorPowerUp == nullptr)	return true;
+
+	if (BehaviorPowerUp->GetIsUsingStrengthPowerUp())	return false;
+
+	return true;
+}
+
 void APlayerBall::InitResetable()
 {
 	if (!GetWorld())	return;

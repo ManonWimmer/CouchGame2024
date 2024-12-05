@@ -47,15 +47,15 @@ void UPlayerBallPowerUpSubStateSlippery::UseSlipperyPowerUp()
 {
 	APlayerBall* NearestPlayerBall = GetNearestPlayerBallInSlipperyRadius();
 
-	if (NearestPlayerBall == nullptr)	return;
-	if (NearestPlayerBall->BehaviorPowerUp == nullptr)	return;
-	
-	NearestPlayerBall->BehaviorPowerUp->ReceiveSlipperyEffect();
-
 	if (Pawn != nullptr)
 	{
 		Pawn->PlaySlipperyCastGamefeelEffectsBlueprint();
 	}
+	
+	if (NearestPlayerBall == nullptr)	return;
+	if (NearestPlayerBall->BehaviorPowerUp == nullptr)	return;
+	
+	NearestPlayerBall->BehaviorPowerUp->ReceiveSlipperyEffect();
 }
 
 APlayerBall* UPlayerBallPowerUpSubStateSlippery::GetNearestPlayerBallInSlipperyRadius()
