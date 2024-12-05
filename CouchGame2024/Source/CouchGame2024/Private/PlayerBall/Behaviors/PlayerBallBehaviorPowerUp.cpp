@@ -194,6 +194,11 @@ void UPlayerBallBehaviorPowerUp::ActivateStrengthPowerUp()
 void UPlayerBallBehaviorPowerUp::DesactivateStrengthPowerUp()
 {
 	bUsingStrength = false;
+
+	if (GetPlayerBall() != nullptr)
+	{
+		GetPlayerBall()->PlayStrengthDisapearGamefeelEffectsBlueprint();
+	}
 }
 
 void UPlayerBallBehaviorPowerUp::HandleStrengthDuration(float DeltaTime)
