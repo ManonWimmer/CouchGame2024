@@ -163,6 +163,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayStrengthCastSound();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayStrengthDisapearSound();
+	
+	UFUNCTION(BlueprintCallable)
+	void PlayStrengthImpactSound();
 
 	UFUNCTION(BlueprintCallable)
 	void PlaySlipperyCastSound();

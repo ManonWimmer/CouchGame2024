@@ -67,6 +67,13 @@ void AMainMenuGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> SpawnPo
 		PlayersBallInsideArena.Add(NewCharacter);
 		//PlayerIndex++;
 	}
+
+	Algo::Sort(PlayersBallInsideArena, [](const APlayerBall* A, const APlayerBall* B)
+	{
+		if (!A || !B)	return false;
+
+		 return A->PlayerIndex < B->PlayerIndex;
+	});
 }
 
 void AMainMenuGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APlayerBallSpawn*> SpawnPoints, int PlayerSpecial)
