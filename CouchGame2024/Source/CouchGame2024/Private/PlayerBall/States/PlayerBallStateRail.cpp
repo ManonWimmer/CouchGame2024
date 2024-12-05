@@ -270,7 +270,7 @@ void UPlayerBallStateRail::ExitRail()
 	CurrentPercent = CurrentTimeInRail / ProgressRailDurationDistance;
 
 	
-	if (DirectionRail >= 0.f)
+	if (DirectionRail >= 0.f && !bOnRespawnRail)
 	{
 		float InversePercent = 1.f - CurrentPercent;
 		
@@ -327,6 +327,8 @@ void UPlayerBallStateRail::ChangeDirection()
 
 	//CurrentTimeInRail = 1.f - CurrentTimeInRail;
 	CurrentTimeInRail = ProgressRailDurationDistance - CurrentTimeInRail;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Silver, "Direction Rail CHANGING");
 }
 
 void UPlayerBallStateRail::CheckForwardCollisionBallRail(bool UseDistance)
