@@ -133,6 +133,7 @@ void UPlayerBallStateRail::HandleRailProgressLocationByPercent(float DeltaTime)	
 	if (CurrentTimeInRail - EndProgressOffset >= SpawnProgressRailDuration)
 	{
 		ExitRail();
+		return;
 	}
 	else
 	{
@@ -175,6 +176,7 @@ void UPlayerBallStateRail::HandleRailProgressLocationByVelocity(float DeltaTime)
 	if (CurrentTimeInRail - EndProgressOffset >= ProgressRailDuration)
 	{
 		ExitRail();
+		return;
 	}
 	else
 	{
@@ -221,6 +223,7 @@ void UPlayerBallStateRail::HandleRailProgressLocationByVelocityAndDistance(float
 	if (CurrentTimeInRail - EndProgressOffset >= ProgressRailDurationDistance)
 	{
 		ExitRail();
+		return;
 	}
 	else
 	{
@@ -252,7 +255,9 @@ void UPlayerBallStateRail::HandleRailProgressLocationByVelocityAndDistance(float
 			FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(CurrentPercent);
 
 			FVector NewPawnLocationOnRail = Pawn->GetActorLocation();
+
 			NewPawnLocationOnRail = FMath::VInterpTo(NewPawnLocationOnRail, LocationAlongSpline, DeltaTime, 25.f);
+			
 		
 			Pawn->SetActorLocation(NewPawnLocationOnRail);
 		}
@@ -264,6 +269,23 @@ void UPlayerBallStateRail::ExitRail()
 	if (Pawn == nullptr)	return;
 	if (Pawn->SphereCollision == nullptr)	return;
 	if (StateMachine == nullptr)	return;
+
+	/*
+	if (DirectionRail >= 0.f)
+	{
+		float InversePercent = 1.f - CurrentPercent;
+		
+		FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(1.f);
+		Pawn->SetActorLocation(LocationAlongSpline);
+	}
+	else
+	{
+		FVector LocationAlongSpline = CurrentRailElement->GetLocationAlongRailSpline(0.f);
+
+		Pawn->SetActorLocation(LocationAlongSpline);
+	}
+	*/
+	
 	
 	Pawn->SphereCollision->SetSimulatePhysics(true);
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
@@ -308,6 +330,8 @@ void UPlayerBallStateRail::ChangeDirection()
 
 	//CurrentTimeInRail = 1.f - CurrentTimeInRail;
 	CurrentTimeInRail = ProgressRailDurationDistance - CurrentTimeInRail;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Silver, "Direction Rail CHANGING");
 }
 
 void UPlayerBallStateRail::CheckForwardCollisionBallRail(bool UseDistance)

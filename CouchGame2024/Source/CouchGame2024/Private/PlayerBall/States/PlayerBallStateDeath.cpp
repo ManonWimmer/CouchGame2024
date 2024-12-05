@@ -66,6 +66,8 @@ void UPlayerBallStateDeath::DeathBall()
 {
 	if (Pawn == nullptr)	return;
 
+	Pawn->ReceiveOnKill(Pawn->DeathDurationBeforeRespawn / 2.f);
+	
 	Pawn->ResetMovement();
 	
 	if (Pawn->SphereCollision == nullptr)	return;
