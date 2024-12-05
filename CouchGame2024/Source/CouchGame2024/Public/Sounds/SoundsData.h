@@ -26,6 +26,11 @@ public:
 	TObjectPtr<UMetaSoundSource> InGameMusic;
 	UPROPERTY(EditAnywhere, Category = "Sounds Music")
 	float InGameMusicAdjuster = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	TObjectPtr<UMetaSoundSource> InGame321Music;
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	float InGame321MusicAdjuster = 1.f;
 	
 #pragma endregion 
 

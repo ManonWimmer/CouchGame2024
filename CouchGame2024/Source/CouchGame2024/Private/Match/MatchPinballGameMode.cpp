@@ -51,7 +51,7 @@ void AMatchPinballGameMode::FindPlayerBallSpawnInWorld(TArray<APlayerBallSpawn*>
 
 void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> SpawnPoints)
 {
-	int PlayerIndex = 0;
+	//int PlayerIndex = 0;
 	for (APlayerBallSpawn* SpawnPoint : SpawnPoints)
 	{
 		EAutoReceiveInput::Type InputType = SpawnPoint->AutoReceiveInput.GetValue();
@@ -62,6 +62,7 @@ void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> Spa
 
 		APlayerBall* NewCharacter = GetWorld()->SpawnActorDeferred<APlayerBall>(PlayerBallClass, SpawnPoint->GetTransform());
 
+		int PlayerIndex = GetPlayerIndexFromInputType(InputType);
 		NewCharacter->PlayerIndex = PlayerIndex;
 		
 		if (NewCharacter == nullptr) continue;
@@ -70,7 +71,7 @@ void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> Spa
 		NewCharacter->FinishSpawning(SpawnPoint->GetTransform());
 
 		PlayersBallInsideArena.Add(NewCharacter);
-		PlayerIndex++;
+		//PlayerIndex++;
 	}
 }
 
@@ -179,6 +180,24 @@ TSubclassOf<APlayerBall> AMatchPinballGameMode::GetPlayerBallClassFromInputType(
 
 		default:
 			return nullptr;
+	}
+}
+
+int AMatchPinballGameMode::GetPlayerIndexFromInputType(EAutoReceiveInput::Type InputType) const
+{
+	switch (InputType)
+	{
+	case EAutoReceiveInput::Type::Player0:
+		return 0;
+	case EAutoReceiveInput::Type::Player1:
+		return 1;
+	case EAutoReceiveInput::Type::Player2:
+		return 2;
+	case EAutoReceiveInput::Type::Player3:
+		return 3;
+
+	default:
+		return -1;
 	}
 }
 
