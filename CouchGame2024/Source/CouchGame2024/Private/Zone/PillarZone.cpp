@@ -265,6 +265,8 @@ void APillarZone::ShowZone(bool Tricked)
 	if (SphereComponent) SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 	EnableOverlappingPillars();
+
+	ReceiveOnShowZone();
 }
 
 void APillarZone::HideZone() const

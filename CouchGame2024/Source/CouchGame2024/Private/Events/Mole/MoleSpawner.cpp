@@ -144,6 +144,7 @@ void AMoleSpawner::StopSpawning()
 	if (SpawnedMole)
 	{
 		UnbindDespawnMoleToEffect();
+		ReceiveOnMoleForcedDestroy();
 		SpawnedMole->Destroy();
 		SpawnedMole = nullptr;
 	}
