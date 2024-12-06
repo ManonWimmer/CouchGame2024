@@ -95,7 +95,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USphereComponent> GrapplingSphereCollision;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UCableComponent> GrapplingCable;
 	
 #pragma endregion
