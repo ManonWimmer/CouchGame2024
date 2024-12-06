@@ -84,8 +84,8 @@ APlayerBall* UPlayerBallPowerUpSubStateSlippery::GetNearestPlayerBallInSlipperyR
 		CollisionParams
 	);
 	
-	if (Pawn->GetWorld())
-		DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->BehaviorPowerUp->SlipperyRadius, 12, FColor::Yellow, false, 3.f);
+	//if (Pawn->GetWorld())
+		//DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->BehaviorPowerUp->SlipperyRadius, 12, FColor::Yellow, false, 3.f);
 
 	if (bHasDetected)	// has detected a pawn
 	{
