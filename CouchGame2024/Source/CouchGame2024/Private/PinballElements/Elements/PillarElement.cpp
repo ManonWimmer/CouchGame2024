@@ -133,6 +133,7 @@ void APillarElement::EnablePillar(bool Tricked, APillarZone* Zone)
 
 void APillarElement::DisableTrickedZone()
 {
+	bIsHookable = false;
 	if (PillarZone == nullptr) return;
 	if (bZoneDisabled) return;
 

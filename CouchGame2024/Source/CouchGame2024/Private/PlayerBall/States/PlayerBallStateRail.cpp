@@ -385,11 +385,27 @@ void UPlayerBallStateRail::CheckForwardCollisionBallRail(bool UseDistance)
 	
 	if (bHasDetected)
 	{
-		if (OverlapResults.Num() > 0)
-		{
-			ChangeDirection();
-		}
+		if (OverlapResults.Num() <= 0)	return;
+		if (OverlapResults[0].GetActor() == nullptr)	return;
+
+		if (!CheckGoingTowardLocation(OverlapResults[0].GetActor()->GetActorLocation(), CheckPosition))	return;
+		
+		ChangeDirection();
+		
 	}
+}
+
+bool UPlayerBallStateRail::CheckGoingTowardLocation(FVector OtherLocation, FVector TargetDirection)
+{
+	if (Pawn == nullptr)	return false;
+
+	FVector PawnLocation = Pawn->GetActorLocation();
+	FVector PawnToTargetPosition = TargetDirection - PawnLocation;
+	FVector PawnToOtherPawn = OtherLocation - PawnLocation;
+	
+	if (FVector::DotProduct(PawnToTargetPosition, PawnToOtherPawn) < 0.f)	return false;
+
+	return true;
 }
 
 void UPlayerBallStateRail::InitProgressRailDurationDistance()
