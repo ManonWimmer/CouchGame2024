@@ -247,26 +247,22 @@ void AEventsManager::GetRandomEvent()
 {
 	if (CurrentEventData != nullptr) LastEventData = CurrentEventData;
 
-	TArray<UEventData*> EventDataList;
+	TArray<UEventData*> EventDataList = Events;
 
-
-	/*
-	if (LastEventData != nullptr) // Round > 0
+	// Exclude last round event from random if there's more than one
+	if (EventDataList.Num() > 1)
 	{
-		GetEventClassFromEventData(LastEventData)->EndEvent();
-		UEventData* ExcludedEventData = LastEventData;
-		EventDataList = Events.FilterByPredicate([ExcludedEventData](const UEventData* Item)
+		if (LastEventData != nullptr) // Round > 0
 		{
-			return Item != ExcludedEventData;
-		});
+			GetEventClassFromEventData(LastEventData)->EndEvent();
+			UEventData* ExcludedEventData = LastEventData;
+			EventDataList = Events.FilterByPredicate([ExcludedEventData](const UEventData* Item)
+			{
+				return Item != ExcludedEventData;
+			});
+		}
 	}
-	else
-	{
-		EventDataList = Events;
-	}
-	*/
-
-	EventDataList = Events;
+	
 	// Check list
 	if (EventDataList.Num() <= 0)
 	{
