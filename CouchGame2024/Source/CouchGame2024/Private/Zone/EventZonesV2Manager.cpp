@@ -70,7 +70,7 @@ void AEventZonesV2Manager::SetStartValues()
 
 void AEventZonesV2Manager::GetPhase2ZonesAndPillars()
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, "Phase2Zones");
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, "Get Phase2Zones");
 
 	// Get Zones Phase 2
 	TArray<AActor*> Actors;
@@ -157,6 +157,19 @@ void AEventZonesV2Manager::GetRandomPillars()
 
 void AEventZonesV2Manager::ShowRandomPillars()
 {
+	// hide all pillars
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, "Hide all pillars");
+	for (TObjectPtr<APillarElement> Pillar : Phase2Pillars)
+	{
+		Pillar->DisablePillar();
+	}
+	for (TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>> ZoneAndPillar : SelectedZonesAndPillars)
+	{
+		TObjectPtr<APillarZone> Zone = ZoneAndPillar.Key;
+		Zone->HideZone();
+	}
+	
+	// show random pillars
 	for (TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>> ZoneAndPillar : SelectedZonesAndPillars)
 	{
 		const TObjectPtr<APillarZone> Zone = ZoneAndPillar.Key;
@@ -180,6 +193,12 @@ void AEventZonesV2Manager::ShowRandomPillars()
 
 void AEventZonesV2Manager::ResetRandomPillars()
 {
+	// hide all pillars
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, "Hide all pillars");
+	for (TObjectPtr<APillarElement> Pillar : Phase2Pillars)
+	{
+		Pillar->DisablePillar();
+	}
 	for (TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>> ZoneAndPillar : SelectedZonesAndPillars)
 	{
 		TObjectPtr<APillarZone> Zone = ZoneAndPillar.Key;
