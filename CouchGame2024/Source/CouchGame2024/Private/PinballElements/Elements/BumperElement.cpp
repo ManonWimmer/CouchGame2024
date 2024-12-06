@@ -44,7 +44,7 @@ FVector ABumperElement::GetHookPosition()
 
 bool ABumperElement::IsHookable()
 {
-	return true;
+	return bIsHookable;
 }
 
 bool ABumperElement::IsPillar()
