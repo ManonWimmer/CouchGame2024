@@ -72,7 +72,16 @@ public:
 	*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Events")
-	TArray<TObjectPtr<UEventData>> Events; 
+	TArray<TObjectPtr<UEventData>> Events;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEventStartedEvent, UEventData*, EventData);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEventEndedEvent);
+
+	UPROPERTY(BlueprintAssignable)
+	FEventStartedEvent OnEventStartedEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FEventEndedEvent OnEventEndedEvent;
 
 protected:
 	// Called when the game starts or when spawned

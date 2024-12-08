@@ -11,6 +11,7 @@
 #include "Events/EventsChildren/EventZones.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayerBall/PlayerBall.h"
+#include "PowerUp/SpawnerPowerUp.h"
 #include "Rounds/RoundsSubsystem.h"
 #include "UI/UIManager.h"
 #include "Zone/EventZonesV2Manager.h"
@@ -155,6 +156,8 @@ void AEventsManager::StartGame()
 	StartGameTime = GetWorld()->GetTimeSeconds();
 	IsGameStarted = true;
 	TriggerEventPhase1(CurrentEventData);
+
+	OnEventStartedEvent.Broadcast(CurrentEventData);
 }
 
 void AEventsManager::EndGame()
@@ -173,6 +176,8 @@ void AEventsManager::EndGame()
 	if (RoundsSubsystem == nullptr) return;
 	
 	RoundsSubsystem->ChangeToNextRoundPhase();
+
+	OnEventEndedEvent.Broadcast();
 }
 
 void AEventsManager::RegisterEvent(UEventData* EventData, AEvent* Event)
@@ -446,6 +451,16 @@ void AEventsManager::CreateEvents()
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO PUSH EVENT AND/OR DATA");
 
 	GetTags();
+
+	// Bind Power Up Spawners
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnerPowerUp::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		if (ASpawnerPowerUp* SpawnerPowerUp = Cast<ASpawnerPowerUp>(Actor))
+			SpawnerPowerUp->BindToEventsManager();
+	}
 }
 
 #pragma region Tags
