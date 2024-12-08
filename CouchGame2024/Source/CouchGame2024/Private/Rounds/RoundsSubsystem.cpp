@@ -3,6 +3,7 @@
 
 #include "Rounds/RoundsSubsystem.h"
 
+#include "LocalMultiplayerSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Match/MatchPinballGameMode.h"
@@ -86,7 +87,6 @@ void URoundsSubsystem::StartRound()	// Reset AllScores -> Lock players -> set to
 			SoundSubsystem->PlayRoundStartSound();
 		}
 	}
-
 }
 
 void URoundsSubsystem::EndRoundChecks()	// Check best player & increments rounds Win
@@ -141,9 +141,23 @@ void URoundsSubsystem::InitRounds()	// Init rounds index
 
 void URoundsSubsystem::InitFirstPlayerSpecial()	// Init a first player randomly for first round
 {
+	int RandomIndex = 0;
+
+	UGameInstance* GameInstance = GetWorld()->GetGameInstance();
+	if (GameInstance != nullptr)
+	{
+		ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
+		if (LocalMultiplayerSubsystem != nullptr)
+		{
+			RandomIndex = LocalMultiplayerSubsystem->GetRandomPlayersIndexConnected();
+		}
+	}
+
+	RandomIndex = FMath::Clamp(RandomIndex, 0, 3);
+	
 	if (PlayerIndexLastRoundWin < 0)
 	{
-		PlayerIndexLastRoundWin = UKismetMathLibrary::RandomIntegerInRange(0, 3);
+		PlayerIndexLastRoundWin = UKismetMathLibrary::RandomIntegerInRange(0, RandomIndex);
 	}
 }
 

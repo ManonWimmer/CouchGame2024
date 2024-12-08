@@ -251,21 +251,22 @@ void AMainMenuGameMode::SpawnNewPlayerBallByPlayerConnected(int InPlayerIndex)
 	
 	if (InPlayerIndex < 0)	return;
 	
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "receive connect controller for spawn");
-
-	
 	if (PlayersBallInsideArena.Num() == 0)	return;
 	if (PlayersBallInsideArena.Num() <= InPlayerIndex)	return;
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "receive connect controller for spawn");
-
 	
 	APlayerBall* PlayerBall = PlayersBallInsideArena[InPlayerIndex];
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "receive connect controller for spawn");
+	if (PlayerBall == nullptr)	return;
 
-	
 	PlayerBall->ConnectPlayer();
+
+	UGameInstance* GameInstance = GetWorld()->GetGameInstance();
+	if (GameInstance == nullptr) return;
+
+	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
+	if (LocalMultiplayerSubsystem == nullptr) return;
+
+	LocalMultiplayerSubsystem->AddPlayerIndexToConnected(InPlayerIndex);
 }
 
 void AMainMenuGameMode::InitConnectionRailElements()

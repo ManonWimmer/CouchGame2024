@@ -40,6 +40,14 @@ public:
 
 
 	bool AllowNewPlayerConnection = true;
+
+
+	void AddPlayerIndexToConnected(int InPlayerIndex);
+	void RemovePlayerIndexFromConnected(int InPlayerIndex);
+	void EmptyPLayersIndexConnected();
+	int GetTotalOfPlayersConnected();
+	int GetRandomPlayersIndexConnected();
+	TArray<int> PlayersIndexConnected;
 	
 protected:
 	UPROPERTY()

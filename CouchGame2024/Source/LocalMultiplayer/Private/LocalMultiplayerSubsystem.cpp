@@ -6,6 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "LocalMultiplayerSettings.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Création des PlayerControllers en fonction du nombre de settings clavier / manettes disponibles dans les paramètres.
 void ULocalMultiplayerSubsystem::CreateAndInitPlayers(ELocalMultiplayerInputMappingType MappingType, bool AutoReasign)
@@ -138,5 +139,38 @@ void ULocalMultiplayerSubsystem::AssignGamepadInputMapping(int PlayerIndex,
 	}
 
 	OnAddNewPlayerForController.Broadcast(PlayerIndex);
+}
+
+void ULocalMultiplayerSubsystem::AddPlayerIndexToConnected(int InPlayerIndex)
+{
+	PlayersIndexConnected.Add(InPlayerIndex);
+}
+
+void ULocalMultiplayerSubsystem::RemovePlayerIndexFromConnected(int InPlayerIndex)
+{
+	PlayersIndexConnected.Remove(InPlayerIndex);
+}
+
+void ULocalMultiplayerSubsystem::EmptyPLayersIndexConnected()
+{
+	PlayersIndexConnected.Empty();
+}
+
+int ULocalMultiplayerSubsystem::GetTotalOfPlayersConnected()
+{
+	return PlayersIndexConnected.Num();
+}
+
+int ULocalMultiplayerSubsystem::GetRandomPlayersIndexConnected()
+{
+	int TempIndex = 0;
+
+	if (PlayersIndexConnected.Num() >= 0)	return 0;
+	
+	TempIndex = UKismetMathLibrary::RandomIntegerInRange(0, PlayersIndexConnected.Num() - 1);
+
+	TempIndex = FMath::Clamp(TempIndex, 0, 3);
+
+	return PlayersIndexConnected[TempIndex];
 }
 

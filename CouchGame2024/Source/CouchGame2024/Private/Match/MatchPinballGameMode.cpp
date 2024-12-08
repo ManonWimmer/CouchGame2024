@@ -55,7 +55,10 @@ void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> Spa
 	//
 	for (APlayerBallSpawn* SpawnPoint : SpawnPoints)
 	{
+		
 		EAutoReceiveInput::Type InputType = SpawnPoint->AutoReceiveInput.GetValue();
+		
+		if (!CheckPlayerBallIsConnected(GetPlayerIndexFromInputType(InputType)))	continue;	// If the player is not connected -> skip spawning his Pawn
 
 		TSubclassOf<APlayerBall> PlayerBallClass = GetPlayerBallClassFromInputType(InputType);
 
@@ -218,6 +221,28 @@ void AMatchPinballGameMode::CreateAndInitPlayers() const
 	if (LocalMultiplayerSubsystem == nullptr) return;
 
 	LocalMultiplayerSubsystem->CreateAndInitPlayers(ELocalMultiplayerInputMappingType::InGame);
+}
+
+bool AMatchPinballGameMode::CheckPlayerBallIsConnected(int InPlayerIndex) const
+{
+	UGameInstance* GameInstance = GetWorld()->GetGameInstance();
+	if (GameInstance == nullptr) return false;
+
+	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
+	if (LocalMultiplayerSubsystem == nullptr) return false;
+
+	return LocalMultiplayerSubsystem->PlayersIndexConnected.Contains(InPlayerIndex);
+}
+
+void AMatchPinballGameMode::DisableNewPlayerConnectedSpawn()
+{
+	UGameInstance* GameInstance = GetWorld()->GetGameInstance();
+	if (GameInstance == nullptr) return;
+
+	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
+	if (LocalMultiplayerSubsystem == nullptr) return;
+
+	LocalMultiplayerSubsystem->AllowNewPlayerConnection = false;
 }
 
 void AMatchPinballGameMode::BeginGame()
