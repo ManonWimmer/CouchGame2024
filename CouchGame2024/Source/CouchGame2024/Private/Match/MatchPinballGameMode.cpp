@@ -231,6 +231,8 @@ bool AMatchPinballGameMode::CheckPlayerBallIsConnected(int InPlayerIndex) const
 	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
 	if (LocalMultiplayerSubsystem == nullptr) return false;
 
+	if (LocalMultiplayerSubsystem->PlayersIndexConnected.Num() <= 0) return true;
+
 	return LocalMultiplayerSubsystem->PlayersIndexConnected.Contains(InPlayerIndex);
 }
 
