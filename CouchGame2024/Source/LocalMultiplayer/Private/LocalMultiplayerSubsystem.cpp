@@ -8,7 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 
 // Création des PlayerControllers en fonction du nombre de settings clavier / manettes disponibles dans les paramètres.
-void ULocalMultiplayerSubsystem::CreateAndInitPlayers(ELocalMultiplayerInputMappingType MappingType)
+void ULocalMultiplayerSubsystem::CreateAndInitPlayers(ELocalMultiplayerInputMappingType MappingType, bool AutoReasign)
 {
 	const ULocalMultiplayerSettings* MultiplayerSettings = GetDefault<ULocalMultiplayerSettings>();
 	
@@ -21,6 +21,15 @@ void ULocalMultiplayerSubsystem::CreateAndInitPlayers(ELocalMultiplayerInputMapp
 		APlayerController* PlayerController = UGameplayStatics::CreatePlayer(GetWorld(), i, true);
 	}
 
+	if (AutoReasign)
+	{
+		// Bind already existing Pair index profile / player index
+		ReasignExistingPlayers(MappingType);
+	}
+}
+
+void ULocalMultiplayerSubsystem::ReasignExistingPlayers(ELocalMultiplayerInputMappingType MappingType)
+{
 	// Bind already existing Pair index profile / player index
 	
 	// Check already existing Pair index profile player and assign keyboard IMC
@@ -92,6 +101,8 @@ void ULocalMultiplayerSubsystem::AssignKeyboardMapping(int PlayerIndex, int Keyb
 	{
 		Controller->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(IMC, 1, ContextOptions);
 	}
+	
+	OnAddNewPlayerForController.Broadcast(PlayerIndex);
 }
 
 int ULocalMultiplayerSubsystem::GetAssignedPlayerIndexFromGamepadProfileID(int DeviceID)
@@ -125,5 +136,7 @@ void ULocalMultiplayerSubsystem::AssignGamepadInputMapping(int PlayerIndex,
 	{
 		Controller->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(IMC, 1, ContextOptions);
 	}
+
+	OnAddNewPlayerForController.Broadcast(PlayerIndex);
 }
 

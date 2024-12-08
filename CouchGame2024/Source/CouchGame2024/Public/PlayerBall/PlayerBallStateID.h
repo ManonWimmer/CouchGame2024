@@ -31,5 +31,6 @@ enum class EPlayerBallStateID : uint8
 	PowerUpHub,
 	Freeze,
 	Strength,
-	Slippery
+	Slippery,
+	Disconnected
 };

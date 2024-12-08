@@ -17,7 +17,9 @@ class LOCALMULTIPLAYER_API ULocalMultiplayerSubsystem : public UGameInstanceSubs
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void CreateAndInitPlayers(ELocalMultiplayerInputMappingType MappingType);
+	void CreateAndInitPlayers(ELocalMultiplayerInputMappingType MappingType, bool AutoReasign = true);
+
+	void ReasignExistingPlayers(ELocalMultiplayerInputMappingType MappingType);
 	
 	int GetAssignedPlayerIndexFromKeyboardProfileIndex(int KeyboardProfileIndex);
 
@@ -31,6 +33,14 @@ public:
 
 	void AssignGamepadInputMapping(int PlayerIndex, ELocalMultiplayerInputMappingType MappingType) const;
 
+
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAddNewPlayerForController, int, PlayerIndex);
+	FOnAddNewPlayerForController OnAddNewPlayerForController;
+
+
+	bool AllowNewPlayerConnection = true;
+	
 protected:
 	UPROPERTY()
 	uint8 LastAssignedPlayerIndex = -1;

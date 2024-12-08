@@ -113,6 +113,22 @@ void APlayerBall::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	BindEventActions();
 }
 
+void APlayerBall::DisconnectPlayer(int InDisconnectValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Disconnected, InDisconnectValue);
+}
+
+void APlayerBall::ConnectPlayer()
+{
+	if (StateMachine == nullptr)	return;
+
+	if (StateMachine->GetCurrentStateID() != EPlayerBallStateID::Disconnected)	return;
+	
+	StateMachine->ChangeState(EPlayerBallStateID::Rail, 1.f);
+}
+
 void APlayerBall::SetupData() // Get all data and set them
 {
 	if (PlayerBallData == nullptr)
