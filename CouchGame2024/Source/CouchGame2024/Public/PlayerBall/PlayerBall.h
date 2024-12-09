@@ -51,6 +51,17 @@ public:
 	UPROPERTY(EditAnywhere)
 	int PlayerIndex = 0;
 
+	
+#pragma region Connected / Disconnected
+
+public:
+	bool bIsConnected = false;
+
+	void DisconnectPlayer(int InDisconnectValue);
+
+	void ConnectPlayer();
+	
+#pragma endregion
 
 public:
 	UPROPERTY(BlueprintReadOnly)

@@ -200,9 +200,12 @@ void AEventPush::ChangePlayersMaterialsToPushV2()
 
 void AEventPush::ResetPlayersMaterialsToInitial()
 {
+	if (PlayersInitialMaterials.Num() <= 0) return;
+	
 	for (const TObjectPtr<APlayerBall> Player : Players)
 	{
-		Player->SphereMesh->SetMaterial(0, *PlayersInitialMaterials.Find(Player->PlayerIndex));
+		if (*PlayersInitialMaterials.Find(Player->PlayerIndex))
+			Player->SphereMesh->SetMaterial(0, *PlayersInitialMaterials.Find(Player->PlayerIndex));
 	}
 
 	PlayersInitialMaterials.Reset();

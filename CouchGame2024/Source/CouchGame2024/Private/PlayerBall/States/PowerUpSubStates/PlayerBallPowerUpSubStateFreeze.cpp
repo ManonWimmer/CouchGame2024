@@ -99,8 +99,8 @@ TArray<APlayerBall*> UPlayerBallPowerUpSubStateFreeze::GetPlayersInFreezeRange()
 		CollisionParams
 	);
 	
-	if (Pawn->GetWorld())
-		DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->BehaviorPowerUp->FreezeRange, 12, FColor::Cyan, false, 3.f);
+	//if (Pawn->GetWorld())
+		//DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->BehaviorPowerUp->FreezeRange, 12, FColor::Cyan, false, 3.f);
 
 	if (!bHasDetected)	return OutPlayersInFreeze;
 

@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "MainMenuGameMode.generated.h"
 
+class ARailElement;
 class APlayerBallSpawn;
 class APlayerBall;
 /**
@@ -44,6 +45,8 @@ private:
 	
 	void CreateAndInitPlayers() const;
 
+	void ReasignExistingPlayers() const;
+	
 protected:
 	UPROPERTY(EditAnywhere)
 	TArray<APlayerBall*> PlayersBallInsideArena;
@@ -53,4 +56,24 @@ protected:
 	
 #pragma endregion
 
+#pragma region Multiplayer Spawns
+
+private:
+	void BindSpawnPlayerBallToNewPlayerConnected();
+
+	UFUNCTION()
+	void SpawnNewPlayerBallByPlayerConnected(int InPlayerIndex);
+
+	UPROPERTY()
+	TArray<ARailElement*> ConnectionRailElements;
+
+	void InitConnectionRailElements();
+
+	void DisconnectAllPlayersBall();
+public:
+	ARailElement* GetConnectionRailElements(int InIndex) const;
+	
+#pragma endregion 
+	
 };
+

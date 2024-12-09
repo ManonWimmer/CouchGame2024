@@ -21,6 +21,7 @@
 #include "PlayerBall/States/PlayerBallStateSnapping.h"
 #include "PlayerBall/States/PlayerBallStateStun.h"
 #include "PlayerBall/States/PlayerBallStateTourniquet.h"
+#include "PlayerBall/States/MultiplayerStates/PlayerBallStateDisconnected.h"
 #include "PlayerBall/States/PowerUpSubStates/PlayerBallPowerUpSubStateFreeze.h"
 #include "PlayerBall/States/PowerUpSubStates/PlayerBallPowerUpSubStateSlippery.h"
 #include "PlayerBall/States/PowerUpSubStates/PlayerBallPowerUpSubStateStrength.h"
@@ -166,6 +167,9 @@ void UPlayerBallStateMachine::CreateStateByID(EPlayerBallStateID InStateID)
 			break;
 		case EPlayerBallStateID::Tourniquet:
 			OutState = NewObject<UPlayerBallStateTourniquet>(this);
+			break;
+		case EPlayerBallStateID::Disconnected:
+			OutState = NewObject<UPlayerBallStateDisconnected>(this);
 			break;
 		default:
 			break;

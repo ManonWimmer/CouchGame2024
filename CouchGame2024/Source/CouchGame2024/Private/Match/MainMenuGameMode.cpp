@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Match/MatchSettings.h"
 #include "Match/PlayerBallSpawn.h"
+#include "PinballElements/Elements/RailElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 
@@ -16,14 +17,22 @@ void AMainMenuGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Connection
+	InitConnectionRailElements();
+	BindSpawnPlayerBallToNewPlayerConnected();
+	
 	// Players
 	CreateAndInitPlayers();
 	TArray<APlayerBallSpawn*> PlayerSpawnPoints;
 	FindPlayerBallSpawnInWorld(PlayerSpawnPoints);
 	PlayerBallSpawns = PlayerSpawnPoints;
 	SpawnPlayerBalls(PlayerSpawnPoints);
-
+	
 	OnPlayerBallSpawned.Broadcast();
+
+	DisconnectAllPlayersBall();
+	
+	ReasignExistingPlayers();
 }
 
 void AMainMenuGameMode::FindPlayerBallSpawnInWorld(TArray<APlayerBallSpawn*>& ResultsActors)
@@ -49,7 +58,7 @@ void AMainMenuGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> SpawnPo
 	for (APlayerBallSpawn* SpawnPoint : SpawnPoints)
 	{
 		EAutoReceiveInput::Type InputType = SpawnPoint->AutoReceiveInput.GetValue();
-
+		
 		TSubclassOf<APlayerBall> PlayerBallClass = GetPlayerBallClassFromInputType(InputType);
 
 		if (PlayerBallClass == nullptr) continue;
@@ -209,5 +218,92 @@ void AMainMenuGameMode::CreateAndInitPlayers() const
 	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
 	if (LocalMultiplayerSubsystem == nullptr) return;
 
-	LocalMultiplayerSubsystem->CreateAndInitPlayers(ELocalMultiplayerInputMappingType::Menu);
+	LocalMultiplayerSubsystem->CreateAndInitPlayers(ELocalMultiplayerInputMappingType::Menu, false);
+}
+
+void AMainMenuGameMode::ReasignExistingPlayers() const
+{
+	UGameInstance* GameInstance = GetWorld()->GetGameInstance();
+	if (GameInstance == nullptr) return;
+
+	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
+	if (LocalMultiplayerSubsystem == nullptr) return;
+
+	LocalMultiplayerSubsystem->ReasignExistingPlayers(ELocalMultiplayerInputMappingType::Menu);
+}
+
+void AMainMenuGameMode::BindSpawnPlayerBallToNewPlayerConnected()
+{
+	UGameInstance* GameInstance = GetWorld()->GetGameInstance();
+	if (GameInstance == nullptr) return;
+
+	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
+	if (LocalMultiplayerSubsystem == nullptr) return;
+
+	LocalMultiplayerSubsystem->AllowNewPlayerConnection = true;	// So that new player can connect to the game and have their pawn spawn
+	
+	LocalMultiplayerSubsystem->OnAddNewPlayerForController.AddDynamic(this, &AMainMenuGameMode::SpawnNewPlayerBallByPlayerConnected);
+}
+
+void AMainMenuGameMode::SpawnNewPlayerBallByPlayerConnected(int InPlayerIndex)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "receive connect controller for spawn");
+	
+	if (InPlayerIndex < 0)	return;
+	
+	if (PlayersBallInsideArena.Num() == 0)	return;
+	if (PlayersBallInsideArena.Num() <= InPlayerIndex)	return;
+	
+	APlayerBall* PlayerBall = PlayersBallInsideArena[InPlayerIndex];
+
+	if (PlayerBall == nullptr)	return;
+
+	PlayerBall->ConnectPlayer();
+
+	UGameInstance* GameInstance = GetWorld()->GetGameInstance();
+	if (GameInstance == nullptr) return;
+
+	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
+	if (LocalMultiplayerSubsystem == nullptr) return;
+
+	LocalMultiplayerSubsystem->AddPlayerIndexToConnected(InPlayerIndex);
+}
+
+void AMainMenuGameMode::InitConnectionRailElements()
+{
+	ConnectionRailElements.Empty();
+	
+	TArray<AActor*> ConnectionRail;
+	UGameplayStatics::GetAllActorsWithTag(this, "ConnectionRail", ConnectionRail);
+
+	for (AActor* RailActor : ConnectionRail)
+	{
+		if (RailActor == nullptr)	continue;
+
+		ARailElement* RailElement = Cast<ARailElement>(RailActor);
+
+		if (RailElement == nullptr)	continue;
+
+		ConnectionRailElements.Add(RailElement);
+	}
+}
+
+void AMainMenuGameMode::DisconnectAllPlayersBall()
+{
+	for (APlayerBall* PlayerBall : PlayersBallInsideArena)
+	{
+		if (PlayerBall == nullptr)	continue;
+
+		PlayerBall->DisconnectPlayer(0.f);
+	}
+}
+
+ARailElement* AMainMenuGameMode::GetConnectionRailElements(int InIndex) const
+{
+	if (ConnectionRailElements.Num() <= 0) return nullptr;
+	if (InIndex < 0)	return nullptr;
+
+	if (InIndex >= ConnectionRailElements.Max())	return nullptr;
+
+	return ConnectionRailElements[InIndex];
 }

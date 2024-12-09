@@ -138,8 +138,8 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 		CollisionParams
 	);
 	
-	if (Pawn->GetWorld())
-		DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->PunchRadius, 12, FColor::Blue, false, 3.f);
+	//if (Pawn->GetWorld())
+		//DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->PunchRadius, 12, FColor::Blue, false, 3.f);
 
 	if (bHasDetected)	// has detected a pawn
 	{
@@ -182,8 +182,8 @@ TArray<APlayerBall*> UPlayerBallStatePunch::GetAllPlayerBallInPunchRadius()
 		CollisionParams
 	);
 	
-	if (Pawn->GetWorld())
-		DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->PunchRadius, 12, FColor::Blue, false, 3.f);
+	//if (Pawn->GetWorld())
+		//DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->PunchRadius, 12, FColor::Blue, false, 3.f);
 
 	if (bHasDetected)	// has detected a pawn
 	{

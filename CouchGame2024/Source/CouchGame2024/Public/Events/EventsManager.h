@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "Rounds/RoundsPhasesID.h"
 #include "Rounds/RoundsResetable.h"
+#include "Rounds/RoundsSubsystem.h"
 #include "EventsManager.generated.h"
 
 class URoundsSubsystem;
@@ -71,7 +72,16 @@ public:
 	*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Events")
-	TArray<UEventData*> Events; 
+	TArray<TObjectPtr<UEventData>> Events;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEventStartedEvent, UEventData*, EventData);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEventEndedEvent);
+
+	UPROPERTY(BlueprintAssignable)
+	FEventStartedEvent OnEventStartedEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FEventEndedEvent OnEventEndedEvent;
 
 protected:
 	// Called when the game starts or when spawned
@@ -80,8 +90,7 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-
+	
 	UFUNCTION()
 	void Setup();
 
@@ -156,6 +165,12 @@ public:
 
 	UPROPERTY()
 	TArray<FName> EventsTags;
+
+	UPROPERTY()
+	URoundsSubsystem* RoundsSubsystem;
+
+	UPROPERTY()
+	int CurrentRound = 0;
 	
 private:
 	UFUNCTION()
@@ -166,6 +181,10 @@ private:
 
 	UFUNCTION()
 	void GetRandomEvent();
+	
+	UFUNCTION()
+	void GetFourRandomEvents();
+	TArray<TObjectPtr<UEventData>> RandomizeList() const;
 
 	UFUNCTION()
 	void SetupEventTimes();
@@ -192,7 +211,7 @@ private:
 	TObjectPtr<AUIManager> UIManager = nullptr;
 
 	UPROPERTY()
-	TObjectPtr<URoundsSubsystem> RoundsSubsystem = nullptr;
+	TArray<TObjectPtr<UEventData>> RandomEvents;
 
 #pragma region Resetable
 
