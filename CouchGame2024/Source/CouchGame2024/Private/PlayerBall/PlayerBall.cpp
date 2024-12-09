@@ -217,6 +217,8 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	if (PlayerBallController == nullptr)
 		return;
 
+	SetupPlayerIndexInController(PlayerBallController);
+	
 	if (BehaviorMovements != nullptr)
 	{
 		BehaviorMovements->BindBehaviorEventAction(PlayerBallController);
@@ -232,6 +234,15 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	{
 		BehaviorPowerUp->BindBehaviorEventAction(PlayerBallController);
 	}
+}
+
+void APlayerBall::SetupPlayerIndexInController(APlayerBallController* InPlayerBallController)
+{
+	if (InPlayerBallController == nullptr)	return;
+
+	if (PlayerIndex < 0)	return;
+
+	InPlayerBallController->AssociatedPlayerIndex = PlayerIndex;
 }
 
 

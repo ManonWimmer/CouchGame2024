@@ -7,6 +7,11 @@
 #include "PlayerBall/Datas/PlayerActionsData.h"
 
 
+int APlayerBallController::GetAssociatedPlayerIndex() const
+{
+	return AssociatedPlayerIndex;
+}
+
 void APlayerBallController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
