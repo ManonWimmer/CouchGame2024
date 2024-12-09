@@ -30,7 +30,7 @@ void URoundsSubsystem::Tick(float DeltaTime)
 		case IN_ROUND:
 			break;
 		case POST_ROUND:
-			HandlePostRoundTimer(DeltaTime);
+			//HandlePostRoundTimer(DeltaTime);
 			break;
 	}
 }
@@ -392,7 +392,7 @@ void URoundsSubsystem::HandlePostRoundTimer(float DeltaTime)
     {
     	ChangeToNextRoundPhase();
     }
-}
+ }
 
 void URoundsSubsystem::AddResetableObject(UObject* InResetableObject)
 {
