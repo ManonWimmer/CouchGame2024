@@ -154,6 +154,8 @@ protected:
 private:
 	UFUNCTION()
 	void BindEventActions();
+
+	void SetupPlayerIndexInController(APlayerBallController* InPlayerBallController);
 	
 #pragma region States
 
