@@ -18,7 +18,15 @@ class COUCHGAME2024_API APlayerBallController : public APlayerController
 public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UPlayerActionsData> PlayerInputsData;
-	
+
+public:
+	UFUNCTION(BlueprintPure)
+	int GetAssociatedPlayerIndex() const;
+
+public:
+	int AssociatedPlayerIndex = -1;
+
+public:
 	UFUNCTION()
 	virtual void SetupInputComponent() override;
 
