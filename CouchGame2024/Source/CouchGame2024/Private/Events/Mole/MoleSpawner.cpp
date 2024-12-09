@@ -28,6 +28,17 @@ void AMoleSpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	/*
+	if (bInGame)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Red,
+			FString::Printf(TEXT("Mole Spawner : %s, Can Spawn %hhd,Random Spawn Time : %f, "
+						"Can Stay %hhd, Random Stay Time : %f"),
+				*this->GetName(), bCanSpawn, RandomSpawnTime,
+				bCanStay, RandomStayTime));
+	}
+	*/
+
 	if (bCanSpawn && bInGame)
 	{
 		CurrentTime = GetWorld()->GetTimeSeconds() - StartedTime;
