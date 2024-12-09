@@ -29,7 +29,7 @@ void AEventsManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	RandomEvents.Add(Events[0]); // jamais appelé on s'en fout
+	//RandomEvents.Add(Events[0]); // jamais appelé on s'en fout
 
 	// Get UI Manager
 	UIManager = Cast<AUIManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AUIManager::StaticClass()));
@@ -86,8 +86,8 @@ void AEventsManager::Setup()
 	BindCountdownToRoundsPhase();
 	BindCountdownToRoundsChange();
 
-	GetRandomEvent();
-	SetupNewRoundEvent(0);
+	//GetRandomEvent();
+	//SetupNewRoundEvent(0);
 }
 
 #pragma region Countdown
@@ -318,7 +318,7 @@ void AEventsManager::GetRandomEvent()
 	UE_LOG(LogTemp, Display, TEXT("Current Event : %hhd"), CurrentEventData->EventName);
 
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "FOUND CURRENT EVENT - SHOW NEW ROUND");
-	UIManager->ShowNextRound(CurrentEventData);
+	//UIManager->ShowNextRound(CurrentEventData);
 	UE_LOG(LogTemp, Display, TEXT("FOUND CURRENT EVENT - SHOW NEW ROUND"));
 	
 	// ----- ----- NEW RANDOM ----- ----- //
