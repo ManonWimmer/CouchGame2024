@@ -73,30 +73,15 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AMoleElement> MoleClass;
 
-	UPROPERTY(BlueprintReadWrite)
-	float RandomSpawnTime = 0.f;
-
-	UPROPERTY(BlueprintReadWrite)
-	float RandomStayTime = 0.f;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bCanSpawn = false;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bCanStay = false;
-
-	UPROPERTY(BlueprintReadWrite)
-	AMoleElement* SpawnedMole = nullptr;
-
-	UPROPERTY(BlueprintReadWrite)
-	float CurrentTime = 0.f;
-
 private:
 	UPROPERTY(EditAnywhere)
 	float MinMoleSpawnTime = 5.0f;
 
 	UPROPERTY(EditAnywhere)
 	float MaxMoleSpawnTime = 20.0f;
+	
+	UPROPERTY()
+	float RandomSpawnTime = 0.f;
 
 	UPROPERTY(EditAnywhere)
 	float MinMoleStayTime = 5.0f;
@@ -105,7 +90,22 @@ private:
 	float MaxMoleStayTime = 20.0f;
 
 	UPROPERTY()
+	float RandomStayTime = 0.f;
+
+	UPROPERTY()
+	float CurrentTime = 0.f;
+
+	UPROPERTY()
 	float StartedTime = 0.f;
+
+	UPROPERTY()
+	bool bCanSpawn = false;
+
+	UPROPERTY()
+	bool bCanStay = false;
+
+	UPROPERTY()
+	AMoleElement* SpawnedMole = nullptr;
 
 	UPROPERTY()
 	bool bHasBeenBind = false;

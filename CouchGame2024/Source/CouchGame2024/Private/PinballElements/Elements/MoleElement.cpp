@@ -55,7 +55,6 @@ void AMoleElement::TriggerElementWithPlayer(APlayerBall* InPlayerBall)
 	bHasBeenHitByPlayer = true;
 	
 	Super::TriggerElementWithPlayer(InPlayerBall);
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f, FColor::Red, "Hit mole");
 
 	UGlobalScoreSubsystem* ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
 	if (ScoreSubsystem != nullptr)
@@ -80,8 +79,6 @@ void AMoleElement::SpawnMole()
 {
 	if (SpawnAnimationCurve)
 	{
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f, FColor::Yellow, FString::Printf(TEXT("Spawn mole: %s"), *this->GetName()));
-
 		ReceiveOnSpawnMole();
 		
 		SpawnTimeline->AddInterpFloat(SpawnAnimationCurve, InterpFunction, FName("Alpha"));
@@ -115,7 +112,6 @@ void AMoleElement::OnTimelineFinished()
 {
 	if (SpawnTimeline->GetPlaybackPosition() == 0.0f) // Si c'est le despawn
 	{
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1,5.f, FColor::Yellow, FString::Printf(TEXT("Destroy mole: %s"), *this->GetName()));
 		Destroy();
 	}
 }
