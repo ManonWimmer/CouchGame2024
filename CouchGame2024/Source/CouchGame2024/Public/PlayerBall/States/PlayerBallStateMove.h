@@ -31,7 +31,11 @@ public:
 
 private:
 	UFUNCTION()
-	void Move(float DeltaTime) const;
+	void Move(float DeltaTime);
+
+	UFUNCTION()
+	void SetRightMoveMaterial(bool IsBrakeDirection);
+	
 	UFUNCTION()
 	void CheckNotMoving();
 	

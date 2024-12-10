@@ -115,6 +115,9 @@ public:
 	void EndSlipperyEffect();
 
 	void HandleSlipperyEffectDuration(float DeltaTime);
+
+	UFUNCTION(BlueprintPure)
+	bool GetIsSlippery() const;
 	
 private:
 	bool bIsSlippery = false;

@@ -128,7 +128,9 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UPlayerBallBehaviorPowerUp> BehaviorPowerUp;
-
+	
+	bool bIsBrakeDirection = false;
+	
 #pragma endregion 
 	
 #pragma region StateMachine

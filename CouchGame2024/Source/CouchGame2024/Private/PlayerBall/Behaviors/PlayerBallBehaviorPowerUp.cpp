@@ -302,3 +302,8 @@ void UPlayerBallBehaviorPowerUp::HandleSlipperyEffectDuration(float DeltaTime)
 		CurrentSlipperyEffectDuration += DeltaTime;
 	}
 }
+
+bool UPlayerBallBehaviorPowerUp::GetIsSlippery() const
+{
+	return bIsSlippery;
+}
