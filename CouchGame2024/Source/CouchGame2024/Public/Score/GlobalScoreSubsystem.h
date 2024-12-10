@@ -6,6 +6,8 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "GlobalScoreSubsystem.generated.h"
 
+class AEventsManager;
+class APlayerBall;
 class USoundSubsystem;
 /**
  * 
@@ -42,6 +44,21 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void StealDuck(int PlayerIndexAdd, int PlayerIndexLose);
+
+	UPROPERTY()
+	TMap<int, TObjectPtr<APlayerBall>> PlayerBallsMap;
+
+	UFUNCTION()
+	void OnAddScoreEffect(APlayerBall* Player, bool bIsInPopcornEvent);
+
+	UFUNCTION()
+	APlayerBall* GetPlayerFromIndex(int PlayerIndex);
+
+	UPROPERTY()
+	TObjectPtr<AEventsManager> EventsManager = nullptr;
+
+	UFUNCTION()
+	void GetEventsManager();
 	
 protected:
 	UPROPERTY(BlueprintReadOnly)
