@@ -16,6 +16,6 @@ class COUCHGAME2024_API URoundsSettings : public UDeveloperSettings
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(Config, EditAnywhere, Category="Settings")
+	UPROPERTY(Config, EditAnywhere, Category="Settings", BlueprintReadOnly)
 	TSoftObjectPtr<URoundsData> RoundsData;
 };
