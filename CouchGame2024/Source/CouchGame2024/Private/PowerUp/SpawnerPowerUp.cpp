@@ -3,6 +3,10 @@
 
 #include "PowerUp/SpawnerPowerUp.h"
 
+#include "Events/EventData.h"
+#include "Events/EventsManager.h"
+#include "Events/Duck/DuckBank.h"
+#include "Kismet/GameplayStatics.h"
 #include "PowerUp/PowerUpDataType.h"
 #include "PowerUp/SpawnerPowerUpData.h"
 #include "PowerUp/Type/PowerUpFreeze.h"
@@ -24,7 +28,7 @@ void ASpawnerPowerUp::BeginPlay()
 
 	SetupData();
 	
-	StartRespawnCooldown();
+	//StartRespawnCooldown();
 }
 
 // Called every frame
@@ -32,7 +36,8 @@ void ASpawnerPowerUp::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	HandleRespawnCooldown(DeltaTime);
+	if (bCanSpawn)
+		HandleRespawnCooldown(DeltaTime);
 }
 
 void ASpawnerPowerUp::SetupData()
@@ -114,6 +119,36 @@ void ASpawnerPowerUp::SpawnRandomPowerUp()	// Spawn a random power up
 	SpawnSpecificPowerUp(PowerUpIDToSpawn);
 }
 
+void ASpawnerPowerUp::StartSpawning(UEventData* EventData)
+{
+	FString EventTag = EventData->EventTag.ToString();
+	if (Tags.Find(EventData->EventTag) != INDEX_NONE || Tags.Find("Constant") != INDEX_NONE )
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, FString::Printf(TEXT("Can spawn power up with Tag %s"), *EventTag));
+	}
+	else
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, FString::Printf(TEXT("Cant spawn power up with Tag %s"), *EventTag));
+		return; // Can't spawn if not same tag as current event
+	}
+	
+	bCanSpawn = true;
+	SetupData();
+	StartRespawnCooldown();
+}
+
+void ASpawnerPowerUp::StopSpawning()
+{
+	bCanSpawn = false;
+	bIsInCooldown = false;
+	
+	if (SpawnedPowerUp)
+	{
+		SpawnedPowerUp->Destroy();
+		SpawnedPowerUp = nullptr;
+	}
+}
+
 EPowerUpID ASpawnerPowerUp::ChooseRandomPowerUp()	// Select a random power up
 {
 	EPowerUpID OutPowerUpID = EPowerUpID::None;
@@ -143,7 +178,7 @@ EPowerUpID ASpawnerPowerUp::ChooseRandomPowerUp()	// Select a random power up
 
 void ASpawnerPowerUp::HandleRespawnCooldown(float DeltaTime)
 {
-	if (!bIsInCooldown)	return;
+	if (!bIsInCooldown || !bCanSpawn)	return;
 	
 	if (CurrentRespawnCooldown >= BasicRespawnCooldown + RespawnCooldownToAdd)
 	{
@@ -188,5 +223,22 @@ void ASpawnerPowerUp::SetNewRespawnCooldownToAdd()
 {
 	float Percent = FMath::RandRange(0.f, 1.f);
 	RespawnCooldownToAdd = FMath::Lerp(MinRespawnCooldownToAdd, MaxRespawnCooldownToAdd, Percent);
+}
+
+void ASpawnerPowerUp::BindToEventsManager()
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Bind spawner power up to events manager");
+	UE_LOG(LogTemp, Display, TEXT("Bind spawner power up"));
+	
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEventsManager::StaticClass(), FoundActors);
+
+	if (FoundActors.Num() > 0)
+	{
+		AEventsManager* EventsManager = Cast<AEventsManager>(FoundActors[0]);
+		EventsManager->OnEventStartedEvent.AddDynamic(this, &ASpawnerPowerUp::StartSpawning);
+		EventsManager->OnEventEndedEvent.AddDynamic(this, &ASpawnerPowerUp::StopSpawning);
+	}
+	
 }
 

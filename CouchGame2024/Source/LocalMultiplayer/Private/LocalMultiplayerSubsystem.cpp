@@ -6,9 +6,95 @@
 #include "EnhancedInputSubsystems.h"
 #include "LocalMultiplayerSettings.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+
+void ULocalMultiplayerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+
+	if (GetGameInstance() != nullptr)
+		GetGameInstance()->OnInputDeviceConnectionChange.AddDynamic(this, &ULocalMultiplayerSubsystem::HandleControllerConnectionChange);
+}
+
+void ULocalMultiplayerSubsystem::HandleControllerConnectionChange(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId)
+{
+
+	if (NewConnectionState == EInputDeviceConnectionState::Disconnected)
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Emerald, "Device disconnected");
+
+		//HandlePlayerDisconnected(InputDeviceId);
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateUObject(this, &ULocalMultiplayerSubsystem::HandlePlayerDisconnected, InputDeviceId), 1.f, false);
+	}
+	else if (NewConnectionState == EInputDeviceConnectionState::Connected)
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Emerald, "Device Connected");
+
+		HandlePlayerConnected(InputDeviceId);
+	}
+}
+
+void ULocalMultiplayerSubsystem::HandlePlayerDisconnected(FInputDeviceId InputDeviceId)
+{
+	int DeviceId = InputDeviceId.GetId();
+
+	if (!DevicesConnectionState.Contains(DeviceId))
+	{
+		DevicesConnectionState.Add(DeviceId, EInputDeviceConnectionState::Disconnected);
+	}
+	else
+	{
+		DevicesConnectionState[InputDeviceId.GetId()] = EInputDeviceConnectionState::Disconnected;
+	}
+
+	if (PlayerIndexFromGamepadProfileIndex.Contains(DeviceId))
+	{
+		int TempKeyToinputIndex = PlayerIndexFromGamepadProfileIndex[DeviceId];
+		PlayerIndexFromGamepadProfileIndex.Remove(DeviceId);
+
+		AllPlayerIndexUnavailable.Remove(TempKeyToinputIndex);
+		
+		if (PlayersIndexConnected.Contains(DeviceId))
+		{
+			PlayersIndexConnected.Remove(DeviceId);
+
+			if (GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Emerald, "Player removed");
+		}
+	}
+}
+
+void ULocalMultiplayerSubsystem::HandlePlayerConnected(FInputDeviceId InputDeviceId)
+{
+	int DeviceId = InputDeviceId.GetId();
+	
+	if (!DevicesConnectionState.Contains(DeviceId))
+	{
+		DevicesConnectionState.Add(DeviceId, EInputDeviceConnectionState::Connected);
+	}
+	else
+	{
+		DevicesConnectionState[DeviceId] = EInputDeviceConnectionState::Connected;
+	}
+}
+
+bool ULocalMultiplayerSubsystem::GetIsConnected(FInputDeviceId InputDeviceId)
+{
+	int DeviceId = InputDeviceId.GetId();
+	
+	if (!DevicesConnectionState.Contains(DeviceId))
+		return true;
+
+	if (DevicesConnectionState[DeviceId] == EInputDeviceConnectionState::Connected)	return true;
+
+	return false;
+}
 
 // Création des PlayerControllers en fonction du nombre de settings clavier / manettes disponibles dans les paramètres.
-void ULocalMultiplayerSubsystem::CreateAndInitPlayers(ELocalMultiplayerInputMappingType MappingType)
+void ULocalMultiplayerSubsystem::CreateAndInitPlayers(ELocalMultiplayerInputMappingType MappingType, bool AutoReasign)
 {
 	const ULocalMultiplayerSettings* MultiplayerSettings = GetDefault<ULocalMultiplayerSettings>();
 	
@@ -21,6 +107,15 @@ void ULocalMultiplayerSubsystem::CreateAndInitPlayers(ELocalMultiplayerInputMapp
 		APlayerController* PlayerController = UGameplayStatics::CreatePlayer(GetWorld(), i, true);
 	}
 
+	if (AutoReasign)
+	{
+		// Bind already existing Pair index profile / player index
+		ReasignExistingPlayers(MappingType);
+	}
+}
+
+void ULocalMultiplayerSubsystem::ReasignExistingPlayers(ELocalMultiplayerInputMappingType MappingType)
+{
 	// Bind already existing Pair index profile / player index
 	
 	// Check already existing Pair index profile player and assign keyboard IMC
@@ -66,8 +161,13 @@ int ULocalMultiplayerSubsystem::GetAssignedPlayerIndexFromKeyboardProfileIndex(i
 int ULocalMultiplayerSubsystem::AssignNewPlayerToKeyboardProfile(int KeyboardProfileIndex)
 {
 	LastAssignedPlayerIndex++;
-	PlayerIndexFromKeyboardProfileIndex.Add(KeyboardProfileIndex, LastAssignedPlayerIndex);
-	return LastAssignedPlayerIndex;
+	//PlayerIndexFromKeyboardProfileIndex.Add(KeyboardProfileIndex, LastAssignedPlayerIndex);
+	int Index = GetFirstPlayerIndexAvailable();
+	PlayerIndexFromKeyboardProfileIndex.Add(KeyboardProfileIndex, Index);
+	//AllPlayerIndexUnavailable.Add(LastAssignedPlayerIndex);
+	AllPlayerIndexUnavailable.Add(Index);
+	//return LastAssignedPlayerIndex;
+	return Index;
 }
 
 // Associe l’IMC correspondant à l’index du profil clavier fourni à l’index du Player Controller fourni.
@@ -92,6 +192,8 @@ void ULocalMultiplayerSubsystem::AssignKeyboardMapping(int PlayerIndex, int Keyb
 	{
 		Controller->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(IMC, 1, ContextOptions);
 	}
+	
+	OnAddNewPlayerForController.Broadcast(PlayerIndex);
 }
 
 int ULocalMultiplayerSubsystem::GetAssignedPlayerIndexFromGamepadProfileID(int DeviceID)
@@ -104,8 +206,13 @@ int ULocalMultiplayerSubsystem::GetAssignedPlayerIndexFromGamepadProfileID(int D
 int ULocalMultiplayerSubsystem::AssignNewPlayerToGamepadProfileID(int DeviceID)
 {
 	LastAssignedPlayerIndex++;
-	PlayerIndexFromGamepadProfileIndex.Add(DeviceID, LastAssignedPlayerIndex);
-	return LastAssignedPlayerIndex;
+	int Index = GetFirstPlayerIndexAvailable();
+	//PlayerIndexFromGamepadProfileIndex.Add(DeviceID, LastAssignedPlayerIndex);
+	PlayerIndexFromGamepadProfileIndex.Add(DeviceID, Index);
+	//AllPlayerIndexUnavailable.Add(LastAssignedPlayerIndex);
+	AllPlayerIndexUnavailable.Add(Index);
+	//return LastAssignedPlayerIndex;
+	return Index;
 }
 
 void ULocalMultiplayerSubsystem::AssignGamepadInputMapping(int PlayerIndex,
@@ -125,5 +232,50 @@ void ULocalMultiplayerSubsystem::AssignGamepadInputMapping(int PlayerIndex,
 	{
 		Controller->GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->AddMappingContext(IMC, 1, ContextOptions);
 	}
+
+	OnAddNewPlayerForController.Broadcast(PlayerIndex);
+}
+
+int ULocalMultiplayerSubsystem::GetFirstPlayerIndexAvailable()
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		if (!AllPlayerIndexUnavailable.Contains(i))	return i;
+	}
+
+	return 0;
+}
+
+void ULocalMultiplayerSubsystem::AddPlayerIndexToConnected(int InPlayerIndex)
+{
+	PlayersIndexConnected.Add(InPlayerIndex);
+}
+
+void ULocalMultiplayerSubsystem::RemovePlayerIndexFromConnected(int InPlayerIndex)
+{
+	PlayersIndexConnected.Remove(InPlayerIndex);
+}
+
+void ULocalMultiplayerSubsystem::EmptyPLayersIndexConnected()
+{
+	PlayersIndexConnected.Empty();
+}
+
+int ULocalMultiplayerSubsystem::GetTotalOfPlayersConnected()
+{
+	return PlayersIndexConnected.Num();
+}
+
+int ULocalMultiplayerSubsystem::GetRandomPlayersIndexConnected()
+{
+	int TempIndex = 0;
+
+	if (PlayersIndexConnected.Num() >= 0)	return 0;
+	
+	TempIndex = UKismetMathLibrary::RandomIntegerInRange(0, PlayersIndexConnected.Num() - 1);
+
+	TempIndex = FMath::Clamp(TempIndex, 0, 3);
+
+	return PlayersIndexConnected[TempIndex];
 }
 

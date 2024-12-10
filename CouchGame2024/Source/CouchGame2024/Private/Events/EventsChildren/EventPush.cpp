@@ -193,16 +193,19 @@ void AEventPush::ChangePlayersMaterialsToPushV2()
 
 	for (const TObjectPtr<APlayerBall> Player : Players)
 	{
-		PlayersInitialMaterials.Add(Player->SphereMesh->GetMaterial(0));
+		PlayersInitialMaterials.Add(Player->PlayerIndex, Player->SphereMesh->GetMaterial(0));
 		Player->SphereMesh->SetMaterial(0, PushV2Material);
 	}
 }
 
 void AEventPush::ResetPlayersMaterialsToInitial()
 {
-	for (int i = 0; i < Players.Num(); i++)
+	if (PlayersInitialMaterials.Num() <= 0) return;
+	
+	for (const TObjectPtr<APlayerBall> Player : Players)
 	{
-		Players[0]->SphereMesh->SetMaterial(0, PlayersInitialMaterials[i]);
+		if (*PlayersInitialMaterials.Find(Player->PlayerIndex))
+			Player->SphereMesh->SetMaterial(0, *PlayersInitialMaterials.Find(Player->PlayerIndex));
 	}
 
 	PlayersInitialMaterials.Reset();

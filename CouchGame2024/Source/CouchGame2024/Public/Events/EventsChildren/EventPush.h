@@ -96,7 +96,7 @@ public:
 	TArray<TObjectPtr<APlayerBall>> Players;
 	
 	UPROPERTY()
-	TArray<TObjectPtr<UMaterialInterface>> PlayersInitialMaterials;
+	TMap<int, TObjectPtr<UMaterialInterface>> PlayersInitialMaterials;
 	
 	UPROPERTY()
 	TObjectPtr<UMaterialInterface> PushV2Material;

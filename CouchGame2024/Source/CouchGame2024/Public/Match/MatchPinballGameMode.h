@@ -44,6 +44,10 @@ private:
 
 	void CreateAndInitPlayers() const;
 
+	bool CheckPlayerBallIsConnected(int InPlayerIndex) const;
+
+	void DisableNewPlayerConnectedSpawn();
+	
 protected:
 	UPROPERTY(EditAnywhere)
 	TArray<APlayerBall*> PlayersBallInsideArena;

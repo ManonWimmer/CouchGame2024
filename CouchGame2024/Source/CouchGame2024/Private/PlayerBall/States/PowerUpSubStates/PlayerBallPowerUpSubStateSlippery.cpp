@@ -47,15 +47,15 @@ void UPlayerBallPowerUpSubStateSlippery::UseSlipperyPowerUp()
 {
 	APlayerBall* NearestPlayerBall = GetNearestPlayerBallInSlipperyRadius();
 
-	if (NearestPlayerBall == nullptr)	return;
-	if (NearestPlayerBall->BehaviorPowerUp == nullptr)	return;
-	
-	NearestPlayerBall->BehaviorPowerUp->ReceiveSlipperyEffect();
-
 	if (Pawn != nullptr)
 	{
 		Pawn->PlaySlipperyCastGamefeelEffectsBlueprint();
 	}
+	
+	if (NearestPlayerBall == nullptr)	return;
+	if (NearestPlayerBall->BehaviorPowerUp == nullptr)	return;
+	
+	NearestPlayerBall->BehaviorPowerUp->ReceiveSlipperyEffect();
 }
 
 APlayerBall* UPlayerBallPowerUpSubStateSlippery::GetNearestPlayerBallInSlipperyRadius()
@@ -84,8 +84,8 @@ APlayerBall* UPlayerBallPowerUpSubStateSlippery::GetNearestPlayerBallInSlipperyR
 		CollisionParams
 	);
 	
-	if (Pawn->GetWorld())
-		DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->BehaviorPowerUp->SlipperyRadius, 12, FColor::Yellow, false, 3.f);
+	//if (Pawn->GetWorld())
+		//DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->BehaviorPowerUp->SlipperyRadius, 12, FColor::Yellow, false, 3.f);
 
 	if (bHasDetected)	// has detected a pawn
 	{

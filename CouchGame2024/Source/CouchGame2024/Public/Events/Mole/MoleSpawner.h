@@ -37,10 +37,20 @@ public:
 
 	UFUNCTION()
 	void SpawnMole();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnSpawnMole"))
+	void ReceiveOnSpawnMole();
 	
 	UFUNCTION()
 	void DestroyMole();
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnDespawnMole"))
+	void ReceiveOnDespawnMole();
+
+	void BindDespawnMoleToEffect();
+
+	void UnbindDespawnMoleToEffect();
+	
 	UFUNCTION()
 	void GetRandomSpawnTime();
 
@@ -53,6 +63,10 @@ public:
 	UFUNCTION()
 	void StopSpawning();
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnMoleForcedDestroy"))
+	void ReceiveOnMoleForcedDestroy();
+	
+	
 	UFUNCTION()
 	void Bind();
 

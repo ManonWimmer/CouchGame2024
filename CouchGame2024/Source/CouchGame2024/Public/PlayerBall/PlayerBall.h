@@ -51,6 +51,17 @@ public:
 	UPROPERTY(EditAnywhere)
 	int PlayerIndex = 0;
 
+	
+#pragma region Connected / Disconnected
+
+public:
+	bool bIsConnected = false;
+
+	void DisconnectPlayer(int InDisconnectValue);
+
+	void ConnectPlayer();
+	
+#pragma endregion
 
 public:
 	UPROPERTY(BlueprintReadOnly)
@@ -95,7 +106,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USphereComponent> GrapplingSphereCollision;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UCableComponent> GrapplingCable;
 	
 #pragma endregion
@@ -143,6 +154,8 @@ protected:
 private:
 	UFUNCTION()
 	void BindEventActions();
+
+	void SetupPlayerIndexInController(APlayerBallController* InPlayerBallController);
 	
 #pragma region States
 
@@ -197,6 +210,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayImpactGamefeelEffectsBlueprint();
 
+	UFUNCTION(BlueprintPure)
+	bool GetIsImpactingNormal();
+	
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayDeathZoneGamefeelEffectsBlueprint();
 	
@@ -222,7 +238,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayStrengthCastGamefeelEffectsBlueprint();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayStrengthDisapearGamefeelEffectsBlueprint();
 
+	
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlaySlipperyCastGamefeelEffectsBlueprint();
 

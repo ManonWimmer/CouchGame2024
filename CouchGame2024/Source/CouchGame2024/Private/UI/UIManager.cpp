@@ -101,6 +101,13 @@ void AUIManager::HideWidgetForEvent(EEventName EventName)
 	}
 }
 
+void AUIManager::HidePowerUpIcon_Implementation(int PlayerIndex)
+{
+}
+
+void AUIManager::ShowPowerUpIcon_Implementation(int PlayerIndex, EPowerUpID PowerUp)
+{
+}
 
 void AUIManager::ShowWinner_Implementation()
 {

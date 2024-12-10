@@ -34,7 +34,7 @@ bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs
 		if (KeyboardIndex >= 0)
 		{
 			int PlayerIndex = MultiplayerSubsystem->GetAssignedPlayerIndexFromKeyboardProfileIndex(KeyboardIndex);
-			if (PlayerIndex == -1)
+			if (PlayerIndex == -1 && MultiplayerSubsystem->AllowNewPlayerConnection)
 			{
 				PlayerIndex = MultiplayerSubsystem->AssignNewPlayerToKeyboardProfile(KeyboardIndex);
 				MultiplayerSubsystem->AssignKeyboardMapping(PlayerIndex, KeyboardIndex, ELocalMultiplayerInputMappingType::InGame);
@@ -57,9 +57,8 @@ bool ULocalMultiplayerGameViewport::InputKey(const FInputKeyEventArgs& EventArgs
 	{
 		int PlayerIndex = MultiplayerSubsystem->GetAssignedPlayerIndexFromGamepadProfileID(EventArgs.InputDevice.GetId());
 
-		if (PlayerIndex == -1)
+		if (PlayerIndex == -1 && MultiplayerSubsystem->AllowNewPlayerConnection)
 		{
-
 			PlayerIndex = MultiplayerSubsystem->AssignNewPlayerToGamepadProfileID(EventArgs.InputDevice.GetId());
 			//GEngine->AddOnScreenDebugMessage(-1,3.f, FColor::Yellow,FString::Printf(TEXT("Player Index : %d"), PlayerIndex));
 			MultiplayerSubsystem->AssignGamepadInputMapping(PlayerIndex, ELocalMultiplayerInputMappingType::InGame);
@@ -96,12 +95,12 @@ bool ULocalMultiplayerGameViewport::InputAxis(FViewport* InViewport, FInputDevic
 		
 		int PlayerIndex = MultiplayerSubsystem->GetAssignedPlayerIndexFromGamepadProfileID(InputDevice.GetId());
 
-		if (PlayerIndex == -1)
+		if (PlayerIndex == -1 && MultiplayerSubsystem->AllowNewPlayerConnection)
 		{
 
 			PlayerIndex = MultiplayerSubsystem->AssignNewPlayerToGamepadProfileID(InputDevice.GetId());
 			MultiplayerSubsystem->AssignGamepadInputMapping(PlayerIndex, ELocalMultiplayerInputMappingType::InGame);
-
+			
 			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, FString::Printf((TEXT("Player index connnected : %d")), PlayerIndex));
 
 		}else

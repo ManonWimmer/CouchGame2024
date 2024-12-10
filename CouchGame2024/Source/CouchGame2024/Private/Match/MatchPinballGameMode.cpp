@@ -52,9 +52,13 @@ void AMatchPinballGameMode::FindPlayerBallSpawnInWorld(TArray<APlayerBallSpawn*>
 void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> SpawnPoints)
 {
 	//int PlayerIndex = 0;
+	//
 	for (APlayerBallSpawn* SpawnPoint : SpawnPoints)
 	{
+		
 		EAutoReceiveInput::Type InputType = SpawnPoint->AutoReceiveInput.GetValue();
+		
+		if (!CheckPlayerBallIsConnected(GetPlayerIndexFromInputType(InputType)))	continue;	// If the player is not connected -> skip spawning his Pawn
 
 		TSubclassOf<APlayerBall> PlayerBallClass = GetPlayerBallClassFromInputType(InputType);
 
@@ -73,6 +77,13 @@ void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> Spa
 		PlayersBallInsideArena.Add(NewCharacter);
 		//PlayerIndex++;
 	}
+
+	Algo::Sort(PlayersBallInsideArena, [](const APlayerBall* A, const APlayerBall* B)
+	{
+		if (!A || !B)	return false;
+
+		 return A->PlayerIndex < B->PlayerIndex;
+	});
 }
 
 void AMatchPinballGameMode::SetLocationStartPlayerBallsSpecial(const TArray<APlayerBallSpawn*> SpawnPoints, int PlayerSpecial)
@@ -210,6 +221,30 @@ void AMatchPinballGameMode::CreateAndInitPlayers() const
 	if (LocalMultiplayerSubsystem == nullptr) return;
 
 	LocalMultiplayerSubsystem->CreateAndInitPlayers(ELocalMultiplayerInputMappingType::InGame);
+}
+
+bool AMatchPinballGameMode::CheckPlayerBallIsConnected(int InPlayerIndex) const
+{
+	UGameInstance* GameInstance = GetWorld()->GetGameInstance();
+	if (GameInstance == nullptr) return false;
+
+	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
+	if (LocalMultiplayerSubsystem == nullptr) return false;
+
+	if (LocalMultiplayerSubsystem->PlayersIndexConnected.Num() <= 0) return true;
+
+	return LocalMultiplayerSubsystem->PlayersIndexConnected.Contains(InPlayerIndex);
+}
+
+void AMatchPinballGameMode::DisableNewPlayerConnectedSpawn()
+{
+	UGameInstance* GameInstance = GetWorld()->GetGameInstance();
+	if (GameInstance == nullptr) return;
+
+	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
+	if (LocalMultiplayerSubsystem == nullptr) return;
+
+	LocalMultiplayerSubsystem->AllowNewPlayerConnection = false;
 }
 
 void AMatchPinballGameMode::BeginGame()

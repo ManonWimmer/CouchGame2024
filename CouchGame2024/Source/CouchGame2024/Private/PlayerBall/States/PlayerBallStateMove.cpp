@@ -131,16 +131,29 @@ void UPlayerBallStateMove::Move(float DeltaTime) const	// Move ball on X and Y A
 	if (Pawn->SphereCollision == nullptr)
 		return;
 
-	bool SameDirectionX = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X <= 0 && Dir.X >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X >= 0 && Dir.X <= 0);
-	bool SameDirectionY = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y <= 0 && Dir.Y >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y >= 0 && Dir.Y <= 0);
+	//bool SameDirectionX = (Pawn->GetVelocity().X <= -10.f && Dir.Y <= -0.2f) || (Pawn->GetVelocity().X >= 10.f && Dir.Y >= 0.2f);
+	//bool SameDirectionY = (Pawn->GetVelocity().Y <= -10.f && Dir.X >= 0.2f) || (Pawn->GetVelocity().Y >= 10.f && Dir.X <= -0.2f);
 
+	bool SameDirectionX = true;
+	bool SameDirectionY = true;
+	if (FMath::Abs(Dir.Y) > 0.2f)
+	{
+		SameDirectionX = (Pawn->GetVelocity().X * Dir.Y < -5.f); // Vérifie si les signes sont identiques
+	}
+	if (FMath::Abs(Dir.X) > 0.2f)
+	{
+		SameDirectionY = (Pawn->GetVelocity().Y * Dir.X > 5.f); // Vérifie si les signes sont identiques
+	}
+	
 	if (!SameDirectionX)	// May Increase roll X if oppositeDirection
 	{
-		Dir.X *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
+		//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("Y: %f , Vel X : %f"), Dir.Y, Pawn->GetVelocity().X));
+		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
 	if (!SameDirectionY)	// May Increase roll Y if oppositeDirection
 	{
-		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
+		//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("X: %f , Vel Y : %f"), Dir.X, Pawn->GetVelocity().Y));
+		Dir.X *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
 
 	//DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 500.f, FColor::Orange, false, 5.f);

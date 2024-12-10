@@ -361,6 +361,36 @@ void USoundSubsystem::PlayStrengthCastSound()
 	}
 }
 
+void USoundSubsystem::PlayStrengthDisapearSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PowerUpStrengthDisapear == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PowerUpStrengthDisapear, SoundsData->PowerUpStrengthDisapearAdjuster, 1.f, 0.f, nullptr, nullptr, false);
+	}
+}
+
+void USoundSubsystem::PlayStrengthImpactSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PowerUpStrengthImpact == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PowerUpStrengthImpact, SoundsData->PowerUpStrengthImpactAdjuster, 1.f, 0.f, nullptr, nullptr, false);
+	}
+}
+
+void USoundSubsystem::PlayStrengthEffectSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PowerUpStrengthEffect == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PowerUpStrengthEffect, SoundsData->PowerUpStrengthEffectAdjuster, 1.f, 0.f, nullptr, nullptr, false);
+	}
+}
+
 void USoundSubsystem::PlaySlipperyCastSound()
 {
 	if (SoundsData == nullptr)	return;

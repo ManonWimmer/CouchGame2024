@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PowerUpID.h"
+#include "Events/EventData.h"
 #include "GameFramework/Actor.h"
 #include "SpawnerPowerUp.generated.h"
 
@@ -28,6 +29,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void BindToEventsManager();
+
 
 private:
 
@@ -36,16 +40,27 @@ private:
 	UFUNCTION()
 	void ReceiveSpawnerPowerUpCollected();
 	
+	UFUNCTION()
 	void BindStartSpawnToPickPowerUp(APowerUp* InPowerUp);
-
+	
+	UFUNCTION()
 	void UnbindStartSpawnToPickPowerUp(APowerUp* InPowerUp);
-	
+
+	UFUNCTION()
 	void SpawnSpecificPowerUp(EPowerUpID InPowerUpID);
-	
+
+	UFUNCTION()
 	void SpawnRandomPowerUp();
 
+	UFUNCTION()
+	void StartSpawning(UEventData* EventData);
+
+	UFUNCTION()
+	void StopSpawning();
+	
 	EPowerUpID ChooseRandomPowerUp();
 
+	UFUNCTION()
 	void HandleRespawnCooldown(float DeltaTime);
 
 	UFUNCTION()
@@ -55,9 +70,11 @@ private:
 	void StopRespawnCooldown();
 
 	bool bIsInCooldown = false;
-	
+
+	UFUNCTION()
 	bool CheckCanSpawnPowerUp();
 
+	UFUNCTION()
 	void SetNewRespawnCooldownToAdd();
 	
 	UPROPERTY()
@@ -69,12 +86,21 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USpawnerPowerUpData> SpawnerPowerUpData;
 
+	UPROPERTY()
 	float CurrentRespawnCooldown = 0.f;
 
+	UPROPERTY()
 	float RespawnCooldownToAdd = 5.f;
 
+	UPROPERTY()
 	float MinRespawnCooldownToAdd = 2.f;
-	float MaxRespawnCooldownToAdd = 5.f;
 	
+	UPROPERTY()
+	float MaxRespawnCooldownToAdd = 5.f;
+
+	UPROPERTY()
 	float BasicRespawnCooldown = 5.f;
+	
+	UPROPERTY()
+	bool bCanSpawn = false;
 };

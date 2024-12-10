@@ -11,6 +11,7 @@
 #include "Events/EventsChildren/EventZones.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayerBall/PlayerBall.h"
+#include "PowerUp/SpawnerPowerUp.h"
 #include "Rounds/RoundsSubsystem.h"
 #include "UI/UIManager.h"
 #include "Zone/EventZonesV2Manager.h"
@@ -27,6 +28,8 @@ AEventsManager::AEventsManager()
 void AEventsManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//RandomEvents.Add(Events[0]); // jamais appelé on s'en fout
 
 	// Get UI Manager
 	UIManager = Cast<AUIManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AUIManager::StaticClass()));
@@ -49,6 +52,11 @@ void AEventsManager::BeginPlay()
 	// BindCountdownToRoundsChange();
 	//
 	// SetupNewRoundEvent(0);
+
+	// Get Rounds Subsystem
+	RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
+	if (RoundsSubsystem == nullptr)
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "MISSING ROUNDS SUBSYSTEM");
 }
 
 // Called every frame
@@ -78,8 +86,8 @@ void AEventsManager::Setup()
 	BindCountdownToRoundsPhase();
 	BindCountdownToRoundsChange();
 
-	GetRandomEvent();
-	SetupNewRoundEvent(0);
+	//GetRandomEvent();
+	//SetupNewRoundEvent(0);
 }
 
 #pragma region Countdown
@@ -135,7 +143,6 @@ float AEventsManager::GetCountdownTime() const
 void AEventsManager::SetupNewRoundEvent(int RoundIndex)
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "setup new round event");
-
 	
 	SetupEventTimes();
 	StartEvent(RoundIndex);
@@ -143,9 +150,14 @@ void AEventsManager::SetupNewRoundEvent(int RoundIndex)
 
 void AEventsManager::StartGame()
 {
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green,
+										 TEXT("START GAME"));
 	StartGameTime = GetWorld()->GetTimeSeconds();
 	IsGameStarted = true;
 	TriggerEventPhase1(CurrentEventData);
+
+	OnEventStartedEvent.Broadcast(CurrentEventData);
 }
 
 void AEventsManager::EndGame()
@@ -160,12 +172,12 @@ void AEventsManager::EndGame()
 
 	if (UIManager != nullptr && CurrentEventData != nullptr)
 		UIManager->HideWidgetForEvent(CurrentEventData->EventName);
-
-	RoundsSubsystem = GetWorld()->GetSubsystem<URoundsSubsystem>();
-
+	
 	if (RoundsSubsystem == nullptr) return;
 	
 	RoundsSubsystem->ChangeToNextRoundPhase();
+
+	OnEventEndedEvent.Broadcast();
 }
 
 void AEventsManager::RegisterEvent(UEventData* EventData, AEvent* Event)
@@ -196,6 +208,9 @@ void AEventsManager::TriggerEventPhase2(const UEventData* EventData)
 
 void AEventsManager::StartEvent(int RoundIndex)
 {
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "START  ");
+	UE_LOG(LogTemp, Display, TEXT("Start Event : %hhd, round %i"), CurrentEventData->EventName, RoundIndex);
+
 	// Hide or show objects depending on current tag
 	ShowObjectsWithCurrentEventTag();
 	
@@ -245,28 +260,26 @@ void AEventsManager::CheckAndTriggerEvents()
 
 void AEventsManager::GetRandomEvent()
 {
+	// ----- ----- OLD RANDOM ----- ----- //
+	/*
 	if (CurrentEventData != nullptr) LastEventData = CurrentEventData;
 
-	TArray<UEventData*> EventDataList;
+	TArray<UEventData*> EventDataList = Events;
 
-
-	/*
-	if (LastEventData != nullptr) // Round > 0
+	// Exclude last round event from random if there's more than one
+	if (EventDataList.Num() > 1)
 	{
-		GetEventClassFromEventData(LastEventData)->EndEvent();
-		UEventData* ExcludedEventData = LastEventData;
-		EventDataList = Events.FilterByPredicate([ExcludedEventData](const UEventData* Item)
+		if (LastEventData != nullptr) // Round > 0
 		{
-			return Item != ExcludedEventData;
-		});
+			GetEventClassFromEventData(LastEventData)->EndEvent();
+			UEventData* ExcludedEventData = LastEventData;
+			EventDataList = Events.FilterByPredicate([ExcludedEventData](const UEventData* Item)
+			{
+				return Item != ExcludedEventData;
+			});
+		}
 	}
-	else
-	{
-		EventDataList = Events;
-	}
-	*/
-
-	EventDataList = Events;
+	
 	// Check list
 	if (EventDataList.Num() <= 0)
 	{
@@ -288,7 +301,82 @@ void AEventsManager::GetRandomEvent()
 	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Failed to pick a random event!"));
 	}
+	*/
+	// ----- ----- OLD RANDOM ----- ----- //
+
+	// ----- ----- NEW RANDOM ----- ----- //
+	CurrentRound++;
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Current Round : %i"), (CurrentRound)));
+	UE_LOG(LogTemp, Display, TEXT("Current Round : %i"), CurrentRound);
+	
+	if (RandomEvents.Num() < CurrentRound || RandomEvents.Num() == 0)
+	{
+		GetFourRandomEvents();
+	}
+	CurrentEventData = RandomEvents[CurrentRound - 1];
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Current Event : %hhd"), CurrentEventData->EventName));
+	UE_LOG(LogTemp, Display, TEXT("Current Event : %hhd"), CurrentEventData->EventName);
+
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "FOUND CURRENT EVENT - SHOW NEW ROUND");
+	//UIManager->ShowNextRound(CurrentEventData);
+	UE_LOG(LogTemp, Display, TEXT("FOUND CURRENT EVENT - SHOW NEW ROUND"));
+	
+	// ----- ----- NEW RANDOM ----- ----- //
 }
+void AEventsManager::GetFourRandomEvents()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Get Four Random Events");
+	}
+
+	if (Events.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Events list is empty!"));
+		return;
+	}
+
+	TArray<TObjectPtr<UEventData>> TempRandomEvents;
+	
+	if (Events.Num() == 1)
+	{
+		TempRandomEvents = Events;
+	}
+	else
+	{
+		do
+		{
+			TempRandomEvents = RandomizeList();
+		} 
+		while (RandomEvents.Num() > 0 && RandomEvents.Last() == TempRandomEvents[0]);
+	}
+	
+	RandomEvents.Append(TempRandomEvents);
+	
+	for (const auto& TempRandomEvent : RandomEvents)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Random Event: %"
+								"hhd"), TempRandomEvent->EventName);
+	}
+}
+
+TArray<TObjectPtr<UEventData>> AEventsManager::RandomizeList() const
+{
+	TArray<TObjectPtr<UEventData>> RandomizedList = Events;
+
+	FRandomStream RandomStream;
+	RandomStream.GenerateNewSeed();
+
+	// Shuffle using the FMath::Rand function
+	for (int32 i = RandomizedList.Num() - 1; i > 0; --i)
+	{
+		int32 SwapIndex = RandomStream.RandRange(0, i);
+		RandomizedList.Swap(i, SwapIndex);
+	}
+
+	return RandomizedList;
+}
+
 
 void AEventsManager::SetupEventTimes()
 {
@@ -363,6 +451,16 @@ void AEventsManager::CreateEvents()
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "NO PUSH EVENT AND/OR DATA");
 
 	GetTags();
+
+	// Bind Power Up Spawners
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnerPowerUp::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		if (ASpawnerPowerUp* SpawnerPowerUp = Cast<ASpawnerPowerUp>(Actor))
+			SpawnerPowerUp->BindToEventsManager();
+	}
 }
 
 #pragma region Tags

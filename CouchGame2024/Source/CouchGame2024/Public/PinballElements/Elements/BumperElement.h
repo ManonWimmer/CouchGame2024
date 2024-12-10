@@ -38,6 +38,9 @@ private:
 public:
 	virtual FVector GetHookPosition() override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsHookable = true;
+
 	virtual bool IsHookable() override;
 
 	virtual bool IsPillar() override;

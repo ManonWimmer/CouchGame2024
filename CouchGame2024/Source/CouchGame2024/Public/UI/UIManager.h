@@ -8,6 +8,7 @@
 #include "UIManager.generated.h"
 
 
+enum class EPowerUpID : uint8;
 class AHUD;
 class UEventData;
 
@@ -60,6 +61,12 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, Category = "UI")
 	void ShowWinner();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UI")
+	void ShowPowerUpIcon(int PlayerIndex, EPowerUpID PowerUp);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UI")
+	void HidePowerUpIcon(int PlayerIndex);
 	
 
 private:

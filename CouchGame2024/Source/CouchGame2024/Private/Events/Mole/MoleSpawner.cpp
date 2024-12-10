@@ -79,8 +79,12 @@ void AMoleSpawner::SpawnMole()
 	SpawnedMole = GetWorld()->SpawnActor<AMoleElement>(MoleClass, GetActorLocation(), GetActorRotation());
 	SpawnedMole->OnMoleCollected.AddDynamic(this, &AMoleSpawner::StartCountdownSpawning);
 
+	BindDespawnMoleToEffect();
+
 	StopCountdownSpawning();
 	StartCountdownStaying();
+
+	ReceiveOnSpawnMole();
 }
 
 void AMoleSpawner::DestroyMole()
@@ -88,9 +92,24 @@ void AMoleSpawner::DestroyMole()
 	if (SpawnedMole)
 	{
 		SpawnedMole->DespawnMole();
+		UnbindDespawnMoleToEffect();
 		SpawnedMole = nullptr;
 		StartCountdownSpawning();
 	}
+}
+
+void AMoleSpawner::BindDespawnMoleToEffect()
+{
+	if (SpawnedMole == nullptr)	return;
+
+	SpawnedMole->OnMoleDespawn.AddDynamic(this, &AMoleSpawner::ReceiveOnDespawnMole);
+}
+
+void AMoleSpawner::UnbindDespawnMoleToEffect()
+{
+	if (SpawnedMole == nullptr)	return;
+
+	SpawnedMole->OnMoleDespawn.RemoveDynamic(this, &AMoleSpawner::ReceiveOnDespawnMole);
 }
 
 void AMoleSpawner::GetRandomSpawnTime()
@@ -124,6 +143,8 @@ void AMoleSpawner::StopSpawning()
 	
 	if (SpawnedMole)
 	{
+		UnbindDespawnMoleToEffect();
+		ReceiveOnMoleForcedDestroy();
 		SpawnedMole->Destroy();
 		SpawnedMole = nullptr;
 	}

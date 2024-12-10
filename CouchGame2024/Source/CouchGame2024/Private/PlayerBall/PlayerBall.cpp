@@ -113,6 +113,22 @@ void APlayerBall::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	BindEventActions();
 }
 
+void APlayerBall::DisconnectPlayer(int InDisconnectValue)
+{
+	if (StateMachine == nullptr)	return;
+
+	StateMachine->ChangeState(EPlayerBallStateID::Disconnected, InDisconnectValue);
+}
+
+void APlayerBall::ConnectPlayer()
+{
+	if (StateMachine == nullptr)	return;
+
+	if (StateMachine->GetCurrentStateID() != EPlayerBallStateID::Disconnected)	return;
+	
+	StateMachine->ChangeState(EPlayerBallStateID::Rail, 1.f);
+}
+
 void APlayerBall::SetupData() // Get all data and set them
 {
 	if (PlayerBallData == nullptr)
@@ -201,6 +217,8 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	if (PlayerBallController == nullptr)
 		return;
 
+	SetupPlayerIndexInController(PlayerBallController);
+	
 	if (BehaviorMovements != nullptr)
 	{
 		BehaviorMovements->BindBehaviorEventAction(PlayerBallController);
@@ -216,6 +234,15 @@ void APlayerBall::BindEventActions() // Bind Input Event from controller to Pawn
 	{
 		BehaviorPowerUp->BindBehaviorEventAction(PlayerBallController);
 	}
+}
+
+void APlayerBall::SetupPlayerIndexInController(APlayerBallController* InPlayerBallController)
+{
+	if (InPlayerBallController == nullptr)	return;
+
+	if (PlayerIndex < 0)	return;
+
+	InPlayerBallController->AssociatedPlayerIndex = PlayerIndex;
 }
 
 
@@ -238,6 +265,15 @@ void APlayerBall::HandlePunchCooldown(float DeltaTime)
 	{
 		bCanPunch = true;
 	}
+}
+
+bool APlayerBall::GetIsImpactingNormal()
+{
+	if (BehaviorPowerUp == nullptr)	return true;
+
+	if (BehaviorPowerUp->GetIsUsingStrengthPowerUp())	return false;
+
+	return true;
 }
 
 void APlayerBall::InitResetable()
@@ -383,7 +419,6 @@ void APlayerBall::Kill()
 	if (bIsDead)	return;
 	
 	OnDeathReaction.Broadcast(1.f);
-	ReceiveOnKill(DeathDurationBeforeRespawn / 2.f);
 }
 
 void APlayerBall::TestCallRespawn()
