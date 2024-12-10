@@ -5,6 +5,7 @@
 
 #include "Components/SphereComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
+#include "PhysicsEngine/BodySetup.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
@@ -114,6 +115,8 @@ void UPlayerBallStateSnapping::StateExit(EPlayerBallStateID NextState)
 			Pawn->BehaviorElementReactions->SnappingPlayerBall = nullptr;
 		}
 	}
+
+	SetRightMoveMaterial(false);
 }
 
 void UPlayerBallStateSnapping::StateTick(float DeltaTime)
@@ -146,6 +149,7 @@ void UPlayerBallStateSnapping::Move(float DeltaTime)
 	if (Pawn->SphereCollision == nullptr)
 		return;
 
+	/* OLD VERSION
 	bool SameDirectionX = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X <= 0 && Dir.X >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X >= 0 && Dir.X <= 0);
 	bool SameDirectionY = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y <= 0 && Dir.Y >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y >= 0 && Dir.Y <= 0);
 
@@ -157,6 +161,32 @@ void UPlayerBallStateSnapping::Move(float DeltaTime)
 	{
 		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
+	*/
+	
+	bool SameDirectionX = true;
+	bool SameDirectionY = true;
+	if (FMath::Abs(Dir.Y) > 0.2f)
+	{
+		SameDirectionX = (Pawn->GetVelocity().X * Dir.Y < -5.f); // Vérifie si les signes sont identiques
+	}
+	if (FMath::Abs(Dir.X) > 0.2f)
+	{
+		SameDirectionY = (Pawn->GetVelocity().Y * Dir.X > 5.f); // Vérifie si les signes sont identiques
+	}
+	
+	if (!SameDirectionX)	// May Increase roll X if oppositeDirection
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("Y: %f , Vel X : %f"), Dir.Y, Pawn->GetVelocity().X));
+		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
+	}
+	if (!SameDirectionY)	// May Increase roll Y if oppositeDirection
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("X: %f , Vel Y : %f"), Dir.X, Pawn->GetVelocity().Y));
+		Dir.X *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
+	}
+
+
+	SetRightMoveMaterial(!SameDirectionX || !SameDirectionY);
 
 	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->BehaviorMovements->GetContextRollForce() / Pawn->GetPlayerBallData()->SnapControlMoveRollDivider), NAME_None, true);
 }
@@ -193,6 +223,33 @@ void UPlayerBallStateSnapping::OnEndSnapping(float InSnappingValue)
 	if (StateMachine == nullptr)	return;
 	
 	StateMachine->ChangeState(EPlayerBallStateID::Idle);
+}
+
+void UPlayerBallStateSnapping::SetRightMoveMaterial(bool IsBrakeDirection)
+{
+	if (Pawn == nullptr)	return;
+	if (Pawn->SphereCollision == nullptr)	return;
+	if (Pawn->GetPlayerBallData() == nullptr)	return;
+	if (Pawn->GetPlayerBallData()->BrakeDirectionPhysicsAsset == nullptr)	return;
+	if (Pawn->GetPlayerBallData()->ClassicPhysicsAsset == nullptr)	return;
+	
+	if (IsBrakeDirection)
+	{
+		if (Pawn->SphereCollision->GetBodySetup()->GetPhysMaterial() != Pawn->GetPlayerBallData()->BrakeDirectionPhysicsAsset)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("Change material to Brake direction"));
+			Pawn->SphereCollision->SetPhysMaterialOverride(Pawn->GetPlayerBallData()->BrakeDirectionPhysicsAsset);
+		}
+	}
+	else
+	{
+		if (Pawn->SphereCollision->GetBodySetup()->GetPhysMaterial() != Pawn->GetPlayerBallData()->ClassicPhysicsAsset)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("Change material to classic direction"));
+
+			Pawn->SphereCollision->SetPhysMaterialOverride(Pawn->GetPlayerBallData()->ClassicPhysicsAsset);
+		}
+	}
 }
 
 void UPlayerBallStateSnapping::OnStunned(float StunnedValue)
