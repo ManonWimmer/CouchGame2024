@@ -194,7 +194,7 @@ void UPlayerBallStateMove::SetRightMoveMaterial(bool IsBrakeDirection)
 	{
 		if (Pawn->bIsBrakeDirection)	return;
 		
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("Change material to brake direction direction"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("Change material to brake direction direction"));
 
 		Pawn->bIsBrakeDirection = true;
 			
@@ -204,7 +204,7 @@ void UPlayerBallStateMove::SetRightMoveMaterial(bool IsBrakeDirection)
 	{
 		if (!Pawn->bIsBrakeDirection)	return;
 		
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("Change material to classic direction"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("Change material to classic direction"));
 
 		Pawn->bIsBrakeDirection = false;
 			

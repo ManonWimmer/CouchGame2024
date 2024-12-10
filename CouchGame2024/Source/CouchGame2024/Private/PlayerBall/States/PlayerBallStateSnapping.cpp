@@ -237,7 +237,7 @@ void UPlayerBallStateSnapping::SetRightMoveMaterial(bool IsBrakeDirection)
 	{
 		if (Pawn->SphereCollision->GetBodySetup()->GetPhysMaterial() != Pawn->GetPlayerBallData()->BrakeDirectionPhysicsAsset)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("Change material to Brake direction"));
+			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("Change material to Brake direction"));
 			Pawn->SphereCollision->SetPhysMaterialOverride(Pawn->GetPlayerBallData()->BrakeDirectionPhysicsAsset);
 		}
 	}
@@ -245,7 +245,7 @@ void UPlayerBallStateSnapping::SetRightMoveMaterial(bool IsBrakeDirection)
 	{
 		if (Pawn->SphereCollision->GetBodySetup()->GetPhysMaterial() != Pawn->GetPlayerBallData()->ClassicPhysicsAsset)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("Change material to classic direction"));
+			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("Change material to classic direction"));
 
 			Pawn->SphereCollision->SetPhysMaterialOverride(Pawn->GetPlayerBallData()->ClassicPhysicsAsset);
 		}

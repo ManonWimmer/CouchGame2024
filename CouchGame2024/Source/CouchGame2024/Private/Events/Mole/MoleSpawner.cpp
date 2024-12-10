@@ -34,6 +34,9 @@ void AMoleSpawner::Tick(float DeltaTime)
 
 		if (CurrentTime > RandomSpawnTime)
 		{
+			//if (GEngine)
+			//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("%s : Current Time > Random"), *this->GetName()));
+			
 			SpawnMole();
 		}
 	}
@@ -72,11 +75,36 @@ void AMoleSpawner::StartCountdownStaying()
 
 void AMoleSpawner::SpawnMole()
 {
-	if (SpawnedMole) return;
+	if (SpawnedMole)
+	{
+		//if (GEngine)
+		//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("%s : Spawned Mole : %s"), *this->GetName(), *SpawnedMole->GetName()));
+
+		SpawnedMole->Destroy();
+		SpawnedMole = nullptr;
+	}
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Spawn Duck");
 
+	//if (GEngine)
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("%s : Pass test"), *this->GetName()));
+
 	// Spawn Mole
-	SpawnedMole = GetWorld()->SpawnActor<AMoleElement>(MoleClass, GetActorLocation(), GetActorRotation());
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	SpawnedMole = GetWorld()->SpawnActor<AMoleElement>(MoleClass, GetActorLocation(), GetActorRotation(), SpawnParameters);
+
+	if (SpawnedMole == nullptr)
+	{
+		//if (GEngine)
+		//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("%s : Return because of nullptr"), *this->GetName()));
+	
+		return;
+	}
+
+	//if (GEngine)
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("%s : Spawn"), *this->GetName()));
+	
 	SpawnedMole->OnMoleCollected.AddDynamic(this, &AMoleSpawner::StartCountdownSpawning);
 
 	BindDespawnMoleToEffect();
