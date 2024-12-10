@@ -53,6 +53,20 @@ void UGlobalScoreSubsystem::AddScore(int PlayerIndex, int Value)
 	}
 
 	ScoreChangedEvent.Broadcast(PlayerIndex, GetScore(PlayerIndex));
+
+	if (Value > 0)
+	{
+		if (APlayerBall* Player = GetPlayerFromIndex(PlayerIndex))
+		{
+			if (EventsManager == nullptr)
+				GetEventsManager();
+			if (EventsManager == nullptr) return;
+
+			if (EventsManager->CurrentEventData == nullptr) return;
+			
+			OnAddScoreEffect(Player, EventsManager->CurrentEventData->EventName == EEventName::Zones);
+		}
+	}
 }
 
 #pragma endregion Score
@@ -155,23 +169,19 @@ void UGlobalScoreSubsystem::PlayerInDuckBank(int PlayerIndex, int DuckToPointsMu
 
 void UGlobalScoreSubsystem::StealDuck(int PlayerIndexAdd, int PlayerIndexLose)
 {
-	// Check if duck event
-	if (AEventsManager* EventsManager = Cast<AEventsManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AEventsManager::StaticClass())))
-	{
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "event manager");
-		if (EventsManager->CurrentEventData != nullptr)
-			if (EventsManager->CurrentEventData->EventName != EEventName::Duck) return;
-			else
-			{
-				//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "pas return");
-			}
-		else return;
-	}
-	else
-	{
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "StealDuck - No events manager");
-		return;
-	}
+	if (EventsManager == nullptr)
+		GetEventsManager();
+	if (EventsManager == nullptr) return;
+	
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "event manager");
+	if (EventsManager->CurrentEventData != nullptr)
+		if (EventsManager->CurrentEventData->EventName != EEventName::Duck) return;
+		else
+		{
+			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "pas return");
+		}
+	else return;
+
 
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, "steal duck");
 	
@@ -192,6 +202,27 @@ void UGlobalScoreSubsystem::StealDuck(int PlayerIndexAdd, int PlayerIndexLose)
 			Soundsubsystem->PlayDuckStealSound();
 		}
 	}
+}
+
+void UGlobalScoreSubsystem::OnAddScoreEffect(APlayerBall* Player, bool bIsInPopcornEvent)
+{
+	// todo : faire la fonction dans l'ui manager en blueprint truc et l'appeler  
+}
+
+APlayerBall* UGlobalScoreSubsystem::GetPlayerFromIndex(int PlayerIndex)
+{
+	if (PlayerBallsMap.Find(PlayerIndex) == nullptr) return nullptr;
+
+	return PlayerBallsMap[PlayerIndex];
+}
+
+void UGlobalScoreSubsystem::GetEventsManager()
+{
+	TArray<TObjectPtr<AActor>> Actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEventsManager::StaticClass(), Actors);
+
+	if (Actors.Num() > 0)
+		EventsManager = Cast<AEventsManager>(Actors[0]);
 }
 
 
