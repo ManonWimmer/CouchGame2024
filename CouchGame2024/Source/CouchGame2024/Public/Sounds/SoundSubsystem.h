@@ -6,7 +6,9 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "SoundSubsystem.generated.h"
 
+class UMetaSoundSource;
 class USoundsData;
+class FCTweenInstance;
 /**
  * 
  */
@@ -21,9 +23,35 @@ public:
 
 #pragma region Play Music
 
+	UPROPERTY()
+	TObjectPtr<UAudioComponent> MusicAudioComponent;
+
+	FCTweenInstance* TweenMusic;
+	
+	UFUNCTION()
+	void InitMusicAudioComponent();
+
+	UFUNCTION()
+	void FadeInMusic(UMetaSoundSource* InSound);
+
+	UFUNCTION()
+	void FadeOutMusic();
+	
 	UFUNCTION(BlueprintCallable)
 	void PlayInGameMusicSound();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayInGameDuckMusicSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayMainMenuMusicSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlaySettingsMusicSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayWaitingMusicSound();
+	
 	UFUNCTION(BlueprintCallable)
 	void Play321MusicSound();
 
