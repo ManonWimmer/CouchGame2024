@@ -28,6 +28,17 @@ void AMoleSpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	/*
+	if (bInGame)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Red,
+			FString::Printf(TEXT("Mole Spawner : %s, Can Spawn %hhd,Random Spawn Time : %f, "
+						"Can Stay %hhd, Random Stay Time : %f"),
+				*this->GetName(), bCanSpawn, RandomSpawnTime,
+				bCanStay, RandomStayTime));
+	}
+	*/
+
 	if (bCanSpawn && bInGame)
 	{
 		CurrentTime = GetWorld()->GetTimeSeconds() - StartedTime;
@@ -50,12 +61,13 @@ void AMoleSpawner::Tick(float DeltaTime)
 
 void AMoleSpawner::StartCountdownSpawning() // start phase 1 mole event - mole collected
 {
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Start mole countdown spawning");
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Magenta, "Start mole countdown spawning");
 
 	GetRandomSpawnTime();
 	bCanSpawn = true;
 	bCanStay = false;
 	StartedTime = GetWorld()->GetTimeSeconds();
+	SpawnedMole = nullptr;
 }
 
 void AMoleSpawner::StopCountdownSpawning() // end event & spawn mole
@@ -63,8 +75,10 @@ void AMoleSpawner::StopCountdownSpawning() // end event & spawn mole
 	bCanSpawn = false;
 }
 
-void AMoleSpawner::StartCountdownStaying()
+void AMoleSpawner::StartCountdownStaying() // end event & spawn mole
 {
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Magenta, "Start mole countdown staying");
+	
 	bCanStay = true;
 	StartedTime = GetWorld()->GetTimeSeconds();
 	GetRandomStayTime();
@@ -73,12 +87,12 @@ void AMoleSpawner::StartCountdownStaying()
 void AMoleSpawner::SpawnMole()
 {
 	if (SpawnedMole) return;
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Spawn Duck");
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Spawn Mole");
 
 	// Spawn Mole
 	SpawnedMole = GetWorld()->SpawnActor<AMoleElement>(MoleClass, GetActorLocation(), GetActorRotation());
 	SpawnedMole->OnMoleCollected.AddDynamic(this, &AMoleSpawner::StartCountdownSpawning);
-
+	
 	BindDespawnMoleToEffect();
 
 	StopCountdownSpawning();
@@ -135,7 +149,7 @@ void AMoleSpawner::StartSpawning()
 
 void AMoleSpawner::StopSpawning()
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "stop spawning mole");
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "stop spawning mole");
 	
 	bCanSpawn = false;
 	bCanStay = false;

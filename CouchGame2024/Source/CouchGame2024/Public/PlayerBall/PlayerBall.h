@@ -268,6 +268,12 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnAppearStartForceEffectWidget"))
 	void ReceiveOnAppearStartForceEffectWidget();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnSetToNeutralBall"))
+	void ReceiveOnSetToNeutralBall();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnUnsetToNeutralBall"))
+	void ReceiveOnUnsetToNeutralBall();
 	
 #pragma endregion
 

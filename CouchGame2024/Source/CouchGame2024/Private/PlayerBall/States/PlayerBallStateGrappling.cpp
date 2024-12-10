@@ -224,6 +224,9 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 				ReleaseForce = Pawn->BehaviorGrapple->GrapplingReleaseForceNotPillar;
 			}
 
+			Pawn->SphereCollision->SetPhysicsLinearVelocity(FVector(0, 0, 0));
+			Pawn->SphereCollision->SetPhysicsAngularVelocityInDegrees(FVector(0, 0, 0));
+			
 			Pawn->SphereCollision->AddImpulse(
 				Pawn->BehaviorGrapple->ReleaseDirection.GetSafeNormal(0.0001f) * FMath::Abs(
 					Pawn->BehaviorGrapple->CurrentGrapplingAngularVelocity) *
