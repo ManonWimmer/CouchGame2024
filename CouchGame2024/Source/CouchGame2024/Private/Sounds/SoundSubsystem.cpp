@@ -3,27 +3,131 @@
 
 #include "Sounds/SoundSubsystem.h"
 
+#include "FCTween.h"
+#include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sounds/SoundsData.h"
 
 #include "Sounds/SoundsSettings.h"
+
 
 void USoundSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
 	Super::OnWorldBeginPlay(InWorld);
 
 	InitSoundSubsystem();
+
+	InitMusicAudioComponent();
 }
+
+void USoundSubsystem::InitMusicAudioComponent()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->MainMenuMusic == nullptr)	return;
+	if (GetWorld())
+	{
+		MusicAudioComponent = UGameplayStatics::SpawnSound2D(GetWorld(), SoundsData->MainMenuMusic, 1.f, 1.f, 0.f, nullptr, false, false);
+		MusicAudioComponent->SetUISound(true);
+		MusicAudioComponent->Stop();
+	}
+}
+
+void USoundSubsystem::FadeInMusic(UMetaSoundSource* InSound)
+{
+	if (InSound == nullptr)	return;
+	if (MusicAudioComponent == nullptr)	return;
+
+	MusicAudioComponent->SetSound(InSound);
+
+	MusicAudioComponent->Play();
+	MusicAudioComponent->FadeIn(1.5f, SoundsData->InGameMusicAdjuster, 0.f);
+}
+
+void USoundSubsystem::FadeOutMusic()
+{
+	MusicAudioComponent->FadeOut(1.5f, 0.f);
+}
+
 
 void USoundSubsystem::PlayInGameMusicSound()
 {
 	if (SoundsData == nullptr)	return;
 	if (SoundsData->InGameMusic == nullptr)	return;
+	
+	if (MusicAudioComponent == nullptr)	return;
 
-	if (GetWorld())
+	FadeOutMusic();
+	if (TweenMusic != nullptr)
 	{
-		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->InGameMusic, SoundsData->InGameMusicAdjuster);
+		TweenMusic->Destroy();
 	}
+	TweenMusic = FCTween::Play(0.f, 1.5f, [&](float Value){ int i = Value; }, 1.5f);
+	TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->InGameMusic); } );
+}
+
+void USoundSubsystem::PlayInGameDuckMusicSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->InGameDuckMusic == nullptr)	return;
+	
+	if (MusicAudioComponent == nullptr)	return;
+
+	FadeOutMusic();
+	if (TweenMusic != nullptr)
+	{
+		TweenMusic->Destroy();
+	}
+	TweenMusic = FCTween::Play(0.f, 1.5f, [&](float Value){ int i = Value; }, 1.5f);
+	TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->InGameDuckMusic); } );
+}
+
+void USoundSubsystem::PlayMainMenuMusicSound()
+{
+	
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->MainMenuMusic == nullptr)	return;
+	
+	if (MusicAudioComponent == nullptr)	return;
+
+	FadeOutMusic();
+	if (TweenMusic != nullptr)
+	{
+		TweenMusic->Destroy();
+	}
+	TweenMusic = FCTween::Play(0.f, 1.5f, [&](float Value){ int i = Value; }, 1.5f);
+	TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->MainMenuMusic); } );
+}
+
+void USoundSubsystem::PlaySettingsMusicSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->SettingsMusic == nullptr)	return;
+	
+	if (MusicAudioComponent == nullptr)	return;
+
+	FadeOutMusic();
+	if (TweenMusic != nullptr)
+	{
+		TweenMusic->Destroy();
+	}
+	TweenMusic = FCTween::Play(0.f, 1.5f, [&](float Value){ int i = Value; }, 1.5f);
+	TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->SettingsMusic); } );
+}
+
+void USoundSubsystem::PlayWaitingMusicSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->WaitingMusic == nullptr)	return;
+	
+	if (MusicAudioComponent == nullptr)	return;
+
+	FadeOutMusic();
+	if (TweenMusic != nullptr)
+	{
+		TweenMusic->Destroy();
+	}
+	TweenMusic = FCTween::Play(0.f, 1.5f, [&](float Value){ int i = Value; }, 1.5f);
+	TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->WaitingMusic); } );
 }
 
 void USoundSubsystem::Play321MusicSound()
@@ -33,7 +137,7 @@ void USoundSubsystem::Play321MusicSound()
 
 	if (GetWorld())
 	{
-		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->InGame321Music, SoundsData->InGame321MusicAdjuster);
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->InGame321Music, SoundsData->InGame321MusicAdjuster, 1.f, 0.f, nullptr, nullptr, false);
 	}
 }
 
