@@ -60,7 +60,13 @@ void ADuckSpawner::StopCountdownSpawning() // end event & spawn duck
 
 void ADuckSpawner::SpawnDuck() // start phase 1 duck event 
 {
-	if (SpawnedDuck) return;
+	if (SpawnedDuck)
+	{
+		SpawnedDuck->Destroy();
+		SpawnedDuck = nullptr;
+		return;
+	}
+
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, "Spawn Duck");
 
 	// Spawn Duck
