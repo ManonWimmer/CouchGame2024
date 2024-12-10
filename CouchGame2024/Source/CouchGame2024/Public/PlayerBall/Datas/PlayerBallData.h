@@ -30,6 +30,16 @@ public:
 	float BraqueDirectionForceMultiplier = 2.f;
 #pragma endregion
 
+#pragma region Physics States
+
+	UPROPERTY(EditAnywhere, Category = "BrakeDirection Physics Asssets")
+	TObjectPtr<UPhysicalMaterial> BrakeDirectionPhysicsAsset;
+
+	UPROPERTY(EditAnywhere, Category = "Classic Physics Asssets")
+	TObjectPtr<UPhysicalMaterial> ClassicPhysicsAsset;
+
+#pragma endregion 
+	
 #pragma region Roll Boost Movements
 
 	UPROPERTY(EditAnywhere, Category = "Roll Boost Movements")

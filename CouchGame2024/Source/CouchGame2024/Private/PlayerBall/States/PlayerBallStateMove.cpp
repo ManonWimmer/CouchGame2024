@@ -4,12 +4,14 @@
 #include "PlayerBall/States/PlayerBallStateMove.h"
 
 #include "Components/SphereComponent.h"
+#include "PhysicsEngine/BodySetup.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
+#include "PlayerBall/Datas/PlayerBallData.h"
 
 
 // Sets default values for this component's properties
@@ -106,6 +108,8 @@ void UPlayerBallStateMove::StateExit(EPlayerBallStateID NextState)
 			Pawn->BehaviorGrapple->OnGrappledActionStarted.RemoveDynamic(this, &UPlayerBallStateMove::OnGrappled);
 		}
 	}
+
+	SetRightMoveMaterial(false);
 }
 
 void UPlayerBallStateMove::StateTick(float DeltaTime)
@@ -119,7 +123,7 @@ void UPlayerBallStateMove::StateTick(float DeltaTime)
 	CheckFalling();
 }
 
-void UPlayerBallStateMove::Move(float DeltaTime) const	// Move ball on X and Y Axis by rolling it
+void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by rolling it
 {
 	if (Pawn->BehaviorMovements == nullptr)	return;
 	
@@ -131,9 +135,20 @@ void UPlayerBallStateMove::Move(float DeltaTime) const	// Move ball on X and Y A
 	if (Pawn->SphereCollision == nullptr)
 		return;
 
-	//bool SameDirectionX = (Pawn->GetVelocity().X <= -10.f && Dir.Y <= -0.2f) || (Pawn->GetVelocity().X >= 10.f && Dir.Y >= 0.2f);
-	//bool SameDirectionY = (Pawn->GetVelocity().Y <= -10.f && Dir.X >= 0.2f) || (Pawn->GetVelocity().Y >= 10.f && Dir.X <= -0.2f);
+	/* OLD VERSION
+	bool SameDirectionX = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X <= 0 && Dir.X >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X >= 0 && Dir.X <= 0);
+	bool SameDirectionY = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y <= 0 && Dir.Y >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y >= 0 && Dir.Y <= 0);
 
+	if (!SameDirectionX)	// May Increase roll X if oppositeDirection
+	{
+		Dir.X *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
+	}
+	if (!SameDirectionY)	// May Increase roll Y if oppositeDirection
+	{
+		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
+	}
+	*/
+	
 	bool SameDirectionX = true;
 	bool SameDirectionY = true;
 	if (FMath::Abs(Dir.Y) > 0.2f)
@@ -156,9 +171,45 @@ void UPlayerBallStateMove::Move(float DeltaTime) const	// Move ball on X and Y A
 		Dir.X *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
 
+
+	SetRightMoveMaterial(!SameDirectionX || !SameDirectionY);
+
 	//DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 500.f, FColor::Orange, false, 5.f);
 
 	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->BehaviorMovements->GetContextRollForce(), NAME_None, true);	// Roll ball
+}
+
+void UPlayerBallStateMove::SetRightMoveMaterial(bool IsBrakeDirection)
+{
+	if (Pawn == nullptr)	return;
+	if (Pawn->BehaviorPowerUp == nullptr)	return;
+	if (Pawn->SphereCollision == nullptr)	return;
+	if (Pawn->GetPlayerBallData() == nullptr)	return;
+	if (Pawn->GetPlayerBallData()->BrakeDirectionPhysicsAsset == nullptr)	return;
+	if (Pawn->GetPlayerBallData()->ClassicPhysicsAsset == nullptr)	return;
+
+	if (Pawn->BehaviorPowerUp->GetIsSlippery())	return;
+	
+	if (IsBrakeDirection)
+	{
+		if (Pawn->bIsBrakeDirection)	return;
+		
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("Change material to brake direction direction"));
+
+		Pawn->bIsBrakeDirection = true;
+			
+		Pawn->SphereCollision->SetPhysMaterialOverride(Pawn->GetPlayerBallData()->BrakeDirectionPhysicsAsset);
+	}
+	else
+	{
+		if (!Pawn->bIsBrakeDirection)	return;
+		
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, TEXT("Change material to classic direction"));
+
+		Pawn->bIsBrakeDirection = false;
+			
+		Pawn->SphereCollision->SetPhysMaterialOverride(Pawn->GetPlayerBallData()->ClassicPhysicsAsset);
+	}
 }
 
 void UPlayerBallStateMove::CheckNotMoving()	// Check if ball is still moving

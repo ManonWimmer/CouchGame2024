@@ -38,6 +38,9 @@ private:
 
 	UFUNCTION()
 	void OnEndSnapping(float InSnappingValue);
+
+	UFUNCTION()
+	void SetRightMoveMaterial(bool IsBrakeDirection);
 	
 	UFUNCTION()
 	void OnStunned(float StunnedValue);
