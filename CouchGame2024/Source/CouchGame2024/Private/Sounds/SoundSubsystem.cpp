@@ -18,6 +18,9 @@ void USoundSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	InitSoundSubsystem();
 
 	InitMusicAudioComponent();
+
+	//todo
+	// Spawn manager Sound in order to manage behavior fade in/out music in BP
 }
 
 void USoundSubsystem::InitMusicAudioComponent()
@@ -45,6 +48,7 @@ void USoundSubsystem::FadeInMusic(UMetaSoundSource* InSound)
 
 void USoundSubsystem::FadeOutMusic()
 {
+	if (MusicAudioComponent == nullptr)	return;
 	MusicAudioComponent->FadeOut(1.5f, 0.f);
 }
 
@@ -57,12 +61,15 @@ void USoundSubsystem::PlayInGameMusicSound()
 	if (MusicAudioComponent == nullptr)	return;
 
 	FadeOutMusic();
+	/*
 	if (TweenMusic != nullptr)
 	{
 		TweenMusic->Destroy();
 	}
 	TweenMusic = FCTween::Play(0.f, 1.5f, [&](float Value){ int i = Value; }, 1.5f);
-	TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->InGameMusic); } );
+	if (TweenMusic != nullptr)
+		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->InGameMusic); } );
+		*/
 }
 
 void USoundSubsystem::PlayInGameDuckMusicSound()
@@ -73,12 +80,15 @@ void USoundSubsystem::PlayInGameDuckMusicSound()
 	if (MusicAudioComponent == nullptr)	return;
 
 	FadeOutMusic();
+	/*
 	if (TweenMusic != nullptr)
 	{
 		TweenMusic->Destroy();
 	}
 	TweenMusic = FCTween::Play(0.f, 1.5f, [&](float Value){ int i = Value; }, 1.5f);
-	TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->InGameDuckMusic); } );
+	if (TweenMusic != nullptr)
+		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->InGameDuckMusic); } );
+		*/
 }
 
 void USoundSubsystem::PlayMainMenuMusicSound()
@@ -90,12 +100,15 @@ void USoundSubsystem::PlayMainMenuMusicSound()
 	if (MusicAudioComponent == nullptr)	return;
 
 	FadeOutMusic();
+	/*
 	if (TweenMusic != nullptr)
 	{
 		TweenMusic->Destroy();
 	}
 	TweenMusic = FCTween::Play(0.f, 1.5f, [&](float Value){ int i = Value; }, 1.5f);
-	TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->MainMenuMusic); } );
+	if (TweenMusic != nullptr)
+		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->MainMenuMusic); } );
+		*/
 }
 
 void USoundSubsystem::PlaySettingsMusicSound()
@@ -106,12 +119,15 @@ void USoundSubsystem::PlaySettingsMusicSound()
 	if (MusicAudioComponent == nullptr)	return;
 
 	FadeOutMusic();
+	/*
 	if (TweenMusic != nullptr)
 	{
 		TweenMusic->Destroy();
 	}
 	TweenMusic = FCTween::Play(0.f, 1.5f, [&](float Value){ int i = Value; }, 1.5f);
-	TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->SettingsMusic); } );
+	if (TweenMusic != nullptr)
+		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->SettingsMusic); } );
+		*/
 }
 
 void USoundSubsystem::PlayWaitingMusicSound()
@@ -122,12 +138,15 @@ void USoundSubsystem::PlayWaitingMusicSound()
 	if (MusicAudioComponent == nullptr)	return;
 
 	FadeOutMusic();
+	/*
 	if (TweenMusic != nullptr)
 	{
 		TweenMusic->Destroy();
 	}
 	TweenMusic = FCTween::Play(0.f, 1.5f, [&](float Value){ int i = Value; }, 1.5f);
-	TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->WaitingMusic); } );
+	if (TweenMusic != nullptr)
+		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->WaitingMusic); } );
+		*/
 }
 
 void USoundSubsystem::Play321MusicSound()
