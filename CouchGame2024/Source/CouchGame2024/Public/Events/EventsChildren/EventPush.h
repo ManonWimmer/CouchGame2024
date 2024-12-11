@@ -50,6 +50,8 @@ public:
 	
 	virtual void EndEvent() override;
 
+	void OnPushEventStarted();
+	
 	UFUNCTION()
 	void OnImpact(int PlayerIndexImpacting, int PlayerIndexImpacting2);
 

@@ -200,7 +200,7 @@ void URoundsSubsystem::InitSoundRoundEffects()
 {
 	if (GetWorld() == nullptr)	return;
 	if (GetWorld()->GetGameInstance() == nullptr)	return;
-	SoundSubsystem = GetWorld()->GetSubsystem<USoundSubsystem>();
+	SoundSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<USoundSubsystem>();
 }
 
 void URoundsSubsystem::InitRoundsPhase()	// Init rounds phases data

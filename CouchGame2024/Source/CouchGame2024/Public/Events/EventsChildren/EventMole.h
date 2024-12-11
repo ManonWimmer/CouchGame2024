@@ -47,5 +47,7 @@ public:
 	
 	virtual void EndEvent() override;
 	
+	void OnMoleEventStarted();
+
 #pragma endregion
 };

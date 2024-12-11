@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayerBall/PlayerBall.h"
 #include "Score/GlobalScoreSubsystem.h"
+#include "Sounds/SoundSubsystem.h"
 
 
 // Sets default values
@@ -68,6 +69,8 @@ void AEventPush::TriggerEventPhase1()
 	UE_LOG(LogTemp, Warning, TEXT("TriggerEventPhase1 push"));
 
 	OnPushStartedEvent.Broadcast();
+
+	OnPushEventStarted();
 }
 
 void AEventPush::TriggerEventPhase2()
@@ -102,6 +105,17 @@ void AEventPush::EndEvent()
 		0.25f,                   
 		false                   
 	);
+}
+
+void AEventPush::OnPushEventStarted()
+{
+	if (GetGameInstance() == nullptr)	return;
+	
+	USoundSubsystem* SoundSubsystem = GetGameInstance()->GetSubsystem<USoundSubsystem>();
+
+	if (SoundSubsystem == nullptr)	return;
+
+	SoundSubsystem->PlayInGameDuckMusicSound();
 }
 
 void AEventPush::CheckAddTimeLastPushed(float DeltaTime)
