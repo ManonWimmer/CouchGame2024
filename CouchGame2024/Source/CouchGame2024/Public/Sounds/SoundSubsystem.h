@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Subsystems/WorldSubsystem.h"
+#include "Subsystems/GameInstanceSubsystem.h"
 #include "SoundSubsystem.generated.h"
 
 class UMetaSoundSource;
@@ -13,11 +13,12 @@ class FCTweenInstance;
  * 
  */
 UCLASS()
-class COUCHGAME2024_API USoundSubsystem : public UWorldSubsystem
+class COUCHGAME2024_API USoundSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
-
-virtual void OnWorldBeginPlay(UWorld& InWorld) override;
+	
+	virtual void Deinitialize() override;
+	
 
 public:
 
@@ -28,13 +29,13 @@ public:
 
 	FCTweenInstance* TweenMusic;
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void InitMusicAudioComponent();
 
 	UFUNCTION()
 	void FadeInMusic(UMetaSoundSource* InSound);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void FadeOutMusic();
 	
 	UFUNCTION(BlueprintCallable)
@@ -233,11 +234,11 @@ public:
 	
 #pragma endregion 
 	
-private:
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void InitSoundSubsystem();
 
 
+private:
 	UPROPERTY()
 	TObjectPtr<USoundsData> SoundsData;
 	

@@ -58,6 +58,8 @@ public:
 	
 	virtual void EndEvent() override;
 
+	void OnZonesEventStarted();
+	
 	UPROPERTY()
 	TArray<TObjectPtr<APillarZone>> PillarZones;
 

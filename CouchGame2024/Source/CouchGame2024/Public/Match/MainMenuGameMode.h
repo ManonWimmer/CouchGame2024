@@ -19,6 +19,7 @@ class COUCHGAME2024_API AMainMenuGameMode : public AGameModeBase
 
 	
 public:
+	void InitSoundSubsystem();
 	virtual void BeginPlay() override;
 
 #pragma region Players

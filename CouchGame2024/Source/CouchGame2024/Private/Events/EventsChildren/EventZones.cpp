@@ -4,6 +4,7 @@
 #include "Events/EventsChildren/EventZones.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Sounds/SoundSubsystem.h"
 #include "Zone/EventZonesV2Manager.h"
 #include "Zone/PillarZone.h"
 #include "Zone/PillarZone.h"
@@ -94,6 +95,8 @@ void AEventZones::TriggerEventPhase1()
 	}
 	
 	OnZonesPhase1StartedEvent.Broadcast();
+
+	OnZonesEventStarted();
 }
 
 void AEventZones::TriggerEventPhase2()
@@ -134,5 +137,16 @@ void AEventZones::EndEvent()
 	Super::EndEvent();
 
 	OnZonesEndedEvent.Broadcast();
+}
+
+void AEventZones::OnZonesEventStarted()
+{
+	if (GetGameInstance() == nullptr)	return;
+	
+	USoundSubsystem* SoundSubsystem = GetGameInstance()->GetSubsystem<USoundSubsystem>();
+
+	if (SoundSubsystem == nullptr)	return;
+
+	SoundSubsystem->PlayInGameDuckMusicSound();
 }
 

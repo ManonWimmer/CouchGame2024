@@ -46,6 +46,7 @@ public:
 	
 	virtual void EndEvent() override;
 
+	void OnDuckEventStarted();
 	
 #pragma endregion
 };

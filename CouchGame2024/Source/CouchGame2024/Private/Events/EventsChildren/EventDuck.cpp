@@ -7,6 +7,7 @@
 #include "Events/Duck/DuckSpawner.h"
 #include "Kismet/GameplayStatics.h"
 #include "PowerUp/Type/PowerUpDuck.h"
+#include "Sounds/SoundSubsystem.h"
 
 
 // Sets default values
@@ -62,7 +63,7 @@ void AEventDuck::TriggerEventPhase1()
 {
 	Super::TriggerEventPhase1();
 	
-	
+	OnDuckEventStarted();
 }
 
 void AEventDuck::TriggerEventPhase2()
@@ -100,6 +101,17 @@ void AEventDuck::EndEvent()
 	*/
 
 	OnDuckEndedEvent.Broadcast();
+}
+
+void AEventDuck::OnDuckEventStarted()
+{
+	if (GetGameInstance() == nullptr)	return;
+	
+	USoundSubsystem* SoundSubsystem = GetGameInstance()->GetSubsystem<USoundSubsystem>();
+
+	if (SoundSubsystem == nullptr)	return;
+
+	SoundSubsystem->PlayInGameDuckMusicSound();
 }
 
 
