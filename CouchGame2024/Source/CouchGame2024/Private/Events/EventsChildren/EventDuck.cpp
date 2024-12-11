@@ -62,8 +62,6 @@ void AEventDuck::SetupEventPhase1()
 void AEventDuck::TriggerEventPhase1()
 {
 	Super::TriggerEventPhase1();
-	
-	OnDuckEventStarted();
 }
 
 void AEventDuck::TriggerEventPhase2()
@@ -102,16 +100,3 @@ void AEventDuck::EndEvent()
 
 	OnDuckEndedEvent.Broadcast();
 }
-
-void AEventDuck::OnDuckEventStarted()
-{
-	if (GetGameInstance() == nullptr)	return;
-	
-	USoundSubsystem* SoundSubsystem = GetGameInstance()->GetSubsystem<USoundSubsystem>();
-
-	if (SoundSubsystem == nullptr)	return;
-
-	SoundSubsystem->PlayInGameDuckMusicSound();
-}
-
-

@@ -52,8 +52,6 @@ void AEventMole::TriggerEventPhase1()
 	Super::TriggerEventPhase1();
 
 	OnMoleStartedEvent.Broadcast();
-
-	OnMoleEventStarted();
 }
 
 void AEventMole::TriggerEventPhase2()
@@ -94,15 +92,3 @@ void AEventMole::EndEvent()
 
 	OnMoleEndedEvent.Broadcast();
 }
-
-void AEventMole::OnMoleEventStarted()
-{
-	if (GetGameInstance() == nullptr)	return;
-	
-	USoundSubsystem* SoundSubsystem = GetGameInstance()->GetSubsystem<USoundSubsystem>();
-
-	if (SoundSubsystem == nullptr)	return;
-
-	SoundSubsystem->PlayInGameDuckMusicSound();
-}
-

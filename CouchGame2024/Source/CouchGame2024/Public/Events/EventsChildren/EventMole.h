@@ -46,8 +46,6 @@ public:
 	virtual void TickPhase2() override;
 	
 	virtual void EndEvent() override;
-	
-	void OnMoleEventStarted();
 
 #pragma endregion
 };

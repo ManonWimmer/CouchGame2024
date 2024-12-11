@@ -132,6 +132,7 @@ void AEventsManager::CheckNewPhase(ERoundsPhaseID InRoundsPhaseID)
 	default:
 		break;
 	}
+	ReceiveCheckNewPhase(InRoundsPhaseID);
 }
 
 float AEventsManager::GetCountdownTime() const
@@ -178,6 +179,11 @@ void AEventsManager::EndGame()
 	RoundsSubsystem->ChangeToNextRoundPhase();
 
 	OnEventEndedEvent.Broadcast();
+}
+
+UEventData* AEventsManager::GetCurrentEventData() const
+{
+	return CurrentEventData;
 }
 
 void AEventsManager::RegisterEvent(UEventData* EventData, AEvent* Event)

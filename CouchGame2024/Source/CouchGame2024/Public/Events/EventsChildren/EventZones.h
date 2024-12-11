@@ -57,8 +57,6 @@ public:
 	virtual void TickPhase2() override;
 	
 	virtual void EndEvent() override;
-
-	void OnZonesEventStarted();
 	
 	UPROPERTY()
 	TArray<TObjectPtr<APillarZone>> PillarZones;

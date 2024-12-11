@@ -41,9 +41,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayInGameMusicSound();
 
+#pragma region Events Musics
+
+	UFUNCTION(BlueprintCallable)
+	void PlayEventMusicSound(EEventName InEventName);
+	
 	UFUNCTION(BlueprintCallable)
 	void PlayInGameDuckMusicSound();
 
+#pragma endregion
+	
 	UFUNCTION(BlueprintCallable)
 	void PlayMainMenuMusicSound();
 

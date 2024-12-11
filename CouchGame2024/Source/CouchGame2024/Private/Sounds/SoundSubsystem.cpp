@@ -5,6 +5,7 @@
 
 #include "FCTween.h"
 #include "Components/AudioComponent.h"
+#include "Events/EventData.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sounds/SoundsData.h"
 
@@ -87,6 +88,26 @@ void USoundSubsystem::PlayInGameMusicSound()
 	{
 		TweenMusic->SetCanTickDuringPause(true);
 		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->InGameMusic); } );
+	}
+}
+
+void USoundSubsystem::PlayEventMusicSound(EEventName InEventName)
+{
+	switch (InEventName)
+	{
+		case EEventName::Duck:
+			PlayInGameDuckMusicSound();
+		case EEventName::Zones:
+			PlayInGameMusicSound();
+			break;
+		case EEventName::Mole:
+			PlayInGameMusicSound();
+			break;
+		case EEventName::Push:
+			PlayInGameMusicSound();
+			break;
+	default:
+		break;
 	}
 }
 

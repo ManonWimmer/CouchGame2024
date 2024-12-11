@@ -95,8 +95,6 @@ void AEventZones::TriggerEventPhase1()
 	}
 	
 	OnZonesPhase1StartedEvent.Broadcast();
-
-	OnZonesEventStarted();
 }
 
 void AEventZones::TriggerEventPhase2()
@@ -138,15 +136,3 @@ void AEventZones::EndEvent()
 
 	OnZonesEndedEvent.Broadcast();
 }
-
-void AEventZones::OnZonesEventStarted()
-{
-	if (GetGameInstance() == nullptr)	return;
-	
-	USoundSubsystem* SoundSubsystem = GetGameInstance()->GetSubsystem<USoundSubsystem>();
-
-	if (SoundSubsystem == nullptr)	return;
-
-	SoundSubsystem->PlayInGameDuckMusicSound();
-}
-

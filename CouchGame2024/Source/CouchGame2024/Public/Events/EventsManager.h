@@ -105,6 +105,9 @@ public:
 	
 	UFUNCTION()
 	void CheckNewPhase(ERoundsPhaseID InRoundsPhaseID);
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnCheckNewPhase"))
+	void ReceiveCheckNewPhase(ERoundsPhaseID InRoundsPhaseID);
 	
 	UFUNCTION(BlueprintCallable, CallInEditor, Category = "Events")
 	void StartGame();
@@ -133,6 +136,9 @@ public:
 	UPROPERTY()
 	UEventData* LastEventData = nullptr;
 
+	UFUNCTION(BlueprintPure)
+	UEventData* GetCurrentEventData() const;
+	
 	UPROPERTY()
 	UEventData* CurrentEventData = nullptr;
 
