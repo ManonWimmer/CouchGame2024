@@ -34,6 +34,7 @@ void USoundSubsystem::InitMusicAudioComponent()
 		MusicAudioComponent = UGameplayStatics::SpawnSound2D(GetWorld(), SoundsData->MainMenuMusic, 1.f, 1.f, 0.f, nullptr, true, false);
 		MusicAudioComponent->SetUISound(true);
 		MusicAudioComponent->Stop();
+		MusicAudioComponent->bIsUISound = true;
 	}
 }
 
@@ -72,7 +73,10 @@ void USoundSubsystem::PlayInGameMusicSound()
 		[&](float Value){ if (TweenMusic == nullptr || !IsValid(MusicAudioComponent))	return; int i = Value; },
 		0.5f);
 	if (TweenMusic != nullptr)
+	{
+		TweenMusic->SetCanTickDuringPause(true);
 		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->InGameMusic); } );
+	}
 }
 
 void USoundSubsystem::PlayInGameDuckMusicSound()
@@ -92,7 +96,10 @@ void USoundSubsystem::PlayInGameDuckMusicSound()
 		[&](float Value){ if (TweenMusic == nullptr || !IsValid(MusicAudioComponent))	return; int i = Value; },
 		0.5f);
 	if (TweenMusic != nullptr)
+	{
+		TweenMusic->SetCanTickDuringPause(true);
 		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->InGameDuckMusic); } );
+	}
 }
 
 void USoundSubsystem::PlayMainMenuMusicSound()
@@ -112,7 +119,10 @@ void USoundSubsystem::PlayMainMenuMusicSound()
 		[&](float Value){ if (TweenMusic == nullptr || !IsValid(MusicAudioComponent))	return; int i = Value; },
 		0.5f);
 	if (TweenMusic != nullptr)
+	{
+		TweenMusic->SetCanTickDuringPause(true);
 		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->MainMenuMusic); } );
+	}
 }
 
 void USoundSubsystem::PlaySettingsMusicSound()
@@ -132,7 +142,10 @@ void USoundSubsystem::PlaySettingsMusicSound()
 		[&](float Value){ if (TweenMusic == nullptr || !IsValid(MusicAudioComponent))	return; int i = Value; },
 		0.5f);
 	if (TweenMusic != nullptr)
+	{
+		TweenMusic->SetCanTickDuringPause(true);
 		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->SettingsMusic); } );
+	}
 }
 
 void USoundSubsystem::PlayWaitingMusicSound()
@@ -152,7 +165,10 @@ void USoundSubsystem::PlayWaitingMusicSound()
 		[&](float Value){ if (TweenMusic == nullptr || !IsValid(MusicAudioComponent))	return; int i = Value; },
 		0.5f);
 	if (TweenMusic != nullptr)
+	{
+		TweenMusic->SetCanTickDuringPause(true);
 		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->WaitingMusic); } );
+	}
 }
 
 void USoundSubsystem::Play321MusicSound()
