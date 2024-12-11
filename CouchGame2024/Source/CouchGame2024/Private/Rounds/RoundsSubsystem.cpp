@@ -254,7 +254,11 @@ void URoundsSubsystem::ChangeRoundPhase(ERoundsPhaseID RoundsPhaseID)
 			break;
 		case POST_ROUND:
 			EndRoundChecks();
-
+			if (SoundSubsystem != nullptr)
+			{
+				SoundSubsystem->PlayWaitingMusicSound();
+			}
+		
 			LockAllPlayer();
 			break;
 		default:
