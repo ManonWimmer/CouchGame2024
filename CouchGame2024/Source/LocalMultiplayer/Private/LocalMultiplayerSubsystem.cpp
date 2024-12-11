@@ -279,3 +279,8 @@ int ULocalMultiplayerSubsystem::GetRandomPlayersIndexConnected()
 	return PlayersIndexConnected[TempIndex];
 }
 
+int ULocalMultiplayerSubsystem::GetNumberOfPlayersConnected() const
+{
+	return PlayersIndexConnected.Num();
+}
+
