@@ -125,4 +125,8 @@ void AUIManager::ShowDuckCounter_Implementation()
 {
 }
 
+void AUIManager::OnAddScoreEffect_Implementation(APlayerBall* Player, bool bIsInPopcornEvent, int Value)
+{
+}
+
 
