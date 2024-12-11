@@ -19,6 +19,9 @@ class COUCHGAME2024_API USoundSubsystem : public UWorldSubsystem
 
 virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 
+	virtual void Deinitialize() override;
+	
+
 public:
 
 #pragma region Play Music
