@@ -100,6 +100,9 @@ public:
 	UPROPERTY()
 	int NbrPlayersGrappling = 0;
 
+	UFUNCTION(BlueprintPure)
+	int GetNumberOfPlayersGrappling() const;
+
 	/*
 	UFUNCTION()
 	void AddPlayerGrappling();

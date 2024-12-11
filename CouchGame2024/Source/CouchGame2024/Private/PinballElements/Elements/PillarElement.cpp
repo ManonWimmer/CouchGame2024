@@ -157,6 +157,14 @@ void APillarElement::OnStoppedGrabbed()
 {
 	if (PillarZone == nullptr) return;
 
-	PillarZone->OnReceiveAssociatedPillarUnGrabbed();
+	if (GetNumberOfPlayersGrappling() <= 0)
+	{
+		PillarZone->OnReceiveAssociatedPillarUnGrabbed();
+	}
+}
+
+int APillarElement::GetNumberOfPlayersGrappling() const
+{
+	return NbrPlayersGrappling;
 }
 
