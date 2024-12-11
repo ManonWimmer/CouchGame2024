@@ -34,18 +34,17 @@ void USoundSubsystem::InitMusicAudioComponent()
 		MusicAudioComponent = UGameplayStatics::SpawnSound2D(GetWorld(), SoundsData->MainMenuMusic, 1.f, 1.f, 0.f, nullptr, true, false);
 		MusicAudioComponent->SetUISound(true);
 		MusicAudioComponent->Stop();
-		MusicAudioComponent->bIsUISound = true;
 	}
 }
 
-void USoundSubsystem::FadeInMusic(UMetaSoundSource* InSound)
+void USoundSubsystem::FadeInMusic(UMetaSoundSource* InSound, float InTimeStart)
 {
 	if (InSound == nullptr)	return;
 	if (MusicAudioComponent == nullptr)	return;
-
+	
 	MusicAudioComponent->SetSound(InSound);
-
-	MusicAudioComponent->Play();
+	
+	MusicAudioComponent->Play(InTimeStart);
 	MusicAudioComponent->FadeIn(0.5f, SoundsData->InGameMusicAdjuster, 0.f);
 }
 
@@ -63,6 +62,18 @@ void USoundSubsystem::PlayInGameMusicSound()
 	
 	if (MusicAudioComponent == nullptr)	return;
 
+	SoundToPlayAfterPause = SoundsData->InGameMusic;
+	/*
+	if (MusicAudioComponent->GetSound()->Duration > 0.f)
+	{
+		MusicPlayingDurationBeforePause = MusicAudioComponent->TimeAudioComponentPlayed / MusicAudioComponent->GetSound()->Duration;
+	}
+	else
+	{
+		MusicPlayingDurationBeforePause = 0.f;
+	}
+	*/
+	
 	FadeOutMusic();
 	
 	if (TweenMusic != nullptr)
@@ -86,6 +97,18 @@ void USoundSubsystem::PlayInGameDuckMusicSound()
 	
 	if (MusicAudioComponent == nullptr)	return;
 
+	SoundToPlayAfterPause = SoundsData->InGameDuckMusic;
+	/*
+	if (MusicAudioComponent->GetSound()->Duration > 0.f)
+	{
+		MusicPlayingDurationBeforePause = MusicAudioComponent->TimeAudioComponentPlayed / MusicAudioComponent->GetSound()->Duration;
+	}
+	else
+	{
+		MusicPlayingDurationBeforePause = 0.f;
+	}
+	*/
+	
 	FadeOutMusic();
 	
 	if (TweenMusic != nullptr)
@@ -109,6 +132,17 @@ void USoundSubsystem::PlayMainMenuMusicSound()
 	
 	if (MusicAudioComponent == nullptr)	return;
 
+	SoundToPlayAfterPause = SoundsData->MainMenuMusic;
+	/*
+	if (MusicAudioComponent->GetSound()->Duration > 0.f)
+	{
+		MusicPlayingDurationBeforePause = MusicAudioComponent->TimeAudioComponentPlayed / MusicAudioComponent->GetSound()->Duration;
+	}
+	else
+	{
+		MusicPlayingDurationBeforePause = 0.f;
+	}
+	*/
 	FadeOutMusic();
 	
 	if (TweenMusic != nullptr)
@@ -131,7 +165,7 @@ void USoundSubsystem::PlaySettingsMusicSound()
 	if (SoundsData->SettingsMusic == nullptr)	return;
 	
 	if (MusicAudioComponent == nullptr)	return;
-
+	
 	FadeOutMusic();
 	
 	if (TweenMusic != nullptr)
@@ -148,6 +182,27 @@ void USoundSubsystem::PlaySettingsMusicSound()
 	}
 }
 
+void USoundSubsystem::UnplaySettingsMusicSound()
+{
+	if (SoundToPlayAfterPause == nullptr)	return;
+	if (MusicAudioComponent == nullptr)	return;
+	
+	FadeOutMusic();
+	
+	if (TweenMusic != nullptr)
+	{
+		TweenMusic->Destroy();
+	}
+	TweenMusic = FCTween::Play(0.f, 1.f,
+		[&](float Value){ if (TweenMusic == nullptr || !IsValid(MusicAudioComponent))	return; int i = Value; },
+		0.5f);
+	if (TweenMusic != nullptr)
+	{
+		TweenMusic->SetCanTickDuringPause(true);
+		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundToPlayAfterPause /*, MusicPlayingDurationBeforePause */); } );
+	}
+}
+
 void USoundSubsystem::PlayWaitingMusicSound()
 {
 	if (SoundsData == nullptr)	return;
@@ -155,6 +210,18 @@ void USoundSubsystem::PlayWaitingMusicSound()
 	
 	if (MusicAudioComponent == nullptr)	return;
 
+	SoundToPlayAfterPause = SoundsData->WaitingMusic;
+	/*
+	if (MusicAudioComponent->GetSound()->Duration > 0.f)
+	{
+		MusicPlayingDurationBeforePause = MusicAudioComponent->TimeAudioComponentPlayed / MusicAudioComponent->GetSound()->Duration;
+	}
+	else
+	{
+		MusicPlayingDurationBeforePause = 0.f;
+	}
+	*/
+	
 	FadeOutMusic();
 	
 	if (TweenMusic != nullptr)

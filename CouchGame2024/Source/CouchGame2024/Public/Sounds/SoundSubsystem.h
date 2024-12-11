@@ -33,7 +33,7 @@ public:
 	void InitMusicAudioComponent();
 
 	UFUNCTION()
-	void FadeInMusic(UMetaSoundSource* InSound);
+	void FadeInMusic(UMetaSoundSource* InSound, float InTimeStart = 0.f);
 
 	UFUNCTION(BlueprintCallable)
 	void FadeOutMusic();
@@ -49,6 +49,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void PlaySettingsMusicSound();
+
+	UFUNCTION(BlueprintCallable)
+	void UnplaySettingsMusicSound();
 
 	UFUNCTION(BlueprintCallable)
 	void PlayWaitingMusicSound();
@@ -241,5 +244,10 @@ public:
 private:
 	UPROPERTY()
 	TObjectPtr<USoundsData> SoundsData;
+
+	UPROPERTY()
+	TObjectPtr<UMetaSoundSource> SoundToPlayAfterPause;
+
+	float MusicPlayingDurationBeforePause = 0.f;
 	
 };
