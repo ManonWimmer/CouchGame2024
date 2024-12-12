@@ -28,6 +28,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnPlayerBallSpawned OnPlayerBallSpawned;
+
+	UPROPERTY()
+	TMap<int, TObjectPtr<APlayerBall>> PlayerBallsMap;
 	
 private:
 

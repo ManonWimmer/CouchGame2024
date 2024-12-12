@@ -11,6 +11,7 @@
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 #include "Rounds/RoundsSubsystem.h"
+#include "Score/GlobalScoreSubsystem.h"
 
 void AMatchPinballGameMode::BeginPlay()
 {
@@ -23,6 +24,12 @@ void AMatchPinballGameMode::BeginPlay()
 	PlayerBallSpawns = PlayerSpawnPoints;
 	SpawnPlayerBalls(PlayerSpawnPoints);
 
+	if (UGlobalScoreSubsystem* ScoreSubsystem = GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>(); ScoreSubsystem != nullptr)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, "PlayerBallSpawns in Score");
+		ScoreSubsystem->PlayerBallsMap = PlayerBallsMap;
+	}
+	
 	OnPlayerBallSpawned.Broadcast();
 
 	// Rounds
@@ -67,6 +74,8 @@ void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> Spa
 		APlayerBall* NewCharacter = GetWorld()->SpawnActorDeferred<APlayerBall>(PlayerBallClass, SpawnPoint->GetTransform());
 
 		int PlayerIndex = GetPlayerIndexFromInputType(InputType);
+
+		
 		NewCharacter->PlayerIndex = PlayerIndex;
 		
 		if (NewCharacter == nullptr) continue;
@@ -76,6 +85,8 @@ void AMatchPinballGameMode::SpawnPlayerBalls(const TArray<APlayerBallSpawn*> Spa
 
 		PlayersBallInsideArena.Add(NewCharacter);
 		//PlayerIndex++;
+
+		PlayerBallsMap.Add(PlayerIndex, NewCharacter);
 	}
 
 	Algo::Sort(PlayersBallInsideArena, [](const APlayerBall* A, const APlayerBall* B)
