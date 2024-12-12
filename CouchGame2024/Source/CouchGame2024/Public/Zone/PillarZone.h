@@ -68,6 +68,12 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (displayname = "OnAssociatedPillarUnGrabbed"))
 	void OnReceiveAssociatedPillarUnGrabbed();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (displayname = "OnReceiveEnablePillar"))
+	void OnReceiveEnablePillar();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (displayname = "OnReceiveDisablePillar"))
+	void OnReceiveDisablePillar();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Collision")
 	TObjectPtr<USphereComponent> SphereComponent;
@@ -78,7 +84,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<APillarElement> TargetPillar = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	EPillarZoneState CurrentZoneState = EPillarZoneState::Waiting;
 	
 	UPROPERTY()

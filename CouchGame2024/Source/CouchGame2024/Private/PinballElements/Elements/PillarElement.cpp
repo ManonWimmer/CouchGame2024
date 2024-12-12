@@ -94,10 +94,14 @@ void APillarElement::DisablePillar()
 		PlayerStateMachineOnPillar = nullptr;
 	}
 
+	/*
 	if (!bIsTricked)
 	{
 		ReceiveOnDisablePillar();
 	}
+	*/
+
+	ReceiveOnDisablePillar();
 }
 
 void APillarElement::EnablePillar(bool Tricked, APillarZone* Zone)
