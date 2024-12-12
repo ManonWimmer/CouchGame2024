@@ -4,6 +4,7 @@
 #include "Events/EventsChildren/EventZones.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Sounds/SoundSubsystem.h"
 #include "Zone/EventZonesV2Manager.h"
 #include "Zone/PillarZone.h"
 #include "Zone/PillarZone.h"
@@ -135,4 +136,3 @@ void AEventZones::EndEvent()
 
 	OnZonesEndedEvent.Broadcast();
 }
-

@@ -94,10 +94,14 @@ void APillarElement::DisablePillar()
 		PlayerStateMachineOnPillar = nullptr;
 	}
 
+	/*
 	if (!bIsTricked)
 	{
 		ReceiveOnDisablePillar();
 	}
+	*/
+
+	ReceiveOnDisablePillar();
 }
 
 void APillarElement::EnablePillar(bool Tricked, APillarZone* Zone)
@@ -157,6 +161,14 @@ void APillarElement::OnStoppedGrabbed()
 {
 	if (PillarZone == nullptr) return;
 
-	PillarZone->OnReceiveAssociatedPillarUnGrabbed();
+	if (GetNumberOfPlayersGrappling() <= 0)
+	{
+		PillarZone->OnReceiveAssociatedPillarUnGrabbed();
+	}
+}
+
+int APillarElement::GetNumberOfPlayersGrappling() const
+{
+	return NbrPlayersGrappling;
 }
 

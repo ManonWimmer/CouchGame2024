@@ -144,6 +144,7 @@ void APlayerBall::SetupData() // Get all data and set them
 	// Punch
 	PunchCooldown = PlayerBallData->PunchCooldown;
 	PunchRadius = PlayerBallData->PunchRadius;
+	PunchRadiusWithStrength = PlayerBallData->PunchRadiusWithStrength;
 	PunchForceMultiplier = PlayerBallData->PunchForceMultiplier;
 
 	if (PlayerBallData->SnapTriggerRadius == PlayerBallData->MaxCableDistance)	// to avoid a case in which 2 spheres overlap and causes physics bug

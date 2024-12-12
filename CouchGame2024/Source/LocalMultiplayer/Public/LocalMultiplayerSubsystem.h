@@ -69,6 +69,9 @@ public:
 	int GetRandomPlayersIndexConnected();
 	UPROPERTY()
 	TArray<int> PlayersIndexConnected;
+
+	UFUNCTION(BlueprintPure)
+	int GetNumberOfPlayersConnected() const;
 	
 protected:
 	UPROPERTY()

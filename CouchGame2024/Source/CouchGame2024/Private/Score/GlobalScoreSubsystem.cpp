@@ -7,6 +7,7 @@
 #include "Events/EventsManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sounds/SoundSubsystem.h"
+#include "UI/UIManager.h"
 
 #pragma region Score
 
@@ -64,7 +65,7 @@ void UGlobalScoreSubsystem::AddScore(int PlayerIndex, int Value)
 
 			if (EventsManager->CurrentEventData == nullptr) return;
 			
-			OnAddScoreEffect(Player, EventsManager->CurrentEventData->EventName == EEventName::Zones);
+			OnAddScoreEffect(Player, EventsManager->CurrentEventData->EventName == EEventName::Zones, Value);
 		}
 	}
 }
@@ -150,9 +151,9 @@ void UGlobalScoreSubsystem::PlayerInDuckBank(int PlayerIndex, int DuckToPointsMu
 
 	if (tempCounter > 0)
 	{
-		if (GetWorld() != nullptr)
+		if (GetGameInstance() != nullptr)
 		{
-			USoundSubsystem* Soundsubsystem = GetWorld()->GetSubsystem<USoundSubsystem>();
+			USoundSubsystem* Soundsubsystem = GetGameInstance()->GetSubsystem<USoundSubsystem>();
 
 			if (Soundsubsystem != nullptr)
 			{
@@ -193,9 +194,9 @@ void UGlobalScoreSubsystem::StealDuck(int PlayerIndexAdd, int PlayerIndexLose)
 	AddDuck(PlayerIndexAdd, 1);
 	AddDuck(PlayerIndexLose, -1);
 
-	if (GetWorld() != nullptr)
+	if (GetGameInstance() != nullptr)
 	{
-		USoundSubsystem* Soundsubsystem = GetWorld()->GetSubsystem<USoundSubsystem>();
+		USoundSubsystem* Soundsubsystem = GetGameInstance()->GetSubsystem<USoundSubsystem>();
 
 		if (Soundsubsystem != nullptr)
 		{
@@ -204,9 +205,23 @@ void UGlobalScoreSubsystem::StealDuck(int PlayerIndexAdd, int PlayerIndexLose)
 	}
 }
 
-void UGlobalScoreSubsystem::OnAddScoreEffect(APlayerBall* Player, bool bIsInPopcornEvent)
+void UGlobalScoreSubsystem::OnAddScoreEffect(APlayerBall* Player, bool bIsInPopcornEvent, int Value)
 {
-	// todo : faire la fonction dans l'ui manager en blueprint truc et l'appeler  
+	if (UIManager == nullptr) GetUIManager();
+	if (UIManager == nullptr) return;
+	
+	UIManager->OnAddScoreEffect(Player, bIsInPopcornEvent, Value);
+}
+
+void UGlobalScoreSubsystem::GetUIManager()
+{
+	TArray<TObjectPtr<AActor>> Actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AUIManager::StaticClass(), Actors);
+
+	if (Actors.Num() > 0)
+	{
+		UIManager = Cast<AUIManager>(Actors[0]);
+	}
 }
 
 APlayerBall* UGlobalScoreSubsystem::GetPlayerFromIndex(int PlayerIndex)

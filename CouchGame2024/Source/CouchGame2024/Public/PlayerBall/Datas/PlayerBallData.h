@@ -87,6 +87,9 @@ public:
 	float PunchRadius = 50.f;
 
 	UPROPERTY(EditAnywhere, Category = "Punch")
+	float PunchRadiusWithStrength = 100.f;
+	
+	UPROPERTY(EditAnywhere, Category = "Punch")
 	float PunchCooldown = 3.f;
 	
 	UPROPERTY(EditAnywhere, Category = "Punch")
