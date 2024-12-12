@@ -12,11 +12,27 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 #include "Rounds/RoundsSubsystem.h"
 #include "Score/GlobalScoreSubsystem.h"
+#include "Sounds/SoundSubsystem.h"
+
+void AMatchPinballGameMode::InitSoundSubsystem()
+{
+	if (GetGameInstance() == nullptr)	return;
+	
+	USoundSubsystem* SoundSubsystem = GetGameInstance()->GetSubsystem<USoundSubsystem>();
+
+	if (SoundSubsystem == nullptr)	return;
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Sound Subsystem !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	SoundSubsystem->InitSoundSubsystem();
+	SoundSubsystem->InitMusicAudioComponent();
+}
 
 void AMatchPinballGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	InitSoundSubsystem();
+	
 	// Players
 	CreateAndInitPlayers();
 	TArray<APlayerBallSpawn*> PlayerSpawnPoints;
