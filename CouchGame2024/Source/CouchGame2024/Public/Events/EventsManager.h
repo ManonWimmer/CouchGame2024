@@ -137,6 +137,9 @@ public:
 	UEventData* LastEventData = nullptr;
 
 	UFUNCTION(BlueprintPure)
+	UEventData* GetLastEventData() const;
+
+	UFUNCTION(BlueprintPure)
 	UEventData* GetCurrentEventData() const;
 	
 	UPROPERTY()
