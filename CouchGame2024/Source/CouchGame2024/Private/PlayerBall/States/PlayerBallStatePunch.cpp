@@ -75,6 +75,7 @@ void UPlayerBallStatePunch::PunchPlayerBall()
 	if (OutPlayerBalls.Num() <= 0)
 	{
 		Pawn->PlayPunchFailedGamefeelEffectsBlueprint();
+		return;
 	}
 	
 	APlayerBall* NearestPlayerBall = GetNearestPlayerBallInPunchRadius();

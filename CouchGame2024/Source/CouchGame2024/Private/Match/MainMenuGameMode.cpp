@@ -11,13 +11,28 @@
 #include "PinballElements/Elements/RailElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
+#include "Sounds/SoundSubsystem.h"
 
+
+void AMainMenuGameMode::InitSoundSubsystem()
+{
+	if (GetGameInstance() == nullptr)	return;
+	
+	USoundSubsystem* SoundSubsystem = GetGameInstance()->GetSubsystem<USoundSubsystem>();
+
+	if (SoundSubsystem == nullptr)	return;
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Sound Subsystem !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	SoundSubsystem->InitSoundSubsystem();
+	SoundSubsystem->InitMusicAudioComponent();
+}
 
 void AMainMenuGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
 	// Connection
+	InitSoundSubsystem();
 	InitConnectionRailElements();
 	BindSpawnPlayerBallToNewPlayerConnected();
 	

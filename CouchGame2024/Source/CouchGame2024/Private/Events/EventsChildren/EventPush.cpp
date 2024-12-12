@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayerBall/PlayerBall.h"
 #include "Score/GlobalScoreSubsystem.h"
+#include "Sounds/SoundSubsystem.h"
 
 
 // Sets default values

@@ -150,9 +150,9 @@ void UGlobalScoreSubsystem::PlayerInDuckBank(int PlayerIndex, int DuckToPointsMu
 
 	if (tempCounter > 0)
 	{
-		if (GetWorld() != nullptr)
+		if (GetGameInstance() != nullptr)
 		{
-			USoundSubsystem* Soundsubsystem = GetWorld()->GetSubsystem<USoundSubsystem>();
+			USoundSubsystem* Soundsubsystem = GetGameInstance()->GetSubsystem<USoundSubsystem>();
 
 			if (Soundsubsystem != nullptr)
 			{
@@ -193,9 +193,9 @@ void UGlobalScoreSubsystem::StealDuck(int PlayerIndexAdd, int PlayerIndexLose)
 	AddDuck(PlayerIndexAdd, 1);
 	AddDuck(PlayerIndexLose, -1);
 
-	if (GetWorld() != nullptr)
+	if (GetGameInstance() != nullptr)
 	{
-		USoundSubsystem* Soundsubsystem = GetWorld()->GetSubsystem<USoundSubsystem>();
+		USoundSubsystem* Soundsubsystem = GetGameInstance()->GetSubsystem<USoundSubsystem>();
 
 		if (Soundsubsystem != nullptr)
 		{

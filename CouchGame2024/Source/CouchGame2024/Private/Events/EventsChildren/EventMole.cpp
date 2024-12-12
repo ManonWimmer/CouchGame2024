@@ -6,6 +6,7 @@
 #include "Events/Mole/MoleSpawner.h"
 #include "Kismet/GameplayStatics.h"
 #include "PinballElements/Elements/MoleElement.h"
+#include "Sounds/SoundSubsystem.h"
 
 
 // Sets default values
@@ -91,4 +92,3 @@ void AEventMole::EndEvent()
 
 	OnMoleEndedEvent.Broadcast();
 }
-

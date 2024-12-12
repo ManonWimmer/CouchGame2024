@@ -7,6 +7,7 @@
 #include "Events/Duck/DuckSpawner.h"
 #include "Kismet/GameplayStatics.h"
 #include "PowerUp/Type/PowerUpDuck.h"
+#include "Sounds/SoundSubsystem.h"
 
 
 // Sets default values
@@ -61,8 +62,6 @@ void AEventDuck::SetupEventPhase1()
 void AEventDuck::TriggerEventPhase1()
 {
 	Super::TriggerEventPhase1();
-	
-	
 }
 
 void AEventDuck::TriggerEventPhase2()
@@ -101,5 +100,3 @@ void AEventDuck::EndEvent()
 
 	OnDuckEndedEvent.Broadcast();
 }
-
-
