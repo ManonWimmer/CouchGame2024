@@ -129,4 +129,7 @@ void AUIManager::OnAddScoreEffect_Implementation(APlayerBall* Player, bool bIsIn
 {
 }
 
+void AUIManager::OnDestroyPopcornAddScoreVFX_Implementation(APlayerBall* Player)
+{
+}
 

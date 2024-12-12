@@ -70,6 +70,9 @@ public:
 	void HidePowerUpIcon(int PlayerIndex);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "UI")
+	void OnDestroyPopcornAddScoreVFX(APlayerBall* Player);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UI")
 	void OnAddScoreEffect(APlayerBall* Player, bool bIsInPopcornEvent, int Value);
 
 private:
