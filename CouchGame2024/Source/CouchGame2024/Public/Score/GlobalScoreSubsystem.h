@@ -6,6 +6,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "GlobalScoreSubsystem.generated.h"
 
+class AUIManager;
 class AEventsManager;
 class APlayerBall;
 class USoundSubsystem;
@@ -49,7 +50,13 @@ public:
 	TMap<int, TObjectPtr<APlayerBall>> PlayerBallsMap;
 
 	UFUNCTION()
-	void OnAddScoreEffect(APlayerBall* Player, bool bIsInPopcornEvent);
+	void OnAddScoreEffect(APlayerBall* Player, bool bIsInPopcornEvent, int Value);
+
+	UFUNCTION()
+	void GetUIManager();
+
+	UPROPERTY()
+	TObjectPtr<AUIManager> UIManager = nullptr;
 
 	UFUNCTION()
 	APlayerBall* GetPlayerFromIndex(int PlayerIndex);

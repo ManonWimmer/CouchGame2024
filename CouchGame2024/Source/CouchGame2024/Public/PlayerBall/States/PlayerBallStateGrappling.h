@@ -7,6 +7,7 @@
 #include "PlayerBallStateGrappling.generated.h"
 
 
+class AUIManager;
 class APillarElement;
 class UGlobalScoreSubsystem;
 
@@ -87,4 +88,10 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<APillarElement> Pillar = nullptr;
+
+	UFUNCTION()
+	void GetUIManager();
+
+	UPROPERTY()
+	TObjectPtr<AUIManager> UIManager = nullptr;
 };

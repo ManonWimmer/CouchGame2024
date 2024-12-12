@@ -6,6 +6,7 @@
 #include "CableComponent.h"
 #include "Components/SphereComponent.h"
 #include "GrapplingHook/Hookable.h"
+#include "Kismet/GameplayStatics.h"
 #include "PinballElements/Elements/PillarElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/PlayerBallStateMachine.h"
@@ -14,6 +15,7 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 
 #include "Score/GlobalScoreSubsystem.h"
+#include "UI/UIManager.h"
 
 
 // Sets default values for this component's properties
@@ -36,6 +38,8 @@ void UPlayerBallStateGrappling::StateInit(UPlayerBallStateMachine* InStateMachin
 	{
 		ScoreSubsystem = World->GetGameInstance()->GetSubsystem<UGlobalScoreSubsystem>();
 	}
+
+	GetUIManager();
 }
 
 void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
@@ -268,6 +272,11 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 
 					Pillar->ReceiveOnEndGainPoint();
 					Pillar->OnStoppedGrabbed();
+
+					// UIManager stop popcorn vfx
+					if (UIManager == nullptr) GetUIManager();
+					if (UIManager)
+						UIManager->OnDestroyPopcornAddScoreVFX(Pawn);
 				}
 			}
 
@@ -605,5 +614,18 @@ void UPlayerBallStateGrappling::GainPillarPoints(float DeltaTime)
 	else
 	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Pas trouvé de score subsystem");
+	}
+}
+
+void UPlayerBallStateGrappling::GetUIManager()
+{
+	if (UIManager != nullptr) return;
+	
+	TArray<TObjectPtr<AActor>> Actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AUIManager::StaticClass(), Actors);
+
+	if (Actors.Num() > 0)
+	{
+		UIManager = Cast<AUIManager>(Actors[0]);
 	}
 }

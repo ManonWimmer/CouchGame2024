@@ -8,6 +8,7 @@
 #include "UIManager.generated.h"
 
 
+class APlayerBall;
 enum class EPowerUpID : uint8;
 class AHUD;
 class UEventData;
@@ -67,7 +68,12 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, Category = "UI")
 	void HidePowerUpIcon(int PlayerIndex);
-	
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UI")
+	void OnDestroyPopcornAddScoreVFX(APlayerBall* Player);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "UI")
+	void OnAddScoreEffect(APlayerBall* Player, bool bIsInPopcornEvent, int Value);
 
 private:
 	// Map of active widgets
