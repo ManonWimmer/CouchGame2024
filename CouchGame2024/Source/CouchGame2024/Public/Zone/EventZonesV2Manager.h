@@ -64,7 +64,9 @@ public:
 	UPROPERTY()
 	TMap<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>> SelectedZonesAndPillars;
 	
-	TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>> TrickedZoneAndPillar;
+	TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>> TrickedZoneAndPillar1;
+	
+	TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>> TrickedZoneAndPillar2;
 
 	UFUNCTION()
 	void StartPhase2();
