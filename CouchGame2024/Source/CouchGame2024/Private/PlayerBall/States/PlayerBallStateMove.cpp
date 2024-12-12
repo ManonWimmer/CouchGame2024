@@ -135,7 +135,6 @@ void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by
 	if (Pawn->SphereCollision == nullptr)
 		return;
 
-	/* OLD VERSION
 	bool SameDirectionX = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X <= 0 && Dir.X >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X >= 0 && Dir.X <= 0);
 	bool SameDirectionY = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y <= 0 && Dir.Y >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y >= 0 && Dir.Y <= 0);
 
@@ -147,8 +146,8 @@ void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by
 	{
 		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
-	*/
-	
+
+	/*
 	bool SameDirectionX = true;
 	bool SameDirectionY = true;
 	if (FMath::Abs(Dir.Y) > 0.2f)
@@ -171,8 +170,8 @@ void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by
 		Dir.X *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
 
-
 	SetRightMoveMaterial(!SameDirectionX || !SameDirectionY);
+	*/
 
 	//DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 500.f, FColor::Orange, false, 5.f);
 

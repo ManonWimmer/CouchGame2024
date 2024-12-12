@@ -9,6 +9,7 @@
 #include "PlayerBall/PlayerBallStateMachine.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorElementReactions.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorGrapple.h"
+#include "PlayerBall/Behaviors/PlayerBallBehaviorPowerUp.h"
 
 
 // Sets default values for this component's properties
@@ -129,18 +130,28 @@ APlayerBall* UPlayerBallStatePunch::GetNearestPlayerBallInPunchRadius()
 	
 	FCollisionObjectQueryParams ObjectQueryParams(ECollisionChannel::ECC_Pawn);	// Look only for pawn
 
+
+	float CurrentRadiusToUse = Pawn->PunchRadius;
+	if (Pawn->BehaviorPowerUp != nullptr)
+	{
+		if (Pawn->BehaviorPowerUp->GetIsUsingStrengthPowerUp())
+		{
+			CurrentRadiusToUse = Pawn->PunchRadiusWithStrength;
+		}
+	}
+	
 	// Detect Collision With sphere overlap
 	bool bHasDetected = Pawn->GetWorld()->OverlapMultiByObjectType(
 		OverlapResults,
 		Start,
 		FQuat::Identity,
 		ObjectQueryParams,
-		FCollisionShape::MakeSphere(Pawn->PunchRadius),
+		FCollisionShape::MakeSphere(CurrentRadiusToUse),
 		CollisionParams
 	);
 	
-	//if (Pawn->GetWorld())
-		//DrawDebugSphere(Pawn->GetWorld(), Start, Pawn->PunchRadius, 12, FColor::Blue, false, 3.f);
+	if (Pawn->GetWorld())
+		DrawDebugSphere(Pawn->GetWorld(), Start, CurrentRadiusToUse, 12, FColor::Blue, false, 3.f);
 
 	if (bHasDetected)	// has detected a pawn
 	{
@@ -173,13 +184,22 @@ TArray<APlayerBall*> UPlayerBallStatePunch::GetAllPlayerBallInPunchRadius()
 	
 	FCollisionObjectQueryParams ObjectQueryParams(ECollisionChannel::ECC_Pawn);	// Look only for pawn
 
+	float CurrentRadiusToUse = Pawn->PunchRadius;
+	if (Pawn->BehaviorPowerUp != nullptr)
+	{
+		if (Pawn->BehaviorPowerUp->GetIsUsingStrengthPowerUp())
+		{
+			CurrentRadiusToUse = Pawn->PunchRadiusWithStrength;
+		}
+	}
+	
 	// Detect Collision With sphere overlap
 	bool bHasDetected = Pawn->GetWorld()->OverlapMultiByObjectType(
 		OverlapResults,
 		Start,
 		FQuat::Identity,
 		ObjectQueryParams,
-		FCollisionShape::MakeSphere(Pawn->PunchRadius),
+		FCollisionShape::MakeSphere(CurrentRadiusToUse),
 		CollisionParams
 	);
 	
