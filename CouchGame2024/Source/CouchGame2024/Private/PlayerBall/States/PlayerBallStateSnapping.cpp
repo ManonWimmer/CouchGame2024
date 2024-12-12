@@ -149,7 +149,6 @@ void UPlayerBallStateSnapping::Move(float DeltaTime)
 	if (Pawn->SphereCollision == nullptr)
 		return;
 
-	/* OLD VERSION
 	bool SameDirectionX = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X <= 0 && Dir.X >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X >= 0 && Dir.X <= 0);
 	bool SameDirectionY = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y <= 0 && Dir.Y >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y >= 0 && Dir.Y <= 0);
 
@@ -161,8 +160,8 @@ void UPlayerBallStateSnapping::Move(float DeltaTime)
 	{
 		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
-	*/
-	
+
+	/* version with Phys mat
 	bool SameDirectionX = true;
 	bool SameDirectionY = true;
 	if (FMath::Abs(Dir.Y) > 0.2f)
@@ -185,8 +184,8 @@ void UPlayerBallStateSnapping::Move(float DeltaTime)
 		Dir.X *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
 
-
 	SetRightMoveMaterial(!SameDirectionX || !SameDirectionY);
+	*/
 
 	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -(Pawn->BehaviorMovements->GetContextRollForce() / Pawn->GetPlayerBallData()->SnapControlMoveRollDivider), NAME_None, true);
 }
