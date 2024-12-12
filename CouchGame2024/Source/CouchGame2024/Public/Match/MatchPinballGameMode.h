@@ -17,6 +17,8 @@ class COUCHGAME2024_API AMatchPinballGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
+	void InitSoundSubsystem();
+	
 	virtual void BeginPlay() override;
 
 #pragma region Players

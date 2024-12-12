@@ -31,8 +31,9 @@ void AMainMenuGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Connection
 	InitSoundSubsystem();
+	
+	// Connection
 	InitConnectionRailElements();
 	BindSpawnPlayerBallToNewPlayerConnected();
 	
