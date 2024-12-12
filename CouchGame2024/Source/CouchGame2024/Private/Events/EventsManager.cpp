@@ -124,6 +124,7 @@ void AEventsManager::CheckNewPhase(ERoundsPhaseID InRoundsPhaseID)
 		}
 		else
 		{
+			if (CurrentEventData) LastEventData = CurrentEventData;
 			GetRandomEvent();
 			UIManager->ShowNextRound(CurrentEventData);
 		}
@@ -179,6 +180,11 @@ void AEventsManager::EndGame()
 	RoundsSubsystem->ChangeToNextRoundPhase();
 
 	OnEventEndedEvent.Broadcast();
+}
+
+UEventData* AEventsManager::GetLastEventData() const
+{
+	return LastEventData;
 }
 
 UEventData* AEventsManager::GetCurrentEventData() const
@@ -350,11 +356,23 @@ void AEventsManager::GetFourRandomEvents()
 	}
 	else
 	{
-		do
+		if (RandomEvents.Num() == 0) // First four events (cant have deathzone as first)
 		{
-			TempRandomEvents = RandomizeList();
-		} 
-		while (RandomEvents.Num() > 0 && RandomEvents.Last() == TempRandomEvents[0]);
+			do
+			{
+				TempRandomEvents = RandomizeList();
+			} 
+			while (TempRandomEvents[0]->EventName == EEventName::Push);
+		}
+		else
+		{
+			do
+			{
+				TempRandomEvents = RandomizeList();
+			} 
+			while (RandomEvents.Num() > 0 && RandomEvents.Last() == TempRandomEvents[0]);
+		}
+		
 	}
 	
 	RandomEvents.Append(TempRandomEvents);
@@ -378,6 +396,11 @@ TArray<TObjectPtr<UEventData>> AEventsManager::RandomizeList() const
 	{
 		int32 SwapIndex = RandomStream.RandRange(0, i);
 		RandomizedList.Swap(i, SwapIndex);
+	}
+
+	for (auto EventData : RandomizedList)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, EventData->EventTag.ToString());
 	}
 
 	return RandomizedList;
