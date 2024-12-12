@@ -124,6 +124,7 @@ void AEventsManager::CheckNewPhase(ERoundsPhaseID InRoundsPhaseID)
 		}
 		else
 		{
+			if (CurrentEventData) LastEventData = CurrentEventData;
 			GetRandomEvent();
 			UIManager->ShowNextRound(CurrentEventData);
 		}
@@ -179,6 +180,11 @@ void AEventsManager::EndGame()
 	RoundsSubsystem->ChangeToNextRoundPhase();
 
 	OnEventEndedEvent.Broadcast();
+}
+
+UEventData* AEventsManager::GetLastEventData() const
+{
+	return LastEventData;
 }
 
 UEventData* AEventsManager::GetCurrentEventData() const
