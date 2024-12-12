@@ -65,7 +65,7 @@ void AEventZonesV2Manager::Bind()
 void AEventZonesV2Manager::SetStartValues()
 {
 	SelectedZonesAndPillars.Reset();
-	TrickedZoneAndPillar = TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>>(nullptr, nullptr);
+	TrickedZoneAndPillar1 = TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>>(nullptr, nullptr);
 }
 
 void AEventZonesV2Manager::GetPhase2ZonesAndPillars()
@@ -146,13 +146,27 @@ void AEventZonesV2Manager::GetRandomPillars()
 	TArray<TObjectPtr<APillarZone>> KeysArray;
 	SelectedZonesAndPillars.GenerateKeyArray(KeysArray);
 
+	// Get tricked pillar 1
 	if (KeysArray.Num() > 0)
 	{
 		int32 RandomIndex = FMath::RandRange(0, KeysArray.Num() - 1);
 		TObjectPtr<APillarZone> RandomZone = KeysArray[RandomIndex];
 
-		TrickedZoneAndPillar = TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>>(RandomZone, SelectedZonesAndPillars[RandomZone]);
+		TrickedZoneAndPillar1 = TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>>(RandomZone, SelectedZonesAndPillars[RandomZone]);
 	}
+
+	// Get tricked pillar 2 
+	KeysArray.Remove(TrickedZoneAndPillar1.Key);
+	if (KeysArray.Num() > 0)
+	{
+		int32 RandomIndex = FMath::RandRange(0, KeysArray.Num() - 1);
+		TObjectPtr<APillarZone> RandomZone = KeysArray[RandomIndex];
+
+		TrickedZoneAndPillar2 = TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>>(RandomZone, SelectedZonesAndPillars[RandomZone]);
+	}
+
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, FString::Printf(TEXT("Tricked 1 : %s, Tricked 2 : %s"),
+		*TrickedZoneAndPillar1.Key->GetName(), *TrickedZoneAndPillar2.Key->GetName()));
 }
 
 void AEventZonesV2Manager::ShowRandomPillars()
@@ -180,7 +194,7 @@ void AEventZonesV2Manager::ShowRandomPillars()
 		Zone->SetActorLocation(TargetLocation);
 
 		// Enable zone
-		if (Zone == TrickedZoneAndPillar.Key)
+		if (Zone == TrickedZoneAndPillar1.Key || Zone == TrickedZoneAndPillar2.Key)
 		{
 			Zone->ShowZone(true);
 		}
@@ -206,7 +220,7 @@ void AEventZonesV2Manager::ResetRandomPillars()
 	}
 
 	SelectedZonesAndPillars.Reset();
-	TrickedZoneAndPillar = TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>>(nullptr, nullptr);
+	TrickedZoneAndPillar1 = TTuple<TObjectPtr<APillarZone>, TObjectPtr<APillarElement>>(nullptr, nullptr);
 }
 
 void AEventZonesV2Manager::StartPhase2()
