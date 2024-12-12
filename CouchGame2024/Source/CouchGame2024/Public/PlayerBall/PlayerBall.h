@@ -194,6 +194,9 @@ public:
 	float PunchRadius = 50.f;
 
 	UPROPERTY()
+	float PunchRadiusWithStrength = 100.f;
+	
+	UPROPERTY()
 	float PunchCooldown = 3.f;
 
 	UPROPERTY()
