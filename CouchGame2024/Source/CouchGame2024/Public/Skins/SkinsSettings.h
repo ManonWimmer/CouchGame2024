@@ -15,6 +15,7 @@ class COUCHGAME2024_API USkinsSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(Config, EditAnywhere, Category="Skins Settings")
 	TSoftObjectPtr<USkinsData> SkinsDataP1;
 

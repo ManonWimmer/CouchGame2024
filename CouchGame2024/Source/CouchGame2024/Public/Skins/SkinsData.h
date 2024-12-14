@@ -16,5 +16,5 @@ class COUCHGAME2024_API USkinsData : public UDataAsset
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skins")
-	TArray<TSoftObjectPtr<UMaterialInstance>> SkinsMaterials;
+	TArray<TObjectPtr<UMaterialInstance>> SkinsMaterials;
 };

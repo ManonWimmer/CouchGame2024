@@ -203,19 +203,29 @@ void AEventsManager::RegisterEvent(UEventData* EventData, AEvent* Event)
 void AEventsManager::TriggerEventPhase1(const UEventData* EventData)
 {
 	if (AEvent* CurrentEvent = GetEventClassFromEventData(EventData))
+	{
 		CurrentEvent->TriggerEventPhase1();
+		ReceiveOnTriggerEventPhase1();
+	}
 	else
+	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
 		                                              "COULDN'T FIND CURRENT EVENT TO TRIGGER PHASE 1");
+	}
 }
 
 void AEventsManager::TriggerEventPhase2(const UEventData* EventData)
 {
 	if (AEvent* CurrentEvent = GetEventClassFromEventData(EventData))
+	{
 		CurrentEvent->TriggerEventPhase2();
+		ReceiveOnTriggerEventPhase2();
+	}
 	else
+	{
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red,
 		                                              "COULDN'T FIND CURRENT EVENT TO TRIGGER PHASE 2");
+	}
 }
 
 void AEventsManager::StartEvent(int RoundIndex)

@@ -11,6 +11,7 @@
 #include "PinballElements/Elements/RailElement.h"
 #include "PlayerBall/PlayerBall.h"
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
+#include "Skins/SkinsSubsystem.h"
 #include "Sounds/SoundSubsystem.h"
 
 
@@ -27,11 +28,24 @@ void AMainMenuGameMode::InitSoundSubsystem()
 	SoundSubsystem->InitMusicAudioComponent();
 }
 
+void AMainMenuGameMode::InitSkinsSubsystem()
+{
+	if (GetGameInstance() == nullptr)	return;
+	
+	USkinsSubsystem* SkinsSubsystem = GetGameInstance()->GetSubsystem<USkinsSubsystem>();
+
+	if (SkinsSubsystem == nullptr)	return;
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Skins Subsystem !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	SkinsSubsystem->InitSkinsSubsystem();
+}
+
 void AMainMenuGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
 	InitSoundSubsystem();
+	InitSkinsSubsystem();
 	
 	// Connection
 	InitConnectionRailElements();
