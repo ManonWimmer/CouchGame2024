@@ -684,6 +684,16 @@ void USoundSubsystem::PlayRailExitSound()
 	}
 }
 
+void USoundSubsystem::PlayFireworksSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->FireworksSound == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->FireworksSound, SoundsData->FireworksSoundAdjuster, 1.f, 0.f, nullptr, nullptr, false);
+	}
+}
+
 void USoundSubsystem::InitSoundSubsystem()
 {
 	if (SoundsData != nullptr)	return;

@@ -303,5 +303,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Element Rail")
 	float RailExitSoundAdjuster = 1.f;
 #pragma endregion 
+
+#pragma region Fireworks
+
+	UPROPERTY(EditAnywhere, Category = "Fireworks")
+	TObjectPtr<UMetaSoundSource> FireworksSound;
+	UPROPERTY(EditAnywhere, Category = "Fireworks")
+	float FireworksSoundAdjuster = 1.f;
+
+#pragma endregion
 	
 };

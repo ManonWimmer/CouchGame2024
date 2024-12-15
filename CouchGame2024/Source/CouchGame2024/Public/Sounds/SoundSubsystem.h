@@ -243,6 +243,14 @@ public:
 #pragma endregion 
 	
 #pragma endregion 
+
+#pragma region Fireworks Sounds
+
+	UFUNCTION(BlueprintCallable)
+	void PlayFireworksSound();
+
+#pragma endregion
+
 	
 	UFUNCTION(BlueprintCallable)
 	void InitSoundSubsystem();
