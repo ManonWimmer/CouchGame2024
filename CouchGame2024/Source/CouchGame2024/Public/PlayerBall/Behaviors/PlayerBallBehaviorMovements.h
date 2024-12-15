@@ -63,6 +63,8 @@ public:
 	UPROPERTY()
 	float BraqueDirectionForceMultiplier = 1.f;
 
+	float NewBraqueDirectionImpulseForce = 2.f;
+	
 	bool bUseBoostRollForce = false;
 	
 	float RollBoostForce = 30000.f;

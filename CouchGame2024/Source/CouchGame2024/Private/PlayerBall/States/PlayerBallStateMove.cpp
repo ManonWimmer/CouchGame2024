@@ -135,6 +135,9 @@ void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by
 	if (Pawn->SphereCollision == nullptr)
 		return;
 
+
+#pragma region Brake Dir first Ver
+	/*
 	bool SameDirectionX = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X <= 0 && Dir.X >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().X >= 0 && Dir.X <= 0);
 	bool SameDirectionY = (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y <= 0 && Dir.Y >= 0) || (Pawn->SphereCollision->GetPhysicsAngularVelocityInDegrees().Y >= 0 && Dir.Y <= 0);
 
@@ -146,7 +149,10 @@ void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by
 	{
 		Dir.Y *= Pawn->BehaviorMovements->BraqueDirectionForceMultiplier;
 	}
+	*/
+#pragma endregion
 
+#pragma region Brake Dir With Physics
 	/*
 	bool SameDirectionX = true;
 	bool SameDirectionY = true;
@@ -172,7 +178,41 @@ void UPlayerBallStateMove::Move(float DeltaTime)	// Move ball on X and Y Axis by
 
 	SetRightMoveMaterial(!SameDirectionX || !SameDirectionY);
 	*/
+#pragma endregion
 
+#pragma region Brake Dir third Ver
+
+	bool SameDirectionX = true;
+	bool SameDirectionY = true;
+	if (FMath::Abs(Dir.Y) > 0.2f)
+	{
+		SameDirectionX = (Pawn->GetVelocity().X * Dir.Y < -5.f); // Vérifie si les signes sont identiques
+	}
+	if (FMath::Abs(Dir.X) > 0.2f)
+	{
+		SameDirectionY = (Pawn->GetVelocity().Y * Dir.X > 5.f); // Vérifie si les signes sont identiques
+	}
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Magenta, FString::Printf(TEXT("Input Dir : %f / %f"), Dir.X, Dir.Y));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Velocity Dir : %f / %f"), Pawn->GetVelocity().X, Pawn->GetVelocity().Y));
+	
+	FVector BrakeDir = FVector::Zero();
+	if (!SameDirectionX)
+	{
+		BrakeDir.X = (-Dir.Y);
+	}
+	if (!SameDirectionY)
+	{
+		BrakeDir.Y = Dir.X;
+	}
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, FString::Printf(TEXT("Brake Dir Length : %f"), BrakeDir.Length()));
+	if (BrakeDir.Length() > 0.1f)
+	{
+		Pawn->SphereCollision->AddImpulse(BrakeDir * Pawn->BehaviorMovements->NewBraqueDirectionImpulseForce * DeltaTime);
+	}
+	//DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + BrakeDir * 500.f, FColor::Orange, false, 5.f);
+#pragma endregion
+	
+	
 	//DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + Dir * 500.f, FColor::Orange, false, 5.f);
 
 	Pawn->SphereCollision->AddAngularImpulseInDegrees(Dir * DeltaTime * -Pawn->BehaviorMovements->GetContextRollForce(), NAME_None, true);	// Roll ball
