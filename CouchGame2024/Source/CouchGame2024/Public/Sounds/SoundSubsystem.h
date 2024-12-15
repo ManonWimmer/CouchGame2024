@@ -58,6 +58,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayInGameDuckMusicSound();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayInGameDeathZoneMusicSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayInGameMoleMusicSound();
+	
+	UFUNCTION(BlueprintCallable)
+	void PlayInGamePopcornMusicSound();
+	
 #pragma endregion
 	
 	UFUNCTION(BlueprintCallable)

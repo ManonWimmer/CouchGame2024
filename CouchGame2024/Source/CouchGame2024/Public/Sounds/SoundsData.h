@@ -27,11 +27,28 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Sounds Music")
 	float InGameMusicAdjuster = 1.f;
 
+	
 	UPROPERTY(EditAnywhere, Category = "Sounds Music")
 	TObjectPtr<UMetaSoundSource> InGameDuckMusic;
 	UPROPERTY(EditAnywhere, Category = "Sounds Music")
 	float InGameDuckMusicAdjuster = 1.f;
 
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	TObjectPtr<UMetaSoundSource> InGameDeathZoneMusic;
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	float InGameDeathZoneMusicAdjuster = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	TObjectPtr<UMetaSoundSource> InGameMoleMusic;
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	float InGameMoleMusicAdjuster = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	TObjectPtr<UMetaSoundSource> InGamePopcornMusic;
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	float InGamePopcornMusicAdjuster = 1.f;
+	
+	
 	UPROPERTY(EditAnywhere, Category = "Sounds Music")
 	TObjectPtr<UMetaSoundSource> MainMenuMusic;
 	UPROPERTY(EditAnywhere, Category = "Sounds Music")

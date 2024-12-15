@@ -139,6 +139,81 @@ void USoundSubsystem::PlayInGameDuckMusicSound()
 	}
 }
 
+void USoundSubsystem::PlayInGameDeathZoneMusicSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->InGameDeathZoneMusic == nullptr)	return;
+	
+	if (MusicAudioComponent == nullptr)	return;
+
+	SoundToPlayAfterPause = SoundsData->InGameDeathZoneMusic;
+	
+	FadeOutMusic();
+	
+	if (TweenMusic != nullptr)
+	{
+		TweenMusic->Destroy();
+	}
+	TweenMusic = FCTween::Play(0.f, 1.f,
+		[&](float Value){ if (TweenMusic == nullptr || !IsValid(MusicAudioComponent))	return; int i = Value; },
+		0.5f);
+	if (TweenMusic != nullptr)
+	{
+		TweenMusic->SetCanTickDuringPause(true);
+		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->InGameDeathZoneMusic); } );
+	}
+}
+
+void USoundSubsystem::PlayInGameMoleMusicSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->InGameMoleMusic == nullptr)	return;
+	
+	if (MusicAudioComponent == nullptr)	return;
+
+	SoundToPlayAfterPause = SoundsData->InGameMoleMusic;
+	
+	FadeOutMusic();
+	
+	if (TweenMusic != nullptr)
+	{
+		TweenMusic->Destroy();
+	}
+	TweenMusic = FCTween::Play(0.f, 1.f,
+		[&](float Value){ if (TweenMusic == nullptr || !IsValid(MusicAudioComponent))	return; int i = Value; },
+		0.5f);
+	if (TweenMusic != nullptr)
+	{
+		TweenMusic->SetCanTickDuringPause(true);
+		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->InGameMoleMusic); } );
+	}
+}
+
+void USoundSubsystem::PlayInGamePopcornMusicSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->InGamePopcornMusic == nullptr)	return;
+	
+	if (MusicAudioComponent == nullptr)	return;
+
+	SoundToPlayAfterPause = SoundsData->InGamePopcornMusic;
+	
+	FadeOutMusic();
+	
+	if (TweenMusic != nullptr)
+	{
+		TweenMusic->Destroy();
+	}
+	TweenMusic = FCTween::Play(0.f, 1.f,
+		[&](float Value){ if (TweenMusic == nullptr || !IsValid(MusicAudioComponent))	return; int i = Value; },
+		0.5f);
+	if (TweenMusic != nullptr)
+	{
+		TweenMusic->SetCanTickDuringPause(true);
+		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundsData->InGamePopcornMusic); } );
+	}
+}
+
 void USoundSubsystem::PlayMainMenuMusicSound()
 {
 	if (SoundsData == nullptr)	return;
