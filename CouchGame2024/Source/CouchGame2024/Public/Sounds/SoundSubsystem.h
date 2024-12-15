@@ -33,6 +33,15 @@ public:
 	void InitMusicAudioComponent();
 
 	UFUNCTION()
+	void UpdatePlaybackPercent(const USoundWave* InSoundPlaying, const float InPlaybackPercent);
+
+	UPROPERTY()
+	float CurrentPlaybackTime = 0.f;
+
+	UPROPERTY()
+	float PlaybackTimeBeforePause = 0.f;
+
+	UFUNCTION()
 	void FadeInMusic(UMetaSoundSource* InSound, float InTimeStart = 0.f);
 
 	UFUNCTION(BlueprintCallable)

@@ -35,18 +35,31 @@ void USoundSubsystem::InitMusicAudioComponent()
 		MusicAudioComponent = UGameplayStatics::SpawnSound2D(GetWorld(), SoundsData->MainMenuMusic, 1.f, 1.f, 0.f, nullptr, true, false);
 		MusicAudioComponent->SetUISound(true);
 		MusicAudioComponent->Stop();
+		MusicAudioComponent->OnAudioPlaybackPercent.AddDynamic(this, &USoundSubsystem::UpdatePlaybackPercent);
 	}
+}
+
+void USoundSubsystem::UpdatePlaybackPercent(const USoundWave* InSoundPlaying, const float InPlaybackPercent)
+{
+	CurrentPlaybackTime = InSoundPlaying->Duration * InPlaybackPercent;
 }
 
 void USoundSubsystem::FadeInMusic(UMetaSoundSource* InSound, float InTimeStart)
 {
 	if (InSound == nullptr)	return;
 	if (MusicAudioComponent == nullptr)	return;
+
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Playback time : %f"), InTimeStart));
+
+	FAudioParameter Param;
+	Param.ParamName = "StartTime"; // ParametersName in Metasound
+	Param.FloatParam = InTimeStart;
 	
 	MusicAudioComponent->SetSound(InSound);
-	
-	MusicAudioComponent->Play(InTimeStart);
-	MusicAudioComponent->FadeIn(0.5f, SoundsData->InGameMusicAdjuster, 0.f);
+	MusicAudioComponent->SetFloatParameter(Param.ParamName, Param.FloatParam);
+	//MusicAudioComponent->Play(InTimeStart);
+	MusicAudioComponent->FadeIn(0.5f, SoundsData->InGameMusicAdjuster, InTimeStart);
 }
 
 void USoundSubsystem::FadeOutMusic()
@@ -64,16 +77,6 @@ void USoundSubsystem::PlayInGameMusicSound()
 	if (MusicAudioComponent == nullptr)	return;
 
 	SoundToPlayAfterPause = SoundsData->InGameMusic;
-	/*
-	if (MusicAudioComponent->GetSound()->Duration > 0.f)
-	{
-		MusicPlayingDurationBeforePause = MusicAudioComponent->TimeAudioComponentPlayed / MusicAudioComponent->GetSound()->Duration;
-	}
-	else
-	{
-		MusicPlayingDurationBeforePause = 0.f;
-	}
-	*/
 	
 	FadeOutMusic();
 	
@@ -119,16 +122,6 @@ void USoundSubsystem::PlayInGameDuckMusicSound()
 	if (MusicAudioComponent == nullptr)	return;
 
 	SoundToPlayAfterPause = SoundsData->InGameDuckMusic;
-	/*
-	if (MusicAudioComponent->GetSound()->Duration > 0.f)
-	{
-		MusicPlayingDurationBeforePause = MusicAudioComponent->TimeAudioComponentPlayed / MusicAudioComponent->GetSound()->Duration;
-	}
-	else
-	{
-		MusicPlayingDurationBeforePause = 0.f;
-	}
-	*/
 	
 	FadeOutMusic();
 	
@@ -154,16 +147,6 @@ void USoundSubsystem::PlayMainMenuMusicSound()
 	if (MusicAudioComponent == nullptr)	return;
 
 	SoundToPlayAfterPause = SoundsData->MainMenuMusic;
-	/*
-	if (MusicAudioComponent->GetSound()->Duration > 0.f)
-	{
-		MusicPlayingDurationBeforePause = MusicAudioComponent->TimeAudioComponentPlayed / MusicAudioComponent->GetSound()->Duration;
-	}
-	else
-	{
-		MusicPlayingDurationBeforePause = 0.f;
-	}
-	*/
 	FadeOutMusic();
 	
 	if (TweenMusic != nullptr)
@@ -186,6 +169,8 @@ void USoundSubsystem::PlaySettingsMusicSound()
 	if (SoundsData->SettingsMusic == nullptr)	return;
 	
 	if (MusicAudioComponent == nullptr)	return;
+
+	PlaybackTimeBeforePause = CurrentPlaybackTime;
 	
 	FadeOutMusic();
 	
@@ -220,7 +205,7 @@ void USoundSubsystem::UnplaySettingsMusicSound()
 	if (TweenMusic != nullptr)
 	{
 		TweenMusic->SetCanTickDuringPause(true);
-		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundToPlayAfterPause /*, MusicPlayingDurationBeforePause */); } );
+		TweenMusic->SetOnComplete([&] { FadeInMusic(SoundToPlayAfterPause, PlaybackTimeBeforePause); } );
 	}
 }
 
@@ -230,18 +215,6 @@ void USoundSubsystem::PlayWaitingMusicSound()
 	if (SoundsData->WaitingMusic == nullptr)	return;
 	
 	if (MusicAudioComponent == nullptr)	return;
-
-	SoundToPlayAfterPause = SoundsData->WaitingMusic;
-	/*
-	if (MusicAudioComponent->GetSound()->Duration > 0.f)
-	{
-		MusicPlayingDurationBeforePause = MusicAudioComponent->TimeAudioComponentPlayed / MusicAudioComponent->GetSound()->Duration;
-	}
-	else
-	{
-		MusicPlayingDurationBeforePause = 0.f;
-	}
-	*/
 	
 	FadeOutMusic();
 	
