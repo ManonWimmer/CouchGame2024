@@ -33,6 +33,15 @@ public:
 	void InitMusicAudioComponent();
 
 	UFUNCTION()
+	void UpdatePlaybackPercent(const USoundWave* InSoundPlaying, const float InPlaybackPercent);
+
+	UPROPERTY()
+	float CurrentPlaybackTime = 0.f;
+
+	UPROPERTY()
+	float PlaybackTimeBeforePause = 0.f;
+
+	UFUNCTION()
 	void FadeInMusic(UMetaSoundSource* InSound, float InTimeStart = 0.f);
 
 	UFUNCTION(BlueprintCallable)
@@ -49,6 +58,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayInGameDuckMusicSound();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayInGameDeathZoneMusicSound();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayInGameMoleMusicSound();
+	
+	UFUNCTION(BlueprintCallable)
+	void PlayInGamePopcornMusicSound();
+	
 #pragma endregion
 	
 	UFUNCTION(BlueprintCallable)
@@ -221,6 +239,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlaySlipperyEffectSound();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayPowerUpCollectSound();
+	
 #pragma endregion
 
 #pragma region Element reactions Sounds
@@ -243,6 +264,14 @@ public:
 #pragma endregion 
 	
 #pragma endregion 
+
+#pragma region Fireworks Sounds
+
+	UFUNCTION(BlueprintCallable)
+	void PlayFireworksSound();
+
+#pragma endregion
+
 	
 	UFUNCTION(BlueprintCallable)
 	void InitSoundSubsystem();

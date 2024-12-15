@@ -27,11 +27,28 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Sounds Music")
 	float InGameMusicAdjuster = 1.f;
 
+	
 	UPROPERTY(EditAnywhere, Category = "Sounds Music")
 	TObjectPtr<UMetaSoundSource> InGameDuckMusic;
 	UPROPERTY(EditAnywhere, Category = "Sounds Music")
 	float InGameDuckMusicAdjuster = 1.f;
 
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	TObjectPtr<UMetaSoundSource> InGameDeathZoneMusic;
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	float InGameDeathZoneMusicAdjuster = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	TObjectPtr<UMetaSoundSource> InGameMoleMusic;
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	float InGameMoleMusicAdjuster = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	TObjectPtr<UMetaSoundSource> InGamePopcornMusic;
+	UPROPERTY(EditAnywhere, Category = "Sounds Music")
+	float InGamePopcornMusicAdjuster = 1.f;
+	
+	
 	UPROPERTY(EditAnywhere, Category = "Sounds Music")
 	TObjectPtr<UMetaSoundSource> MainMenuMusic;
 	UPROPERTY(EditAnywhere, Category = "Sounds Music")
@@ -281,7 +298,13 @@ public:
 	TObjectPtr<UMetaSoundSource> PowerUpSlipperyEffect;
 	UPROPERTY(EditAnywhere, Category = "Power Up Slippery")
 	float PowerUpSlipperyEffectSoundAdjuster = 1.f;
+
+
 	
+	UPROPERTY(EditAnywhere, Category = "Power Up Collect")
+	TObjectPtr<UMetaSoundSource> PowerUpCollectSound;
+	UPROPERTY(EditAnywhere, Category = "Power Up Collect")
+	float PowerUpCollectSoundAdjuster = 1.f;
 	
 #pragma endregion 
 
@@ -303,5 +326,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Element Rail")
 	float RailExitSoundAdjuster = 1.f;
 #pragma endregion 
+
+#pragma region Fireworks
+
+	UPROPERTY(EditAnywhere, Category = "Fireworks")
+	TObjectPtr<UMetaSoundSource> FireworksSound;
+	UPROPERTY(EditAnywhere, Category = "Fireworks")
+	float FireworksSoundAdjuster = 1.f;
+
+#pragma endregion
 	
 };

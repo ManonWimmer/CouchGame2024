@@ -51,6 +51,8 @@ private:
 	bool CheckGoingTowardLocation(FVector OtherLocation, FVector TargetDirection);
 	
 	bool bOnRespawnRail = false;
+
+	bool bOnChangeSkinRail = false;
 	
 	float DirectionRail = 0.f;
 

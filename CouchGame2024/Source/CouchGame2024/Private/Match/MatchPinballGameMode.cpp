@@ -12,6 +12,7 @@
 #include "PlayerBall/Behaviors/PlayerBallBehaviorMovements.h"
 #include "Rounds/RoundsSubsystem.h"
 #include "Score/GlobalScoreSubsystem.h"
+#include "Skins/SkinsSubsystem.h"
 #include "Sounds/SoundSubsystem.h"
 
 void AMatchPinballGameMode::InitSoundSubsystem()
@@ -27,11 +28,24 @@ void AMatchPinballGameMode::InitSoundSubsystem()
 	SoundSubsystem->InitMusicAudioComponent();
 }
 
+void AMatchPinballGameMode::InitSkinsSubsystem()
+{
+	if (GetGameInstance() == nullptr)	return;
+	
+	USkinsSubsystem* SkinsSubsystem = GetGameInstance()->GetSubsystem<USkinsSubsystem>();
+
+	if (SkinsSubsystem == nullptr)	return;
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, "Skins Subsystem !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	SkinsSubsystem->InitSkinsSubsystem();
+}
+
 void AMatchPinballGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
 	InitSoundSubsystem();
+	InitSkinsSubsystem();
 	
 	// Players
 	CreateAndInitPlayers();

@@ -80,6 +80,8 @@ void UPlayerBallBehaviorMovements::SetupData()
 	AngularRollForce = GetPlayerBall()->GetPlayerBallData()->AngularRollForce;
 	BraqueDirectionForceMultiplier = GetPlayerBall()->GetPlayerBallData()->BraqueDirectionForceMultiplier;
 
+	NewBraqueDirectionImpulseForce = GetPlayerBall()->GetPlayerBallData()->NewBraqueDirectionImpulseForce;
+	
 	RollBoostForce = GetPlayerBall()->GetPlayerBallData()->RollBoostForce;
 	TotalRollBoostDuration = GetPlayerBall()->GetPlayerBallData()->TotalRollBoostDuration;
 

@@ -48,7 +48,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int PlayerIndex = 0;
 
 	
@@ -93,7 +93,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UFloatingPawnMovement> PawnMovement;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UStaticMeshComponent> SphereMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -281,6 +281,14 @@ public:
 	void ReceiveOnUnsetToNeutralBall();
 	
 #pragma endregion
+
+#pragma region Skins
+public:
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnChangeSkin"))
+	void ReceiveOnChangeSkin();
+
+#pragma endregion 
+	
 
 #pragma region IRoundsResetable
 

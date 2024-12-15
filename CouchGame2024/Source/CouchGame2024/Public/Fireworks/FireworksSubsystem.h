@@ -23,10 +23,10 @@ public:
 	void InitFireworkSubsystem();
 
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void FireAllFireworks();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void StopAllFireworks();
 	
 private:

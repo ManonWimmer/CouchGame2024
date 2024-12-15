@@ -114,6 +114,10 @@ void UPlayerBallStateRail::EnterRail()
 	{
 		bOnRespawnRail = CurrentRailElement->ActorHasTag("RespawnRail");
 	}
+	if (CurrentRailElement != nullptr)
+	{
+		bOnChangeSkinRail = CurrentRailElement->ActorHasTag("ChangeSkinRail");
+	}
 	
 	Pawn->ResetMovement();
 	
@@ -286,7 +290,11 @@ void UPlayerBallStateRail::ExitRail()
 			Pawn->SetActorLocation(LocationAlongSpline);
 		}
 	}
-	
+
+	if (bOnChangeSkinRail)
+	{
+		Pawn->ReceiveOnChangeSkin();
+	}
 	
 	Pawn->SphereCollision->SetSimulatePhysics(true);
 	Pawn->SphereCollision->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);

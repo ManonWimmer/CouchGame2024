@@ -28,6 +28,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Roll Movements")
 	float BraqueDirectionForceMultiplier = 2.f;
+
+	UPROPERTY(EditAnywhere, Category = "Roll Movements")
+	float NewBraqueDirectionImpulseForce = 2.f;
 #pragma endregion
 
 #pragma region Physics States

@@ -151,8 +151,14 @@ public:
 	UFUNCTION()
 	void TriggerEventPhase1(const UEventData* EventData);
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnTriggerEventPhase1"))
+	void ReceiveOnTriggerEventPhase1();
+	
 	UFUNCTION()
 	void TriggerEventPhase2(const UEventData* EventData);
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnTriggerEventPhase2"))
+	void ReceiveOnTriggerEventPhase2();
 
 	UFUNCTION()
 	void StartEvent(int RoundIndex);
