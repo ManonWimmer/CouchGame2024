@@ -281,7 +281,13 @@ public:
 	TObjectPtr<UMetaSoundSource> PowerUpSlipperyEffect;
 	UPROPERTY(EditAnywhere, Category = "Power Up Slippery")
 	float PowerUpSlipperyEffectSoundAdjuster = 1.f;
+
+
 	
+	UPROPERTY(EditAnywhere, Category = "Power Up Collect")
+	TObjectPtr<UMetaSoundSource> PowerUpCollectSound;
+	UPROPERTY(EditAnywhere, Category = "Power Up Collect")
+	float PowerUpCollectSoundAdjuster = 1.f;
 	
 #pragma endregion 
 

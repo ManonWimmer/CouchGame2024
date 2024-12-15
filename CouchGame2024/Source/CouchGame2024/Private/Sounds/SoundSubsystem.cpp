@@ -654,6 +654,16 @@ void USoundSubsystem::PlaySlipperyEffectSound()
 	}
 }
 
+void USoundSubsystem::PlayPowerUpCollectSound()
+{
+	if (SoundsData == nullptr)	return;
+	if (SoundsData->PowerUpCollectSound == nullptr)	return;
+	if (GetWorld())
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), SoundsData->PowerUpCollectSound, SoundsData->PowerUpCollectSoundAdjuster, 1.f, 0.f, nullptr, nullptr, false);
+	}
+}
+
 void USoundSubsystem::PlayBumperImpactSound()
 {
 	if (SoundsData == nullptr)	return;

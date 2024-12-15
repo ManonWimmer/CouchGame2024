@@ -221,6 +221,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlaySlipperyEffectSound();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayPowerUpCollectSound();
+	
 #pragma endregion
 
 #pragma region Element reactions Sounds
