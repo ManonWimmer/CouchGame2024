@@ -303,6 +303,7 @@ public:
 	void ResetState();
 	void ResetMovement();
 	void ResetGrapple();
+	void ResetPowerUp();
 	void ResetCooldown();
 	void ResetPosition();
 	void ResetPhysics();

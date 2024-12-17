@@ -298,6 +298,7 @@ void APlayerBall::ResetObject()
 	ResetState();
 	ResetMovement();
 	ResetGrapple();
+	ResetPowerUp();
 	ResetCooldown();
 	ResetPosition();
 	ResetPhysics();
@@ -326,7 +327,18 @@ void APlayerBall::ResetMovement()
 
 void APlayerBall::ResetGrapple()
 {
-	BehaviorGrapple->ResetGrapplingCooldown();
+	if (BehaviorGrapple != nullptr)
+	{
+		BehaviorGrapple->ResetGrapplingCooldown();
+	}
+}
+
+void APlayerBall::ResetPowerUp()
+{
+	if (BehaviorPowerUp != nullptr)
+	{
+		BehaviorPowerUp->EmptyCurrentPowerUpCarried();
+	}
 }
 
 void APlayerBall::ResetCooldown()
