@@ -89,7 +89,7 @@ public:
 	TObjectPtr<UMaterialInterface> TrickedMaterial;
 
 	UPROPERTY()
-	TObjectPtr<UPlayerBallStateMachine> PlayerStateMachineOnPillar = nullptr;
+	TArray<TObjectPtr<UPlayerBallStateMachine>> PlayerStateMachinesOnPillar;
 
 	UPROPERTY()
 	APillarZone* PillarZone = nullptr;

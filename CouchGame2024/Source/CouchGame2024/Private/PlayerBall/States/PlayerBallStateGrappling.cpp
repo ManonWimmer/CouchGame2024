@@ -116,7 +116,7 @@ void UPlayerBallStateGrappling::StateEnter(EPlayerBallStateID PreviousState)
 						Pillar->NbrPlayersGrappling += 1;
 						if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("+= 1 nbr Player grappling : %d"), Pillar->NbrPlayersGrappling));
 						if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "set state machine");
-						Pillar->PlayerStateMachineOnPillar = StateMachine;
+						Pillar->PlayerStateMachinesOnPillar.Add(StateMachine);
 
 						Pillar->ReceiveOnStartGainPoint();
 						Pillar->OnStartedGrabbed();
@@ -268,7 +268,7 @@ void UPlayerBallStateGrappling::StateExit(EPlayerBallStateID NextState)
 					Pillar->NbrPlayersGrappling -= 1;
 					if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::Printf(TEXT("-= 1 nbr Player grappling : %d"), Pillar->NbrPlayersGrappling));
 					if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "reset state machine");
-					Pillar->PlayerStateMachineOnPillar = nullptr;
+					Pillar->PlayerStateMachinesOnPillar.Remove(StateMachine);
 
 					Pillar->ReceiveOnEndGainPoint();
 					Pillar->OnStoppedGrabbed();

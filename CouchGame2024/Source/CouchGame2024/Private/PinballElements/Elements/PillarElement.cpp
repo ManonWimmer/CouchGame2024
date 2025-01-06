@@ -88,10 +88,14 @@ void APillarElement::DisablePillar()
 		if (GEngine) GEngine->AddOnScreenDebugMessage(0, 3, FColor::Red, "pas mesh");
 	}
 
-	if (PlayerStateMachineOnPillar)
+	if (PlayerStateMachinesOnPillar.Num() > 0)
 	{
-		PlayerStateMachineOnPillar->ChangeState(EPlayerBallStateID::Idle);
-		PlayerStateMachineOnPillar = nullptr;
+		for (auto PlayerStateMachine : PlayerStateMachinesOnPillar)
+		{
+			PlayerStateMachine->ChangeState(EPlayerBallStateID::Idle);
+		}
+		
+		PlayerStateMachinesOnPillar.Reset();
 	}
 
 	/*
