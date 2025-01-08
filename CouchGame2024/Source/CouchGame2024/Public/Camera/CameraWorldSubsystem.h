@@ -160,4 +160,26 @@ private:
 
 #pragma endregion 
 
+#pragma region Camera Cine
+
+public:
+	void InitCineCamera();
+
+	UFUNCTION(BlueprintCallable)
+	void ToggleCameraTarget();
+	
+	UFUNCTION(BlueprintCallable)
+	void SwitchToCineCamera();
+	
+	UFUNCTION(BlueprintCallable)
+	void SwitchToMainCamera();
+	
+private:
+	UPROPERTY()
+	TObjectPtr<UCameraComponent> CineCamera;
+
+	bool IsOnMainCamera = true;
+	
+#pragma endregion 
+	
 };

@@ -33,6 +33,8 @@ void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	InitCameraZoomParameters();
 
 	InitCameraShake();
+
+	InitCineCamera();
 	
 	SetupData();
 }
@@ -388,3 +390,48 @@ void UCameraWorldSubsystem::InitCameraShake()
 
 	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Orange, "Init camera shake");
 }
+
+void UCameraWorldSubsystem::InitCineCamera()
+{
+	if (GetWorld() == nullptr)	return;
+
+	CineCamera = FindCameraByTag("CineCamera");
+}
+
+void UCameraWorldSubsystem::ToggleCameraTarget()
+{
+	if (IsOnMainCamera)
+	{
+		SwitchToCineCamera();
+	}
+	else
+	{
+		SwitchToMainCamera();
+	}
+}
+
+void UCameraWorldSubsystem::SwitchToCineCamera()
+{
+	if (CameraShakePlayerController == nullptr)	return;
+	if (CineCamera == nullptr)	return;
+
+	FViewTargetTransitionParams TransitionParams;
+	TransitionParams.bLockOutgoing = true;
+	CameraShakePlayerController->SetViewTarget(CineCamera->GetOwner(), TransitionParams);
+
+	IsOnMainCamera = false;
+}
+
+void UCameraWorldSubsystem::SwitchToMainCamera()
+{
+	if (CameraShakePlayerController == nullptr)	return;
+	if (CameraMain == nullptr)	return;
+
+	FViewTargetTransitionParams TransitionParams;
+	TransitionParams.bLockOutgoing = true;
+	CameraShakePlayerController->SetViewTarget(CameraMain->GetOwner(), TransitionParams);
+	
+	IsOnMainCamera = true;
+}
+
+
