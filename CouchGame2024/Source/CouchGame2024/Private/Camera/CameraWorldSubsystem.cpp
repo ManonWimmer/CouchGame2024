@@ -22,7 +22,13 @@ void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	CameraMain = FindCameraByTag(TEXT("CameraMain"));
 
 	if (CameraMain != nullptr)
+	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Orange, "CameraBoundsActor");
+		if (CameraMain->GetOwner() != nullptr)
+		{
+			bIsNotMoving = CameraMain->GetOwner()->ActorHasTag(TEXT("NotMoving"));
+		}
+	}
 	
 	AActor* CameraBoundsActor = FindCameraBoundsActor();
 	if (CameraBoundsActor != nullptr)
@@ -42,6 +48,8 @@ void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 void UCameraWorldSubsystem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bIsNotMoving)	return;
 	TickUpdateCameraZoom(DeltaTime);
 	TickUpdateCameraPosition(DeltaTime);
 }
