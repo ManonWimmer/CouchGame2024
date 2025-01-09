@@ -268,6 +268,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlaySetProgressStartForceEffect(float NewProgressStartForce);
 
+	UPROPERTY(BlueprintReadWrite)
+	bool IsForcedDisabledStartForceEffect = false;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> StartForceEffectWidget;
 

@@ -49,6 +49,9 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UCameraComponent> CameraMain;
 
+	UPROPERTY()
+	bool bIsNotMoving = false;
+	
 	UCameraComponent* FindCameraByTag(const FName& Tag) const;
 
 	void TickUpdateCameraZoom(float DeltaTime);
