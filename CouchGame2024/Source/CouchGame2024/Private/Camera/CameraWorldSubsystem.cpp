@@ -40,7 +40,7 @@ void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 
 	InitCameraShake();
 
-	InitCineCamera();
+	//InitCineCamera();
 	
 	SetupData();
 }
